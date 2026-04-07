@@ -1,0 +1,85 @@
+YCDO rehabilitation fingerprint — local matcher HTTP API
+==========================================================
+
+Define in company_info.php (before rehab_fingerprint.php runs):
+
+  define('REHAB_FP_VERIFY_URL', 'http://127.0.0.1:9100/verify');   // optional, 1:1
+  define('REHAB_FP_IDENTIFY_URL', 'http://127.0.0.1:9100/identify'); // optional, 1:N one round-trip
+
+Timeouts: matcher should respond within ~30s for large template batches.
+
+
+1) 1:1 verify — rehab_fp_external_verify()
+--------------------------------------------
+POST {REHAB_FP_VERIFY_URL}
+Content-Type: application/json
+
+Request body:
+{
+  "stored_left":  "<string: enrolled left thumb template / FMD / base64>",
+  "stored_right": "<string: enrolled right thumb template>",
+  "probe":        "<string: live scan template to check>",
+  "threshold":    50
+}
+
+Success response (HTTP 200, JSON):
+  { "match": true }   — probe matches at least one enrolled thumb
+  { "match": false }  — no match
+
+Your service should use HID DigitalPersona (or vendor) SDK to compare probe to stored templates
+(score / FAR-FRR), not byte equality.
+
+
+2) 1:N identify — REHAB_FP_IDENTIFY_URL (single HTTP call)
+--------------------------------------------------------
+POST {REHAB_FP_IDENTIFY_URL}
+Content-Type: application/json
+
+Request body:
+{
+  "probe": "<string: live scan from first or second identification thumb>",
+  "threshold": 50,
+  "templates": [
+    {
+      "patient_id": 123,
+      "finger_code": "left",
+      "template": "<string>",
+      "thumb_left": "<string>",
+      "thumb_right": "<string>"
+    }
+    ...
+  ]
+}
+
+PHP sends ALL rows from table patient_fingerprints. For large sites, implement your service to
+stream or use a DB-backed index — you may ignore extra fields if you load from MySQL by probe alone.
+
+Success response (HTTP 200, JSON), either:
+
+  { "match": true, "patient_id": 123 }
+  { "score": 77.4, "patient_id": 123 }   // also accepted by PHP
+
+or
+
+  { "match": false }
+  { "score": 42.1, "patient_id": 123 }   // below threshold => treated as no-match
+  { "candidates": [ {"patient_id":123, "score":77.4}, ... ] } // top score picked
+
+Rules:
+  - If match is true, patient_id MUST be the enrolled patient who matched the probe.
+  - If match is false, omit patient_id or send null.
+
+If the service returns non-200, invalid JSON, or empty body, PHP falls back to the built-in
+per-row loop (exact template match + REHAB_FP_VERIFY_URL per row only — slow).
+
+
+3) Example stub (pseudo-code)
+-----------------------------
+identify(probe, templates):
+  for each t in templates:
+    if sdk.verify(probe, t.thumb_left) or sdk.verify(probe, t.thumb_right):
+      return { match: true, patient_id: t.patient_id }
+  return { match: false }
+
+verify(stored_left, stored_right, probe):
+  return { match: sdk.verify(probe, stored_left) || sdk.verify(probe, stored_right) }

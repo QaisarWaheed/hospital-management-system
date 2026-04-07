@@ -1,0 +1,83 @@
+<?php include 'includes/connect.php'; 
+if (isset($_GET['print_summary'])) {
+	$select_month = $_GET['select_month'];
+	$br_id = $_GET['br_id'];
+?>
+<script>
+window.open("print_account_summary.php?month=<?php echo $select_month; ?>&br_id=<?php echo $br_id; ?>", "_blank", "toolbar=no,scrollbars=no,resizable=no,top=50,left=50,status=no");
+	  location.replace("account_summary.php");
+window.close();
+</script>
+<?php
+}
+?>
+<?php include 'includes/head.php'; ?>
+<title>User Summary - <?php echo $company_trademark; ?></title>
+</head>
+
+<body class="">
+<div class="row" style="margin: 0px;">
+	<div class="col-md-12" style="text-align: center;background: lightgreen;">
+		<label><h1>YCDO </h1></label>
+	</div>
+	<div class="col-md-3 background_whitesmoke" style="min-height: 450px">
+		<?php include 'left_navigation.php'; ?>
+	</div>
+	<div class="col-md-9 background_image_ycdo">
+	<div class="row">
+		
+		<div class="col-md-12 col-sm-12 col-xs-12">
+			
+		<form method="GET"  target="_blank">
+			
+			<div class="row">
+				
+				<div class="col-md-12 col-sm-12 col-xs-12">
+
+					<label for="br_id">Branch</label>
+                        <select class="form-control" style="min-width: 200px;text-transform: uppercase;" name="br_id">
+                        <?php 
+                            $branch = "SELECT * FROM branchs WHERE id = '$branch_id' AND status = 1 ORDER BY `address` ASC ";
+                            $run_branch = mysqli_query($con, $branch);
+                            if (mysqli_num_rows($run_branch) > 0) 
+                            {
+                                while ($row_branch = mysqli_fetch_array($run_branch)) 
+                                {
+                                    echo '<option value="'.$row_branch['id'].'">'.$row_branch['address'].'</option>';
+                                }
+                            }
+                            else
+                            {
+                                echo '<option value="">Add Doctors Data</option>';
+                            }
+                        ?>
+                        </select>
+                </div>
+
+				<div class="col-md-12 col-sm-12 col-xs-12">
+
+					<label for="select_month">From:</label>
+					<input type="month" name="select_month" class="form-control" required id="select_month">
+				
+				</div>
+
+				<div class="col-md-12 col-sm-12 col-xs-12">
+					<br>
+					<input class="btn btn-sm btn-primary" type="submit" name="print_summary" value="PRINT SUMMARY" />
+
+					<input class="btn btn-sm btn-danger" type="reset" name="clear" value="CLEAR FORM" />
+
+				</div>
+
+			</div>
+
+		</form>
+	
+		</div>
+
+	</div>		
+	</div>
+</div>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
