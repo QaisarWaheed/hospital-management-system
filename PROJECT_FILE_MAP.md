@@ -1,0 +1,327 @@
+# YCDO Project File Map
+
+This catalog focuses on application code files and explains likely functionality based on file names and module context.
+
+## Root Files
+- [.htaccess](.htaccess): Force HTTPS redirects at web server level
+- [404.php](404.php): Template placeholder 404 page
+- [action_login.php](action_login.php): Role router: sends selected role to correct login page
+- [admin_login.php](admin_login.php): Role-specific login workflow and session initialization
+- [ao_login.php](ao_login.php): Role-specific login workflow and session initialization
+- [api](api): Plaintext API key/name file
+- [bk_login.php](bk_login.php): Role-specific login workflow and session initialization
+- [callback.php](callback.php): Placeholder callback endpoint (currently empty)
+- [dashboard.php](dashboard.php): Root dashboard layout (legacy/admin-style view)
+- [display_s.php](display_s.php): Debug page that prints session and server arrays
+- [dr_login.php](dr_login.php): Role-specific login workflow and session initialization
+- [facebook.php](facebook.php): Prototype Facebook SDK/deletion callback code
+- [fr_login.php](fr_login.php): Role-specific login workflow and session initialization
+- [hr_login.php](hr_login.php): Role-specific login workflow and session initialization
+- [index.php](index.php): Entry page: branch and role selection
+- [index-files-08102025.zip](index-files-08102025.zip): Archived snapshot/backup zip
+- [issue.php](issue.php): One-off diagnostics/reporting query page
+- [la_login.php](la_login.php): Role-specific login workflow and session initialization
+- [lab_login.php](lab_login.php): Role-specific login workflow and session initialization
+- [left_navigation.php](left_navigation.php): Root shared menu links for inventory/admin operations
+- [lm_login.php](lm_login.php): Role-specific login workflow and session initialization
+- [login.php](login.php): Role-specific login workflow and session initialization
+- [logout.php](logout.php): Destroy session and redirect to entry page
+- [manifest.json](manifest.json): PWA manifest metadata
+- [mm_login.php](mm_login.php): Role-specific login workflow and session initialization
+- [pfa.txt](pfa.txt): Snippet showing manifest/service-worker include
+- [php.ini](php.ini): Local PHP runtime overrides
+- [print_progress_report_monthly_lab.php](print_progress_report_monthly_lab.php): Printable monthly lab progress report
+- [privacy_policy.php](privacy_policy.php): Static privacy policy page
+- [rate.php](rate.php): One-off diagnostics/reporting query page
+- [sm_login.php](sm_login.php): Role-specific login workflow and session initialization
+- [sw.js](sw.js): Service worker cache/fetch handler
+
+## Module Files
+\n### ao
+- [ao/add_user.php](ao/add_user.php): Create/add data workflow
+- [ao/audit_branch_form.php](ao/audit_branch_form.php): Audit/counter-verification workflow
+- [ao/audit_complete_report.php](ao/audit_complete_report.php): Reporting/analytics page
+- [ao/audit_detail_form.php](ao/audit_detail_form.php): Audit/counter-verification workflow
+- [ao/audit_detail_form__lab_store.php](ao/audit_detail_form__lab_store.php): Audit/counter-verification workflow
+- [ao/audit_detail_form_lab_store.php](ao/audit_detail_form_lab_store.php): Audit/counter-verification workflow
+- [ao/audit_detail_form_store.php](ao/audit_detail_form_store.php): Audit/counter-verification workflow
+- [ao/audit_difference_report.php](ao/audit_difference_report.php): Reporting/analytics page
+- [ao/audit_extra_report.php](ao/audit_extra_report.php): Reporting/analytics page
+- [ao/audit_lab_complete_report.php](ao/audit_lab_complete_report.php): Reporting/analytics page
+- [ao/audit_lab_detail_form.php](ao/audit_lab_detail_form.php): Audit/counter-verification workflow
+- [ao/audit_lab_difference_report.php](ao/audit_lab_difference_report.php): Reporting/analytics page
+- [ao/audit_lab_extra_report.php](ao/audit_lab_extra_report.php): Reporting/analytics page
+- [ao/audit_lab_form.php](ao/audit_lab_form.php): Audit/counter-verification workflow
+- [ao/audit_lab_short_report.php](ao/audit_lab_short_report.php): Reporting/analytics page
+- [ao/audit_lab_store_clear.php](ao/audit_lab_store_clear.php): Audit/counter-verification workflow
+- [ao/audit_lab_store_form.php](ao/audit_lab_store_form.php): Audit/counter-verification workflow
+- [ao/audit_short_report.php](ao/audit_short_report.php): Reporting/analytics page
+- [ao/audit_store_clear.php](ao/audit_store_clear.php): Audit/counter-verification workflow
+- [ao/audit_store_form.php](ao/audit_store_form.php): Audit/counter-verification workflow
+- [ao/branch_item_consumed_details.php](ao/branch_item_consumed_details.php): Inventory/procurement/stock operation
+- [ao/check_store_sctock.php](ao/check_store_sctock.php): Action endpoint (state changes/validation)
+- [ao/complete_audit_extra_report.php](ao/complete_audit_extra_report.php): Reporting/analytics page
+- [ao/dashboard.php](ao/dashboard.php): Module landing dashboard
+- [ao/deserving_medicines.php](ao/deserving_medicines.php): Feature-specific module page
+- [ao/lab_store_audit_complete_report.php](ao/lab_store_audit_complete_report.php): Reporting/analytics page
+- [ao/lab_store_audit_difference_report.php](ao/lab_store_audit_difference_report.php): Reporting/analytics page
+- [ao/lab_store_audit_extra_report.php](ao/lab_store_audit_extra_report.php): Reporting/analytics page
+- [ao/lab_store_audit_short_report.php](ao/lab_store_audit_short_report.php): Reporting/analytics page
+- [ao/left_navigation.php](ao/left_navigation.php): Sidebar/menu definition for this role
+- [ao/logout.php](ao/logout.php): Logout/session termination
+- [ao/navigation_top.php](ao/navigation_top.php): Top navigation/header partial
+- [ao/show_consumed_item_records.php](ao/show_consumed_item_records.php): List/view/report table
+- [ao/show_stock.php](ao/show_stock.php): List/view/report table
+- [ao/show_user.php](ao/show_user.php): List/view/report table
+- [ao/store_audit_complete_report.php](ao/store_audit_complete_report.php): Reporting/analytics page
+- [ao/store_audit_difference_report.php](ao/store_audit_difference_report.php): Reporting/analytics page
+- [ao/store_audit_extra_report.php](ao/store_audit_extra_report.php): Reporting/analytics page
+- [ao/store_audit_short_report.php](ao/store_audit_short_report.php): Reporting/analytics page
+- [ao/top_row.php](ao/top_row.php): Top navigation/header partial
+- [ao/update_branch_item.php](ao/update_branch_item.php): Update/edit data workflow
+- [ao/update_branch_session.php](ao/update_branch_session.php): Update/edit data workflow
+- [ao/update_user.php](ao/update_user.php): Update/edit data workflow
+- [ao/update_user_password.php](ao/update_user_password.php): Update/edit data workflow
+- [ao/varify_token.php](ao/varify_token.php): Action endpoint (state changes/validation)
+\n### bk
+- [bk/add_user.php](bk/add_user.php): Create/add data workflow
+- [bk/dashboard.php](bk/dashboard.php): Module landing dashboard
+- [bk/doctor_monthly_profile.php](bk/doctor_monthly_profile.php): Feature-specific module page
+- [bk/doctor_prescription_token_wise.php](bk/doctor_prescription_token_wise.php): Feature-specific module page
+- [bk/gyane_report_discontinued.php](bk/gyane_report_discontinued.php): Reporting/analytics page
+- [bk/gyane_report_greater_then_eight_month.php](bk/gyane_report_greater_then_eight_month.php): Reporting/analytics page
+- [bk/gyane_report_less_then_four_month.php](bk/gyane_report_less_then_four_month.php): Reporting/analytics page
+- [bk/gyane_report_less_then_four_month_and_greater_then_eight_month.php](bk/gyane_report_less_then_four_month_and_greater_then_eight_month.php): Reporting/analytics page
+- [bk/gyane_total_record.php](bk/gyane_total_record.php): Gynecology registration/reporting flow
+- [bk/gynae_registeration.php](bk/gynae_registeration.php): Gynecology registration/reporting flow
+- [bk/gynae_registeration_delete.php](bk/gynae_registeration_delete.php): Gynecology registration/reporting flow
+- [bk/gynae_registeration_file_add.php](bk/gynae_registeration_file_add.php): Gynecology registration/reporting flow
+- [bk/gynae_registeration_history.php](bk/gynae_registeration_history.php): Gynecology registration/reporting flow
+- [bk/gynae_registeration_print.php](bk/gynae_registeration_print.php): Gynecology registration/reporting flow
+- [bk/gynae_registeration_update.php](bk/gynae_registeration_update.php): Gynecology registration/reporting flow
+- [bk/hr.zip](bk/hr.zip): Feature-specific module page
+- [bk/left_navigation.php](bk/left_navigation.php): Sidebar/menu definition for this role
+- [bk/logout.php](bk/logout.php): Logout/session termination
+- [bk/navigation_top.php](bk/navigation_top.php): Top navigation/header partial
+- [bk/print_gynae_report.php](bk/print_gynae_report.php): Printable report/slip output
+- [bk/print_medicine_slip_duplicate.php](bk/print_medicine_slip_duplicate.php): Printable report/slip output
+- [bk/print_progess_report.php](bk/print_progess_report.php): Printable report/slip output
+- [bk/print_progess_report_daily.php](bk/print_progess_report_daily.php): Printable report/slip output
+- [bk/print_progess_report_daily_gynae.php](bk/print_progess_report_daily_gynae.php): Printable report/slip output
+- [bk/print_progess_report_daily_lab.php](bk/print_progess_report_daily_lab.php): Printable report/slip output
+- [bk/print_progess_report_daily_other_services.php](bk/print_progess_report_daily_other_services.php): Printable report/slip output
+- [bk/print_progess_report_daily_procedure.php](bk/print_progess_report_daily_procedure.php): Printable report/slip output
+- [bk/print_progess_report_daily_summery.php](bk/print_progess_report_daily_summery.php): Printable report/slip output
+- [bk/print_progess_report_doctor.php](bk/print_progess_report_doctor.php): Printable report/slip output
+- [bk/print_progess_report_monthly_gynae.php](bk/print_progess_report_monthly_gynae.php): Printable report/slip output
+- [bk/print_progess_report_monthly_pharmacy.php](bk/print_progess_report_monthly_pharmacy.php): Printable report/slip output
+- [bk/print_progess_report_monthly_reception.php](bk/print_progess_report_monthly_reception.php): Printable report/slip output
+- [bk/print_progress_report_daily.php](bk/print_progress_report_daily.php): Printable report/slip output
+- [bk/print_progress_report_daily_branch.php](bk/print_progress_report_daily_branch.php): Printable report/slip output
+- [bk/print_progress_report_daily_branch_time.php](bk/print_progress_report_daily_branch_time.php): Printable report/slip output
+- [bk/print_progress_report_daily_gynae.php](bk/print_progress_report_daily_gynae.php): Printable report/slip output
+- [bk/print_progress_report_monthly.php](bk/print_progress_report_monthly.php): Printable report/slip output
+- [bk/print_progress_report_monthly_gynae.php](bk/print_progress_report_monthly_gynae.php): Printable report/slip output
+- [bk/print_progress_report_monthly_gynae2.php](bk/print_progress_report_monthly_gynae2.php): Printable report/slip output
+- [bk/print_progress_report_monthly_half.php](bk/print_progress_report_monthly_half.php): Printable report/slip output
+- [bk/print_progress_report_monthly_half1.php](bk/print_progress_report_monthly_half1.php): Printable report/slip output
+- [bk/print_progress_report_monthly_half2.php](bk/print_progress_report_monthly_half2.php): Printable report/slip output
+- [bk/print_progress_report_monthly_half3.php](bk/print_progress_report_monthly_half3.php): Printable report/slip output
+- [bk/print_progress_report_monthly_half4.php](bk/print_progress_report_monthly_half4.php): Printable report/slip output
+- [bk/print_progress_report_monthly_half5.php](bk/print_progress_report_monthly_half5.php): Printable report/slip output
+- [bk/print_progress_report_monthly_half6.php](bk/print_progress_report_monthly_half6.php): Printable report/slip output
+- [bk/print_progress_report_monthly_lab.php](bk/print_progress_report_monthly_lab.php): Printable report/slip output
+- [bk/print_referred_patient_report.php](bk/print_referred_patient_report.php): Printable report/slip output
+- [bk/print_summary.php](bk/print_summary.php): Printable report/slip output
+- [bk/print_summary_login.php](bk/print_summary_login.php): Printable report/slip output
+- [bk/progress_monthly.php](bk/progress_monthly.php): Reporting/analytics page
+- [bk/progress_report.php](bk/progress_report.php): Reporting/analytics page
+- [bk/progress_report_daily.php](bk/progress_report_daily.php): Reporting/analytics page
+- [bk/progress_report_daily_branch.php](bk/progress_report_daily_branch.php): Reporting/analytics page
+- [bk/progress_report_daily_branch_time.php](bk/progress_report_daily_branch_time.php): Reporting/analytics page
+- [bk/progress_report_daily_gynae.php](bk/progress_report_daily_gynae.php): Reporting/analytics page
+- [bk/progress_report_monthly.php](bk/progress_report_monthly.php): Reporting/analytics page
+- [bk/progress_report_monthly_gynae.php](bk/progress_report_monthly_gynae.php): Reporting/analytics page
+- [bk/referred_patient_report.php](bk/referred_patient_report.php): Reporting/analytics page
+- [bk/show_user.php](bk/show_user.php): List/view/report table
+- [bk/update_user.php](bk/update_user.php): Update/edit data workflow
+- [bk/update_user_password.php](bk/update_user_password.php): Update/edit data workflow
+- [bk/user_summary.php](bk/user_summary.php): User management/reporting
+- [bk/user_summary_login.php](bk/user_summary_login.php): User management/reporting
+\n### dr
+- [dr/css.zip](dr/css.zip): Feature-specific module page
+- [dr/dashboard.php](dr/dashboard.php): Module landing dashboard
+- [dr/gynae_registeration.php](dr/gynae_registeration.php): Gynecology registration/reporting flow
+- [dr/gynae_registeration_discharge.php](dr/gynae_registeration_discharge.php): Gynecology registration/reporting flow
+- [dr/gynae_registeration_discharge_print.php](dr/gynae_registeration_discharge_print.php): Gynecology registration/reporting flow
+- [dr/gynae_registeration_file_add.php](dr/gynae_registeration_file_add.php): Gynecology registration/reporting flow
+- [dr/gynae_registeration_file_print.php](dr/gynae_registeration_file_print.php): Gynecology registration/reporting flow
+- [dr/gynae_registeration_history.php](dr/gynae_registeration_history.php): Gynecology registration/reporting flow
+- [dr/gynae_registeration_print.php](dr/gynae_registeration_print.php): Gynecology registration/reporting flow
+- [dr/gynae_registeration_update.php](dr/gynae_registeration_update.php): Gynecology registration/reporting flow
+- [dr/js.zip](dr/js.zip): Feature-specific module page
+- [dr/lab_report.php](dr/lab_report.php): Reporting/analytics page
+- [dr/left_navigation.php](dr/left_navigation.php): Sidebar/menu definition for this role
+- [dr/logout.php](dr/logout.php): Logout/session termination
+- [dr/patient_by_token.php](dr/patient_by_token.php): Patient/token management flow
+- [dr/print_progess_report.php](dr/print_progess_report.php): Printable report/slip output
+- [dr/progress_report.php](dr/progress_report.php): Reporting/analytics page
+- [dr/referral_patient_by_token.php](dr/referral_patient_by_token.php): Patient/token management flow
+- [dr/referral_patients.php](dr/referral_patients.php): Patient/token management flow
+- [dr/referred_patients.php](dr/referred_patients.php): Patient/token management flow
+- [dr/stop_patient_by_token.php](dr/stop_patient_by_token.php): Patient/token management flow
+- [dr/update_refereeal_patient.php](dr/update_refereeal_patient.php): Update/edit data workflow
+- [dr/usg.php](dr/usg.php): Feature-specific module page
+\n### fr
+- [fr/account_summary.php](fr/account_summary.php): Feature-specific module page
+- [fr/accounts_monthly_report.php](fr/accounts_monthly_report.php): Reporting/analytics page
+- [fr/action_duplicate_token.php](fr/action_duplicate_token.php): Action endpoint (state changes/validation)
+- [fr/add_company.php](fr/add_company.php): Create/add data workflow
+- [fr/add_item.php](fr/add_item.php): Create/add data workflow
+- [fr/add_item_purchase.php](fr/add_item_purchase.php): Create/add data workflow
+- [fr/add_party.php](fr/add_party.php): Create/add data workflow
+- [fr/branchs_collection.php](fr/branchs_collection.php): Feature-specific module page
+- [fr/branchs_summery.php](fr/branchs_summery.php): Feature-specific module page
+- [fr/comparision_all_branches.php](fr/comparision_all_branches.php): Feature-specific module page
+- [fr/dashboard.php](fr/dashboard.php): Module landing dashboard
+- [fr/demo_print_complete_summery.php](fr/demo_print_complete_summery.php): Feature-specific module page
+- [fr/demo_user_complete_summary.php](fr/demo_user_complete_summary.php): Feature-specific module page
+- [fr/doctor_monthly_profile.php](fr/doctor_monthly_profile.php): Feature-specific module page
+- [fr/doctor_summery_report.php](fr/doctor_summery_report.php): Reporting/analytics page
+- [fr/duplicate_token.php](fr/duplicate_token.php): Feature-specific module page
+- [fr/fr.zip](fr/fr.zip): Feature-specific module page
+- [fr/fr_collection.php](fr/fr_collection.php): Feature-specific module page
+- [fr/general_pending.php](fr/general_pending.php): Feature-specific module page
+- [fr/generate_salary_slip.php](fr/generate_salary_slip.php): Feature-specific module page
+- [fr/index.php](fr/index.php): Module entry/login helper page
+- [fr/left_navigation.php](fr/left_navigation.php): Sidebar/menu definition for this role
+- [fr/lg_general_pending.php](fr/lg_general_pending.php): Feature-specific module page
+- [fr/lg_general_pending_detail.php](fr/lg_general_pending_detail.php): Feature-specific module page
+- [fr/lg_operate_pending.php](fr/lg_operate_pending.php): Feature-specific module page
+- [fr/login.php](fr/login.php): Module entry/login helper page
+- [fr/logout.php](fr/logout.php): Logout/session termination
+- [fr/mm.zip](fr/mm.zip): Feature-specific module page
+- [fr/navigation_top.php](fr/navigation_top.php): Top navigation/header partial
+- [fr/notifications.php](fr/notifications.php): Feature-specific module page
+- [fr/operate_medicines_token.php](fr/operate_medicines_token.php): Feature-specific module page
+- [fr/operate_pending.php](fr/operate_pending.php): Feature-specific module page
+- [fr/parties_account.php](fr/parties_account.php): Feature-specific module page
+- [fr/php.ini](fr/php.ini): Feature-specific module page
+- [fr/phpinfo.php](fr/phpinfo.php): PHP runtime info/debug page
+- [fr/print_account_summary.php](fr/print_account_summary.php): Printable report/slip output
+- [fr/print_accounts_monthly_report.php](fr/print_accounts_monthly_report.php): Printable report/slip output
+- [fr/print_comparision.php](fr/print_comparision.php): Printable report/slip output
+- [fr/print_comparision_test.php](fr/print_comparision_test.php): Printable report/slip output
+- [fr/print_complete_summery.php](fr/print_complete_summery.php): Printable report/slip output
+- [fr/print_medicine_slip_duplicate.php](fr/print_medicine_slip_duplicate.php): Printable report/slip output
+- [fr/print_progess_report.php](fr/print_progess_report.php): Printable report/slip output
+- [fr/print_report_account.php](fr/print_report_account.php): Printable report/slip output
+- [fr/print_report_month.php](fr/print_report_month.php): Printable report/slip output
+- [fr/print_salary_slip.php](fr/print_salary_slip.php): Printable report/slip output
+- [fr/print_staff.php](fr/print_staff.php): Printable report/slip output
+- [fr/print_summary.php](fr/print_summary.php): Printable report/slip output
+- [fr/print_summary_login.php](fr/print_summary_login.php): Printable report/slip output
+- [fr/print_summary_time.php](fr/print_summary_time.php): Printable report/slip output
+- [fr/print_summary_with_phone.php](fr/print_summary_with_phone.php): Printable report/slip output
+- [fr/progress_report.php](fr/progress_report.php): Reporting/analytics page
+- [fr/progress_report_daily_lab.php](fr/progress_report_daily_lab.php): Reporting/analytics page
+- [fr/recepits.php](fr/recepits.php): Feature-specific module page
+- [fr/report_account.php](fr/report_account.php): Reporting/analytics page
+- [fr/report_month.php](fr/report_month.php): Reporting/analytics page
+- [fr/report_pending_all_data.php](fr/report_pending_all_data.php): Reporting/analytics page
+- [fr/return_tokens.php](fr/return_tokens.php): Feature-specific module page
+- [fr/show_members.php](fr/show_members.php): List/view/report table
+- [fr/show_staff.php](fr/show_staff.php): List/view/report table
+- [fr/update_branch_session.php](fr/update_branch_session.php): Update/edit data workflow
+- [fr/user_complete_summary.php](fr/user_complete_summary.php): User management/reporting
+- [fr/user_summary.php](fr/user_summary.php): User management/reporting
+- [fr/user_summary_login.php](fr/user_summary_login.php): User management/reporting
+- [fr/user_summary_time.php](fr/user_summary_time.php): User management/reporting
+- [fr/ycdo_phone_numbers.php](fr/ycdo_phone_numbers.php): Feature-specific module page
+\n### hr
+- [hr/add_staff.php](hr/add_staff.php): Create/add data workflow
+- [hr/add_user.php](hr/add_user.php): Create/add data workflow
+- [hr/attendace_list_today.php](hr/attendace_list_today.php): Feature-specific module page
+- [hr/attendance_record_monthly.php](hr/attendance_record_monthly.php): Feature-specific module page
+- [hr/attendance_record_monthly_account.php](hr/attendance_record_monthly_account.php): Feature-specific module page
+- [hr/attendance_record_monthly_register.php](hr/attendance_record_monthly_register.php): Feature-specific module page
+- [hr/attendance_record_monthly_register_excel.php](hr/attendance_record_monthly_register_excel.php): Feature-specific module page
+- [hr/attendance_records.php](hr/attendance_records.php): Feature-specific module page
+- [hr/backup_database.php](hr/backup_database.php): Feature-specific module page
+- [hr/dashboard.php](hr/dashboard.php): Module landing dashboard
+- [hr/doctor_monthly_report.php](hr/doctor_monthly_report.php): Reporting/analytics page
+- [hr/employees.php](hr/employees.php): Feature-specific module page
+- [hr/gynae_registeration.php](hr/gynae_registeration.php): Gynecology registration/reporting flow
+- [hr/gynae_registeration_delete.php](hr/gynae_registeration_delete.php): Gynecology registration/reporting flow
+- [hr/gynae_registeration_history.php](hr/gynae_registeration_history.php): Gynecology registration/reporting flow
+- [hr/gynae_registeration_summery.php](hr/gynae_registeration_summery.php): Gynecology registration/reporting flow
+- [hr/gynae_report.php](hr/gynae_report.php): Reporting/analytics page
+- [hr/left_navigation.php](hr/left_navigation.php): Sidebar/menu definition for this role
+- [hr/logout.php](hr/logout.php): Logout/session termination
+- [hr/payroll.php](hr/payroll.php): Feature-specific module page
+- [hr/print_attendance_daily.php](hr/print_attendance_daily.php): Printable report/slip output
+- [hr/print_progress_report_monthly.php](hr/print_progress_report_monthly.php): Printable report/slip output
+- [hr/print_referred_patient_report.php](hr/print_referred_patient_report.php): Printable report/slip output
+- [hr/print_staff.php](hr/print_staff.php): Printable report/slip output
+- [hr/progress_report_daily.php](hr/progress_report_daily.php): Reporting/analytics page
+- [hr/progress_report_daily_gynae.php](hr/progress_report_daily_gynae.php): Reporting/analytics page
+- [hr/progress_report_daily_lab.php](hr/progress_report_daily_lab.php): Reporting/analytics page
+- [hr/progress_report_daily_other_services.php](hr/progress_report_daily_other_services.php): Reporting/analytics page
+- [hr/progress_report_daily_procedure.php](hr/progress_report_daily_procedure.php): Reporting/analytics page
+- [hr/progress_report_daily_summery.php](hr/progress_report_daily_summery.php): Reporting/analytics page
+- [hr/progress_report_monthly.php](hr/progress_report_monthly.php): Reporting/analytics page
+- [hr/progress_report_monthly_gynae.php](hr/progress_report_monthly_gynae.php): Reporting/analytics page
+- [hr/progress_report_monthly_pharmacy.php](hr/progress_report_monthly_pharmacy.php): Reporting/analytics page
+- [hr/progress_report_monthly_reception.php](hr/progress_report_monthly_reception.php): Reporting/analytics page
+- [hr/referred_patient_report.php](hr/referred_patient_report.php): Reporting/analytics page
+- [hr/show_staff.php](hr/show_staff.php): List/view/report table
+- [hr/show_user.php](hr/show_user.php): List/view/report table
+- [hr/update_staff.php](hr/update_staff.php): Update/edit data workflow
+- [hr/update_staff_image.php](hr/update_staff_image.php): Update/edit data workflow
+- [hr/update_user.php](hr/update_user.php): Update/edit data workflow
+- [hr/update_user_password.php](hr/update_user_password.php): Update/edit data workflow
+- [hr/ycdo_phone_numbers.php](hr/ycdo_phone_numbers.php): Feature-specific module page
+\n### la
+- [la/dashboard.php](la/dashboard.php): Module landing dashboard
+- [la/issue_item_in_lab.php](la/issue_item_in_lab.php): Inventory/procurement/stock operation
+- [la/issued_item_in_lab.php](la/issued_item_in_lab.php): Inventory/procurement/stock operation
+- [la/item_receive_in_lab.php](la/item_receive_in_lab.php): Inventory/procurement/stock operation
+- [la/la.zip](la/la.zip): Feature-specific module page
+- [la/lab_items_in_branch.php](la/lab_items_in_branch.php): Laboratory/testing workflow
+- [la/lab_tests.php](la/lab_tests.php): Laboratory/testing workflow
+- [la/las_test_perform.php](la/las_test_perform.php): Laboratory/testing workflow
+- [la/left_navigation.php](la/left_navigation.php): Sidebar/menu definition for this role
+- [la/logout.php](la/logout.php): Logout/session termination
+- [la/patient_lab_by_token.php](la/patient_lab_by_token.php): Patient/token management flow
+- [la/patient_report_by_token.php](la/patient_report_by_token.php): Reporting/analytics page
+- [la/print_progess_report_daily.php](la/print_progess_report_daily.php): Printable report/slip output
+- [la/print_progress_report_monthly.php](la/print_progress_report_monthly.php): Printable report/slip output
+- [la/print_test_report_slip.php](la/print_test_report_slip.php): Printable report/slip output
+- [la/progress_report_daily.php](la/progress_report_daily.php): Reporting/analytics page
+- [la/progress_report_monthly.php](la/progress_report_monthly.php): Reporting/analytics page
+- [la/receive_purchase_item.php](la/receive_purchase_item.php): Inventory/procurement/stock operation
+- [la/referal_tests.php](la/referal_tests.php): Laboratory/testing workflow
+- [la/referral_patients.php](la/referral_patients.php): Patient/token management flow
+- [la/referral_patients_report.php](la/referral_patients_report.php): Reporting/analytics page
+- [la/testing_pdf.php](la/testing_pdf.php): Feature-specific module page
+- [la/ycdo_phone_book.php](la/ycdo_phone_book.php): Feature-specific module page
+\n### lab
+- [lab/add_test_normal_range.php](lab/add_test_normal_range.php): Create/add data workflow
+- [lab/daily_over_performa.php](lab/daily_over_performa.php): Feature-specific module page
+- [lab/dashboard.php](lab/dashboard.php): Module landing dashboard
+- [lab/data.php](lab/data.php): Feature-specific module page
+- [lab/data_file.php](lab/data_file.php): Feature-specific module page
+- [lab/item_receive_in_lab.php](lab/item_receive_in_lab.php): Inventory/procurement/stock operation
+- [lab/item_receive_lab.php](lab/item_receive_lab.php): Inventory/procurement/stock operation
+- [lab/lab_items_in_branch.php](lab/lab_items_in_branch.php): Laboratory/testing workflow
+- [lab/lab_test_all_reocrds.php](lab/lab_test_all_reocrds.php): Laboratory/testing workflow
+- [lab/lab_test_approved_report.php](lab/lab_test_approved_report.php): Reporting/analytics page
+- [lab/lab_test_conducted.php](lab/lab_test_conducted.php): Laboratory/testing workflow
+- [lab/lab_test_current_status.php](lab/lab_test_current_status.php): Laboratory/testing workflow
+- [lab/lab_test_in_process.php](lab/lab_test_in_process.php): Laboratory/testing workflow
+- [lab/lab_test_link.php](lab/lab_test_link.php): Laboratory/testing workflow
+- [lab/lab_test_patinet_record_update.php](lab/lab_test_patinet_record_update.php): Laboratory/testing workflow
+
+## Notes
+- This map intentionally ignores bulk binary assets (for example PNG/JPG) and vendor internals unless they are directly app-facing.
+- For exact runtime behavior, pair this map with each module's connect.php and navigation files.
