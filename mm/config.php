@@ -15,5 +15,5 @@ error_reporting(1);
 //     $branch_address = $_SESSION['branch_address'];
 //     $branch_phone = $_SESSION['branch_phone'];
 // }
-$con = mysqli_connect('localhost', 'ycdoeh1', 'ycdoeh1', 'ycdomlt');
+require_once __DIR__ . '/../includes/db_connect.php';
 ?>

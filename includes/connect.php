@@ -16,16 +16,11 @@ else
 {
 //    header('location: logout.php'); 
 }
-include 'company_info.php'; 
-$con = mysqli_connect('localhost', 'ycdoeh1', 'ycdoeh1', 'ycdomlt');
-if(!$con)
-    {
-        echo $con->error;
-    }
-    else
-        {
-            echo "COnnected";
-        }
+include 'company_info.php';
+require_once __DIR__ . '/db_connect.php';
+if (!$con) {
+    echo mysqli_connect_error();
+}
 
 function available_items_in_store_by_register_item($branch_item_id)
 {

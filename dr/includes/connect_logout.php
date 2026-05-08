@@ -25,7 +25,7 @@ else
 //     // echo substr($current_date,0,10) . '<br>' . substr($login_expire_at,0,10); 
 // }
  
-$con = mysqli_connect('localhost', 'ycdoeh1', 'ycdoeh1', 'ycdoeh1');
+require_once __DIR__ . '/../../includes/db_connect.php';
 
 //Check Expire Login
 // $search = "SELECT `login_expire_at` FROM `logins_detail` WHERE `id` = '$login_id' ";

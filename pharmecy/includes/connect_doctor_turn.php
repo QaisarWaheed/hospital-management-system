@@ -41,7 +41,7 @@ if(substr($current_date,0,10) != substr($login_expire_at,0,10))
     // echo substr($current_date,0,10) . '<br>' . substr($login_expire_at,0,10); 
 }
  
-$con = mysqli_connect('localhost', 'ycdoeh1', 'ycdoeh1', 'ycdomlt');
+require_once __DIR__ . '/../../includes/db_connect.php';
 
 function get_branch_item_id_from_select_by_doctor_id($id)
 {

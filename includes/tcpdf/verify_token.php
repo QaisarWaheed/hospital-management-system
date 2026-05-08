@@ -2,11 +2,11 @@
 session_start();
 require_once('tcpdf/tcpdf_include.php');
 // include('pageHeaderFooter.php');
-    $con = mysqli_connect('localhost', 'ycdoeh1', 'ycdoeh1', 'ycdomlt');
+    require_once __DIR__ . '/../db_connect.php';
 function get_uname_by_id($id)
 {
     $output = '';
-    $con = mysqli_connect('localhost', 'ycdoeh1', 'ycdoeh1', 'ycdomlt');
+    require_once __DIR__ . '/../db_connect.php';
     $run = mysqli_query($con, "SELECT u_name FROM `users` WHERE `id` = '$id' ");
     if (mysqli_num_rows($run) == 1) 
     {
@@ -21,7 +21,7 @@ function get_uname_by_id($id)
 function get_branch_tag_name_by($id)
 {
     $output = '';
-    $con = mysqli_connect('localhost', 'ycdoeh1', 'ycdoeh1', 'ycdomlt');
+    require_once __DIR__ . '/../db_connect.php';
     $run = mysqli_query($con, "SELECT tag_name FROM `branchs` WHERE `id` = '$id' ");
     if (mysqli_num_rows($run) == 1) 
     {
@@ -36,7 +36,7 @@ function get_branch_tag_name_by($id)
 function get_item_name_by_register_item_id($register_item_id)
 {
     $output = '';
-    $con = mysqli_connect('localhost', 'ycdoeh1', 'ycdoeh1', 'ycdomlt');
+    require_once __DIR__ . '/../db_connect.php';
     $run = mysqli_query($con, "SELECT name FROM `items` WHERE `id` iN (SELECT item_id FROM `item_register_to_branches` WHERE id = '$register_item_id') ");
     if (mysqli_num_rows($run) == 1) 
     {
@@ -55,7 +55,7 @@ function get_item_name_by_register_item_id($register_item_id)
 function get_given_services_by_token_no($token_no)
 {
     $output = '';
-    $con = mysqli_connect('localhost', 'ycdoeh1', 'ycdoeh1', 'ycdomlt');
+    require_once __DIR__ . '/../db_connect.php';
     $run = mysqli_query($con, "SELECT item_id FROM `item_by_doctor` WHERE `tokan_no` = '$token_no' ");
     if (mysqli_num_rows($run) > 0) 
     {
@@ -82,7 +82,7 @@ function get_given_services_by_token_no($token_no)
 function get_patient_name_by_token_no($token_no)
 {
     $output = '';
-    $con = mysqli_connect('localhost', 'ycdoeh1', 'ycdoeh1', 'ycdomlt');
+    require_once __DIR__ . '/../db_connect.php';
     $get_patient = mysqli_query($con, "SELECT * FROM patients WHERE id IN (SELECT `patient_id` FROM `tokans` WHERE `id` = '$token_no') ");
     if (mysqli_num_rows($get_patient) == 1) 
     {
@@ -101,7 +101,7 @@ function fetch_parties($br_id, $service_id, $start_date, $end_date, $title)
     $company_trademark = 'YCDO';
     $company_ambition = 'SERVE HUMANITY';
     $company_phone = '0304-1110222';
-    $con = mysqli_connect('localhost', 'ycdoeh1', 'ycdoeh1', 'ycdomlt');
+    require_once __DIR__ . '/../db_connect.php';
     $output .= '<table border = "solid">
                 <thead>
                 <tr>

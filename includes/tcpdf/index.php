@@ -4,7 +4,7 @@ require_once('tcpdf/tcpdf_include.php');
 include('pageHeaderFooter.php');
 function fetch_parties()  
 {    
-    $con = mysqli_connect('localhost', 'ycdoeh1', 'ycdoeh1', 'ycdomlt');
+    require_once __DIR__ . '/../db_connect.php';
     $output = '';  
 
     return $output; 

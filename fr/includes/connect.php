@@ -18,7 +18,7 @@ else
 }
 include 'company_info.php'; 
 //$con = mysqli_connect('184.168.103.144', 'anmol', 'Anmol_122', 'ycdo');
-$con = mysqli_connect('localhost', 'ycdoeh1', 'ycdoeh1', 'ycdomlt');
+require_once __DIR__ . '/../../includes/db_connect.php';
 // $con = mysqli_connect('localhost', 'root', '', 'ycdo');
 if(!$con)
     {

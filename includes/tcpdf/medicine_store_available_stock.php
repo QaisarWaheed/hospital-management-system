@@ -1,11 +1,11 @@
 <?php
 session_start();
 require_once('tcpdf/tcpdf_include.php');
-    $con = mysqli_connect('localhost', 'ycdoeh1', 'ycdoeh1', 'ycdomlt');
+    require_once __DIR__ . '/../db_connect.php';
 function get_uname_by_id($id)
 {
     $output = '';
-    $con = mysqli_connect('localhost', 'ycdoeh1', 'ycdoeh1', 'ycdomlt');
+    require_once __DIR__ . '/../db_connect.php';
     $run = mysqli_query($con, "SELECT u_name FROM `users` WHERE `id` = '$id' ");
     if (mysqli_num_rows($run) == 1) 
     {
@@ -24,7 +24,7 @@ function fetch_parties($title, $category_id)
     $company_trademark = 'YCDO';
     $company_ambition = 'SERVE HUMANITY';
     $company_phone = '0304-1110222';
-    $con = mysqli_connect('localhost', 'ycdoeh1', 'ycdoeh1', 'ycdomlt');
+    require_once __DIR__ . '/../db_connect.php';
     $output .= '<table>
                 <thead>
                 <tr>

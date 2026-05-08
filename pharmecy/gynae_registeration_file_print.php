@@ -1,6 +1,6 @@
 <?php
 include 'includes/security.php'; 
-$con = mysqli_connect('localhost', 'ycdoeh1', 'ycdoeh1', 'ycdomlt');
+require_once __DIR__ . '/../includes/db_connect.php';
 
 function get_uname_by_id($id)
 {

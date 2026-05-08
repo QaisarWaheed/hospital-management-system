@@ -1,5 +1,5 @@
 <?php 
-$con = mysqli_connect('localhost', 'ycdoeh1', 'ycdoeh1', 'ycdomlt');
+require_once __DIR__ . '/../includes/db_connect.php';
 session_start();
 if (isset($_SESSION['ph_id'])) 
 {
