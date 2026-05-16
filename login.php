@@ -1,4 +1,5 @@
     <?php 
+    echo "Hello World";
 include 'includes/connect.php';
 function get_client_ip() {
     $ipaddress = '';
