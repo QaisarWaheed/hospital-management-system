@@ -37,7 +37,8 @@ if ($login_expire_at !== '' && substr($current_date, 0, 10) !== substr($login_ex
 
 @include_once __DIR__ . '/company_info.php';
 
-require_once __DIR__ . '/../../includes/db_connect.php';
+$con = mysqli_connect('localhost', 'ycdoeh1', 'ycdoeh1', 'ycdomlt');
+
 if (!$con) {
     connect_ajax_fail('Database connection failed.');
 }

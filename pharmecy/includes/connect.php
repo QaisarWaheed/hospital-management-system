@@ -39,7 +39,8 @@ if(substr($current_date,0,10) != substr($login_expire_at,0,10))
     header('location: logout_with_report.php');
 }
  
-require_once __DIR__ . '/../../includes/db_connect.php';
+$con = mysqli_connect('localhost', 'ycdoeh1', 'ycdoeh1', 'ycdomlt');
+
 
 //Check Expire Login
 // $search = "SELECT `login_expire_at` FROM `logins_detail` WHERE `id` = '$login_id' ";

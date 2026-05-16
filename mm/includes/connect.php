@@ -25,7 +25,8 @@ if($user_id < 1 || $user_id == '')
 }
 include 'company_info.php'; 
 //$con = mysqli_connect('184.168.103.144', 'anmol', 'Anmol_122', 'ycdo');
-require_once __DIR__ . '/../../includes/db_connect.php';
+$con = mysqli_connect('localhost', 'ycdoeh1', 'ycdoeh1', 'ycdomlt');
+
 // $con = mysqli_connect('localhost', 'root', '', 'ycdo');
 if(!$con)
     {
