@@ -63,7 +63,7 @@ else
 	}
 	?>
 		<h4 style="color: white;">UAN : 0304-1110222</h4>
-		<h3 style="margin-top: 250px;text-align: center;">USER: <?php echo $_SESSION['ph_name'];if($_SESSION['is_incharge'] == 2){ echo " Incharge ";} ?>(<?php echo $role_title; ?>)</h3>
+		<h3 style="margin-top: 250px;text-align: center;">USER: <?php echo htmlspecialchars($user_name); if ($is_incharge == 2) { echo ' Incharge '; } ?>(<?php echo htmlspecialchars($role_title); ?>)</h3>
 		<h3>LAST TOKEN NO: <?php echo last_token_by_user($user_id); ?></h3>
 	</div>
 			

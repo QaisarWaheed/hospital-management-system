@@ -1,44 +1,42 @@
-<script>
-    document.oncontextmenu = function(e) {return false;};
-    document.onkeydown = function(e) {
-            if (e.ctrlKey && (e.keyCode === 67 || e.keyCode === 86 || e.keyCode === 85 || e.keyCode === 117)) {//Alt+c, Alt+v will also be disabled sadly.
-                alert('not allowed');
-            return false;
-            }
-    };
-</script>
 <?php
 date_default_timezone_set("Asia/Karachi");
 $current_date = date('Y-m-d H:i:s');
 $ip_address = $_SERVER['SERVER_ADDR'];
-session_start();
-$_SESSION['form_token'] = bin2hex(random_bytes(32));
-if (isset($_SESSION['ph_id'])) 
-{
-    $user_id = $_SESSION['ph_id'];
-    $login_id = $_SESSION['login_id'];
-    $login_expire_at = $_SESSION['login_expire_at'];
-    $user_name = $_SESSION['ph_name'];
-    $branch_id = $_SESSION['branch_id'];
-    $is_admin = $_SESSION['is_admin'];
-    $is_incharge = $_SESSION['is_incharge'];
-    $branch_name = $_SESSION['branch_name'];
-    $branch_address = $_SESSION['branch_address'];
-    $branch_phone = $_SESSION['branch_phone'];
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
-else
-{
-    header('location: logout.php'); 
+
+if (empty($_SESSION['ph_id'])) {
+    header('Location: logout.php');
+    exit;
 }
-if($user_id < 1 || $user_id == '')
-{
-    header('location: logout.php'); 
+
+$user_id = (int) $_SESSION['ph_id'];
+$login_id = $_SESSION['login_id'] ?? 0;
+$login_expire_at = $_SESSION['login_expire_at'] ?? '';
+$user_name = $_SESSION['ph_name'] ?? '';
+$branch_id = $_SESSION['branch_id'] ?? 0;
+$is_admin = $_SESSION['is_admin'] ?? 0;
+$is_incharge = $_SESSION['is_incharge'] ?? 0;
+$branch_name = $_SESSION['branch_name'] ?? '';
+$branch_address = $_SESSION['branch_address'] ?? '';
+$branch_phone = $_SESSION['branch_phone'] ?? '';
+
+if ($user_id < 1) {
+    header('Location: logout.php');
+    exit;
 }
-if(substr($current_date,0,10) != substr($login_expire_at,0,10))
-{
-    header('location: logout_with_report.php');
+
+if ($login_expire_at !== '' && substr($current_date, 0, 10) !== substr($login_expire_at, 0, 10)) {
+    header('Location: logout_with_report.php');
+    exit;
 }
- 
+
+if (empty($_SESSION['form_token'])) {
+    $_SESSION['form_token'] = bin2hex(random_bytes(32));
+}
+
 $db_host = getenv('DB_HOST');
 if ($db_host === false || $db_host === '') {
     $db_host = file_exists('/.dockerenv') ? 'srv-captain--mysql-db' : 'localhost';
@@ -68,10 +66,9 @@ $con = mysqli_connect($db_host, getenv('DB_USER') ?: 'ycdoeh1', getenv('DB_PASS'
 
 include 'company_info.php'; 
 //$con = mysqli_connect('184.168.103.144', 'anmol', 'Anmol_122', 'ycdo');
-if(!$con)
-    {
-        echo $con->error;
-    }
+if (!$con) {
+    die(mysqli_connect_error());
+}
 
 
 function get_staff_time_in($staff_id)

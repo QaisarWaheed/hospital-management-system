@@ -119,5 +119,5 @@ if($branch_id != '0')
 		</li>
 
 	</ul>
-	<h5 style="margin-top: 150px;text-align: center;">USER: <?php echo $_SESSION['ph_name'];if($_SESSION['is_incharge'] == 2){ echo " Incharge ";} ?></h5>
+	<h5 style="margin-top: 150px;text-align: center;">USER: <?php echo htmlspecialchars($user_name); if ($is_incharge == 2) { echo ' Incharge '; } ?></h5>
 </nav>
