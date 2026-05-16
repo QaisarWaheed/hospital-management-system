@@ -17,8 +17,14 @@ else
 //    header('location: logout.php'); 
 }
 include 'company_info.php';
-$con = mysqli_connect('localhost', 'ycdoeh1', 'ycdoeh1', 'ycdomlt');
-require_once __DIR__ . '/db_connect.php';
+$db_host = getenv('DB_HOST');
+if ($db_host === false || $db_host === '') {
+    $db_host = file_exists('/.dockerenv') ? 'srv-captain--mysql-db' : 'localhost';
+}
+if ($db_host === 'localhost' && PHP_OS_FAMILY !== 'Windows') {
+    $db_host = '127.0.0.1';
+}
+$con = mysqli_connect($db_host, getenv('DB_USER') ?: 'ycdoeh1', getenv('DB_PASS') ?: 'ycdoeh1', getenv('DB_NAME') ?: 'ycdomlt');
 if (!$con) {
     echo mysqli_connect_error();
 }
