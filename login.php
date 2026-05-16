@@ -1,7 +1,4 @@
-    <?php 
-    echo "<pre>";
-    print_r($_POST);
-    echo "</pre>";
+<?php 
 include 'includes/connect.php';
 function get_client_ip() {
     $ipaddress = '';
@@ -53,7 +50,6 @@ if (mysqli_num_rows($run_user) > 0)
         $is_incharge = $row_user['is_incharge'];
 if ($role_id == 7 || $role_id == 2 || $role_id == 0) 
         {    
-            echo "Hello World<br>";  
             $currentdate = date('Y-m-d H:i:s');
             mysqli_query($con, "INSERT INTO `whitelist`(`ip_address`, `user`, `status`, `role_id`, `branch_id`, `created`) VALUES ('$ip_address', '$user_id', '1', '$role_id', '$branch_id', '$current_date')");  
             $login_id = next_login_id();
@@ -64,7 +60,6 @@ if ($role_id == 7 || $role_id == 2 || $role_id == 0)
             {
                 while($row = mysqli_fetch_array($run))
                 {
-                    echo "Hello World<br>";  
                     $login_id = $row['id'];
                     $login_expire_at = $row['login_expire_at'];
                     $try_login = $row['try_login'] + 1;
@@ -76,6 +71,7 @@ if ($role_id == 7 || $role_id == 2 || $role_id == 0)
                 mysqli_query($con, "INSERT INTO `logins_detail`
                     (`user_id`, `branch_id`, `login_expire_at`, `login_at`) VALUES 
                     ('$user_id', '$branch_id', '$login_expire_at', '$currentdate')");
+                $login_id = mysqli_insert_id($con);
             }
 
               $_SESSION['login_expire_at'] = $login_expire_at;
@@ -89,9 +85,8 @@ if ($role_id == 7 || $role_id == 2 || $role_id == 0)
               $_SESSION['branch_address'] = $branch_address;
               $_SESSION['branch_phone'] = $branch_phone;
               $_SESSION['ph_name'] = $user_name;
-             header('location: pharmecy/dashboard.php');
-              mysqli_close($con);
-              exit(0);               
+              header('Location: pharmecy/dashboard.php');
+              exit;               
         }          
 
     }
