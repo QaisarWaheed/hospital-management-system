@@ -1,4 +1,7 @@
     <?php 
+    echo "<pre>";
+    print_r($_POST);
+    echo "</pre>";
 include 'includes/connect.php';
 function get_client_ip() {
     $ipaddress = '';
@@ -18,12 +21,12 @@ function get_client_ip() {
         $ipaddress = 'UNKNOWN';
     return $ipaddress;
 }
-echo "Hello World";
 $ip_address = get_client_ip();
 $check = mysqli_query($con, "SELECT * FROM whitelist WHERE `ip_address` = '$ip_address' ");
 if (mysqli_num_rows($check) == 0) {
 //    header('location: 404.html');
 }
+echo "Hello World";
 if (isset($_POST['login'])) {
      $user_id = $_POST['user_id'];
      $branch_id = $_POST['branch_id'];
