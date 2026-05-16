@@ -26,7 +26,6 @@ $check = mysqli_query($con, "SELECT * FROM whitelist WHERE `ip_address` = '$ip_a
 if (mysqli_num_rows($check) == 0) {
 //    header('location: 404.html');
 }
-echo "Hello World";
 if (isset($_POST['login'])) {
      $user_id = $_POST['user_id'];
      $branch_id = $_POST['branch_id'];
@@ -46,6 +45,7 @@ $user = "SELECT * FROM users WHERE id = '$user_id' AND password = '$password' AN
 $run_user = mysqli_query($con, $user);
 if (mysqli_num_rows($run_user) > 0) 
 {
+    echo "Hello World";
     while ($row_user = mysqli_fetch_array($run_user)) 
     {
         $user_name = $row_user['u_name'];
