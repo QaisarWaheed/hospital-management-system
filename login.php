@@ -45,7 +45,6 @@ $user = "SELECT * FROM users WHERE id = '$user_id' AND password = '$password' AN
 $run_user = mysqli_query($con, $user);
 if (mysqli_num_rows($run_user) > 0) 
 {
-    echo "Hello World";
     while ($row_user = mysqli_fetch_array($run_user)) 
     {
         $user_name = $row_user['u_name'];
@@ -53,7 +52,8 @@ if (mysqli_num_rows($run_user) > 0)
         $is_admin = $row_user['is_admin'];
         $is_incharge = $row_user['is_incharge'];
 if ($role_id == 7 || $role_id == 2 || $role_id == 0) 
-        {      
+        {    
+            echo "Hello World<br>";  
             $currentdate = date('Y-m-d H:i:s');
             mysqli_query($con, "INSERT INTO `whitelist`(`ip_address`, `user`, `status`, `role_id`, `branch_id`, `created`) VALUES ('$ip_address', '$user_id', '1', '$role_id', '$branch_id', '$current_date')");  
             $login_id = next_login_id();
@@ -64,6 +64,7 @@ if ($role_id == 7 || $role_id == 2 || $role_id == 0)
             {
                 while($row = mysqli_fetch_array($run))
                 {
+                    echo "Hello World<br>";  
                     $login_id = $row['id'];
                     $login_expire_at = $row['login_expire_at'];
                     $try_login = $row['try_login'] + 1;

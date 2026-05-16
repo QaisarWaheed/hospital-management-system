@@ -17,6 +17,7 @@ else
 //    header('location: logout.php'); 
 }
 include 'company_info.php';
+$con = mysqli_connect('localhost', 'ycdoeh1', 'ycdoeh1', 'ycdomlt');
 require_once __DIR__ . '/db_connect.php';
 if (!$con) {
     echo mysqli_connect_error();
