@@ -32,7 +32,14 @@ if($user_id < 1 || $user_id == '')
 //     // echo substr($current_date,0,10) . '<br>' . substr($login_expire_at,0,10); 
 // }
  
-$con = mysqli_connect('localhost', 'ycdoeh1', 'ycdoeh1', 'ycdomlt');
+$db_host = getenv('DB_HOST');
+if ($db_host === false || $db_host === '') {
+    $db_host = file_exists('/.dockerenv') ? 'srv-captain--mysql-db' : 'localhost';
+}
+if ($db_host === 'localhost' && PHP_OS_FAMILY !== 'Windows') {
+    $db_host = '127.0.0.1';
+}
+$con = mysqli_connect($db_host, getenv('DB_USER') ?: 'ycdoeh1', getenv('DB_PASS') ?: 'ycdoeh1', getenv('DB_NAME') ?: 'ycdomlt');
 
 
 //Check Expire Login
@@ -54,10 +61,9 @@ $con = mysqli_connect('localhost', 'ycdoeh1', 'ycdoeh1', 'ycdomlt');
 
 include 'company_info.php'; 
 //$con = mysqli_connect('184.168.103.144', 'anmol', 'Anmol_122', 'ycdo');
-if(!$con)
-    {
-        echo $con->error;
-    }
+if (!$con) {
+    die(mysqli_connect_error());
+}
 
 function available_items_in_store_by_register_item($branch_item_id)
 {
