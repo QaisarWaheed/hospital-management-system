@@ -14,3 +14,10 @@
 <style>
 @font-face{  font-family: "Jameel Noori Nastaleeq";  src: url("fonts/Jameel Noori Nastaleeq Regular.ttf") format("truetype");}    
 </style>
+<style>
+@media print {
+    .noprint, .noprint * {
+        display: none !important;
+    }
+}
+</style>

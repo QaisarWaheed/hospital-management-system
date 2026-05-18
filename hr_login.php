@@ -1,4 +1,4 @@
-    <?php 
+<?php
 include 'includes/connect.php';
 function get_client_ip() {
     $ipaddress = '';
@@ -64,9 +64,8 @@ if ($role_id == 12 ||$role_id == 0)
               $_SESSION['branch_address'] = $branch_address;
               $_SESSION['branch_phone'] = $branch_phone;
               $_SESSION['hr_name'] = $user_name;
-             header('location: hr/dashboard.php');
-              mysqli_close($con);
-              exit(0);               
+              header('Location: hr/dashboard.php');
+              exit;               
         }          
 
     }

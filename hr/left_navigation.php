@@ -7,7 +7,7 @@
 
 		<a>
 		</a>
-<?php if($hr_is_admin = '2')
+<?php if ($hr_is_admin == 2)
 { ?>
 		<li>
 			<a href="attendance_records.php">Attendance Register</a>
@@ -34,7 +34,7 @@
 			<a href="add_user.php">User</a>
 		</li>
 <?php }
-if($hr_is_incharge = '2' || $hr_is_admin = '2')
+if ($hr_is_incharge == 2 || $hr_is_admin == 2)
 { ?>
 		<li>
 			<a href="gynae_registeration.php">Gynae Register</a>
@@ -85,7 +85,7 @@ if($hr_is_incharge = '2' || $hr_is_admin = '2')
 			<a style="cursor: pointer;" href='gynae_report.php' class="" title = "DOCTOR WISE">GYNAE REPORT</a>
 		</li>
 <?php }
-if($hr_is_incharge = '1' || $hr_is_admin = '1')
+if ($hr_is_incharge == 1 || $hr_is_admin == 1)
 { ?>
 <?php } ?>
 		<li>

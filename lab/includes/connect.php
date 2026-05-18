@@ -1,26 +1,39 @@
 <?php
-// ini_set("display_errors", "1");
-include 'company_info.php';
-session_start();
-$ip_address = $_SERVER['SERVER_ADDR'];
 date_default_timezone_set("Asia/Karachi");
 $current_date = date('Y-m-d H:i:s');
-if (isset($_SESSION['lab_user_id'])) {
-    $lab_user_id = $_SESSION['lab_user_id'];
-    $lab_user_name = $_SESSION['lab_user_name'];
-    $lab_user_phone = $_SESSION['lab_user_phone'];
-    $lab_login_branch_id = $_SESSION['lab_login_branch_id'];
-    $lab_login_is_admin = $_SESSION['lab_login_is_admin'];
-    $lab_login_is_incharge = $_SESSION['lab_login_is_incharge'];
-    $lab_login_branch_name = $_SESSION['lab_login_branch_name'];
-    $lab_login_branch_address = $_SESSION['lab_login_branch_address'];
-    $lab_login_branch_phone = $_SESSION['lab_login_branch_phone'];
+$ip_address = $_SERVER['SERVER_ADDR'] ?? '';
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
-else
-{
-    // print_r($_SESSION);
-    header('location: logout.php'); 
+
+if (empty($_SESSION['lab_user_id'])) {
+    header('Location: logout.php');
+    exit;
 }
+
+$lab_user_id = (int) $_SESSION['lab_user_id'];
+$lab_user_name = $_SESSION['lab_user_name'] ?? '';
+$lab_user_phone = $_SESSION['lab_user_phone'] ?? '';
+$lab_login_branch_id = $_SESSION['lab_login_branch_id'] ?? 0;
+$lab_login_is_admin = $_SESSION['lab_login_is_admin'] ?? 0;
+$lab_login_is_incharge = $_SESSION['lab_login_is_incharge'] ?? 0;
+$lab_login_branch_name = $_SESSION['lab_login_branch_name'] ?? '';
+$lab_login_branch_address = $_SESSION['lab_login_branch_address'] ?? '';
+$lab_login_branch_phone = $_SESSION['lab_login_branch_phone'] ?? '';
+
+if ($lab_user_id < 1) {
+    header('Location: logout.php');
+    exit;
+}
+
+require_once __DIR__ . '/../../includes/ycdo_mysqli_vars.php';
+$con = mysqli_connect($ycdo_db_host, $ycdo_db_user, $ycdo_db_pass, $ycdo_db_name);
+if (!$con) {
+    die(mysqli_connect_error());
+}
+
+include 'company_info.php';
 
 function get_branch_tag_by($id)
 {
@@ -154,5 +167,3 @@ function insert_test_by_token_no($token_no)
     }
     return $quanity;
 }
-
-?>

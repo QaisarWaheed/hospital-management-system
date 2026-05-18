@@ -24,9 +24,11 @@ if ($db_host === false || $db_host === '') {
 if ($db_host === 'localhost' && PHP_OS_FAMILY !== 'Windows') {
     $db_host = '127.0.0.1';
 }
+mysqli_report(MYSQLI_REPORT_OFF);
 $con = mysqli_connect($db_host, getenv('DB_USER') ?: 'ycdoeh1', getenv('DB_PASS') ?: 'ycdoeh1', getenv('DB_NAME') ?: 'ycdomlt');
 if (!$con) {
-    echo mysqli_connect_error();
+    http_response_code(503);
+    exit('Database connection failed.');
 }
 
 function available_items_in_store_by_register_item($branch_item_id)

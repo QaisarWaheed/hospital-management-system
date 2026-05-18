@@ -1,48 +1,39 @@
-<style>
-@media print
-{    
-    .noprint, .noprint *
-    {
-        display: none !important;
-    }
-}    
-</style>
 <?php
-
-        // $activity_logs = "INSERT INTO `activity_logs`
-        // (`activity_log_id`, `user_id`, `activity_log_title`, `table_name`, `record_id`, `parameter_names`, `activity_log_new_value`, `activity_log_status`, `activity_logs_created_at`, `activity_log_location`, `ip_address`) 
-        // VALUES
-        // (NULL, '$hr_id', 'UPDATE STAFF STATUS', 'staff', '$update_staff_id', 'staff_status', '$update_staff_status', '1', '$current_date', '', '$ip_address')";
-        
-        // mysqli_query($con, $activity_logs);
-        
 date_default_timezone_set("Asia/Karachi");
-$ip_address = $_SERVER['SERVER_ADDR'];
+$ip_address = $_SERVER['SERVER_ADDR'] ?? '';
 $current_date = date('Y-m-d G:i:s A');
 error_reporting(1);
-session_start();
-if (isset($_SESSION['hr_id']) && $_SESSION['hr_id'] != '') {
-    $hr_id = $_SESSION['hr_id'];
-    $hr_name = $_SESSION['hr_name'];
-    $hr_branch_id = $_SESSION['branch_id'];
-    $hr_is_admin = $_SESSION['is_admin'];;
-    $hr_is_incharge = $_SESSION['is_incharge'];
-    $hr_branch_name = $_SESSION['branch_name'];
-    $hr_branch_address = $_SESSION['branch_address'];
-    $hr_branch_phone = $_SESSION['branch_phone'];
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
-else
-{
-//    header('location: logout.php'); 
+
+if (empty($_SESSION['hr_id'])) {
+    header('Location: logout.php');
+    exit;
 }
-include 'company_info.php'; 
+
+$hr_id = (int) $_SESSION['hr_id'];
+$hr_name = $_SESSION['hr_name'] ?? '';
+$hr_branch_id = $_SESSION['branch_id'] ?? 0;
+$hr_is_admin = $_SESSION['is_admin'] ?? 0;
+$hr_is_incharge = $_SESSION['is_incharge'] ?? 0;
+$hr_branch_name = $_SESSION['branch_name'] ?? '';
+$hr_branch_address = $_SESSION['branch_address'] ?? '';
+$hr_branch_phone = $_SESSION['branch_phone'] ?? '';
+
+if ($hr_id < 1) {
+    header('Location: logout.php');
+    exit;
+}
+
 require_once __DIR__ . '/../../includes/ycdo_mysqli_vars.php';
 $con = mysqli_connect($ycdo_db_host, $ycdo_db_user, $ycdo_db_pass, $ycdo_db_name);
-
-if(!$con)
-{
-    echo $con->error;
+if (!$con) {
+    die(mysqli_connect_error());
 }
+
+include 'company_info.php';
 
 function get_extra_staff_duty($staff_id, $month)
 {

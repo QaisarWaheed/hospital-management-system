@@ -1,10 +1,5 @@
 <?php include 'includes/connect.php'; ?>
-<?php include 'includes/head.php'; 
-if(!isset($_SESSION['hr_id']))
-{
-    header('location: logout.php');
-}
-?>
+<?php include 'includes/head.php'; ?>
 	<title>Dashboard - <?php echo $company_trademark; ?></title>
 </head>
 
@@ -24,7 +19,7 @@ if(!isset($_SESSION['hr_id']))
 		<h3 style="color: red;"><?php echo $hr_branch_name; ?></h3>
 		<h4 style="color: white;"><?php echo $hr_branch_address; ?></h4>
 		<h4 style="color: white;"><?php echo $hr_branch_phone; ?></h4>
-		<h3 style="margin-top: 350px;text-align: center;">USER: <?php echo $_SESSION['hr_name']; ?></h3>
+		<h3 style="margin-top: 350px;text-align: center;">USER: <?php echo htmlspecialchars($hr_name); ?></h3>
 	</div>
 			
 	</div>
