@@ -73,7 +73,8 @@ window.close();
                     <option value="0">ALL</option>
 <?php 
 
-$con = mysqli_connect('localhost', 'ycdoeh1', 'ycdoeh1', 'ycdomlt');
+require_once __DIR__ . '/../../includes/ycdo_mysqli_vars.php';
+$con = mysqli_connect($ycdo_db_host, $ycdo_db_user, $ycdo_db_pass, $ycdo_db_name);
 
 $user = "SELECT * FROM users WHERE role_id IN (1, 2, 7) AND status = 1 AND branch_id = '$branch_id' ORDER BY `u_name` ASC ";
 $run_user = mysqli_query($con, $user);

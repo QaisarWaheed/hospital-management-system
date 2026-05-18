@@ -1,5 +1,6 @@
 <?php
-$conn = new mysqli('localhost', 'ycdoeh1', 'ycdoeh1', 'ycdomlt');
+require_once __DIR__ . '/../includes/ycdo_mysqli_vars.php';
+$conn = new mysqli($ycdo_db_host, $ycdo_db_user, $ycdo_db_pass, $ycdo_db_name);
 date_default_timezone_set("Asia/Karachi");
 $current_date = date('Y-m-d G:i:s A');
 error_reporting(1);

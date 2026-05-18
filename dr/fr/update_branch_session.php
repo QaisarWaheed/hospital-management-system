@@ -1,7 +1,8 @@
 <?php
 if(isset($_POST['change_branch_id']) && $_POST['change_branch_id'] != '')
 {
-    $con = mysqli_connect('localhost', 'ycdoeh1', 'ycdoeh1', 'ycdomlt');
+    require_once __DIR__ . '/../../includes/ycdo_mysqli_vars.php';
+    $con = mysqli_connect($ycdo_db_host, $ycdo_db_user, $ycdo_db_pass, $ycdo_db_name);
 
     $branch_id = $_POST['change_branch_id'];
     $select_branch = mysqli_query($con, "SELECT * FROM `branchs` WHERE `id` = '$branch_id' ");

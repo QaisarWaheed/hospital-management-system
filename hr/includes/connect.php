@@ -36,7 +36,8 @@ else
 //    header('location: logout.php'); 
 }
 include 'company_info.php'; 
-$con = mysqli_connect('localhost', 'ycdoeh1', 'ycdoeh1', 'ycdomlt');
+require_once __DIR__ . '/../../includes/ycdo_mysqli_vars.php';
+$con = mysqli_connect($ycdo_db_host, $ycdo_db_user, $ycdo_db_pass, $ycdo_db_name);
 
 if(!$con)
 {
