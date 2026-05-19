@@ -1,4 +1,4 @@
-    <?php 
+<?php
 include 'includes/connect.php';
 function get_client_ip() {
     $ipaddress = '';
@@ -18,9 +18,10 @@ function get_client_ip() {
         $ipaddress = 'UNKNOWN';
     return $ipaddress;
 }
+$msg = '';
 $ip_address = get_client_ip();
 $check = mysqli_query($con, "SELECT * FROM whitelist WHERE `ip_address` = '$ip_address' ");
-if (mysqli_num_rows($check) == 0) {
+if ($check && mysqli_num_rows($check) == 0) {
 //    header('location: 404.html');
 }
 if (isset($_POST['login'])) {
@@ -38,7 +39,7 @@ if (isset($_POST['login'])) {
             }
      $password = md5($_POST['password']);
      $try_password = $_POST['password'];
-$user = "SELECT * FROM users WHERE id = '$user_id' AND password = '$password' AND status = 1 ";
+$user = "SELECT * FROM users WHERE id = '$user_id' AND password = '$password' AND status = '1' ";
 $run_user = mysqli_query($con, $user);
 if (mysqli_num_rows($run_user) > 0) 
 {
@@ -50,7 +51,7 @@ if (mysqli_num_rows($run_user) > 0)
         $is_admin = $row_user['is_admin'];
         $is_incharge = $row_user['is_incharge'];
 
-if ($role_id = 3 || $role_id = 0) 
+if ($role_id == 3 || $role_id == 0) 
         {      
             mysqli_query($con, "INSERT INTO `whitelist`(`ip_address`, `user`, `status`, `role_id`, `branch_id`, `created`) VALUES ('$ip_address', '$user_id', '1', '$role_id', '$branch_id', '$current_date')");  
             $currentdate = date('Y-m-d H:i:s');     
@@ -67,10 +68,12 @@ if ($role_id = 3 || $role_id = 0)
               $_SESSION['branch_address'] = $branch_address;
               $_SESSION['branch_phone'] = $branch_phone;
               $_SESSION['dr_name'] = $user_name;
-             header('location: dr/dashboard.php');
-            // print_r($_SESSION);
-              mysqli_close($con);
-              exit(0);               
+              header('Location: dr/dashboard.php');
+              exit;               
+        }
+        else
+        {
+            $msg = 'This user is not allowed to log in to Doctor module.';
         }          
 
     }

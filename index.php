@@ -24,6 +24,10 @@ elseif(isset($_SESSION['hr_id']))
 {
     header('location: hr/dashboard.php');
 }
+elseif(isset($_SESSION['dr_id']))
+{
+    header('location: dr/dashboard.php');
+}
 function get_client_ip() {
     $ipaddress = '';
     if (getenv('HTTP_CLIENT_IP'))

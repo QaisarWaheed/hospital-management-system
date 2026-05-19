@@ -1,30 +1,38 @@
 <?php
 date_default_timezone_set("Asia/Karachi");
 $current_date = date('Y-m-d H:i:s');
-session_start();
-if (isset($_SESSION['dr_id'])) {
-    $user_id = $_SESSION['dr_id'];
-    $user_name = $_SESSION['dr_name'];
-    $branch_id = $_SESSION['branch_id'];
-    $is_admin = $_SESSION['is_admin'];
-    $branch_name = $_SESSION['branch_name'];
-    $branch_address = $_SESSION['branch_address'];
-    $branch_phone = $_SESSION['branch_phone'];
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
-else
-{
-    header('location: logout.php'); 
+
+if (empty($_SESSION['dr_id'])) {
+    header('Location: logout.php');
+    exit;
+}
+
+$user_id = (int) $_SESSION['dr_id'];
+$user_name = $_SESSION['dr_name'] ?? '';
+$branch_id = $_SESSION['branch_id'] ?? 0;
+$is_admin = $_SESSION['is_admin'] ?? 0;
+$is_incharge = $_SESSION['is_incharge'] ?? 0;
+$branch_name = $_SESSION['branch_name'] ?? '';
+$branch_address = $_SESSION['branch_address'] ?? '';
+$branch_phone = $_SESSION['branch_phone'] ?? '';
+
+if ($user_id < 1) {
+    header('Location: logout.php');
+    exit;
 }
 
 require_once __DIR__ . '/../../includes/ycdo_mysqli_vars.php';
+mysqli_report(MYSQLI_REPORT_OFF);
 $con = mysqli_connect($ycdo_db_host, $ycdo_db_user, $ycdo_db_pass, $ycdo_db_name);
+if (!$con) {
+    die(mysqli_connect_error());
+}
 
-
-include 'company_info.php'; 
-if(!$con)
-    {
-        echo $con->error;
-    }
+include 'company_info.php';
 
 function get_doctor_id_by_token_no($token_no)
 {
