@@ -1,22 +1,35 @@
 <?php
-include 'company_info.php';
-session_start();
+require_once __DIR__ . '/../../includes/ycdo_bootstrap.php';
 date_default_timezone_set("Asia/Karachi");
 $current_date = date('Y-m-d H:i:s');
-if (isset($_SESSION['lab_admin_user_id'])) {
-    $lab_admin_user_id = $_SESSION['lab_admin_user_id'];
-    $lab_admin_user_name = $_SESSION['lab_admin_user_name'];
-    $lab_admin_login_branch_id = $_SESSION['lab_admin_login_branch_id'];
-    $lab_admin_login_is_admin = $_SESSION['lab_admin_login_is_admin'];
-    $lab_admin_login_is_incharge = $_SESSION['lab_admin_login_is_incharge'];
-    $lab_admin_login_branch_name = $_SESSION['lab_admin_login_branch_name'];
-    $lab_admin_login_branch_address = $_SESSION['lab_admin_login_branch_address'];
-    $lab_admin_login_branch_phone = $_SESSION['lab_admin_login_branch_phone'];
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
-else
-{
-    header('location: logout.php'); 
+
+if (empty($_SESSION['lab_admin_user_id'])) {
+    header('Location: logout.php');
+    exit;
 }
+
+$lab_admin_user_id = (int) $_SESSION['lab_admin_user_id'];
+$lab_admin_user_name = $_SESSION['lab_admin_user_name'] ?? '';
+$lab_admin_login_branch_id = $_SESSION['lab_admin_login_branch_id'] ?? 0;
+$lab_admin_login_is_admin = $_SESSION['lab_admin_login_is_admin'] ?? 0;
+$lab_admin_login_is_incharge = $_SESSION['lab_admin_login_is_incharge'] ?? 0;
+$lab_admin_login_branch_name = $_SESSION['lab_admin_login_branch_name'] ?? '';
+$lab_admin_login_branch_address = $_SESSION['lab_admin_login_branch_address'] ?? '';
+$lab_admin_login_branch_phone = $_SESSION['lab_admin_login_branch_phone'] ?? '';
+
+if ($lab_admin_user_id < 1) {
+    header('Location: logout.php');
+    exit;
+}
+
+$con = ycdo_db_connect();
+$GLOBALS['con'] = $con;
+
+include 'company_info.php';
 
 function get_branch_tag_by($id)
 {
@@ -120,7 +133,7 @@ function insert_test_by_token_no($token_no)
 {
     $quanity = '';
     $ser = 0;
-    $user_id = $GLOBALS['lab_user_id'];
+    $user_id = $GLOBALS['lab_user_id'] ?? 0;
     $run = mysqli_query($GLOBALS['con'], "SELECT item_by_doctor.id AS record_id, items.id AS item_id, items.name AS item_name FROM `item_by_doctor` INNER JOIN item_register_to_branches ON item_by_doctor.item_id = item_register_to_branches.id INNER JOIN items ON item_register_to_branches.item_id = items.id WHERE `tokan_no` = '$token_no' AND items.category_id = 2");
     if (mysqli_num_rows($run) > 0) 
     {
@@ -152,5 +165,3 @@ function item_available_quantity($item_id)
     return $quanity;
 }
 
-
-?>

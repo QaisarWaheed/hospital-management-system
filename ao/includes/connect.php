@@ -1,40 +1,34 @@
 <?php
+require_once __DIR__ . '/../../includes/ycdo_bootstrap.php';
 date_default_timezone_set("Asia/Karachi");
 $current_date = date('Y-m-d G:i:s A');
-error_reporting(1);
-session_start();
-if (isset($_SESSION['ao_id']))
-{
-    $user_id = $_SESSION['ao_id'];
-    $is_admin = $_SESSION['is_admin'];
-    $is_incharge = $_SESSION['is_incharge'];
-    $role_id = $_SESSION['role_id'];
-    $user_name = $_SESSION['ao_name'];
-    $branch_id = $_SESSION['branch_id'];
-    $branch_name = $_SESSION['branch_name'];
-    $branch_address = $_SESSION['branch_address'];
-    $branch_phone = $_SESSION['branch_phone'];
-}
-else
-{
-//    header('location: logout.php'); 
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
-if($user_id < 1 || $user_id == '')
-{
-    header('location: logout.php'); 
+if (empty($_SESSION['ao_id'])) {
+    header('Location: logout.php');
+    exit;
 }
-include 'company_info.php'; 
-//$con = mysqli_connect('184.168.103.144', 'anmol', 'Anmol_122', 'ycdo');
-require_once __DIR__ . '/../../includes/ycdo_mysqli_vars.php';
-$con = mysqli_connect($ycdo_db_host, $ycdo_db_user, $ycdo_db_pass, $ycdo_db_name);
 
-// $con = mysqli_connect('localhost', 'root', '', 'ycdo');
-if(!$con)
-    {
-        echo $con->error;
-    }
+$user_id = (int) $_SESSION['ao_id'];
+$user_name = $_SESSION['ao_name'] ?? '';
+$branch_id = $_SESSION['branch_id'] ?? 0;
+$is_admin = $_SESSION['is_admin'] ?? 0;
+$is_incharge = $_SESSION['is_incharge'] ?? 0;
+$role_id = $_SESSION['role_id'] ?? 0;
+$branch_name = $_SESSION['branch_name'] ?? '';
+$branch_address = $_SESSION['branch_address'] ?? '';
+$branch_phone = $_SESSION['branch_phone'] ?? '';
 
+if ($user_id < 1) {
+    header('Location: logout.php');
+    exit;
+}
+
+include 'company_info.php';
+$con = ycdo_db_connect();
 function available_items_in_store_by_register_item($branch_item_id)
 {
     $quanity = 0;

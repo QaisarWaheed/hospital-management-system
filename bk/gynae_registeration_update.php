@@ -77,7 +77,7 @@ if (isset($_POST['save']))
                     $up_id = $_GET['update'];
                 $select = "SELECT * FROM `gynae_register` WHERE id = '$up_id' ";
                 $run = mysqli_query($con, $select);
-                if(mysqli_num_rows($run) > 0)
+                if ($run && mysqli_num_rows($run) > 0)
                 {
                 while($row = mysqli_fetch_array($run))
                 {
@@ -89,10 +89,10 @@ if (isset($_POST['save']))
                 $phone = $row['phone'];
                 $remarks = $row['remarks'];
                 $gravide = $row['gravide'];
-                $start_date = date_format(date_create($row['weeks']), 'd/m/Y H:i:s');
+                $weeks = ycdo_gynae_weeks_offset($row['weeks']);
                 $next_visit_date = $row['next_visit_date'];
-                $to_date = date('d/m/Y H:i:s');
-                $weeks = weeks_between($start_date, $to_date);
+                $weeks_start_ymd = ycdo_safe_date_format($row['weeks'], 'Y-m-d', '');
+                $next_visit_ymd = ycdo_safe_date_format($next_visit_date, 'Y-m-d', date('Y-m-d'));
                 ?>
                 <form METHOD = "POST" autocomplete = "off">
                 <div class = "row">
@@ -114,7 +114,7 @@ if (isset($_POST['save']))
                     </div>
                     <div class = "col-md-6">
                         <label>START DATE</label>
-                        <input type = "date" name = "start_date" readonly value = "<?php echo date_format(date_create($row['weeks']), 'Y-m-d'); ?>" required class = "form-control" />
+                        <input type = "date" name = "start_date" readonly value = "<?php echo $weeks_start_ymd; ?>" required class = "form-control" />
                     </div>
                     <div class = "col-md-6">
                         <label>TOTAL WEEKS</label>
@@ -130,18 +130,18 @@ if (isset($_POST['save']))
                     </div>
                     <div class = "col-md-6">
                         <label>LAST VISIT DATE</label>
-                        <input readonly type = "date" name = "last_visit_date" value = "<?php echo date_format(date_create($next_visit_date), 'Y-m-d'); ?>" required class = "form-control bg-info" />
+                        <input readonly type = "date" name = "last_visit_date" value = "<?php echo $next_visit_ymd; ?>" required class = "form-control bg-info" />
                     </div>
                     <div class = "col-md-6">
                         <label>NEXT VISIT DATE</label>
-                        <input type = "date" name = "next_visit_date" required min = "<?php echo date_format(date_create($next_visit_date), 'Y-m-d'); ?>" class = "form-control" />
+                        <input type = "date" name = "next_visit_date" required min = "<?php echo $next_visit_ymd; ?>" class = "form-control" />
                     </div>
                     <div class = "col-md-6">
                         <label>LAST TIME CHECK BY DOCTOR</label>
                         <?php
                         $select_dr = "SELECT * FROM users WHERE id = '$doctor_id' ";
                         $run_dr = mysqli_query($con, $select_dr);
-                        if(mysqli_num_rows($run_dr) == 1)
+                        if ($run_dr && mysqli_num_rows($run_dr) == 1)
                         {
                         while($row_dr = mysqli_fetch_array($run_dr))
                         {

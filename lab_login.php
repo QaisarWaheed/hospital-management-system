@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/includes/ycdo_bootstrap.php';
 include 'includes/connect.php';
 
 if (!$con) {

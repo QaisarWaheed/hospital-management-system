@@ -1,9 +1,4 @@
 <?php
-require_once __DIR__ . '/../../includes/ycdo_mysqli_vars.php';
-$con = mysqli_connect($ycdo_db_host, $ycdo_db_user, $ycdo_db_pass, $ycdo_db_name);
-
-if(!$con)
-{
-    echo $con->error;
-}
+require_once __DIR__ . '/../../includes/ycdo_bootstrap.php';
+$con = ycdo_db_connect();
 ?>

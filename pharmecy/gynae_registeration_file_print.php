@@ -1,34 +1,5 @@
 <?php
-include 'includes/security.php'; 
-require_once __DIR__ . '/../includes/db_connect.php';
-
-function get_uname_by_id($id)
-{
-    $output = '';
-    $run = mysqli_query($GLOBALS['con'], "SELECT u_name FROM `users` WHERE `id` = '$id' ");
-    if (mysqli_num_rows($run) == 1) 
-    {
-        while ($row = mysqli_fetch_array($run)) 
-        {
-            $output .= $row['u_name'];
-        }    
-    }    
-    return $output;
-}
-
-function get_patient_name_by_token_no($token_no)
-{
-    $output = '';
-    $get_patient = mysqli_query($GLOBALS['con'], "SELECT * FROM patients WHERE id IN (SELECT patient_id FROM tokans WHERE id = '$token_no') ");
-    if (mysqli_num_rows($get_patient) == 1) 
-    {
-        while ($row_patient = mysqli_fetch_array($get_patient)) 
-        {
-            $output .= $row_patient['name'];
-        }
-    }
-    return $output;
-}
+require_once __DIR__ . '/includes/connect.php';
 
 if (isset($_GET['reg_id']) && $_GET['reg_id'] != '') 
 {
@@ -90,7 +61,7 @@ if (isset($_GET['reg_id']) && $_GET['reg_id'] != '')
 	</tr>
 	<tr>
 		<th>REGISTERATION DATE</th>
-		<td><?php echo date_format(date_create($reg_date), 'd F Y'); ?></td>
+		<td><?php echo ycdo_safe_date_format($reg_date, 'd F Y', 'N/A'); ?></td>
 	</tr>
 	<tr>
 		<th>token_no</th>

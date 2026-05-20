@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../../includes/ycdo_bootstrap.php';
 date_default_timezone_set("Asia/Karachi");
 $current_date = date('Y-m-d H:i:s');
 
@@ -25,12 +26,10 @@ if ($user_id < 1) {
     exit;
 }
 
-require_once __DIR__ . '/../../includes/ycdo_mysqli_vars.php';
-mysqli_report(MYSQLI_REPORT_OFF);
-$con = mysqli_connect($ycdo_db_host, $ycdo_db_user, $ycdo_db_pass, $ycdo_db_name);
-if (!$con) {
-    die(mysqli_connect_error());
-}
+$con = ycdo_db_connect();
+$GLOBALS['con'] = $con;
+$GLOBALS['branch_id'] = $branch_id;
+$GLOBALS['user_id'] = $user_id;
 
 include 'company_info.php';
 
@@ -105,12 +104,14 @@ function get_uname_by_id($id)
 
 function weeks_between($datefrom, $dateto)
 {
-    $datefrom = DateTime::createFromFormat('d/m/Y H:i:s',$datefrom);
-    $dateto = DateTime::createFromFormat('d/m/Y H:i:s',$dateto);
-    $interval = $dateto->diff($datefrom);
-    $week_total = $interval->format('%a')/7;
-    return floor($week_total)-33;
-
+    $from = DateTime::createFromFormat('d/m/Y H:i:s', $datefrom);
+    $to = DateTime::createFromFormat('d/m/Y H:i:s', $dateto);
+    if (!$from || !$to) {
+        return 0;
+    }
+    $interval = $to->diff($from);
+    $week_total = $interval->format('%a') / 7;
+    return (int) floor($week_total) - 33;
 }
 
 function get_branch_name_by_branch_id($id)
@@ -151,14 +152,56 @@ function get_item_id_by_register_item_id($id)
     $output = '';
     $query = "SELECT `item_id` FROM `item_register_to_branches` WHERE `id` = '$id' ";
     $run = mysqli_query($con,  $query);
-    if (mysqli_num_rows($run) > 0) 
+    if (mysqli_num_rows($run) > 0)
     {
-        while ( $row = mysqli_fetch_array($run) ) 
+        while ( $row = mysqli_fetch_array($run) )
         {
             $output .= $row['item_id'];
-        }    
-    }    
+        }
+    }
         return $output;
+}
+
+/**
+ * Create branch stock row when missing (e.g. after DB migration).
+ */
+function ycdo_get_or_create_branch_item_register($branch_id, $item_id)
+{
+    $branch_id = (int) $branch_id;
+    $item_id = (int) $item_id;
+    $con = $GLOBALS['con'];
+    if ($branch_id < 1 || $item_id < 1 || !$con) {
+        return 0;
+    }
+    $run = mysqli_query($con, "SELECT id FROM `item_register_to_branches` WHERE `item_id` = '$item_id' AND `branch_id` = '$branch_id' LIMIT 1");
+    if ($run && mysqli_num_rows($run) === 1) {
+        $row = mysqli_fetch_array($run);
+        return (int) $row['id'];
+    }
+    mysqli_query($con, "INSERT INTO `item_register_to_branches` (`item_id`, `branch_id`, `quantity`, `status`) VALUES ('$item_id', '$branch_id', '0', '1')");
+    return (int) mysqli_insert_id($con);
+}
+
+/**
+ * Accept either item_register_to_branches.id or bare items.id from the dropdown.
+ */
+function ycdo_resolve_register_item_id($branch_id, $id)
+{
+    $branch_id = (int) $branch_id;
+    $id = (int) $id;
+    $con = $GLOBALS['con'];
+    if ($branch_id < 1 || $id < 1 || !$con) {
+        return 0;
+    }
+    $run = mysqli_query($con, "SELECT id FROM `item_register_to_branches` WHERE `id` = '$id' AND `branch_id` = '$branch_id' LIMIT 1");
+    if ($run && mysqli_num_rows($run) === 1) {
+        return $id;
+    }
+    $item_check = mysqli_query($con, "SELECT id FROM `items` WHERE `id` = '$id' AND `status` = '1' LIMIT 1");
+    if ($item_check && mysqli_num_rows($item_check) === 1) {
+        return ycdo_get_or_create_branch_item_register($branch_id, $id);
+    }
+    return 0;
 }
 
 function get_branch_phone_by_branch_id($id)
@@ -200,44 +243,54 @@ function show_departments_option()
 
 function branch_medicines_by_name()
 {
-    $branch_id = $GLOBALS['branch_id'];
+    $branch_id = (int) ($GLOBALS['branch_id'] ?? 0);
+    $con = $GLOBALS['con'] ?? null;
+    if ($branch_id < 1 || !$con) {
+        return '<option>NO DATA FOUND</option>';
+    }
+
+    $testCategories = '2, 8, 29, 39, 40, 41, 42';
+    $medicineCategories = '1, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27';
     $output = '';
-    $run1 = mysqli_query($GLOBALS['con'], "SELECT item_register_to_branches.id AS item_register_id,items.id,items.category_id,items.name, categories.name AS cat_name, item_register_to_branches.quantity AS available_branch_stock FROM `items` INNER JOIN categories ON items.category_id = categories.id INNER JOIN item_register_to_branches ON items.id = item_register_to_branches.item_id WHERE item_register_to_branches.branch_id = '$branch_id' AND items.category_id IN (2, 8, 29, 39, 40, 41, 42) AND items.status = '1' AND item_register_to_branches.status = '1' ORDER BY items.`name` ");
-    $run2 = mysqli_query($GLOBALS['con'], "SELECT item_register_to_branches.id AS item_register_id,items.id,items.category_id,items.name, categories.name AS cat_name, item_register_to_branches.quantity AS available_branch_stock FROM `items` INNER JOIN categories ON items.category_id = categories.id INNER JOIN item_register_to_branches ON items.id = item_register_to_branches.item_id WHERE item_register_to_branches.branch_id = '$branch_id' AND items.category_id IN (1, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27) AND items.status = '1' AND item_register_to_branches.status = '1' ORDER BY items.`name` ");
-    if (mysqli_num_rows($run1) > 0)  
-    {
-        while ($row1 = mysqli_fetch_array($run1)) 
-        {
-            $item_id = $row1['id'];
-            $category_id = $row1['category_id'];
-            $item_name = $row1['name'];
-            $category_name = $row1['cat_name'];
-            $reg_item_id = $row1['item_register_id'];
-                 $output .= '<option value="'.$reg_item_id.'">'.$item_name.' - '.$category_name.'</option>';   
+
+    $run1 = mysqli_query($con, "SELECT item_register_to_branches.id AS item_register_id, items.id, items.category_id, items.name, categories.name AS cat_name, item_register_to_branches.quantity AS available_branch_stock FROM `items` INNER JOIN categories ON items.category_id = categories.id INNER JOIN item_register_to_branches ON items.id = item_register_to_branches.item_id WHERE item_register_to_branches.branch_id = '$branch_id' AND items.category_id IN ($testCategories) AND items.status = '1' AND item_register_to_branches.status = '1' ORDER BY items.`name`");
+    if ($run1 && mysqli_num_rows($run1) > 0) {
+        while ($row1 = mysqli_fetch_array($run1)) {
+            $output .= '<option value="'.$row1['item_register_id'].'">'.htmlspecialchars($row1['name']).' - '.htmlspecialchars($row1['cat_name']).'</option>';
         }
-    }    
-    if(mysqli_num_rows($run2) > 0)  
-    {
-        while ($row2 = mysqli_fetch_array($run2)) 
-        {
-            $available_branch_stock = $row2['available_branch_stock'];
-            $item_id2 = $row2['id'];
-            $category_id2 = $row2['category_id'];
-            $item_name2 = $row2['name'];
-            $category_name2 = $row2['cat_name'];
-            $reg_item_id2 = $row2['item_register_id'];
-            if($available_branch_stock < 1)
-            {
-                 $output .= '<option value="'.$reg_item_id2.'">OUT OF STOCK '.$item_name2.' - '.$category_name2.'</option>';   
+    }
+
+    $run2 = mysqli_query($con, "SELECT item_register_to_branches.id AS item_register_id, items.id, items.category_id, items.name, categories.name AS cat_name, item_register_to_branches.quantity AS available_branch_stock FROM `items` INNER JOIN categories ON items.category_id = categories.id INNER JOIN item_register_to_branches ON items.id = item_register_to_branches.item_id WHERE item_register_to_branches.branch_id = '$branch_id' AND items.category_id IN ($medicineCategories) AND items.status = '1' AND item_register_to_branches.status = '1' ORDER BY items.`name`");
+    if ($run2 && mysqli_num_rows($run2) > 0) {
+        while ($row2 = mysqli_fetch_array($run2)) {
+            $label = htmlspecialchars($row2['name']).' - '.htmlspecialchars($row2['cat_name']);
+            if ((float) $row2['available_branch_stock'] < 1) {
+                $label = 'OUT OF STOCK '.$label;
             }
-            else
-            {
-                 $output .= '<option value="'.$reg_item_id2.'">'.$item_name2.' - '.$category_name2.'</option>';   
+            $output .= '<option value="'.$row2['item_register_id'].'">'.$label.'</option>';
+        }
+    }
+
+    if ($output === '') {
+        $allCategories = $testCategories.', '.$medicineCategories;
+        $fallback = mysqli_query($con, "SELECT items.id AS item_id, items.name AS item_name, categories.name AS cat_name, items.category_id, item_register_to_branches.id AS item_register_id, COALESCE(item_register_to_branches.quantity, 0) AS available_branch_stock FROM `items` INNER JOIN categories ON items.category_id = categories.id LEFT JOIN item_register_to_branches ON items.id = item_register_to_branches.item_id AND item_register_to_branches.branch_id = '$branch_id' AND item_register_to_branches.status = '1' WHERE items.status = '1' AND items.category_id IN ($allCategories) ORDER BY items.`name`");
+        if ($fallback && mysqli_num_rows($fallback) > 0) {
+            while ($row = mysqli_fetch_array($fallback)) {
+                $option_value = $row['item_register_id'] ? (int) $row['item_register_id'] : (int) $row['item_id'];
+                $label = htmlspecialchars($row['item_name']).' - '.htmlspecialchars($row['cat_name']);
+                $is_medicine_cat = !in_array((int) $row['category_id'], array(2, 8, 29, 39, 40, 41, 42), true);
+                if ($is_medicine_cat && (float) $row['available_branch_stock'] < 1) {
+                    $label = 'OUT OF STOCK '.$label;
+                }
+                if (!$row['item_register_id']) {
+                    $label .= ' (register on save)';
+                }
+                $output .= '<option value="'.$option_value.'">'.$label.'</option>';
             }
         }
     }
-    else
-    {
+
+    if ($output === '') {
         return '<option>NO DATA FOUND</option>';
     }
     return $output;
@@ -277,8 +330,7 @@ function branch_medicines_by_name2()
             
         }
     }
-    else
-    {
+    if ($output === '') {
         return '<option>NO DATA FOUND</option>';
     }
     return $output;
@@ -436,29 +488,62 @@ function get_branch_address($branch_id)
 }
 
 
+function ycdo_format_user_time($time)
+{
+    if ($time === null || $time === '' || $time === '00:00:00') {
+        return 'N/A';
+    }
+    $dt = date_create($time);
+    return $dt ? date_format($dt, 'h:i A') : 'N/A';
+}
+
+/**
+ * Referral consultant dropdown (referral_patient_by_token.php).
+ * Uses users.department_id + consultant_status — not select_by_doctor.
+ */
 function show_doctors_by_department_id($department_id)
 {
+    $department_id = (int) $department_id;
+    $con = $GLOBALS['con'] ?? null;
+    if ($department_id < 1 || !$con) {
+        return '<option value="">NO DATA FOUND</option>';
+    }
+
+    $queries = array(
+        "SELECT * FROM `users` WHERE `status` = '1' AND `department_id` = '$department_id' AND (`consultant_status` = '1' OR `consultant_status` = 1) ORDER BY `u_name`",
+        "SELECT * FROM `users` WHERE `status` = '1' AND `department_id` = '$department_id' AND `role_id` IN (3, 0) ORDER BY `u_name`",
+        "SELECT * FROM `users` WHERE `status` = '1' AND `department_id` = '$department_id' ORDER BY `u_name`",
+    );
+
     $output = '';
-    $run1 = mysqli_query($GLOBALS['con'], "SELECT * FROM `users` WHERE `consultant_status` = '1' AND `department_id` = '$department_id' ");
-    if (mysqli_num_rows($run1) > 0)  
-    {
-        while ($row1 = mysqli_fetch_array($run1)) 
-        {
-            $consultant_id = $row1['id'];
-            $consultant_name = $row1['u_name'];
-            $consultant_branch_name = get_branch_address($row1['branch_id']);
-            $consultant_in_time = date_format(date_create($row1['in_time']), "h:i:s A");
-            $consultant_out_time = date_format(date_create($row1['out_time']), "h:i:s A");
-            $consultant_qualification = $row1['qualification'];
-            $consultant_phone = $row1['phone'];
-            $output .= '<option value="'.$consultant_id.'">'.$consultant_name.' ('.$consultant_in_time.' - '.$consultant_out_time.') '.$consultant_qualification.' ('.$consultant_branch_name.')</option>';   
+    foreach ($queries as $sql) {
+        $run = mysqli_query($con, $sql);
+        if (!$run || mysqli_num_rows($run) < 1) {
+            continue;
         }
+        while ($row = mysqli_fetch_array($run)) {
+            $consultant_id = (int) $row['id'];
+            $consultant_name = htmlspecialchars($row['u_name'] ?? '', ENT_QUOTES, 'UTF-8');
+            $consultant_branch_name = htmlspecialchars(get_branch_address($row['branch_id'] ?? 0), ENT_QUOTES, 'UTF-8');
+            $consultant_in_time = ycdo_format_user_time($row['in_time'] ?? null);
+            $consultant_out_time = ycdo_format_user_time($row['out_time'] ?? null);
+            $consultant_qualification = htmlspecialchars($row['qualification'] ?? '', ENT_QUOTES, 'UTF-8');
+            $output .= '<option value="'.$consultant_id.'">'.$consultant_name.' ('.$consultant_in_time.' - '.$consultant_out_time.') '.$consultant_qualification.' ('.$consultant_branch_name.')</option>';
+        }
+        if (getenv('YCDO_DEBUG') === '1') {
+            error_log('show_doctors_by_department_id dept='.$department_id.' sql='.$sql.' count='.mysqli_num_rows($run));
+        }
+        break;
     }
-    else
-    {
-        return '<option>NO DATA FOUND</option>';
+
+    if ($output === '') {
+        if (getenv('YCDO_DEBUG') === '1') {
+            error_log('show_doctors_by_department_id: no users for department_id='.$department_id);
+        }
+        return '<option value="">NO DATA FOUND</option>';
     }
-    return $output;
+
+    return '<option value="">Select Doctor...</option>'.$output;
 }
 
 function get_branch_tag_by($id)

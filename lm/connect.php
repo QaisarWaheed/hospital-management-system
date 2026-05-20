@@ -1,22 +1,35 @@
 <?php
-include '../lab/includes/company_info.php';
-session_start();
+require_once __DIR__ . '/../includes/ycdo_bootstrap.php';
 date_default_timezone_set("Asia/Karachi");
 $current_date = date('Y-m-d H:i:s');
-if (isset($_SESSION['lab_manager_user_id'])) {
-    $lab_manager_user_id = $_SESSION['lab_manager_user_id'];
-    $lab_manager_user_name = $_SESSION['lab_manager_user_name'];
-    $lab_manager_login_branch_id = $_SESSION['lab_manager_login_branch_id'];
-    $lab_manager_login_is_admin = $_SESSION['lab_manager_login_is_admin'];
-    $lab_manager_login_is_incharge = $_SESSION['lab_manager_login_is_incharge'];
-    $lab_manager_login_branch_name = $_SESSION['lab_manager_login_branch_name'];
-    $lab_manager_login_branch_address = $_SESSION['lab_manager_login_branch_address'];
-    $lab_manager_login_branch_phone = $_SESSION['lab_manager_login_branch_phone'];
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
-else
-{
-    header('location: logout.php'); 
+
+if (empty($_SESSION['lab_manager_user_id'])) {
+    header('Location: logout.php');
+    exit;
 }
+
+$lab_manager_user_id = (int) $_SESSION['lab_manager_user_id'];
+$lab_manager_user_name = $_SESSION['lab_manager_user_name'] ?? '';
+$lab_manager_login_branch_id = $_SESSION['lab_manager_login_branch_id'] ?? 0;
+$lab_manager_login_is_admin = $_SESSION['lab_manager_login_is_admin'] ?? 0;
+$lab_manager_login_is_incharge = $_SESSION['lab_manager_login_is_incharge'] ?? 0;
+$lab_manager_login_branch_name = $_SESSION['lab_manager_login_branch_name'] ?? '';
+$lab_manager_login_branch_address = $_SESSION['lab_manager_login_branch_address'] ?? '';
+$lab_manager_login_branch_phone = $_SESSION['lab_manager_login_branch_phone'] ?? '';
+
+if ($lab_manager_user_id < 1) {
+    header('Location: logout.php');
+    exit;
+}
+
+$con = ycdo_db_connect();
+$GLOBALS['con'] = $con;
+
+include __DIR__ . '/../lab/includes/company_info.php';
 
 function get_branch_tag_by($id)
 {
@@ -63,4 +76,3 @@ function get_branch_name_by($id)
     }    
         return $output;
 }
-?>

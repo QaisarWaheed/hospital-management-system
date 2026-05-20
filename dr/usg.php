@@ -30,7 +30,12 @@ if (isset($_GET['del_medicine']) && $_GET['del_medicine'] != '')
 if (isset($_GET['save_test'])) 
 {
     $token_id = $_GET['token_id'];
-    $reg_item_id = $_GET['reg_item_id'];
+    $reg_item_id = ycdo_resolve_register_item_id($branch_id, $_GET['reg_item_id']);
+    if ($reg_item_id < 1) {
+        header('location: usg.php?token_id='.$token_id.'&msg=ERROR-INVALID-ITEM');
+        exit;
+    }
+    $item_id = get_item_id_by_register_item_id($reg_item_id);
     $fix_dose = $_GET['fix_dose'];
     $dose = $_GET['dose'];
     $feed = $_GET['feed'];
@@ -44,8 +49,8 @@ if (isset($_GET['save_test']))
             $quantity = $fix_dose;
     }
     $insert = "INSERT INTO `select_by_doctor`
-    (`tokan_no`, `item_id`, `dose`,  `feed`,  `days`,  `user_id`,  `branch_id`, `fix_dose`, `created`) VALUES 
-    ('$token_id', '$reg_item_id', '$dose', '$feed', '$days', '$user_id','$branch_id', '$fix_dose', '$current_date')";
+    (`tokan_no`, `item_id`, `dose`,  `feed`,  `days`,  `user_id`,  `branch_id`, `fix_dose`, `created`, `items_table_id`) VALUES 
+    ('$token_id', '$reg_item_id', '$dose', '$feed', '$days', '$user_id','$branch_id', '$fix_dose', '$current_date', '$item_id')";
         if (mysqli_query($con, $insert))        
         { 
             $token_doctor_id = get_doctor_id_by_token_no($token_id);

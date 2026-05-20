@@ -1,8 +1,11 @@
 <?php
+require_once __DIR__ . '/ycdo_bootstrap.php';
 date_default_timezone_set("Asia/Karachi");
 $current_date = date('Y-m-d h:i:s');
-error_reporting(1);
-session_start();
+error_reporting(getenv('YCDO_DEBUG') === '1' ? E_ALL : 1);
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 if (isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
     $login_id = $_SESSION['login_id'];
@@ -17,19 +20,7 @@ else
 //    header('location: logout.php'); 
 }
 include 'company_info.php';
-$db_host = getenv('DB_HOST');
-if ($db_host === false || $db_host === '') {
-    $db_host = file_exists('/.dockerenv') ? 'srv-captain--mysql-db' : 'localhost';
-}
-if ($db_host === 'localhost' && PHP_OS_FAMILY !== 'Windows') {
-    $db_host = '127.0.0.1';
-}
-mysqli_report(MYSQLI_REPORT_OFF);
-$con = mysqli_connect($db_host, getenv('DB_USER') ?: 'ycdoeh1', getenv('DB_PASS') ?: 'ycdoeh1', getenv('DB_NAME') ?: 'ycdomlt');
-if (!$con) {
-    http_response_code(503);
-    exit('Database connection failed.');
-}
+$con = ycdo_db_connect();
 
 function available_items_in_store_by_register_item($branch_item_id)
 {

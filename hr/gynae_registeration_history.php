@@ -77,7 +77,7 @@ include 'includes/connect.php';
 			             <tr class = "'.$style.'">
 			                <td>'.$s.'</td>
 			                <td>'.$weeks_visit_time.'</td>
-			                <td>'.date_format(date_create($last_visit_date), "d-m-Y").'</td>
+			                <td>'.ycdo_safe_date_format($last_visit_date, 'd-m-Y', 'N/A').'</td>
 			                <td>'.$previous_gravide.'</td>
 			                <td>'.$previous_remarks.'</td>';
 			                if($previous_update_by == 0)

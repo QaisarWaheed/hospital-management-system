@@ -163,7 +163,7 @@ if(mysqli_num_rows($run) > 0)
                     <td class ="h6">'.date_format(date_create($created), "d-m-Y").'</td>
                     <td class ="h6">'.$patient_name.'</td>
                     <td class ="noprint h6">'.$procedure_name.'</td>
-                    <td class ="noprint h6">'.$ref_name.'</td>
+                    <td class ="noprint h6">'.$rf_name.'</td>
                     <td class ="noprint h6">'.$recommended_by.'</td>
                     <td class ="h6">'.$token_no.'</td>
                     <td class ="h6" style = "text-align: center;">'.number_format($total_amount).'</td>

@@ -41,7 +41,7 @@ if(isset($_GET['select_visit_date']) && $_GET['select_visit_date'] != '')
                                             {
                                                 $select_br_id = $row['id'];
                                                 $select_br_tag_name = $row['tag_name'];
-                                                if($_GET['br_id'] == $select_br_id)
+                                                if(isset($_GET['br_id']) && $_GET['br_id'] == $select_br_id)
                                                 {
                                                     echo '<option SELECTED value = "'.$select_br_id.'">'.$select_br_tag_name.'</option>';
                                                 }
@@ -90,10 +90,10 @@ if(isset($_GET['select_visit_date']) && $_GET['select_visit_date'] != '')
 			         else
 			         {
 			             $select_visit_date = date('Y-m-d');
-    			         $select = "SELECT * FROM `gynae_register` WHERE AND status = '1' AND next_visit_date <= '$select_visit_date' ORDER BY `next_visit_date` DESC ";
+    			         $select = "SELECT * FROM `gynae_register` WHERE status = '1' AND next_visit_date <= '$select_visit_date' ORDER BY `next_visit_date` DESC ";
 			         }
 			         $run = mysqli_query($con, $select);
-			         if(mysqli_num_rows($run) > 0)
+			         if ($run && mysqli_num_rows($run) > 0)
 			         {
 			             while($row = mysqli_fetch_array($run))
 			             {
@@ -102,16 +102,11 @@ if(isset($_GET['select_visit_date']) && $_GET['select_visit_date'] != '')
 			                 $token_no = $row['token_no'];
 			                 $update_by = $row['update_by'];
 			                 $phone = $row['phone'];
-			                 //$phone_no = '';
-			                 //for($i = 0; $i<strlen($phone); $i++)
-			                 //{
-			                 //    $phone_no .= '*';
-			                 //}
 			                 $gravide = $row['gravide'];
-			                 $start_date = date_format(date_create($row['weeks']), 'd/m/Y H:i:s');
+			                 $start_date = ycdo_safe_date_format($row['weeks'], 'd/m/Y H:i:s', '');
 			                 $next_visit_date = $row['next_visit_date'];
                              $to_date = date('d/m/Y H:i:s');
-			                 $weeks = weeks_between($start_date, $to_date);
+			                 $weeks = ($start_date !== '') ? weeks_between($start_date, $to_date) : 0;
                             if($weeks >31 && $weeks < 37){$style = "bg-info text-light";}elseif($weeks >= 37){$style = "bg-danger text-light";}else{$style = "";}
 			                 $s = $s + 1;
 			                 echo '
@@ -122,7 +117,7 @@ if(isset($_GET['select_visit_date']) && $_GET['select_visit_date'] != '')
 			                <td>'.get_patient_name_by_token_no($token_no).'</td>
 			                <td>'.$phone.'</td>
 			                <td>'.get_patient_age_by_token_no($token_no).'</td>
-			                <td>'.date_format(date_create($row['weeks']), "d-M-Y").'</td>
+			                <td>'.ycdo_safe_date_format($row['weeks'], 'd-M-Y', 'N/A').'</td>
 			                <td>'.$gravide.'</td>
 			                <td>'.$next_visit_date.'</td>';
 			                if($update_by == 0)

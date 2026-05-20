@@ -62,7 +62,7 @@ include 'includes/connect.php';
 			         $s = 0;
 			         $select = "SELECT * FROM `gynae_register_history` WHERE gynae_register_id = '$history_id' ";
 			         $run = mysqli_query($con, $select);
-			         if(mysqli_num_rows($run) > 0)
+			         if ($run && mysqli_num_rows($run) > 0)
 			         {
 			             while($row = mysqli_fetch_array($run))
 			             {
@@ -72,12 +72,13 @@ include 'includes/connect.php';
 			                 $previous_gravide = $row['previous_gravide'];
 			                 $previous_update_by = $row['previous_update_by'];
 			                 $weeks_visit_time = $row['weeks_visit_time'];
+			                 $style = '';
 			                 $s = $s + 1;
 			                 echo '
 			             <tr class = "'.$style.'">
 			                <td>'.$s.'</td>
 			                <td>'.$weeks_visit_time.'</td>
-			                <td>'.date_format(date_create($last_visit_date), "d-m-Y").'</td>
+			                <td>'.ycdo_safe_date_format($last_visit_date, 'd-m-Y', 'N/A').'</td>
 			                <td>'.$previous_gravide.'</td>
 			                <td>'.$previous_remarks.'</td>';
 			                if($previous_update_by == 0)

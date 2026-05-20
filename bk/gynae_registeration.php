@@ -1,9 +1,10 @@
-<?php include 'includes/connect.php'; 
-if(isset($_GET['select_visit_date']) && $_GET['select_visit_date'] != '')
-{
-    $br_id = $_GET['br_id'];
-    $select_visit_date = $_GET['select_visit_date'];
-}
+<?php
+require_once __DIR__ . '/includes/connect.php';
+
+$br_id = isset($_GET['br_id']) ? (int) $_GET['br_id'] : (int) $bk_branch_id;
+$select_visit_date = isset($_GET['select_visit_date']) && $_GET['select_visit_date'] !== ''
+    ? $_GET['select_visit_date']
+    : date('Y-m-d');
 ?>
 <?php include 'includes/head.php'; ?>
 	<title>Patient Registeration - <?php echo $company_trademark; ?></title>
@@ -30,25 +31,18 @@ if(isset($_GET['select_visit_date']) && $_GET['select_visit_date'] != '')
 			                <th>
 			                    <form>
 			                        <select  onchange = "this.form.submit()" name = "br_id" required>  
-			                            <?php if(!isset($_GET['br_id'])) { echo '<option SELECTED value = "">NO</option>';} ?> 
-			                            <option <?php if(isset($_GET['br_id']) && $_GET['br_id'] == 0) { echo "SELECTED";} ?> value = "0">ALL</option>
+			                            <option <?php if ($br_id === 0) { echo 'SELECTED'; } ?> value="0">ALL</option>
 			                        <?php
                                         $query = "SELECT id, tag_name FROM branchs WHERE status = '1' ";
                                         $run = mysqli_query($con,  $query);
-                                        if (mysqli_num_rows($run) > 0) 
+                                        if ($run && mysqli_num_rows($run) > 0) 
                                         {
                                             while ( $row = mysqli_fetch_array($run) ) 
                                             {
                                                 $select_br_id = $row['id'];
                                                 $select_br_tag_name = $row['tag_name'];
-                                                if($_GET['br_id'] == $select_br_id)
-                                                {
-                                                    echo '<option SELECTED value = "'.$select_br_id.'">'.$select_br_tag_name.'</option>';
-                                                }
-                                                else
-                                                {
-                                                    echo '<option value = "'.$select_br_id.'">'.$select_br_tag_name.'</option>';
-                                                }
+                                                $selected = ($br_id === (int) $select_br_id) ? ' SELECTED' : '';
+                                                echo '<option'.$selected.' value="'.$select_br_id.'">'.htmlspecialchars($select_br_tag_name).'</option>';
                                             }    
                                         }    
 			                        ?>
@@ -64,13 +58,13 @@ if(isset($_GET['select_visit_date']) && $_GET['select_visit_date'] != '')
 			                <th>Gravida</th>
 			                <th>
 			                    <form>
-			                        <input type = "hidden" name = "br_id" value = "<?php if(isset($_GET['br_id'])) { echo $_GET['br_id'];}else {echo $bk_branch_id;} ?>" />
+			                        <input type = "hidden" name = "br_id" value = "<?php echo (int) $br_id; ?>" />
 			                        <input onchange = "this.form.submit()" type = "date" name = "select_visit_date" value = <?php if(isset($select_visit_date)){echo '"'.$select_visit_date.'"';}else{echo '"'.date('Y-m-d').'"';} ?> />
 			                    </form>
 			                    Next Visit
 			                    </th>
 			                <th>
-			                    <a href = "gynae_registeration_print.php?br_id=<?php if(isset($_GET['br_id'])){echo $_GET['br_id'];}else{echo $bk_branch_id;}?>&select_visit_date=<?php echo $select_visit_date; ?>">PRINT</a>
+			                    <a href = "gynae_registeration_print.php?br_id=<?php echo (int) $br_id; ?>&select_visit_date=<?php echo htmlspecialchars($select_visit_date); ?>">PRINT</a>
 			                    <br>Update By
 			                </th>
 			                <th colspan = "3">
@@ -82,48 +76,30 @@ if(isset($_GET['select_visit_date']) && $_GET['select_visit_date'] != '')
 			        <tbody>
 			         <?php
 			         $s = 0;
-			         if(isset($select_visit_date) && $select_visit_date != '')
-			         {
-			             if($br_id > 0)
-			             {
+			         if ($br_id > 0) {
         			         $select = "SELECT * FROM `gynae_register` WHERE branch_id = '$br_id' AND status = 1 AND next_visit_date <= '$select_visit_date' ORDER BY `next_visit_date` DESC ";
-			             }
-			             else
-			             {
+			         } else {
         			         $select = "SELECT * FROM `gynae_register` WHERE status = 1 AND next_visit_date <= '$select_visit_date' ORDER BY `next_visit_date` DESC ";
-			             }
-			         }
-			         else
-			         {
-			             $select_visit_date = date('Y-m-d');
-    			         $select = "SELECT * FROM `gynae_register` WHERE AND status = '1' AND next_visit_date <= '$select_visit_date' ORDER BY `next_visit_date` DESC ";
 			         }
 			         $run = mysqli_query($con, $select);
-			         if(mysqli_num_rows($run) > 0)
+			         if ($run && mysqli_num_rows($run) > 0)
 			         {
 			             while($row = mysqli_fetch_array($run))
 			             {
 			                 $id = $row['id'];
-			                 $br_id = $row['branch_id'];
+			                 $row_br_id = $row['branch_id'];
 			                 $token_no = $row['token_no'];
 			                 $update_by = $row['update_by'];
 			                 $phone = $row['phone'];
-			                 //$phone_no = '';
-			                 //for($i = 0; $i<strlen($phone); $i++)
-			                 //{
-			                 //    $phone_no .= '*';
-			                 //}
 			                 $gravide = $row['gravide'];
-			                 $start_date = date_format(date_create($row['weeks']), 'd/m/Y H:i:s');
+			                 $weeks = ycdo_gynae_weeks_offset($row['weeks']);
+			                 $style = ycdo_gynae_row_style($row['weeks']);
 			                 $next_visit_date = $row['next_visit_date'];
-                             $to_date = date('d/m/Y H:i:s');
-			                 $weeks = weeks_between($start_date, $to_date);
-                            if($weeks >31 && $weeks < 37){$style = "bg-info text-light";}elseif($weeks >= 37){$style = "bg-danger text-light";}else{$style = "";}
 			                 $s = $s + 1;
 			                 echo '
 			             <tr class = "'.$style.'">
 			                <td>'.$s.'</td>
-			                <td>'.get_branch_tag_name_by_id($br_id).'</td>
+			                <td>'.get_branch_tag_name_by_id($row_br_id).'</td>
 			                <td>'.$token_no.'</td>
 			                <td>'.get_patient_name_by_token_no($token_no).'</td>
 			                <td>'.$phone.'</td>

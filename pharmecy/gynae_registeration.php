@@ -77,25 +77,20 @@ if(isset($_GET['search_token']) && $_GET['search_token'] != '')
     			         $select = "SELECT * FROM `gynae_register` WHERE status = 1 AND (`token_no` LIKE '%$search_token%' OR `phone` LIKE '%$search_token%') ";
 			         }
 			         $run = mysqli_query($con, $select);
-			         if(mysqli_num_rows($run) > 0)
+			         if ($run && mysqli_num_rows($run) > 0)
 			         {
 			             while($row = mysqli_fetch_array($run))
 			             {
 			                 $id = $row['id'];
-			                 $is_discharge = mysqli_num_rows(mysqli_query($con, "SELECT `gynae_discharge_id` FROM `gynae_register_discharge` WHERE `registeration_id` = '$id' "));
+			                 $discharge_check = mysqli_query($con, "SELECT `gynae_discharge_id` FROM `gynae_register_discharge` WHERE `registeration_id` = '$id' ");
+			                 $is_discharge = ($discharge_check && mysqli_num_rows($discharge_check) > 0) ? 1 : 0;
 			                 $token_no = $row['token_no'];
 			                 $update_by = $row['update_by'];
 			                 $phone = $row['phone'];
 			                 $gravide = $row['gravide'];
-			                 $start_date = date_format(date_create($row['weeks']), 'd/m/Y H:i:s');
-			                 $edd = date_format(date_create($row['weeks']), 'd/m/Y');
+			                 $edd = ycdo_safe_date_format($row['weeks'], 'd/m/Y', 'N/A');
 			                 $next_visit_date = $row['next_visit_date'];
-                             $to_date = date('d/m/Y H:i:s');
-                                $datefrom = DateTime::createFromFormat('d/m/Y H:i:s',$start_date);
-                                $dateto = DateTime::createFromFormat('d/m/Y H:i:s',$to_date);
-                                $interval = $dateto->diff($datefrom);
-                                $weeks = floor($interval->format('%R%a')/7);
-                            if($weeks < 2 && $weeks > -2){$style = "bg-info text-light";}elseif($weeks <= -2){$style = "bg-danger text-light";}else{$style = "";}
+			                 $style = ycdo_gynae_row_style($row['weeks']);
 			                 $s = $s + 1;
 			                 echo '
 			             <tr class = "'.$style.'">

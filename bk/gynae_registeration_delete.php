@@ -53,7 +53,7 @@ if (isset($_POST['save_delete']))
                     $up_id = $_GET['del'];
                 $select = "SELECT * FROM `gynae_register` WHERE id = '$up_id' ";
                 $run = mysqli_query($con, $select);
-                if(mysqli_num_rows($run) > 0)
+                if ($run && mysqli_num_rows($run) > 0)
                 {
                 while($row = mysqli_fetch_array($run))
                 {
@@ -65,10 +65,8 @@ if (isset($_POST['save_delete']))
                 $phone = $row['phone'];
                 $remarks = $row['remarks'];
                 $gravide = $row['gravide'];
-                $start_date = date_format(date_create($row['weeks']), 'd/m/Y H:i:s');
+                $weeks = ycdo_gynae_weeks_offset($row['weeks']);
                 $next_visit_date = $row['next_visit_date'];
-                $to_date = date('d/m/Y H:i:s');
-                $weeks = weeks_between($start_date, $to_date);
                 ?>
                 <form METHOD = "POST" autocomplete = "off" action = "gynae_registeration_delete.php">
                 <div class = "row">

@@ -48,26 +48,24 @@ else
 			         $s = 0;
         			 $select = "SELECT * FROM `gynae_register` WHERE branch_id = '$br_id' AND status = 1 AND next_visit_date = '$select_visit_date' ORDER BY `next_visit_date` DESC ";
 			         $run = mysqli_query($con, $select);
-			         if(mysqli_num_rows($run) > 0)
+			         if ($run && mysqli_num_rows($run) > 0)
 			         {
 			             while($row = mysqli_fetch_array($run))
 			             {
 			                 $id = $row['id'];
-			                 $br_id = $row['branch_id'];
+			                 $row_br_id = $row['branch_id'];
 			                 $token_no = $row['token_no'];
 			                 $update_by = $row['update_by'];
 			                 $phone = $row['phone'];
 			                 $gravide = $row['gravide'];
-			                 $start_date = date_format(date_create($row['weeks']), 'd/m/Y H:i:s');
+			                 $weeks = ycdo_gynae_weeks_offset($row['weeks']);
+			                 $style = ycdo_gynae_row_style($row['weeks']);
 			                 $next_visit_date = $row['next_visit_date'];
-                             $to_date = date('d/m/Y H:i:s');
-			                 $weeks = weeks_between($start_date, $to_date);
-                            if($weeks >31 && $weeks < 37){$style = "bg-info text-light";}elseif($weeks >= 37){$style = "bg-danger text-light";}else{$style = "";}
 			                 $s = $s + 1;
 			                 echo '
 			             <tr class = "'.$style.'">
 			                <td>'.$s.'</td>
-			                <td>'.get_branch_tag_name_by_id($br_id).'</td>
+			                <td>'.get_branch_tag_name_by_id($row_br_id).'</td>
 			                <td>'.$token_no.'</td>
 			                <td>'.get_patient_name_by_token_no($token_no).'</td>
 			                <td>'.$phone.'</td>

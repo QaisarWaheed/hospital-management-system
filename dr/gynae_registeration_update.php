@@ -97,10 +97,10 @@ if (isset($_POST['save']))
                 $doctor_id = $row['doctor_id'];
                 $update_by = $row['update_by'];
                 $phone = $row['phone'];
-                $start_date = date_format(date_create($row['weeks']), 'd/m/Y H:i:s');
+                $start_date = ycdo_safe_date_format($row['weeks'], 'd/m/Y H:i:s', '');
                 $next_visit_date = $row['next_visit_date'];
                 $to_date = date('d/m/Y H:i:s');
-                $weeks = weeks_between($start_date, $to_date);
+                $weeks = ycdo_gynae_weeks_offset($row['weeks']);
                 ?>
                 <form METHOD = "POST" autocomplete = "off">
                 <div class = "row">
@@ -127,7 +127,7 @@ if (isset($_POST['save']))
                     </div>
                     <div class = "col-md-3">
                         <label for = "edd" title = "edd">E.D.D</label>
-                        <input id = "edd" type = "date" name = "start_date" readonly value = "<?php echo date_format(date_create($row['weeks']), 'Y-m-d'); ?>" required class = "form-control" />
+                        <input id = "edd" type = "date" name = "start_date" readonly value = "<?php echo ycdo_safe_date_format($row['weeks'], 'Y-m-d', ''); ?>" required class = "form-control" />
                     </div>
                     <div class = "col-md-3">
                         <label>TOTAL WEEKS</label>
@@ -135,11 +135,11 @@ if (isset($_POST['save']))
                     </div>
                     <div class = "col-md-3">
                         <label>LAST VISIT DATE</label>
-                        <input readonly type = "date" name = "last_visit_date" value = "<?php echo date_format(date_create($next_visit_date), 'Y-m-d'); ?>" required class = "form-control bg-info" />
+                        <input readonly type = "date" name = "last_visit_date" value = "<?php echo ycdo_safe_date_format($next_visit_date, 'Y-m-d', ''); ?>" required class = "form-control bg-info" />
                     </div>
                     <div class = "col-md-6">
                         <label>NEXT VISIT DATE</label>
-                        <input type = "date" name = "next_visit_date" required min = "<?php echo date_format(date_create($next_visit_date), 'Y-m-d'); ?>" class = "form-control" />
+                        <input type = "date" name = "next_visit_date" required min = "<?php echo ycdo_safe_date_format($next_visit_date, 'Y-m-d', date('Y-m-d')); ?>" class = "form-control" />
                     </div>
                     <div class = "col-md-6">
                         <label>LAST TIME CHECK BY DOCTOR</label>

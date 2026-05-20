@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../../includes/ycdo_bootstrap.php';
 date_default_timezone_set("Asia/Karachi");
 $current_date = date('Y-m-d H:i:s');
 $ip_address = $_SERVER['SERVER_ADDR'] ?? '';
@@ -27,11 +28,7 @@ if ($lab_user_id < 1) {
     exit;
 }
 
-require_once __DIR__ . '/../../includes/ycdo_mysqli_vars.php';
-$con = mysqli_connect($ycdo_db_host, $ycdo_db_user, $ycdo_db_pass, $ycdo_db_name);
-if (!$con) {
-    die(mysqli_connect_error());
-}
+$con = ycdo_db_connect();
 
 include 'company_info.php';
 

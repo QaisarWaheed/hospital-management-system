@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../../includes/ycdo_bootstrap.php';
 date_default_timezone_set("Asia/Karachi");
 $current_date = date('Y-m-d H:i:s');
 $ip_address = $_SERVER['SERVER_ADDR'];
@@ -22,6 +23,9 @@ $is_incharge = $_SESSION['is_incharge'] ?? 0;
 $branch_name = $_SESSION['branch_name'] ?? '';
 $branch_address = $_SESSION['branch_address'] ?? '';
 $branch_phone = $_SESSION['branch_phone'] ?? '';
+if (!isset($role_title)) {
+    $role_title = '';
+}
 
 if ($user_id < 1) {
     header('Location: logout.php');
@@ -37,14 +41,7 @@ if (empty($_SESSION['form_token'])) {
     $_SESSION['form_token'] = bin2hex(random_bytes(32));
 }
 
-$db_host = getenv('DB_HOST');
-if ($db_host === false || $db_host === '') {
-    $db_host = file_exists('/.dockerenv') ? 'srv-captain--mysql-db' : 'localhost';
-}
-if ($db_host === 'localhost' && PHP_OS_FAMILY !== 'Windows') {
-    $db_host = '127.0.0.1';
-}
-$con = mysqli_connect($db_host, getenv('DB_USER') ?: 'ycdoeh1', getenv('DB_PASS') ?: 'ycdoeh1', getenv('DB_NAME') ?: 'ycdomlt');
+$con = ycdo_db_connect();
 
 
 //Check Expire Login
@@ -274,15 +271,22 @@ function get_branch_item_quantity_from_item_id($item_id)
 
 function get_branch_item_id_from_item_id($item_id, $branch_idd)
 {
+    $item_id = (int) $item_id;
+    $branch_idd = (int) $branch_idd;
+    $con = $GLOBALS['con'] ?? null;
+    if ($item_id < 1 || $branch_idd < 1 || !$con) {
+        return 0;
+    }
     $output = 0;
-    $run = mysqli_query($GLOBALS['con'], "SELECT id FROM `item_register_to_branches` WHERE `item_id` = '$item_id' AND `branch_id` = '$branch_idd' ");
-    if (mysqli_num_rows($run) == 1) 
-    {
-        while ($row = mysqli_fetch_array($run)) 
-        {
-            $output = $row['id'];
-        }    
-    }    
+    $run = mysqli_query($con, "SELECT id FROM `item_register_to_branches` WHERE `item_id` = '$item_id' AND `branch_id` = '$branch_idd' LIMIT 1");
+    if ($run && mysqli_num_rows($run) === 1) {
+        $row = mysqli_fetch_array($run);
+        $output = (int) $row['id'];
+    }
+    if ($output < 1) {
+        mysqli_query($con, "INSERT INTO `item_register_to_branches` (`item_id`, `branch_id`, `quantity`, `status`) VALUES ('$item_id', '$branch_idd', '0', '1')");
+        $output = (int) mysqli_insert_id($con);
+    }
     return $output;
 }
 

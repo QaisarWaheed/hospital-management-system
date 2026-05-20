@@ -1,30 +1,37 @@
 <?php
+require_once __DIR__ . '/../../includes/ycdo_bootstrap.php';
 date_default_timezone_set("Asia/Karachi");
 $current_date = date('Y-m-d h:i:s A');
-error_reporting(1);
-session_start();
-if (isset($_SESSION['bk_id'])) {
-    $bk_id = $_SESSION['bk_id'];
-    $bk_name = $_SESSION['bk_name'];
-    $bk_branch_id = $_SESSION['branch_id'];
-    $bk_is_admin = $_SESSION['is_admin'];;
-    $bk_is_incharge = $_SESSION['is_incharge'];
-    $bk_branch_name = $_SESSION['branch_name'];
-    $bk_branch_address = $_SESSION['branch_address'];
-    $bk_branch_phone = $_SESSION['branch_phone'];
-}
-else
-{
-//    header('location: logout.php'); 
-}
-include 'company_info.php'; 
-require_once __DIR__ . '/../../includes/ycdo_mysqli_vars.php';
-$con = mysqli_connect($ycdo_db_host, $ycdo_db_user, $ycdo_db_pass, $ycdo_db_name);
 
-if(!$con)
-{
-    echo $con->error;
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
+
+if (empty($_SESSION['bk_id'])) {
+    header('Location: logout.php');
+    exit;
+}
+
+$bk_id = (int) $_SESSION['bk_id'];
+$bk_name = $_SESSION['bk_name'] ?? '';
+$bk_branch_id = $_SESSION['branch_id'] ?? 0;
+$bk_is_admin = $_SESSION['is_admin'] ?? 0;
+$bk_is_incharge = $_SESSION['is_incharge'] ?? 0;
+$bk_branch_name = $_SESSION['branch_name'] ?? '';
+$bk_branch_address = $_SESSION['branch_address'] ?? '';
+$bk_branch_phone = $_SESSION['branch_phone'] ?? '';
+
+if ($bk_id < 1) {
+    header('Location: logout.php');
+    exit;
+}
+
+include 'company_info.php';
+$con = ycdo_db_connect();
+$GLOBALS['con'] = $con;
+$user_id = $bk_id;
+$branch_id = $bk_branch_id;
+$branch_name = $bk_branch_name;
 
 function get_branch_tag_by($id)
 {
@@ -163,11 +170,13 @@ function get_patient_age_by_token_no($token_no)
 
 function weeks_between($datefrom, $dateto)
 {
-    $datefrom = DateTime::createFromFormat('d/m/Y H:i:s',$datefrom);
-    $dateto = DateTime::createFromFormat('d/m/Y H:i:s',$dateto);
+    $datefrom = DateTime::createFromFormat('d/m/Y H:i:s', $datefrom);
+    $dateto = DateTime::createFromFormat('d/m/Y H:i:s', $dateto);
+    if (!$datefrom || !$dateto) {
+        return 0;
+    }
     $interval = $datefrom->diff($dateto);
-    $week_total = $interval->format('%a')/7;
-    return floor($week_total)+1;
-
+    $week_total = $interval->format('%a') / 7;
+    return (int) floor($week_total) + 1;
 }
 ?>

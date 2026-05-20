@@ -11,6 +11,13 @@ if ($ycdo_db_host === false || $ycdo_db_host === '') {
 if ($ycdo_db_host === 'localhost' && PHP_OS_FAMILY !== 'Windows') {
     $ycdo_db_host = '127.0.0.1';
 }
-$ycdo_db_user = getenv('DB_USER') ?: 'ycdoeh1';
-$ycdo_db_pass = getenv('DB_PASS') ?: 'ycdoeh1';
-$ycdo_db_name = getenv('DB_NAME') ?: 'ycdomlt';
+
+if (file_exists('/.dockerenv')) {
+    $ycdo_db_user = getenv('DB_USER') ?: 'root';
+    $ycdo_db_pass = getenv('DB_PASS') ?: 'AppPass123';
+    $ycdo_db_name = getenv('DB_NAME') ?: 'ycdomlt';
+} else {
+    $ycdo_db_user = getenv('DB_USER') ?: 'ycdoeh1';
+    $ycdo_db_pass = getenv('DB_PASS') ?: 'ycdoeh1';
+    $ycdo_db_name = getenv('DB_NAME') ?: 'ycdomlt';
+}

@@ -12,13 +12,14 @@ if (isset($_POST['id']))
     $update_branch = "UPDATE item_register_to_branches SET quantity = quantity-$quantity WHERE id = '$branch_item_id' ";
     $update_store = "UPDATE items SET quantity = quantity+$quantity WHERE id = '$item_id' ";
     $update_database = "UPDATE `return_item_by_branch` SET `mm`= '$user_id', status = 2 WHERE `id` = '$id' AND status = '1' ";
-    if($receive_quantity == $quantity)
-    {
+    if ((float) $receive_quantity === (float) $quantity && $quantity > 0) {
         mysqli_query($con, $update_database);
-        if(mysqli_affected_rows($con) == 1)
-        {
+        if (mysqli_affected_rows($con) >= 1) {
             mysqli_query($con, $update_branch);
             mysqli_query($con, $update_store);
+        } else {
+            echo '<script>alert("Return row already processed or not found.");location.replace("item_receive_from_branch.php");</script>';
+            exit;
         }
     ?>
 	<script>
@@ -36,7 +37,12 @@ if (isset($_POST['id']))
 <?php    }
 exit(0);
 }
-$current_issue_no = mysqli_num_rows(mysqli_query($con, "SELECT DISTINCT return_no FROM `return_item_by_branch`"));
+$distinct_returns = mysqli_query($con, "SELECT COUNT(DISTINCT return_no) AS cnt FROM `return_item_by_branch`");
+$current_issue_no = 1;
+if ($distinct_returns && ($cnt_row = mysqli_fetch_assoc($distinct_returns))) {
+    $current_issue_no = max(1, (int) $cnt_row['cnt']);
+}
+$current_purchase_no = $current_issue_no;
 ?>
 <?php include 'includes/head.php'; ?>
 	<title>Receive Item From Branch - <?php echo $company_trademark; ?></title>
@@ -141,7 +147,7 @@ if(mysqli_num_rows($run) > 0)
         else{
         echo '<td style = "text-align: center;">'.$return_quantity.'</td>';
         }
-        if(is_null($mm) == 1)
+        if ($status == 1 && ($mm === null || $mm === '' || $mm === '0' || (int) $mm === 0))
         {
         echo '
             <td>

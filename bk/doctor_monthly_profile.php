@@ -1,10 +1,10 @@
-<?php 
-include 'includes/connect.php'; 
-include 'includes/head.php'; 
+<?php
+require_once __DIR__ . '/includes/connect.php';
+include 'includes/head.php';
 
 $roles = "SELECT * FROM roles WHERE id IN (SELECT role_id FROM users WHERE id = '$user_id') ";
 $run_roles = mysqli_query($con, $roles);
-if(mysqli_num_rows($run_roles) == 1)
+if ($run_roles && mysqli_num_rows($run_roles) == 1)
 {
     while($row_role = mysqli_fetch_array($run_roles))
     {
@@ -16,20 +16,19 @@ else
     $role_title = '';
 }
 
-if(isset($_POST['date']) && $_POST['date'] != '')
-{
+$date = date('Y-m');
+$doctor = 0;
+$br_id = (int) $bk_branch_id;
+$output_procedure = '';
+$total_collections = 0;
+$total_cons_opds_cash = 0;
+if (isset($_POST['date']) && $_POST['date'] !== '') {
     $date = $_POST['date'];
 }
-elseif(isset($_POST['date']) && $_POST['date'] != '')
-{
-    $date = $_POST['date'];
-}
-else
-{
-    $date = date('Y-m');
-}
-    $doctor = $_POST['doctor_id'];
+if (isset($_POST['doctor_id']) && $_POST['doctor_id'] !== '') {
+    $doctor = (int) $_POST['doctor_id'];
     $br_id = get_branch_id_by_user_id($doctor);
+}
 ?>
 	<title>DOCTOR MONTHLY PROFILE - <?php echo $date; ?> <?php echo $company_trademark; ?></title>
 <script src="js/jquery.min.js"></script>
@@ -51,13 +50,13 @@ else
 <div class="row" style="margin: 0px;">
 	<div class="col-md-12" style="text-align: center;background: lightgreen;"><label><h1><?php echo $company_name; ?> </h1></label></div>
 	<div class="col-md-3 background_whitesmoke no-print">	<?php include 'left_navigation.php'; ?>	
-    	<h3 style="margin-top: 350px;text-align: center;"><?php echo $_SESSION['dr_name'];if($_SESSION['is_incharge'] == 2){ echo " Incharge ";} ?>(<?php echo $role_title; ?>)</h3>
+    	<h3 style="margin-top: 350px;text-align: center;"><?php echo htmlspecialchars($bk_name); if ($bk_is_incharge == 2) { echo ' Incharge '; } ?>(<?php echo htmlspecialchars($role_title); ?>)</h3>
     </div>
     <div class = "col-md-9">
         <form METHOD = "POST">
         <div class = "row no-print">
             <div class = "col-md-12">
-                <h2 align = "center"><?php echo $branch_name; ?></h2>
+                <h2 align = "center"><?php echo htmlspecialchars($bk_branch_name); ?></h2>
             </div>
             <div class = "col-md-12">
                 <label>DOCTOR</label>
@@ -93,12 +92,12 @@ $total_medicine = 0;
 $total_opds = 0;
 $total_cons_opds = 0;
 $total_gynae = 0;
-if(isset($_POST['date']))
+if (isset($_POST['date']) && isset($_POST['doctor_id']) && $doctor > 0)
 {
     echo '
     <table class = "table" border = "solid">
     <caption style = "caption-side: top; text-align: center;color: black;">
-        <h3>SUMMERY REPORT OF '.date_format(date_create($date), "F Y").'</h3>
+        <h3>SUMMERY REPORT OF '.ycdo_safe_date_format($date.'-01', 'F Y', $date).'</h3>
     </caption>
     <thead>
         <tr>
@@ -120,19 +119,25 @@ if(isset($_POST['date']))
     <tbody>';
     {
         $opd = mysqli_query($con, "SELECT COUNT(id) FROM tokans WHERE `tokan_type_id` < 100 AND status = 1 and doctor_id = '$doctor' AND created like '$date%' AND `branch_id` = '$br_id' ");
+        $opds = 0;
+        if ($opd) {
         while($row_opd = mysqli_fetch_array($opd))
         {
             $opds = $row_opd['0'];
             $total_opds = $total_opds + $opds;
         }
+        }
 
         $collection = mysqli_query($con, "SELECT SUM(cash) FROM tokans WHERE status = 1 and doctor_id = '$doctor' AND created like '$date%' AND `branch_id` = '$br_id' ");
+        if ($collection) {
         while($row_collection = mysqli_fetch_array($collection))
         {
             $collections = $row_collection['0'];
             $total_collections = $total_collections + $collections;
         }
+        }
 
+        $total_cons_opds_cash = 0;
         $select_cons_opd = "SELECT DISTINCT tokan_no, tokans.cash AS cash FROM item_by_doctor INNER JOIN tokans ON item_by_doctor.tokan_no = tokans.id INNER JOIN item_register_to_branches ON item_by_doctor.item_id = item_register_to_branches.id WHERE item_by_doctor.doctor_id LIKE '$doctor' AND item_by_doctor.created LIKE '$date%' AND item_by_doctor.branch_id = '$br_id' AND item_by_doctor.status = 2 AND item_register_to_branches.item_id IN( SELECT id FROM items WHERE category_id = '29' )";
         $run_cons_opd = mysqli_query($con,$select_cons_opd);
         $cons_opds = mysqli_num_rows($run_cons_opd);
@@ -175,12 +180,16 @@ if(isset($_POST['date']))
 
         $select_usgs = "SELECT COUNT(`tokan_no`) FROM `item_by_doctor` WHERE tokan_no IN (SELECT id FROM tokans WHERE doctor_id = '$doctor' AND created like '$date%' AND status = 1) AND branch_id = '$br_id' AND `status` = 2 AND `item_id` IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (476, 477, 478, 479, 1138, 1185, 1161, 1162, 1163, 1164, 1184, 1317, 1318, 1319, 1411, 1435))";
         $usg = mysqli_query($con, $select_usgs);
+        $usgs = 0;
+        if ($usg) {
         while($row_usg = mysqli_fetch_array($usg))
         {
             $usgs = $row_usg['0'];
             $total_usg = $total_usg + $usgs;
         }
-        $gynae_system = mysqli_num_rows(mysqli_query($con, "SELECT * FROM `gynae_register` WHERE doctor_id = '$doctor' AND created like '$date%' AND branch_id = '$br_id'"));
+        }
+        $gynae_q = mysqli_query($con, "SELECT * FROM `gynae_register` WHERE doctor_id = '$doctor' AND created like '$date%' AND branch_id = '$br_id'");
+        $gynae_system = $gynae_q ? mysqli_num_rows($gynae_q) : 0;
         $total_gynae_system = $total_gynae_system + $gynae_system;
       
         $doctor_name = get_uname_by_id($doctor);
@@ -205,12 +214,12 @@ if(isset($_POST['date']))
 ?>
 </table>
 <?php 
-if(isset($_POST['date']) && $_POST['date'] != '')
+if (isset($_POST['date']) && $_POST['date'] !== '' && isset($_POST['doctor_id']) && (int) $_POST['doctor_id'] > 0)
 { 
     $sr = 1;
     $output_opd = '';
     $date = $_POST['date'];
-    $doctor_id = $_POST['doctor_id'];
+    $doctor_id = (int) $_POST['doctor_id'];
     $select_opd = "
                 SELECT tokan_type_id, tokan_types.title, COUNT(cash), SUM(cash), AVG(cash) FROM `tokans` 
                 INNER JOIN tokan_types ON tokans.tokan_type_id = tokan_types.id 
@@ -273,7 +282,7 @@ if(isset($_POST['date']) && $_POST['date'] != '')
             $output_procedure .= '
                 <tr>
                     <td>'.$sr_procedure.'</td>
-                    <td>'.date_format(date_create($row_procedure['3']), "d-m-Y").'</td>
+                    <td>'.ycdo_safe_date_format($row_procedure['3'], 'd-m-Y', 'N/A').'</td>
                     <td>'.$row_procedure['0'].'</td>
                     <td>'.$row_procedure['2'].'</td>
                     <td>'.$row_procedure['1'].'</td>

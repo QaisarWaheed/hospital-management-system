@@ -49,7 +49,11 @@ if (isset($_GET['del_medicine']) && $_GET['del_medicine'] != '')
 if (isset($_GET['save_test'])) 
 {
     $token_id = $_GET['token_id'];
-    $reg_item_id = $_GET['reg_item_id'];
+    $reg_item_id = ycdo_resolve_register_item_id($branch_id, $_GET['reg_item_id']);
+    if ($reg_item_id < 1) {
+        header('location: patient_by_token.php?token_id='.$token_id.'&msg=ERROR-INVALID-ITEM');
+        exit;
+    }
     $item_id = get_item_id_by_register_item_id($reg_item_id);
     $fix_dose = $_GET['fix_dose'];
     $dose = $_GET['dose'];

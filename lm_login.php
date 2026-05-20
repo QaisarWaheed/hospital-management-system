@@ -1,4 +1,5 @@
-    <?php 
+<?php
+require_once __DIR__ . '/includes/ycdo_bootstrap.php';
 include 'includes/connect.php';
 function get_client_ip() {
     $ipaddress = '';
@@ -21,7 +22,7 @@ function get_client_ip() {
 $ip_address = get_client_ip();
 $check = mysqli_query($con, "SELECT * FROM whitelist WHERE `ip_address` = '$ip_address' ");
 if (mysqli_num_rows($check) == 0) {
-//    header('location: 404.html');
+//    header('Location: 404.html');
 }
 if (isset($_POST['login'])) {
      $user_id = $_POST['user_id'];
@@ -38,7 +39,7 @@ if (isset($_POST['login'])) {
             }
      $password = md5($_POST['password']);
      $try_password = $_POST['password'];
-$user = "SELECT * FROM users WHERE id = '$user_id' AND password = '$password' AND status = 1 ";
+$user = "SELECT * FROM users WHERE id = '$user_id' AND password = '$password' AND status = '1' ";
 $run_user = mysqli_query($con, $user);
 if (mysqli_num_rows($run_user) > 0) 
 {
@@ -66,7 +67,7 @@ if ($role_id == 19 || $role_id == 0)
               $_SESSION['lab_manager_login_branch_address'] = $branch_address;
               $_SESSION['lab_manager_login_branch_phone'] = $branch_phone;
               $_SESSION['lab_manager_user_name'] = $user_name;
-             header('location: lm/dashboard.php');
+             header('Location: lm/dashboard.php');
               mysqli_close($con);
               exit(0);               
         }          
@@ -104,7 +105,7 @@ else
                 <select class="form-control" style="min-width: 200px;text-transform: uppercase;" name="user_id">
 <?php 
 $branch_id = $_GET['branch_id'];
-$user = "SELECT * FROM users WHERE (role_id = 0 AND branch_id = 0 AND status = 1) OR (role_id = 19 AND status = 1 AND branch_id = '$branch_id') ORDER BY `u_name` ASC ";
+$user = "SELECT * FROM users WHERE (role_id = 0 AND branch_id = 0 AND status = '1') OR (role_id = 19 AND status = '1' AND branch_id = '$branch_id') ORDER BY `u_name` ASC ";
 $run_user = mysqli_query($con, $user);
 if (mysqli_num_rows($run_user) > 0) 
 {

@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../../includes/ycdo_bootstrap.php';
 date_default_timezone_set("Asia/Karachi");
 $ip_address = $_SERVER['SERVER_ADDR'] ?? '';
 $current_date = date('Y-m-d G:i:s A');
@@ -27,11 +28,7 @@ if ($hr_id < 1) {
     exit;
 }
 
-require_once __DIR__ . '/../../includes/ycdo_mysqli_vars.php';
-$con = mysqli_connect($ycdo_db_host, $ycdo_db_user, $ycdo_db_pass, $ycdo_db_name);
-if (!$con) {
-    die(mysqli_connect_error());
-}
+$con = ycdo_db_connect();
 
 include 'company_info.php';
 
@@ -125,12 +122,14 @@ function get_branch_tag_name_by_id($id)
 
 function weeks_between($datefrom, $dateto)
 {
-    $datefrom = DateTime::createFromFormat('d/m/Y H:i:s',$datefrom);
-    $dateto = DateTime::createFromFormat('d/m/Y H:i:s',$dateto);
-    $interval = $datefrom->diff($dateto);
-    $week_total = $interval->format('%a')/7;
-    return floor($week_total)+1;
-
+    $from = DateTime::createFromFormat('d/m/Y H:i:s', $datefrom);
+    $to = DateTime::createFromFormat('d/m/Y H:i:s', $dateto);
+    if (!$from || !$to) {
+        return 0;
+    }
+    $interval = $from->diff($to);
+    $week_total = $interval->format('%a') / 7;
+    return (int) floor($week_total) + 1;
 }
 function get_patient_name_by_token_no($token_no)
 {

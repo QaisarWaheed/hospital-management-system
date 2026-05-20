@@ -1,5 +1,5 @@
-<?php 
-include 'includes/connect.php';
+<?php
+require_once __DIR__ . '/includes/connect_public.php';
 function get_client_ip() {
     $ipaddress = '';
     if (getenv('HTTP_CLIENT_IP'))

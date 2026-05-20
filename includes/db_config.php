@@ -14,8 +14,13 @@ if ($DB_HOST === false || $DB_HOST === '') {
 }
 
 $DB_NAME = getenv('DB_NAME') ?: 'ycdomlt';
-$DB_USER = getenv('DB_USER') ?: 'ycdoeh1';
-$DB_PASS = getenv('DB_PASS') ?: 'ycdoeh1';
+if (file_exists('/.dockerenv')) {
+    $DB_USER = getenv('DB_USER') ?: 'root';
+    $DB_PASS = getenv('DB_PASS') ?: 'AppPass123';
+} else {
+    $DB_USER = getenv('DB_USER') ?: 'ycdoeh1';
+    $DB_PASS = getenv('DB_PASS') ?: 'ycdoeh1';
+}
 
 // On Linux, mysqli "localhost" uses a Unix socket; use TCP to the same machine instead.
 if ($DB_HOST === 'localhost' && PHP_OS_FAMILY !== 'Windows') {

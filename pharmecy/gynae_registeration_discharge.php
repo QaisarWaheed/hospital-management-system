@@ -75,7 +75,7 @@ if (isset($_POST['save']))
                 $doctor_id = $row['doctor_id'];
                 $update_by = $row['update_by'];
                 $phone = $row['phone'];
-                $start_date = date_format(date_create($row['weeks']), 'd/m/Y H:i:s');
+                $start_date = ycdo_safe_date_format($row['weeks'], 'd/m/Y H:i:s', '');
                 $next_visit_date = $row['next_visit_date'];
                 $to_date = date('d/m/Y H:i:s');
                 $weeks = weeks_between($start_date, $to_date);

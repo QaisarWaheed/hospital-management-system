@@ -4,7 +4,7 @@ include 'includes/head.php';
 
 $roles = "SELECT * FROM roles WHERE id IN (SELECT role_id FROM users WHERE id = '$user_id') ";
 $run_roles = mysqli_query($con, $roles);
-if(mysqli_num_rows($run_roles) == 1)
+if ($run_roles && mysqli_num_rows($run_roles) == 1)
 {
     while($row_role = mysqli_fetch_array($run_roles))
     {

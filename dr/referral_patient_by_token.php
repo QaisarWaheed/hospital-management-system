@@ -152,7 +152,7 @@ Dr Name: <?php echo $docotr_name; ?>
     	
     	<div class="row">
     	<div class="col-md-12">
-    		<select required name="consultant_id" id="consultant_id" class = "bg-success" placeholder="Pick Select Department" autofocus>
+    		<select required name="consultant_id" id="consultant_id" class = "bg-success" placeholder="Select Doctor" autofocus>
     			<?php echo show_doctors_by_department_id($department_id); ?>
     		</select>
     	</div>

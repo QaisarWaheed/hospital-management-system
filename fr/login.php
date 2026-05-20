@@ -1,5 +1,5 @@
-    <?php 
-include 'includes/connect.php';
+<?php
+require_once __DIR__ . '/includes/connect_public.php';
 function get_client_ip() {
     $ipaddress = '';
     if (getenv('HTTP_CLIENT_IP'))
@@ -51,15 +51,16 @@ if ($role_id == 9)
         mysqli_query($con, "INSERT INTO `logins_detail_fr_mm_sm`
             (`user_id`, `created`) VALUES 
             ('$user_id', '$current_date')");
-              $_SESSION['ph_id'] = $user_id;
+              $_SESSION['fr_id'] = $user_id;
               $_SESSION['role_id'] = $role_id;
               $_SESSION['branch_id'] = $branch_id;
               $_SESSION['is_admin'] = $is_admin;
+              $_SESSION['is_incharge'] = $row_user['is_incharge'] ?? 0;
               $_SESSION['branch_name'] = $branch_name;
               $_SESSION['branch_address'] = $branch_address;
               $_SESSION['branch_phone'] = $branch_phone;
-              $_SESSION['ph_name'] = $user_name;
-             header('location: fr/dashboard.php');
+              $_SESSION['fr_name'] = $user_name;
+             header('Location: dashboard.php');
               mysqli_close($con);
               exit(0);               
         }          
