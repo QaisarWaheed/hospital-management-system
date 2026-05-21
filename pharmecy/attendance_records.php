@@ -1,97 +1,77 @@
-<?php include 'includes/connect.php'; ?>
-<?php include 'includes/head.php'; 
+<?php include 'includes/connect.php';
+
 $month = date('Y-m');
 $day = date('d');
 $br_id = $branch_id;
-$attendance_record_month = substr(date('Y-m-d H:i:s'),0,7);
-if(!isset($_SESSION['ph_id']))
-{
-    header('location: logout.php');
+$attendance_record_month = substr(date('Y-m-d H:i:s'), 0, 7);
+
+if (isset($_POST['save_break_records'])) {
+    $attendance_record_id = (int) $_POST['attendance_record_id'];
+    $insert = "INSERT INTO `attendance_break_records`
+    (`attendance_break_record_id`, `attendance_record_id`, `attendance_break_record_status`, `attendance_break_record_created_at`, `attendance_break_record_created_by`)
+    VALUES (NULL, '$attendance_record_id', '1', '$current_date', '$user_id')";
+    if (mysqli_query($con, $insert)) {
+        header('Location: attendance_records.php?msg=break_start');
+        exit;
+    }
+    exit;
 }
 
-if(isset($_POST['save_break_records']))
-{
-    $attendance_record_id = $_POST['attendance_record_id'];
-    $insert = "INSERT INTO `attendance_break_records`
-    (`attendance_break_record_id`, `attendance_record_id`, `attendance_break_record_status`, `attendance_break_record_created_at`, `attendance_break_record_created_by`) 
-    VALUES (NULL, '$attendance_record_id', '1', '$current_date', '$user_id')";
-    if(mysqli_query($con, $insert))
-    {
-        $insert;
-        header('location: attendance_records.php?msg=break_start');
+if (isset($_POST['save_records'])) {
+    $employee_id = $_POST['employee_id'] ?? '';
+    $attendance_record_title = $_POST['attendance_record_title'] ?? '1';
+    $attendance_record_remarks = $_POST['attendance_record_remarks'] ?? '';
+    if ($employee_id === '') {
+        header('Location: attendance_records.php?msg=error');
+        exit;
     }
-    else
-    {
-        echo $con->error;
-    }
-    exit(0);
-}
-elseif(isset($_POST['save_records']))
-{
-    if(isset($_POST['employee_id']) != ''){$employee_id = $_POST['employee_id'];}
-    if(isset($_POST['attendance_record_title']) != ''){$attendance_record_title = $_POST['attendance_record_title'];}
-    $attendance_record_remarks = $_POST['attendance_record_remarks'];
     $staff_time_in = get_staff_time_in($employee_id);
     $staff_time_out = get_staff_time_out($employee_id);
     $insert = "INSERT INTO `attendance_records`
-    (`attendance_record_id`, `attendance_record_month`, `attendance_record_date`, `employee_id`, `attendance_record_title`, `attendance_record_remarks`, `attendance_record_start_time`, `attendance_record_status`, `attendance_record_created`, `user_id`, `branch_id`, `staff_duty_in`, `staff_duty_out`) 
+    (`attendance_record_id`, `attendance_record_month`, `attendance_record_date`, `employee_id`, `attendance_record_title`, `attendance_record_remarks`, `attendance_record_start_time`, `attendance_record_status`, `attendance_record_created`, `user_id`, `branch_id`, `staff_duty_in`, `staff_duty_out`)
     VALUES
-    (NULL, '".substr(date('Y-m-d H:i:s'),0,7)."', '".substr(date('Y-m-d H:i:s'),8,2)."', '$employee_id', '$attendance_record_title', '$attendance_record_remarks', '".substr(date('Y-m-d H:i:s'),11)."', '1', '$current_date', '$user_id', '$branch_id', '$staff_time_in', '$staff_time_out')";
-    if(mysqli_query($con, $insert))
-    {
+    (NULL, '".substr(date('Y-m-d H:i:s'), 0, 7)."', '".substr(date('Y-m-d H:i:s'), 8, 2)."', '$employee_id', '$attendance_record_title', '$attendance_record_remarks', '".substr(date('Y-m-d H:i:s'), 11)."', '1', '$current_date', '$user_id', '$branch_id', '$staff_time_in', '$staff_time_out')";
+    if (mysqli_query($con, $insert)) {
         $attendance_record_id = mysqli_insert_id($con);
-        if($attendance_record_title == 2)
-        {        
-            $releaver_staff_id = $_POST['releaver_staff_id'];
+        if ($attendance_record_title == 2) {
+            $releaver_staff_id = $_POST['releaver_staff_id'] ?? 0;
             mysqli_query($con, "INSERT INTO `attendance_releaver_records`
             (`attendance_releaver_record_id`, `staff_id`, `releaver_staff_id`, `attendance_record_id`, `attendance_releaver_record_created_by`, `attendance_releaver_record_created_at`, `branch_id`)
             VALUES
-            (NULL, '$employee_id', '$releaver_staff_id', '$attendance_record_id', '$hr_id', '$current_date', '$br_id')");
+            (NULL, '$employee_id', '$releaver_staff_id', '$attendance_record_id', '$user_id', '$current_date', '$br_id')");
         }
+        header('Location: attendance_records.php?msg=in');
+        exit;
+    }
+    header('Location: attendance_records.php?msg=error');
+    exit;
+}
 
-        // $insert;
-        header('location: attendance_records.php?msg=in');
+if (isset($_POST['update_record'])) {
+    $attendance_record_id = (int) $_POST['attendance_record_id'];
+    $update = "UPDATE `attendance_records` SET `attendance_record_end_time` = '".substr(date('Y-m-d H:i:s'), 11)."', attendance_record_updated_at = '$current_date', attendance_record_updated_by = '$user_id' WHERE `attendance_record_id` = '$attendance_record_id' ";
+    if (mysqli_query($con, $update)) {
+        header('Location: attendance_records.php?msg=out');
+        exit;
     }
-    else
-    {
-        echo $con->error;
-    }
-    exit(0);
+    exit;
 }
-elseif(isset($_POST['update_record']))
-{
-    $attendance_record_id = $_POST['attendance_record_id'];
-    $update = "UPDATE `attendance_records` SET `attendance_record_end_time` = '".substr(date('Y-m-d H:i:s'),11)."', attendance_record_updated_at = '$current_date', attendance_record_updated_by = '$user_id' WHERE `attendance_record_id` = '$attendance_record_id' ";
-    if(mysqli_query($con, $update))
-    {
-        // echo $update;
-        header('location: attendance_records.php?msg=out');
-    }
-    else
-    {
-        echo $con->error;
-    }  
-    exit(0);
-}
-elseif(isset($_POST['update_break_record']))
-{
-    $attendance_record_id = $_POST['attendance_record_id'];
+
+if (isset($_POST['update_break_record'])) {
+    $attendance_record_id = (int) $_POST['attendance_record_id'];
     $update = "UPDATE `attendance_break_records` SET `attendance_break_record_status` = '2', attendance_break_record_updated_at = '$current_date', attendance_break_record_updated_by = '$user_id' WHERE `attendance_record_id` = '$attendance_record_id' AND attendance_break_record_status = '1' ";
-    if(mysqli_query($con, $update))
-    {
-        // echo $update;
-        header('location: attendance_records.php?msg=break_end');
+    if (mysqli_query($con, $update)) {
+        header('Location: attendance_records.php?msg=break_end');
+        exit;
     }
-    else
-    {
-        echo $con->error;
-    }  
-    exit(0);
+    exit;
 }
-elseif(isset($_POST['br_id']))
-{
+
+if (isset($_POST['br_id'])) {
     $br_id = $_POST['br_id'];
 }
+
+include 'includes/head.php';
 ?>
 	<title>Dashboard - <?php echo $company_trademark; ?></title>
 <script src="js/jquery.min.js"></script>
@@ -232,7 +212,6 @@ elseif(isset($_POST['br_id']))
   $('#select_item').selectize({
       sortField: 'text'
   });
-  $(".alert").alert();
 });
 </script>
 <script type="text/javascript">
@@ -240,7 +219,6 @@ elseif(isset($_POST['br_id']))
   $('#releaver_staff_id').selectize({
       sortField: 'text'
   });
-  $(".alert").alert();
 });
 </script>
 </body>
