@@ -1,23 +1,14 @@
-<?php include 'includes/connect.php'; ?>
-<?php include 'includes/head.php'; 
+<?php include 'includes/connect.php';
+
 function days_in_month($month_days, $year)
 {
     return $month_days == 2 ? ($year % 4 ? 28 : ($year % 100 ? 29 : ($year % 400 ? 28 : 29))) : (($month_days - 1) % 7 % 2 ? 30 : 31);
 }
 
-$br_id = $hr_branch_id;
-if(!isset($_SESSION['hr_id']))
-{
-    header('location: logout.php');
-}
-
-if(isset($_GET['br_id']))
-{
-    $br_id = $_GET['br_id'];
-}
-else
-{
-    $br_id = 0;
+if (isset($_GET['br_id'])) {
+    $br_id = (int) $_GET['br_id'];
+} else {
+    $br_id = (int) $hr_branch_id;
 }
 
 if(isset($_GET['month']) && $_GET['month'] != '')
@@ -33,11 +24,55 @@ else
     $month_days = date('m');
 }
 $days_in_month = days_in_month($month_days, $year);
+$month_filter = (isset($_GET['month']) && $_GET['month'] !== '') ? $_GET['month'] : $month;
+$month_sql = mysqli_real_escape_string($con, $month);
+$branch_filter_sql = " AND attendance_records.branch_id = '" . (int) $br_id . "' ";
+
+$staff_rows = array();
+$staff_sql = "SELECT DISTINCT staff.staff_id, staff.staff_name, designations.designation_title
+    FROM attendance_records
+    INNER JOIN staff ON attendance_records.employee_id = staff.staff_id
+    INNER JOIN designations ON staff.designation_id = designations.designation_id
+    WHERE attendance_records.attendance_record_month = '$month_sql' $branch_filter_sql
+    ORDER BY staff.staff_name ASC";
+$run_staff = mysqli_query($con, $staff_sql);
+if ($run_staff) {
+    while ($row = mysqli_fetch_assoc($run_staff)) {
+        $staff_rows[] = $row;
+    }
+}
+
+$attendance_by_staff = array();
+$attendance_sql = "SELECT employee_id, attendance_record_date,
+        CASE
+            WHEN attendance_record_title = '1' THEN 'P'
+            WHEN attendance_record_title = '2' THEN 'L'
+            WHEN attendance_record_title = '3' THEN 'A'
+            WHEN attendance_record_title = '4' THEN 'D'
+            ELSE ' '
+        END AS att_status
+    FROM attendance_records
+    WHERE attendance_record_month = '$month_sql' $branch_filter_sql
+    ORDER BY employee_id, attendance_record_date";
+$run_attendance_all = mysqli_query($con, $attendance_sql);
+if ($run_attendance_all) {
+    while ($row = mysqli_fetch_assoc($run_attendance_all)) {
+        $sid = (int) $row['employee_id'];
+        $day = (int) $row['attendance_record_date'];
+        if (!isset($attendance_by_staff[$sid])) {
+            $attendance_by_staff[$sid] = array();
+        }
+        if (!isset($attendance_by_staff[$sid][$day])) {
+            $attendance_by_staff[$sid][$day] = array();
+        }
+        $attendance_by_staff[$sid][$day][] = $row['att_status'];
+    }
+}
+
+$extra_duty_map = get_extra_staff_duty_map($month, $br_id);
 ?>
+<?php include 'includes/head.php'; ?>
 	<title>ATTENDANCE REGISTER <?php echo get_branch_name_by($br_id); ?> FEB-2025 ORDER BY STAFF - <?php echo $company_trademark; ?></title>
-<script src="js/jquery.min.js"></script>
-<script src="js/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
 <style>
     @media print {
        .noprint {
@@ -68,12 +103,12 @@ $days_in_month = days_in_month($month_days, $year);
 	                <td colspan = "3">
 	                    <form>
 	                        <input type = "hidden" name = "br_id" value = "<?php echo $br_id; ?>" />
-	                        <input onchange = "this.form.submit()" type = "month" name = "month" value = "<?php echo (isset($_GET['month']) == '') ? date('Y-m') : $_GET['month']; ?>" class = "form-control" />
+	                        <input onchange = "this.form.submit()" type = "month" name = "month" value = "<?php echo htmlspecialchars($month_filter, ENT_QUOTES, 'UTF-8'); ?>" class = "form-control" />
 	                    </form>
 	                </td>
 	                <td colspan = "4">
 	                    <form>
-	                        <input type = "hidden" name = "month" value = "<?php echo (isset($_GET['month']) == '') ? date('Y-m') : $_GET['month']; ?>" />
+	                        <input type = "hidden" name = "month" value = "<?php echo htmlspecialchars($month_filter, ENT_QUOTES, 'UTF-8'); ?>" />
 	                        <select name = "br_id" class = "form-control" onchange = "this.form.submit()">
 	                            <option value = "0">ORGANIZATION</option>
 	                            <?php
@@ -116,65 +151,58 @@ $days_in_month = days_in_month($month_days, $year);
 	        </thead>
 	        <tbody>
 	        <?php
-	        $s = 0;
-	        $attendance = "SELECT distinct staff.staff_id, staff.staff_name, designations.designation_title FROM `attendance_records` INNER JOIN staff ON attendance_records.employee_id = staff.staff_id INNER JOIN designations ON staff.designation_id = designations.designation_id WHERE attendance_records.branch_id = '$br_id' AND `attendance_record_month` = '$month' ORDER BY `staff`.`staff_name` ASC ";
-	        $run_attendance = mysqli_query($con, $attendance);
-	        if(mysqli_num_rows($run_attendance) > 0)
-	        {
-	            while($row_attendance = mysqli_fetch_array($run_attendance))
-	            {
+	        if (count($staff_rows) > 0) {
+	            $s = 0;
+	            foreach ($staff_rows as $row_attendance) {
 	                $s++;
                     $p = 0;
                     $l = 0;
                     $a = 0;
                     $d = 0;
-	                $staff_id = $row_attendance['staff_id'];
+	                $staff_id = (int) $row_attendance['staff_id'];
+	                $by_day = $attendance_by_staff[$staff_id] ?? array();
+	                $extra = $extra_duty_map[$staff_id] ?? 0;
 	            ?>
 	           <tr>
 	               <td><?php echo $s; ?></td>
-	               <td><?php echo $row_attendance['staff_id']; ?></td>
-	               <td><?php echo $row_attendance['staff_name']; ?></td>
-	               <td><?php echo $row_attendance['designation_title']; ?></td>
-	               <td><?php echo $days_in_month; ?></td>	               
+	               <td><?php echo (int) $row_attendance['staff_id']; ?></td>
+	               <td><?php echo htmlspecialchars($row_attendance['staff_name'], ENT_QUOTES, 'UTF-8'); ?></td>
+	               <td><?php echo htmlspecialchars($row_attendance['designation_title'], ENT_QUOTES, 'UTF-8'); ?></td>
+	               <td><?php echo $days_in_month; ?></td>
 	               <?php
-                    for ($day = 1; $day <= $days_in_month; $day++) 
-                    {
-                        $select = "SELECT CASE WHEN attendance_records.attendance_record_title = '1' THEN 'P' WHEN attendance_records.attendance_record_title = '2' THEN 'L' WHEN attendance_records.attendance_record_title = '3' THEN 'A' WHEN attendance_records.attendance_record_title = '4' THEN 'D' ELSE ' ' END AS ATT_STATUS FROM `attendance_records` WHERE `employee_id` = '$staff_id' AND `attendance_record_month` = '$month' AND attendance_record_date = '$day' ";
-            	        $run = mysqli_query($con, $select);
+                    for ($day = 1; $day <= $days_in_month; $day++) {
                         echo '<td>';
-                        $loc = 1;
-            	        if(mysqli_num_rows($run) > 0)
-            	        {
-            	            while($row = mysqli_fetch_array($run))
-            	            {
-                    	            $attendacne_status = $row['0'];
-            	                if($loc == 1 || $attendacne_msg != $attendacne_status)
-            	                {
-                    	            if($attendacne_status == 'P'){$p = $p +1;}
-                    	            elseif($attendacne_status == 'L'){$l = $l +1;}
-                    	            elseif($attendacne_status == 'A'){$a = $a +1;}
-                    	            elseif($attendacne_status == 'D'){$d = $d +1;}
-    	                            $loc = 0;
-    	                            $attendacne_msg = $attendacne_status;
-            	                }
-    	                            echo $attendacne_status;
-            	            }
-            	        }
-            	        else
-            	        {
-	                            echo ' ';
-            	        }      
+                        if (!empty($by_day[$day])) {
+                            $loc = 1;
+                            $attendacne_msg = '';
+                            foreach ($by_day[$day] as $attendacne_status) {
+                                if ($loc == 1 || $attendacne_msg != $attendacne_status) {
+                                    if ($attendacne_status == 'P') {
+                                        $p++;
+                                    } elseif ($attendacne_status == 'L') {
+                                        $l++;
+                                    } elseif ($attendacne_status == 'A') {
+                                        $a++;
+                                    } elseif ($attendacne_status == 'D') {
+                                        $d++;
+                                    }
+                                    $loc = 0;
+                                    $attendacne_msg = $attendacne_status;
+                                }
+                                echo $attendacne_status;
+                            }
+                        } else {
+                            echo ' ';
+                        }
                         echo '</td>';
-                    }?>
+                    } ?>
                     <td><?php echo $p; ?></td>
                     <td><?php echo $l; ?></td>
                     <td><?php echo $a; ?></td>
-                    <td><?php echo $d+get_extra_staff_duty($staff_id, $month); ?></td>
+                    <td><?php echo $d + $extra; ?></td>
 	           </tr>
 	   <?php    }
-	        }
-	        else
-	        {
+	        } else {
 	            echo '<tr><th colspan = "8">NO DATA FOUND</th></tr>';
 	        }
 	        ?>
@@ -182,8 +210,6 @@ $days_in_month = days_in_month($month_days, $year);
 	    </table>
 	</div>
 </div>
-<script src="js/bootstrap.bundle.min.js"></script>
-<script src="js/bootstrap.js"></script>
 </body>
 </html>
 <?php mysqli_close($con); ?>

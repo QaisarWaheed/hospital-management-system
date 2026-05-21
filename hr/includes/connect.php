@@ -32,18 +32,32 @@ $con = ycdo_db_connect();
 
 include 'company_info.php';
 
-function get_extra_staff_duty($staff_id, $month)
+function get_extra_staff_duty($staff_id, $month, $branch_id = 0)
 {
-    $quanity = 0;
-    $run = mysqli_query($GLOBALS['con'], "SELECT COUNT(`releaver_staff_id`) FROM `attendance_releaver_records` WHERE `releaver_staff_id` = '$staff_id' AND `attendance_record_id` IN (SELECT attendance_records.attendance_record_id FROM attendance_records WHERE attendance_records.attendance_record_month LIKE '$month')");
-    if (mysqli_num_rows($run) == 1) 
-    {
-        while ($row = mysqli_fetch_array($run)) 
-        {
-            $quanity = $row['0'];
-        }    
-    }    
-    return $quanity;
+    $map = get_extra_staff_duty_map($month, $branch_id);
+    return $map[(int) $staff_id] ?? 0;
+}
+
+/** @return array<int, int> staff_id => extra duty count */
+function get_extra_staff_duty_map($month, $branch_id = 0)
+{
+    $con = $GLOBALS['con'];
+    $month_esc = mysqli_real_escape_string($con, $month);
+    $branch_id = (int) $branch_id;
+    $sql = "SELECT arr.releaver_staff_id, COUNT(*) AS extra_cnt
+        FROM attendance_releaver_records arr
+        INNER JOIN attendance_records ar ON arr.attendance_record_id = ar.attendance_record_id
+        WHERE ar.attendance_record_month = '$month_esc'
+        AND ar.branch_id = '$branch_id'
+        GROUP BY arr.releaver_staff_id";
+    $map = array();
+    $run = mysqli_query($con, $sql);
+    if ($run) {
+        while ($row = mysqli_fetch_assoc($run)) {
+            $map[(int) $row['releaver_staff_id']] = (int) $row['extra_cnt'];
+        }
+    }
+    return $map;
 }
 
 function get_staff_time_in($staff_id)

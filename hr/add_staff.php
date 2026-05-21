@@ -245,5 +245,4 @@ if (isset($_POST['save']))
 
 </body>
 </html>
-<script type="text/javascript" src="js/bootstrap.min.js"></script>
 <?php mysqli_close($con); ?>
