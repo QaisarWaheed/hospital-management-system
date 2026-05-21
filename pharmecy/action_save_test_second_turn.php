@@ -30,5 +30,3 @@ if(substr($current_date,0,10) != substr($login_expire_at,0,10))
 }
  
 require_once __DIR__ . '/../includes/db_connect.php';
-echo "SANAULLAH";
-?>

@@ -1,16 +1,8 @@
-<?php include 'includes/connect.php'; ?>
-<?php include 'includes/head.php'; 
-if(!isset($_SESSION['ao_id']))
-{
-    header('location: logout.php');
-}
+<?php include 'includes/connect.php';
+
 if(isset($_GET['audit_lab_store_form_id']) && $_GET['audit_lab_store_form_id'] != '')
 {
     $audit_lab_store_form_id = $_GET['audit_lab_store_form_id'];
-}
-else
-{
-    // header('location: logout.php');
 }
 
 if(isset($_GET['clear_id']))
@@ -26,9 +18,11 @@ if(isset($_GET['clear_id']))
         $update_item = "UPDATE `items` SET `quantity` = `quantity`+$quantity WHERE `id` = '$item_id' ";
         mysqli_query($con, $update_item);
     }
-    header('location: audit_lab_store_clear.php?audit_lab_store_form_id='.$audit_lab_store_form_id);
-    exit(0);
+    header('Location: audit_lab_store_clear.php?audit_lab_store_form_id='.$audit_lab_store_form_id);
+    exit;
 }
+
+include 'includes/head.php';
 ?>
 <style>
 @media print 

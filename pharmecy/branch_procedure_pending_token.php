@@ -1,6 +1,5 @@
 <?php 
 include 'includes/connect.php'; 
-include 'includes/head.php'; 
 
 if (isset($_GET['add_token']) && $_GET['enter_token'] != '' && $_GET['add_token']) 
 {
@@ -37,6 +36,8 @@ if (isset($_GET['add_token']) && $_GET['enter_token'] != '' && $_GET['add_token'
 	$error = "ENTER A VALID TOKEN NO";
 	}
 }
+
+include 'includes/head.php'; 
 ?>
 	<title>Branch Procedure Token - <?php echo $company_trademark; ?></title>
 

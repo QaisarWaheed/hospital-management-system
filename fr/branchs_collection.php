@@ -1,13 +1,9 @@
-<?php include 'includes/connect.php'; ?>
-<?php include 'includes/head.php'; 
-if($_SESSION['fr_id'] != 1 && $_SESSION['fr_id'] != 350)
-{
-    header('location: logout.php');
+<?php include 'includes/connect.php';
+if ($fr_id != 1 && $fr_id != 350) {
+    header('Location: logout.php');
+    exit;
 }
-elseif(!isset($_SESSION['fr_id']))
-{
-    header('location: logout.php');
-}
+include 'includes/head.php';
 ?>
 <style>
 @page 

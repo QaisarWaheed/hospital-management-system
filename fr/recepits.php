@@ -1,9 +1,4 @@
-<?php include 'includes/connect.php'; ?>
-<?php include 'includes/head.php'; 
-if(!isset($_SESSION['fr_id']))
-{
-    header('location: logout.php');
-}
+<?php include 'includes/connect.php';
 
 if(isset($_POST['show_book_record']) && $_POST['book_no'] != '')
 {
@@ -34,16 +29,14 @@ elseif(isset($_POST['save_book']) && $_POST['book_no'] != '')
         } 
         if(mysqli_query($con, substr($insert2,0,-1)))
         {
-            header('location: recepits.php');   
-        }
-        else
-        {
-            echo $insert2. "<br>";
-            echo $con->error;
+            header('Location: recepits.php');
+            exit;
         }
     }
-    exit(0);
+    exit;
 }
+
+include 'includes/head.php';
 ?>
 	<title>Dashboard - <?php echo $company_trademark; ?></title>
 </head>

@@ -42,13 +42,8 @@ if (isset($_POST['save'])) {
 		if (is_rehabilitation_branch($branch_id)) {
 			save_patient_fingerprints($con, $id, $fp_left, $fp_right);
 		}
-    	header('location: print_tokan.php?tokan_no='.$tokan_no);
-?>
-<script type="text/javascript">
-// 	alert("Success: Data save successfullly");
-// 	window.open("print_tokan.php?tokan_no=<?php echo $tokan_no; ?>", "_blank", "toolbar=no,scrollbars=no,resizable=no,top=500,left=500,width=400,height=400,status=no");
-</script>
-<?php		
+    	header('Location: print_tokan.php?tokan_no=' . (int) $tokan_no);
+		exit;
 	}
 }
 ?>

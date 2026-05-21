@@ -1,9 +1,10 @@
-<?php include 'includes/connect.php'; ?>
-<?php include 'includes/head.php'; 
+<?php include 'includes/connect.php';
 if(!isset($_SESSION['fr_id']))
 {
-    header('location: logout.php');
+    header('Location: logout.php');
+    exit;
 }
+include 'includes/head.php';
 ?>
 <style>
 @page 

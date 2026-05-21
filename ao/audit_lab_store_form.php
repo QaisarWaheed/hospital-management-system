@@ -1,9 +1,5 @@
 <?php include 'includes/connect.php'; ?>
-<?php include 'includes/head.php'; 
-if(!isset($_SESSION['ao_id']))
-{
-    header('location: logout.php');
-}
+<?php include 'includes/head.php';
 if(isset($_POST['audit_lab_store_form_id']) && $_POST['audit_lab_store_form_id'] != '')
 {
     $audit_lab_store_form_id = $_POST['audit_lab_store_form_id'];

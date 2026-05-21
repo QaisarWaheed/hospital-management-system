@@ -1,11 +1,8 @@
 <?php 
-    include 'includes/connect.php'; 
-    include 'includes/head.php'; 
+include 'includes/connect.php';
+
 if(isset($_GET['save_staff_salary_details']) && $_GET['save_staff_salary_details'] != '')
 {
-    echo '<pre>';
-    print_r($_GET);
-    echo '</pre>';
     //OTHER DATA
     $staff_id = $_GET['staff_id'];
     $payroll_month = $_GET['payroll_month'];
@@ -31,18 +28,19 @@ if(isset($_GET['save_staff_salary_details']) && $_GET['save_staff_salary_details
     $health = $_GET['health'];
     $rashan_deduction = $_GET['rashan_deduction'];
     $other_deductions = $_GET['other_deductions'];
-    echo $insert = "INSERT INTO `staff_salaries`
+    $insert = "INSERT INTO `staff_salaries`
     (`staff_salary_id`, `staff_id`, `payroll_month`, `staff_salary`, `staff_extra_days`, `reward_on_progess`, `rewards`, `rashan_allowance`, `petrol`, `mobile_load`, `previous_arrears`, `other_allownaces`, `absence`, `less_hours`, `advance`, `pending_medicines`, `kitchen_expense`, `fine`, `health`, `rashan_deduction`, `other_deductions`, `staff_salary_created_by`, `staff_salary_created_at`, `staff_salary_status`) 
     VALUES
-    (NULL, '$staff_id', '$payroll_month', '$staff_salary', '$staff_extra_days', '$reward_on_progess', '$rewards', '$rashan_allowance', '$petrol', '$mobile_load', '$previous_arrears', '$other_allownaces', '$absence', '$less_hours', '$advance', '$pending_medicines', '$kitchen_expense', '$fine', '$health', '$rashan_deduction', '$other_deductions', '$fr_id', '$current_date', '1')";    if(mysqli_query($con, $insert))
+    (NULL, '$staff_id', '$payroll_month', '$staff_salary', '$staff_extra_days', '$reward_on_progess', '$rewards', '$rashan_allowance', '$petrol', '$mobile_load', '$previous_arrears', '$other_allownaces', '$absence', '$less_hours', '$advance', '$pending_medicines', '$kitchen_expense', '$fine', '$health', '$rashan_deduction', '$other_deductions', '$fr_id', '$current_date', '1')";
+    if(mysqli_query($con, $insert))
     {
-        header('location: generate_salary_slip.php?msg=success');
+        header('Location: generate_salary_slip.php?msg=success');
+        exit;
     }
-    else
-    {
-        echo $con-error;
-    }
+    exit;
 }
+
+include 'includes/head.php';
     
 if(isset($_GET['generate_salary_payroll_month']))
 {

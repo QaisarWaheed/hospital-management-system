@@ -1,9 +1,5 @@
-<?php include 'includes/connect.php'; ?>
-<?php include 'includes/head.php'; 
-if(!isset($_SESSION['ao_id']))
-{
-    header('location: logout.php');
-}
+<?php include 'includes/connect.php';
+
 if(isset($_GET['audit_store_form_id']) && $_GET['audit_store_form_id'] != '')
 {
     $audit_store_form_id = $_GET['audit_store_form_id'];
@@ -13,14 +9,15 @@ if(isset($_GET['audit_store_form_id']) && $_GET['audit_store_form_id'] != '')
         $run_check = mysqli_query($con, $select_check);
         if(mysqli_num_rows($run_check)!=1)
         {
-            header('location: dashboard.php');
-            exit(0);
+            header('Location: dashboard.php');
+            exit;
         }
     }
 }
 else
 {
-    header('location: logout.php');
+    header('Location: logout.php');
+    exit;
 }
 if(isset($_POST['manual_stock']) && $_POST['manual_stock'] != '')
 {
@@ -37,9 +34,11 @@ if(isset($_POST['manual_stock']) && $_POST['manual_stock'] != '')
         $update = "UPDATE `audit_store_detail` SET `manual_stock`= '$manual_stock',`computer_stock`= '$computer_stock',`user_id`= '$user_id',`manual_tries`= `manual_tries`+1, audit_store_detail_status = '2' WHERE `audit_store_detail_id` = '$audit_store_detail_id' ";
     }
     mysqli_query($con, $update);
-    header("location: audit_store_form.php?audit_store_form_id=".$audit_store_form_id."&#show".$audit_store_detail_id);
-    exit(0);
+    header('Location: audit_store_form.php?audit_store_form_id='.$audit_store_form_id.'#show'.$audit_store_detail_id);
+    exit;
 }
+
+include 'includes/head.php';
 ?>
 	<title>AUDIT store FORM - <?php echo $company_trademark; ?></title>
 <style>

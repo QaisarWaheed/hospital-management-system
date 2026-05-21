@@ -27,8 +27,8 @@ if (isset($_GET['save']) && $_GET['save'] != '')
     }
     else
     {
-        echo $con->error;
-        header('location: dashboard.php');
+        echo '<script>alert("Save failed.");location.replace("dashboard.php");</script>';
+        exit;
     }
 ?>
 <style>

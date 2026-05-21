@@ -1,11 +1,8 @@
-<?php include 'includes/connect.php'; ?>
-<?php include 'includes/head.php'; 
-if($user_id == 1 || ($user_id >= 150 && $user_id <= 159) )
+<?php include 'includes/connect.php';
+if($user_id != 1 && !($user_id >= 150 && $user_id <= 159))
 {
-}
-else
-{
-    header('location: logout.php');
+    header('Location: logout.php');
+    exit;
 }
 if(isset($_POST['return_token']) && isset($_POST['token_no']) && $_POST['token_no'] != '')
 {
@@ -17,7 +14,7 @@ if(isset($_POST['return_token']) && isset($_POST['token_no']) && $_POST['token_n
     $query = "UPDATE `tokans` SET `status`= '3' WHERE `id` = '$token_no' AND branch_id = '$branch_id' AND `status`= '1' ";
     if(mysqli_query($con, $query))
     {
-        echo $select = "SELECT * FROM item_by_doctor WHERE `tokan_no` = '$token_no' ";
+        $select = "SELECT * FROM item_by_doctor WHERE `tokan_no` = '$token_no' ";
         $run = mysqli_query($con, $select);
         if(mysqli_num_rows($run) > 0)
         {
@@ -38,19 +35,16 @@ if(isset($_POST['return_token']) && isset($_POST['token_no']) && $_POST['token_n
                 $item_id = $row['item_id'];
                 $branch_item_quantity = get_branch_item_quantity_from_item_id($item_id);
                 $update_quantity = $branch_item_quantity - $quantity;
-                echo $update = "UPDATE `item_register_to_branches` SET `quantity` = '$update_quantity' WHERE `id` = '$item_id' ";
-                // echo $update."</br>";
-                $run_update = mysqli_query($con, $update);
+                $update = "UPDATE `item_register_to_branches` SET `quantity` = '$update_quantity' WHERE `id` = '$item_id' ";
+                mysqli_query($con, $update);
             }
         }  
     }
-    else
-    {
-        echo $con->error;
-    }
-    header('location: return_token_full.php');
-    exit(0);
+    header('Location: return_token_full.php?msg=returned');
+    exit;
 }
+
+include 'includes/head.php';
 ?>
 	<title>Dashboard - <?php echo $company_trademark; ?></title>
 </head>

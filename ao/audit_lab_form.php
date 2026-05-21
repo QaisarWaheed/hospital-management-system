@@ -1,9 +1,5 @@
-<?php include 'includes/connect.php'; ?>
-<?php include 'includes/head.php'; 
-if(!isset($_SESSION['ao_id']))
-{
-    header('location: logout.php');
-}
+<?php include 'includes/connect.php';
+
 if(isset($_GET['audit_id']) && $_GET['audit_id'] != '')
 {
     $audit_id = $_GET['audit_id'];
@@ -11,7 +7,8 @@ if(isset($_GET['audit_id']) && $_GET['audit_id'] != '')
 }
 else
 {
-    header('location: logout.php');
+    header('Location: logout.php');
+    exit;
 }
 if(isset($_POST['manual_quantity']) && $_POST['manual_quantity'] != '')
 {
@@ -20,12 +17,13 @@ if(isset($_POST['manual_quantity']) && $_POST['manual_quantity'] != '')
     $tries = $_POST['tries'] + 1;
     $computer_quantity = $_POST['computer_quantity'];
     $manual_quantity = $_POST['manual_quantity'];
-    echo $update = "UPDATE `audit_lab_detail` SET `manual_quantity`= '$manual_quantity',`computer_quantity`= '$computer_quantity',`audit_lab_detail_update_by`= '$user_id',`audit_lab_detail_tries`= '$tries' WHERE `audit_lab_detail_id` = '$branch_form_id' ";
-    // echo $update;
+    $update = "UPDATE `audit_lab_detail` SET `manual_quantity`= '$manual_quantity',`computer_quantity`= '$computer_quantity',`audit_lab_detail_update_by`= '$user_id',`audit_lab_detail_tries`= '$tries' WHERE `audit_lab_detail_id` = '$branch_form_id' ";
     mysqli_query($con, $update);
-    header("location: audit_lab_form.php?audit_id=".$audit_id."&br_id=".$br_id."&#show".$branch_form_id);
-    exit(0);
+    header('Location: audit_lab_form.php?audit_id='.$audit_id.'&br_id='.$br_id.'#show'.$branch_form_id);
+    exit;
 }
+
+include 'includes/head.php';
 ?>
 	<title>LAB AUDIT FORM - <?php echo $company_trademark; ?></title>
 <style>

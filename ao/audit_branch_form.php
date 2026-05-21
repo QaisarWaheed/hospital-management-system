@@ -1,9 +1,5 @@
-<?php include 'includes/connect.php'; ?>
-<?php include 'includes/head.php'; 
-if(!isset($_SESSION['ao_id']))
-{
-    header('location: logout.php');
-}
+<?php include 'includes/connect.php';
+
 if(isset($_GET['audit_id']) && $_GET['audit_id'] != '')
 {
     $audit_id = $_GET['audit_id'];
@@ -14,14 +10,15 @@ if(isset($_GET['audit_id']) && $_GET['audit_id'] != '')
         $run_check = mysqli_query($con, $select_check);
         if(mysqli_num_rows($run_check)!=1)
         {
-            header('location: dashboard.php');
-            exit(0);
+            header('Location: dashboard.php');
+            exit;
         }
     }
 }
 else
 {
-    header('location: logout.php');
+    header('Location: logout.php');
+    exit;
 }
 if(isset($_POST['manual_quantity']) && $_POST['manual_quantity'] != '')
 {
@@ -31,11 +28,12 @@ if(isset($_POST['manual_quantity']) && $_POST['manual_quantity'] != '')
     $computer_quantity = $_POST['computer_quantity'];
     $manual_quantity = $_POST['manual_quantity'];
     $update = "UPDATE `audit_branch_detail` SET `manual_quantity`= '$manual_quantity',`computer_quantity`= '$computer_quantity',`user_id`= '$user_id',`tries`= '$tries' WHERE `id` = '$branch_form_id' ";
-    // echo $update;
     mysqli_query($con, $update);
-    header("location: audit_branch_form.php?audit_id=".$audit_id."&br_id=".$br_id."&#show".$branch_form_id);
-    exit(0);
+    header('Location: audit_branch_form.php?audit_id='.$audit_id.'&br_id='.$br_id.'#show'.$branch_form_id);
+    exit;
 }
+
+include 'includes/head.php';
 ?>
 	<title>AUDIT BRANCH FORM - <?php echo $company_trademark; ?></title>
 <style>

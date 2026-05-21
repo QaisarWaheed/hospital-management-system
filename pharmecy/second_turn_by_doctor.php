@@ -88,20 +88,12 @@ if (isset($_GET['save']) && $_GET['save'] != '')
 					('$tokan_no','$reg_item_id', '$dose', '$feed', '$days', '$user_id','$branch_id', '$fix_dose', '$current_date', '$doctor_id', '2', '$purchase', '$general', '$member', '$poor', '$category_id', '$tokan_type', '$sale_price', '$sale_quantity')");
     				mysqli_query($con, "DELETE FROM `items_by_doctor` WHERE id = '$del_record_id' AND user_id = '$user_id' ");
 				}
-				mysqli_query($con, "DELETE FROM `items_by_doctor` WHERE branch_id = '$branch_id' AND user_id = '$user_id' ");				
+				mysqli_query($con, "DELETE FROM `items_by_doctor` WHERE branch_id = '$branch_id' AND user_id = '$user_id' ");
+				header('Location: print_medicine_slip.php?tokan_no=' . (int) $tokan_no);
+				exit;
 			}
-?>
-<style>
-.greenText{ background-color:green; }
-.blueText{ background-color:blue; }
-.redText{ background-color:red; }
-</style>
-<script>
-//   window.open("print_medicine_slip.php?tokan_no=<?php echo $tokan_no; ?>", "_blank", "toolbar=no,scrollbars=no,resizable=no,top=500,left=500,width=400,height=400,status=no");
-//   location.replace("dashboard.php");
-</script>
-<?php
-    header('location: print_medicine_slip.php?tokan_no='.$tokan_no);
+			echo '<script>alert("Token could not be saved. Please try again.");history.back();</script>';
+			exit;
 }
 
 if (isset($_GET['save_test'])) 

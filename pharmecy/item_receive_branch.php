@@ -1,6 +1,5 @@
 <?php 
 include 'includes/connect.php'; 
-include 'includes/head.php'; 
 
 if (isset($_POST['receive_quantity'])) 
 {
@@ -29,16 +28,14 @@ if (isset($_POST['receive_quantity']))
 	else
 	{		
 		mysqli_query($con, "UPDATE item_register_branchs_by_sm SET `attempts` = `attempts`+1 WHERE branch_item_id = '$branch_item_id' AND status = '1' ");
-	?>
-	<script>
-		alert('Not Receive Medicine');
-		location.replace("item_receive_branch.php");
-	</script>
-	<?php
+		header('Location: item_receive_branch.php?msg=not-received');
+		exit;
 	}
-	header('location: item_receive_branch.php');
-	exit(0);
+	header('Location: item_receive_branch.php?msg=received');
+	exit;
 }
+
+include 'includes/head.php'; 
 ?>
 	<title>Receive Items - <?php echo $company_trademark; ?></title>
 </head>

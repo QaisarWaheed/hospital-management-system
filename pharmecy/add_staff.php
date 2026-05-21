@@ -2,7 +2,8 @@
     include 'includes/connect.php'; 
     if($is_admin != 2)
     {
-        header('location: logout.php'); 
+        header('Location: logout.php');
+        exit;
     }
 if (isset($_POST['save'])) 
 {
@@ -37,17 +38,11 @@ if (isset($_POST['save']))
 	if ($run) 
 	{	
 	    $staff_id = mysqli_insert_id($con);
-	    header('location: print_staff.php?staff_id='.$staff_id);
+	    header('Location: print_staff.php?staff_id=' . (int) $staff_id);
+	    exit;
 	}
-	else
-	{	
-		 echo  $con->error;
-		 echo '
-			 <script> 
-				location.replace("add_staff.php");
-			 </script>';
-	}
-	exit(0);
+	echo '<script>alert("Staff could not be saved.");location.replace("add_staff.php");</script>';
+	exit;
 }
 ?>
 <?php include 'includes/head.php'; ?>

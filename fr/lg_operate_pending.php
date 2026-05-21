@@ -1,9 +1,5 @@
 <?php include 'includes/connect.php'; ?>
-<?php include 'includes/head.php'; 
-if(!isset($_SESSION['fr_id']))
-{
-    header('location: logout.php');
-}
+<?php include 'includes/head.php';
 if(isset($_GET['br_id']) && $_GET['br_id'] != '')
 {
     $br_id = $_GET['br_id'];

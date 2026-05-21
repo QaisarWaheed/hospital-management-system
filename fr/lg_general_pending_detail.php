@@ -1,11 +1,7 @@
-<?php include 'includes/connect.php'; ?>
-<?php include 'includes/head.php'; 
+<?php include 'includes/connect.php';
 $br_id = $branch_id;
 $from_date = date('Y-m-d');
-if(!isset($_SESSION['fr_id']))
-{
-    header('location: logout.php');
-}
+include 'includes/head.php';
 ?>
 <style>
 @page 

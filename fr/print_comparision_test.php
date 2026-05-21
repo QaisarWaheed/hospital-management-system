@@ -1,19 +1,11 @@
-<?php include 'includes/connect.php'; ?>
-<?php include 'includes/head.php'; 
-if(isset($_GET['s']) && isset($_GET['e']))
-{
-    $first_month = $_GET['s'];
-    $second_month = $_GET['e'];
+<?php include 'includes/connect.php';
+if (!isset($_GET['s'], $_GET['e'])) {
+    header('Location: logout.php');
+    exit;
 }
-else
-{
-    header('location: logout.php');
-}
-
-if(!isset($_SESSION['fr_id']))
-{
-    header('location: logout.php');
-}
+$first_month = $_GET['s'];
+$second_month = $_GET['e'];
+include 'includes/head.php';
 ?>
 	<title>COMPARISION ALL BRANCHES - <?php echo $company_trademark; ?></title>
 </head>

@@ -1,10 +1,5 @@
 <?php include 'includes/connect.php'; ?>
-<?php include 'includes/head.php'; 
-if (empty($_SESSION['fr_id'])) {
-    header('Location: logout.php');
-    exit;
-}
-?>
+<?php include 'includes/head.php'; ?>
 	<title>Dashboard - <?php echo $company_trademark; ?></title>
 </head>
 

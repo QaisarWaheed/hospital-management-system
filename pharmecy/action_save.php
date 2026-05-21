@@ -125,26 +125,16 @@ if($count_item >= 1)
     				mysqli_query($con, "DELETE FROM `items_by_doctor` WHERE id = '$del_record_id' AND user_id = '$user_id' ");
 				}
 				// mysqli_query($con, "DELETE FROM `items_by_doctor` WHERE branch_id = '$branch_id' AND user_id = '$user_id' ");
+				header('Location: print_medicine_slip.php?tokan_no=' . (int) $tokan_no);
+				exit;
 			}
-?>
-<style>
-.greenText{ background-color:green; }
-.blueText{ background-color:blue; }
-.redText{ background-color:red; }
-</style>
-<script>
-//   window.open("print_medicine_slip.php?tokan_no=<?php echo $tokan_no; ?>", "_blank", "toolbar=no,scrollbars=no,resizable=no,top=500,left=500,width=400,height=400,status=no");
-//   location.replace("dashboard.php");
-</script>
-<?php
-    header('location: print_medicine_slip.php?tokan_no='.$tokan_no);
-    exit(0);
+			echo '<script>alert("Token could not be saved. Please try again.");history.back();</script>';
+			exit;
 }
 else
 {
-    echo "INTERNET ERROR";
-    exit(0);
+	echo '<script>alert("Add at least one medicine or test before saving the token.");history.back();</script>';
+	exit;
 }
 }
 mysqli_close($con);
-?>
