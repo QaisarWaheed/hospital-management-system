@@ -1,67 +1,10 @@
 <?php
 include 'includes/connect.php';
-
-$role_title = '';
-$roles = "SELECT * FROM roles WHERE id IN (SELECT role_id FROM users WHERE id = '$hr_id') ";
-$run_roles = mysqli_query($con, $roles);
-if (mysqli_num_rows($run_roles) == 1) {
-    while ($row_role = mysqli_fetch_array($run_roles)) {
-        $role_title = $row_role['title'];
-    }
-}
-
-$print_popup_script = '';
-if (isset($_POST['date']) && $_POST['date'] !== '') {
-    $date = $_POST['date'];
-    $br_id = (int) $_POST['br_id'];
-    $print_url = '../bk/print_progess_report_daily.php?date=' . urlencode($date) . '&br_id=' . $br_id;
-    $print_popup_script = '<script>window.open(' . json_encode($print_url) . ', "PROGRESS REPORT", "width=3000,height=3000");</script>';
-}
-?>
-<?php include 'includes/head.php'; ?>
-<?php echo $print_popup_script; ?>
-	<title>DAILY PROGRESS - <?php echo $company_trademark; ?></title>
-<script src="js/jquery.min.js"></script>
-<script src="js/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
-
-</head>
-
-<body class="background_image">
-
-<div class="row" style="margin: 0px;">
-	<div class="col-md-12" style="text-align: center;background: lightgreen;"><label><h1><?php echo $company_name; ?> </h1></label></div>
-	<div class="col-md-3 background_whitesmoke">	<?php include 'left_navigation.php'; ?>	
-    	<h3 style="margin-top: 350px;text-align: center;"><?php echo $_SESSION['hr_name'];if($_SESSION['is_incharge'] == 2){ echo " Incharge ";} ?>(<?php echo $role_title; ?>)</h3>
-    </div>
-    <div class = "col-md-9">
-        <form METHOD = "POST" class = "container">
-        <div class = "row">
-            <div class = "col">
-                <label>BRANCH</label>
-                <select name = "br_id" class = "form-control" required>
-<?php
-$branch = "SELECT * FROM branchs WHERE id > '1' AND status = '1' ORDER BY `address` ASC ";
-$run_branch = mysqli_query($con, $branch);
-if (mysqli_num_rows($run_branch) > 0) 
-{
-    while ($row_branch = mysqli_fetch_array($run_branch)) {
-        echo '<option value="'.$row_branch['id'].'">'.$row_branch['address'].'</option>';
-    }
-}
-?>
-                    <!--<option value = "<?php echo $hr_branch_id; ?>"><?php echo $hr_branch_address; ?></option>-->
-                </select>
-            </div>
-            <div class = "col">
-                <label>DATE</label>
-                <input required type = "date" value = "<?php echo date('Y-m-d'); ?>" name = "date" id = "date" class = "form-control" />
-                <input type = "submit" name = "progress" value = "PROGRESS" class = "btn btn-sm btn-info" />
-                <input type = "reset" name = "reset" value = "CLEAR" class = "btn btn-sm btn-danger" />
-            </div>
-        </div>
-        </form>
-    </div>
-</div>
-</body>
-</html>
+$progress_page_title = 'DAILY PROGRESS';
+$progress_bootstrap_opts = array(
+    'print' => '../bk/print_progess_report_daily.php',
+    'window_title' => 'PROGRESS REPORT',
+);
+$progress_date_input = 'date';
+$progress_branch_mode = 'exclude_first';
+include 'includes/progress_report_form.php';

@@ -1,155 +1,113 @@
-<?php 
-include 'includes/connect.php'; 
-if(isset($_GET['date']))
-{
-    $date = $_GET['date'];
-    $br_id = $_GET['br_id'];
-}
-elseif(isset($_POST['date']))
-{
-    $date = $_POST['date'];
-    $br_id = $_POST['br_id'];
-}
-else
-{
-    exit(0);
+<?php
+include 'includes/connect.php';
+require_once __DIR__ . '/includes/progress_report_params.php';
+
+$req = progress_report_resolve_request($con);
+$date = $req['date'];
+$br_id = $req['br_id'];
+$like = $req['like'];
+
+$opds = progress_opd_count_by_doctor($con, $br_id, $like);
+$usgs = progress_item_count_by_doctor($con, $br_id, $like, '476, 477, 478, 479, 1138, 1185, 1161, 1162, 1163, 1164, 1184, 1317, 1318, 1319, 1411, 1435');
+$gynae_tokens = progress_item_count_by_doctor($con, $br_id, $like, '483, 1159, 1321, 1414, 1576');
+$gynae_system = progress_gynae_register_count_by_doctor($con, $br_id, $like);
+$refer_all = progress_referral_from_count_by_doctor($con, $like, false);
+$refer_ok = progress_referral_from_count_by_doctor($con, $like, true);
+
+$doctor_ids = array_unique(array_merge(
+    array_keys($opds),
+    array_keys($usgs),
+    array_keys($gynae_tokens),
+    array_keys($gynae_system),
+    array_keys($refer_all)
+));
+sort($doctor_ids, SORT_NUMERIC);
+
+$user_names = array();
+if (count($doctor_ids) > 0) {
+    $ids = implode(',', $doctor_ids);
+    $run_names = mysqli_query($con, "SELECT id, u_name FROM users WHERE id IN ($ids)");
+    if ($run_names) {
+        while ($row = mysqli_fetch_assoc($run_names)) {
+            $user_names[(int) $row['id']] = $row['u_name'];
+        }
+    }
 }
 ?>
 <html>
 <head>
-    <title>PRINT PROGRESS GYNAE DATE <?php echo date_format(date_create($date), " d F Y"); ?></title>
+    <title>PRINT PROGRESS GYNAE DATE <?php echo date_format(date_create($date), ' d F Y'); ?></title>
 </head>
 <body>
-    
-<table border = "solid">
+
+<table border="solid">
 <caption>
     <h2><?php echo $company_name; ?></h2>
     <h2><?php echo get_branch_name_by($br_id); ?></h2>
-    <h3>PROGRESS DATE <?php echo date_format(date_create($date), "d F Y"); ?></h3>
+    <h3>PROGRESS DATE <?php echo date_format(date_create($date), 'd F Y'); ?></h3>
 </caption>
     <thead>
         <tr>
-            <th rowspan = "2">S#</th>
-            <th rowspan = "2">NAME</th>
-            <th rowspan = "2">OPD</th>
-            <th rowspan = "2">USG</th>
-            <th colspan = "2">GYNAE REGISTRATION</th>
-            <th colspan = "3">REFERRAL SYSTEM</th>
+            <th rowspan="2">S#</th>
+            <th rowspan="2">NAME</th>
+            <th rowspan="2">OPD</th>
+            <th rowspan="2">USG</th>
+            <th colspan="2">GYNAE REGISTRATION</th>
+            <th colspan="3">REFERRAL SYSTEM</th>
         </tr>
         <tr>
-            <th>TOKEN</th>
-            <th>SYSTEM</th>
-            <th>PATIENT</th>
-            <th>COMPLETE</th>
-            <th>REJECT</th>
+            <th>TOKEN</th><th>SYSTEM</th>
+            <th>PATIENT</th><th>COMPLETE</th><th>REJECT</th>
         </tr>
     </thead>
 <?php
-$s = 0; 
-$labs = 0;
-$medicines = 0;
-$total_admission = 0;
-$total_procedure = 0;
-$total_dnc = 0;
-$total_svd = 0;
-$total_referred = 0;
-$total_usg = 0;
-$total_lab = 0;
-$total_medicine = 0;
+$s = 0;
 $total_opds = 0;
-$total_cons_opds = 0;
+$total_usg = 0;
 $total_gynae = 0;
-$select = "SELECT DISTINCT `doctor_id` FROM `tokans` WHERE doctor_id IN (SELECT `id` FROM `users` WHERE `branch_id` = '$br_id') AND created like '$date%' AND `branch_id` = '$br_id' AND ( doctor_id IN (SELECT DISTINCT `doctor_id` FROM `item_by_doctor` WHERE tokan_no IN (SELECT id FROM tokans WHERE created like '$date%' AND status = 1) AND branch_id = '$br_id' AND `status` = 2 AND `item_id` IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (483, 1159, 1321, 1414, 476, 477, 478, 479, 1138, 1185, 1161, 1162, 1163, 1164, 1184, 1317, 1318, 1319, 1411, 1435)) ) OR doctor_id IN (SELECT DISTINCT doctor_id FROM `gynae_register` WHERE created like '$date%' AND branch_id = '$br_id') OR (doctor_id IN (SELECT DISTINCT from_user_id FROM `referral_patients` WHERE referral_patient_created LIKE '$date%' AND branch_id = '$br_id') ) ) ORDER BY `doctor_id` ";
-$run = mysqli_query($con, $select);
-if(mysqli_num_rows($run) > 0)
-{
+$total_gynae_system = 0;
+$total_reffered = 0;
+$total_reffered_successfull = 0;
+$rejected_total = 0;
+
+if (count($doctor_ids) > 0) {
     echo '<tbody>';
-    while($row = mysqli_fetch_array($run))
-    {
-        $gynae_file_tokens = '';
-        $gynae_file_token = '';
-        $s = $s + 1;
-        $doctor = $row['doctor_id'];
+    foreach ($doctor_ids as $doctor) {
+        $s++;
+        $opd = $opds[$doctor] ?? 0;
+        $usg = $usgs[$doctor] ?? 0;
+        $gyn_cnt = $gynae_tokens[$doctor] ?? 0;
+        $gyn_sys = $gynae_system[$doctor] ?? 0;
+        $ref = $refer_all[$doctor] ?? 0;
+        $ref_ok = $refer_ok[$doctor] ?? 0;
+        $rejected = $ref - $ref_ok;
 
-        $opds = mysqli_num_rows(mysqli_query($con, "SELECT id FROM tokans WHERE `tokan_type_id` < 9 AND status = 1 and doctor_id = '$doctor' AND created like '$date%' AND `branch_id` = '$br_id' "));
-        $total_opds = $total_opds + $opds;
+        $total_opds += $opd;
+        $total_usg += $usg;
+        $total_gynae += $gyn_cnt;
+        $total_gynae_system += $gyn_sys;
+        $total_reffered += $ref;
+        $total_reffered_successfull += $ref_ok;
+        $rejected_total += $rejected;
 
-        $gynae = mysqli_query($con, "SELECT `tokan_no` FROM `item_by_doctor` WHERE tokan_no IN (SELECT id FROM tokans WHERE doctor_id = '$doctor' AND created like '$date%' AND status = 1) AND branch_id = '$br_id' AND `status` = 2 AND `item_id` IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (483, 1159, 1321, 1414, 1576)) ORDER BY `tokan_no` ");
-        $gynae_count = mysqli_num_rows($gynae);
-        if(mysqli_num_rows($gynae) > 0)
-        {
-            while($row_gynae_token = mysqli_fetch_array($gynae))
-            {
-                $gynae_file_token .= $row_gynae_token['tokan_no']."</br>";
-            }
-        }
-        $total_gynae = $total_gynae + $gynae_count;
-
-        $gynae_system = mysqli_query($con, "SELECT * FROM `gynae_register` WHERE doctor_id = '$doctor' AND created like '$date%' AND branch_id = '$br_id' ORDER BY `token_no`");
-        $gynae_system_count = mysqli_num_rows($gynae_system);
-        if(mysqli_num_rows($gynae_system) > 0)
-        {
-            while($row_gynae_file = mysqli_fetch_array($gynae_system))
-            {
-                $gynae_file_tokens .= $row_gynae_file['1']."</br>";
-            }
-        }
-        $total_gynae_system = $total_gynae_system + $gynae_system_count;
-        
-        $reffered = mysqli_num_rows(mysqli_query($con, "SELECT * FROM `referral_patients` WHERE referral_patient_created LIKE '$date%' AND from_user_id = '$doctor' "));
-        $total_reffered = $total_reffered + $reffered;
-        
-        $reffered_successfull = mysqli_num_rows(mysqli_query($con, "SELECT * FROM `referral_patients` WHERE referral_patient_created LIKE '$date%' AND from_user_id = '$doctor' AND referral_patient_status > '1' "));
-        $total_reffered_successfull = $total_reffered_successfull + $reffered_successfull;
-
-        $rejected = $reffered - $reffered_successfull;
-        $rejected_total = $rejected + $rejected_total;
-
-        $usgs = mysqli_num_rows(mysqli_query($con, "SELECT `tokan_no` FROM `item_by_doctor` WHERE tokan_no IN (SELECT id FROM tokans WHERE doctor_id = '$doctor' AND created like '$date%' AND status = 1) AND branch_id = '$br_id' AND `status` = 2 AND `item_id` IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (476, 477, 478, 479, 1138, 1185, 1161, 1162, 1163, 1164, 1184, 1317, 1318, 1319, 1411, 1435))"));
-        $total_usg = $total_usg + $usgs;
-
-        // $svds = mysqli_num_rows(mysqli_query($con, "SELECT `tokan_no` FROM `item_by_doctor` WHERE tokan_no IN (SELECT id FROM tokans WHERE doctor_id = '$doctor' AND created like '$date%' AND status = 1) AND branch_id = '$br_id' AND `status` = 2 AND `item_id` IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (472, 1118, 1313) )"));
-        // $total_svd = $total_svd + $svds;
-
-        // $dncs = mysqli_num_rows(mysqli_query($con, "SELECT `tokan_no` FROM `item_by_doctor` WHERE tokan_no IN (SELECT id FROM tokans WHERE doctor_id = '$doctor' AND created like '$date%' AND status = 1) AND branch_id = '$br_id' AND `status` = 2 AND `item_id` IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (473, 1119, 1314) )"));
-        // $total_dnc = $total_dnc + $dncs;
-
-        // $procedures = mysqli_num_rows(mysqli_query($con, "SELECT `tokan_no` FROM `item_by_doctor` WHERE tokan_no IN (SELECT id FROM tokans WHERE doctor_id = '$doctor' AND created like '$date%' AND status = 1) AND branch_id = '$br_id' AND `status` = 2 AND `item_id` IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (SELECT id FROM items WHERE id NOT IN (473, 1119, 1314, 472, 1118, 1313) AND category_id = 3))"));
-        // $total_procedure = $total_procedure + $procedures;
-        
-        $doctor_name = get_uname_by_id($doctor);
-        echo ' <tr style = "text-align: right;">
-                <td>'.$s.'</td>
-                <td style = "text-align: left;">'.$doctor_name.'</td>
-                <td>'.$opds.'</td>';
-                echo '<td>'.$usgs.'</td>';
-                echo '<td>'.$gynae_count.' - '.$gynae_file_token.'</td>';
-                echo '<td>'.$gynae_system_count.' - '.$gynae_file_tokens.'</td>';
-                echo '<td>'.$reffered.'</td>';
-                echo '<td>'.$reffered_successfull.'</td>';
-                echo '<td>'.$rejected.'</td>';
-                echo '
-            </tr>';
+        $doctor_name = $user_names[$doctor] ?? get_uname_by_id($doctor);
+        echo '<tr style="text-align: right;">';
+        echo '<td>' . $s . '</td>';
+        echo '<td style="text-align: left;">' . htmlspecialchars($doctor_name, ENT_QUOTES, 'UTF-8') . '</td>';
+        echo '<td>' . $opd . '</td><td>' . $usg . '</td>';
+        echo '<td>' . $gyn_cnt . '</td><td>' . $gyn_sys . '</td>';
+        echo '<td>' . $ref . '</td><td>' . $ref_ok . '</td><td>' . $rejected . '</td>';
+        echo '</tr>';
     }
-    echo '</tbody>';
-    echo '<tfoot>
-            <tr style = "text-align: right;">
-                <th></th>
-                <th></th>
-                <th>'.$total_opds.'</th>';
-                echo '<th>'.$total_usg.'</th>';
-                echo '<th>'.$total_gynae.'</th>';
-                echo '<th>'.$total_gynae_system.'</th>';
-                echo '<th>'.$total_reffered.'</th>';
-                echo '<th>'.$total_reffered_successfull.'</th>';
-                echo '<th>'.$rejected_total.'</th>';
-                echo '
-            </tr>
-        </tfoor>';
+    echo '</tbody><tfoot><tr style="text-align: right;"><th></th><th></th>';
+    echo '<th>' . $total_opds . '</th><th>' . $total_usg . '</th><th>' . $total_gynae . '</th><th>' . $total_gynae_system . '</th>';
+    echo '<th>' . $total_reffered . '</th><th>' . $total_reffered_successfull . '</th><th>' . $rejected_total . '</th>';
+    echo '</tr></tfoot>';
+} else {
+    echo '<tbody><tr><td colspan="9">NO DATA FOUND</td></tr></tbody>';
 }
 ?>
 </table>
-
 </body>
 </html>
 <?php mysqli_close($con); ?>

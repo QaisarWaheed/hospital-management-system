@@ -1,14 +1,12 @@
-<?php include 'includes/connect.php'; 
-include 'includes/head.php'; 
-if(isset($_GET['date']) && $_GET['date'] != '')
-{
-    $date = $_GET['date'];
-    $br_id = $_GET['br_id'];
+<?php
+include 'includes/connect.php';
+if (!isset($_GET['date']) || $_GET['date'] === '') {
+    header('Location: logout.php');
+    exit;
 }
-else
-{
-    header('location: logout.php');
-}
+$date = $_GET['date'];
+$br_id = isset($_GET['br_id']) ? (int) $_GET['br_id'] : (int) $hr_branch_id;
+include 'includes/head.php';
 ?>
 	<title>REFFERED PATIENT <?php echo date_format(date_create($date), 'd F Y'); ?> - <?php echo $company_trademark; ?></title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>

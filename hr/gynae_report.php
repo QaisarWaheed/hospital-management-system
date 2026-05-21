@@ -1,53 +1,11 @@
-<?php 
-include 'includes/connect.php'; 
-include 'includes/head.php'; 
-
-$roles = "SELECT * FROM roles WHERE id IN (SELECT role_id FROM users WHERE id = '$user_id') ";
-$run_roles = mysqli_query($con, $roles);
-if(mysqli_num_rows($run_roles) == 1)
-{
-    while($row_role = mysqli_fetch_array($run_roles))
-    {
-        $role_title = $row_role['title'];
-    }
-}
-else
-{
-    $role_title = '';
-}
-
-if( isset($_POST['date']) && $_POST['date'] != '')
-{
-    $date = $_POST['date'];
-    echo '<script>window.open("../bk/print_gynae_report.php?date='.$date.'", "PROGRESS REPORT", "width=3000,height=3000");</script>';
-}
-?>
-	<title>DAILY PROGRESS - <?php echo $company_trademark; ?></title>
-<script src="js/jquery.min.js"></script>
-<script src="js/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
-
-</head>
-
-<body class="background_image">
-
-<div class="row" style="margin: 0px;">
-	<div class="col-md-12" style="text-align: center;background: lightgreen;"><label><h1><?php echo $company_name; ?> </h1></label></div>
-	<div class="col-md-3 background_whitesmoke">	<?php include 'left_navigation.php'; ?>	
-    	<h3 style="margin-top: 350px;text-align: center;"><?php echo $_SESSION['dr_name'];if($_SESSION['is_incharge'] == 2){ echo " Incharge ";} ?>(<?php echo $role_title; ?>)</h3>
-    </div>
-    <div class = "col-md-9">
-        <form METHOD = "POST" class = "container">
-        <div class = "row">
-            <div class = "col">
-                <label>DATE</label>
-                <input required type = "date" value = "<?php echo date('Y-m-d'); ?>" name = "date" id = "date" class = "form-control" />
-                <input type = "submit" name = "progress" value = "PROGRESS" class = "btn btn-sm btn-info" />
-                <input type = "reset" name = "reset" value = "CLEAR" class = "btn btn-sm btn-danger" />
-            </div>
-        </div>
-        </form>
-    </div>
-</div>
-</body>
-</html>
+<?php
+include 'includes/connect.php';
+$progress_page_title = 'GYNAE REPORT';
+$progress_bootstrap_opts = array(
+    'print' => '../bk/print_gynae_report.php',
+    'window_title' => 'PROGRESS REPORT',
+    'needs_br_id' => false,
+);
+$progress_date_input = 'date';
+$progress_hide_branch = true;
+include 'includes/progress_report_form.php';

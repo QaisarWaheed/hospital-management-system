@@ -1,19 +1,11 @@
-<?php 
-include 'includes/connect.php'; 
-if(isset($_GET['date']))
-{
-    $date = $_GET['date'];
-    $br_id = $_GET['br_id'];
-}
-elseif(isset($_POST['date']))
-{
-    $date = $_POST['date'];
-    $br_id = $_POST['br_id'];
-}
-else
-{
-    exit(0);
-}
+<?php
+include 'includes/connect.php';
+require_once __DIR__ . '/includes/progress_report_params.php';
+
+$req = progress_report_resolve_request($con);
+$date = $req['date'];
+$br_id = $req['br_id'];
+$like = $req['like'];
 ?>
 <html>
 <head>
@@ -43,7 +35,7 @@ $s = 0;
 $total_sale = 0;
 $total_incentive = 0;
 $total_purchase = 0;
-$select = "SELECT DISTINCT item_by_doctor.user_id, users.u_name, SUM(item_by_doctor.sale_quantity*item_by_doctor.sale_price_poor)AS sale_poor, SUM(item_by_doctor.sale_quantity*item_by_doctor.purchase_price)AS purchase_price FROM `item_by_doctor` INNER JOIN users ON item_by_doctor.user_id = users.id INNER JOIN categories ON item_by_doctor.category_id = categories.id AND categories.is_medicine = '1' WHERE item_by_doctor.branch_id = '$br_id' AND item_by_doctor.status = '2' AND item_by_doctor.created LIKE '$date%' GROUP BY item_by_doctor.user_id ";
+$select = "SELECT DISTINCT item_by_doctor.user_id, users.u_name, SUM(item_by_doctor.sale_quantity*item_by_doctor.sale_price_poor)AS sale_poor, SUM(item_by_doctor.sale_quantity*item_by_doctor.purchase_price)AS purchase_price FROM `item_by_doctor` INNER JOIN users ON item_by_doctor.user_id = users.id INNER JOIN categories ON item_by_doctor.category_id = categories.id AND categories.is_medicine = '1' WHERE item_by_doctor.branch_id = '$br_id' AND item_by_doctor.status = '2' AND item_by_doctor.created LIKE '$like' GROUP BY item_by_doctor.user_id ";
 $run = mysqli_query($con, $select);
 if(mysqli_num_rows($run) > 0)
 {
