@@ -50,6 +50,14 @@ if (!$con) {
 
 include 'company_info.php';
 
+$role_title = '';
+$roles = "SELECT title FROM roles WHERE id IN (SELECT role_id FROM users WHERE id = '$user_id') LIMIT 1";
+$run_roles = mysqli_query($con, $roles);
+if ($run_roles && mysqli_num_rows($run_roles) === 1) {
+    $row_role = mysqli_fetch_array($run_roles);
+    $role_title = $row_role['title'] ?? '';
+}
+
 
 function get_branch_item_id_from_select_by_doctor_id($id)
 {
@@ -290,8 +298,8 @@ function branch_medicines_by_name()
     $branch_id = $GLOBALS['branch_id'];
     $output = '';
     $run1 = mysqli_query($GLOBALS['con'], "SELECT item_register_to_branches.id AS item_register_id,items.id,items.category_id,items.name, categories.name AS cat_name, item_register_to_branches.quantity AS available_branch_stock FROM `items` INNER JOIN categories ON items.category_id = categories.id INNER JOIN item_register_to_branches ON items.id = item_register_to_branches.item_id WHERE item_register_to_branches.branch_id = '$branch_id' AND items.category_id IN (2, 8, 29, 31, 32, 33, 34, 36, 39, 40, 41, 42, 44) AND items.status = '1' AND item_register_to_branches.status = '1' ORDER BY items.`name` ");
-    $run2 = mysqli_query($GLOBALS['con'], "SELECT item_register_to_branches.id AS item_register_id,items.id,items.category_id,items.name, categories.name AS cat_name, item_register_to_branches.quantity AS available_branch_stock FROM `items` INNER JOIN categories ON items.category_id = categories.id INNER JOIN item_register_to_branches ON items.id = item_register_to_branches.item_id WHERE item_register_to_branches.branch_id = '$branch_id' AND items.category_id IN (1, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27) AND items.status = '1' AND item_register_to_branches.status = '1' AND item_register_to_branches.quantity > 0 ORDER BY items.`name` ");
-    if (mysqli_num_rows($run1) > 0)  
+    $run2 = mysqli_query($GLOBALS['con'], "SELECT item_register_to_branches.id AS item_register_id,items.id,items.category_id,items.name, categories.name AS cat_name, item_register_to_branches.quantity AS available_branch_stock FROM `items` INNER JOIN categories ON items.category_id = categories.id INNER JOIN item_register_to_branches ON items.id = item_register_to_branches.item_id WHERE item_register_to_branches.branch_id = '$branch_id' AND items.category_id IN (1, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27) AND items.status = '1' AND item_register_to_branches.status = '1' ORDER BY items.`name` ");
+    if ($run1 && mysqli_num_rows($run1) > 0)  
     {
         while ($row1 = mysqli_fetch_array($run1)) 
         {
@@ -303,7 +311,7 @@ function branch_medicines_by_name()
                  $output .= '<option value="'.$reg_item_id.'">'.$item_name.' - '.$category_name.'</option>';   
         }
     }    
-    if(mysqli_num_rows($run2) > 0)  
+    if ($run2 && mysqli_num_rows($run2) > 0)  
     {
         while ($row2 = mysqli_fetch_array($run2)) 
         {
@@ -313,19 +321,15 @@ function branch_medicines_by_name()
             $item_name2 = $row2['name'];
             $category_name2 = $row2['cat_name'];
             $reg_item_id2 = $row2['item_register_id'];
-            // if($available_branch_stock < 1)
-            // {
-                //  $output .= '<option value="'.$reg_item_id2.'">OUT OF STOCK '.$item_name2.' - '.$category_name2.'</option>';   
-            // }
-            // else
-            // {
-                 $output .= '<option value="'.$reg_item_id2.'">'.$item_name2.' - '.$category_name2.'</option>';   
-            // }
+            if ($available_branch_stock < 1) {
+                 $output .= '<option value="'.$reg_item_id2.'">OUT OF STOCK '.$item_name2.' - '.$category_name2.'</option>';
+            } else {
+                 $output .= '<option value="'.$reg_item_id2.'">'.$item_name2.' - '.$category_name2.'</option>';
+            }
         }
     }
-    else
-    {
-        return '<option>NO DATA FOUND</option>';
+    if ($output === '') {
+        return '<option value="" disabled>NO DATA FOUND — register items to this branch</option>';
     }
     return $output;
 }
