@@ -70,7 +70,10 @@ else
     <?php
     $total_refered = 0;
     $total_refered_to = 0;
-
+    $total_opd = 0;
+    $total_cash = 0;
+    $total_dia_patients = 0;
+    $total_gynae_system = 0;
 
     $s = 0; 
     $cash_collection = 0;
@@ -109,8 +112,8 @@ else
     
     $select = "SELECT DISTINCT tokans.doctor_id, users.u_name , branchs.tag_name, COUNT(CASE WHEN tokans.tokan_type_id <= 100 THEN tokans.tokan_type_id END) AS opd, SUM(cash) AS cash_collection FROM `tokans` INNER JOIN users ON tokans.doctor_id = users.id INNER JOIN branchs ON users.branch_id = branchs.id WHERE tokans.created like '$date%' AND tokans.branch_id = '$br_id' AND tokans.status = '1' GROUP BY tokans.doctor_id ORDER BY tokans.doctor_id ";
     $run = mysqli_query($con, $select);
-    $count_run = mysqli_num_rows($run);
-    if(mysqli_num_rows($run) > 0)
+    $count_run = ($run && mysqli_num_rows($run) > 0) ? mysqli_num_rows($run) : 0;
+    if ($run && mysqli_num_rows($run) > 0)
     {
         while($row = mysqli_fetch_array($run))
         {
