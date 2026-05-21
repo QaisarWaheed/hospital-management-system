@@ -1,48 +1,48 @@
 <?php 
-    include 'includes/connect.php'; 
-    include 'includes/head.php'; 
-if(isset($_GET['br_id']) && $_GET['br_id'] != '')
-{
-    $br_id = $_GET['br_id'];   
-}
-else
-{
-    $br_id = $hr_branch_id;    
+include 'includes/connect.php';
+
+if (isset($_GET['br_id']) && $_GET['br_id'] != '') {
+    $br_id = $_GET['br_id'];
+} else {
+    $br_id = $hr_branch_id;
 }
 
-if(isset($_POST['update_staff_id']) && $_POST['update_staff_id'] != '')
-{
-    $br_id = $_POST['br_id'];
-    $update_staff_id = $_POST['update_staff_id'];
-    $update_staff_status = $_POST['update_staff_status'];
-    echo $query = "UPDATE `staff` SET `staff_status` = '$update_staff_status', `staff_deleted_by` = '$hr_id', `staff_deleted_at` = '$current_date' WHERE `staff_status` > 0 AND `staff_id` = '$update_staff_id' ";
-    if(mysqli_query($con, $query))
-    {
+if (isset($_POST['update_staff_id']) && $_POST['update_staff_id'] != '') {
+    $br_id = $_POST['br_id'] ?? $br_id;
+    $update_staff_id = (int) $_POST['update_staff_id'];
+    $update_staff_status = (int) $_POST['update_staff_status'];
+    $query = "UPDATE `staff` SET `staff_status` = '$update_staff_status', `staff_deleted_by` = '$hr_id', `staff_deleted_at` = '$current_date' WHERE `staff_status` > 0 AND `staff_id` = '$update_staff_id' ";
+    if (mysqli_query($con, $query)) {
         $activity_logs = "INSERT INTO `activity_logs`
-        (`activity_log_id`, `user_id`, `activity_log_title`, `table_name`, `record_id`, `parameter_names`, `activity_log_new_value`, `activity_log_status`, `activity_logs_created_at`, `activity_log_location`, `ip_address`) 
+        (`activity_log_id`, `user_id`, `activity_log_title`, `table_name`, `record_id`, `parameter_names`, `activity_log_new_value`, `activity_log_status`, `activity_logs_created_at`, `activity_log_location`, `ip_address`)
         VALUES
         (NULL, '$hr_id', 'UPDATE STAFF STATUS', 'staff', '$update_staff_id', 'staff_status', '$update_staff_status', '1', '$current_date', '', '$ip_address')";
         mysqli_query($con, $activity_logs);
-        header('location: show_staff.php?msg=upddate_status&br_id='.$br_id);
+        header('Location: show_staff.php?msg=upddate_status&br_id=' . urlencode((string) $br_id));
+        exit;
     }
-    exit(0);
+    header('Location: show_staff.php?br_id=' . urlencode((string) $br_id) . '&msg=error');
+    exit;
 }
-elseif(isset($_POST['update_staff_branch_id']) && $_POST['update_staff_branch_id'] != '')
-{
-    $update_staff_branch_id = $_POST['update_staff_branch_id'];
-    $update_br_id = $_POST['update_br_id'];
+
+if (isset($_POST['update_staff_branch_id']) && $_POST['update_staff_branch_id'] != '') {
+    $update_staff_branch_id = (int) $_POST['update_staff_branch_id'];
+    $update_br_id = $_POST['update_br_id'] ?? $br_id;
     $query = "UPDATE `staff` SET `branch_id` = '$update_br_id', `staff_deleted_by` = '$hr_id', `staff_deleted_at` = '$current_date' WHERE `staff_status` > 0 AND `staff_id` = '$update_staff_branch_id' ";
-    if(mysqli_query($con, $query))
-    {
+    if (mysqli_query($con, $query)) {
         $activity_logs = "INSERT INTO `activity_logs`
-        (`activity_log_id`, `user_id`, `activity_log_title`, `table_name`, `record_id`, `parameter_names`, `activity_log_new_value`, `activity_log_status`, `activity_logs_created_at`, `activity_log_location`, `ip_address`) 
+        (`activity_log_id`, `user_id`, `activity_log_title`, `table_name`, `record_id`, `parameter_names`, `activity_log_new_value`, `activity_log_status`, `activity_logs_created_at`, `activity_log_location`, `ip_address`)
         VALUES
         (NULL, '$hr_id', 'UPDATE STAFF BRANCH', 'staff', '$update_staff_branch_id', 'branch_id', '$update_br_id', '1', '$current_date', '', '$ip_address')";
         mysqli_query($con, $activity_logs);
-        header('location: show_staff.php?msg=upddate_branch&br_id='.$update_br_id);
+        header('Location: show_staff.php?msg=upddate_branch&br_id=' . urlencode((string) $update_br_id));
+        exit;
     }
-    exit(0);
+    header('Location: show_staff.php?br_id=' . urlencode((string) $br_id) . '&msg=error');
+    exit;
 }
+
+include 'includes/head.php';
 ?>
 	<title>Show Staff - <?php echo $company_trademark; ?></title>
 </head>
