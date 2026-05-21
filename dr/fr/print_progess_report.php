@@ -1,13 +1,34 @@
-<?php 
-include 'includes/connect.php'; 
-if(isset($_GET['date']))
-{
-    $date = $_GET['date'];
-    $br_id = $_GET['br_id'];
+<?php
+include 'includes/connect.php';
+require_once __DIR__ . '/../../bk/includes/progress_report_params.php';
+
+$req = progress_report_resolve_request($con);
+$date = $req['date'];
+$br_id = $req['br_id'];
+$like = $req['like'];
+
+$opds = progress_opd_count_by_doctor($con, $br_id, $like);
+$cons_opds = progress_item_count_by_doctor($con, $br_id, $like, '(SELECT id FROM items WHERE category_id = 29)');
+$lab_stats = progress_lab_stats_by_doctor($con, $br_id, $like);
+
+$doctor_sql = "SELECT DISTINCT doctor_id FROM tokans WHERE created LIKE '$like' AND branch_id = '$br_id' ORDER BY doctor_id";
+$doctor_ids = array();
+$run = mysqli_query($con, $doctor_sql);
+if ($run) {
+    while ($row = mysqli_fetch_assoc($run)) {
+        $doctor_ids[] = (int) $row['doctor_id'];
+    }
 }
-else
-{
-    exit(0);
+
+$user_names = array();
+if (count($doctor_ids) > 0) {
+    $ids = implode(',', $doctor_ids);
+    $run_names = mysqli_query($con, "SELECT id, u_name FROM users WHERE id IN ($ids)");
+    if ($run_names) {
+        while ($row = mysqli_fetch_assoc($run_names)) {
+            $user_names[(int) $row['id']] = $row['u_name'];
+        }
+    }
 }
 ?>
 <html>
@@ -15,133 +36,47 @@ else
     <title>PRINT PROGRESS REPORT</title>
 </head>
 <body>
-    
-<table border = "solid">
+
+<table border="solid">
 <caption>
     <h2><?php echo $company_name; ?></h2>
     <h2><?php echo get_branch_name_by($br_id); ?></h2>
-    <h3>PROGRESS DATE <?php echo date_format(date_create($date), " d F Y"); ?></h3>
+    <h3>PROGRESS DATE <?php echo date_format(date_create($date), ' d F Y'); ?></h3>
 </caption>
     <thead>
-        <tr>
-            <th>S#</th>
-            <th>NAME</th>
-            <th>OPD</th>
-            <th>CONS</th>
-            <th>LAB</th>
-        </tr>
+        <tr><th>S#</th><th>NAME</th><th>OPD</th><th>CONS</th><th>LAB</th></tr>
     </thead>
 <?php
-$s = 0; 
-$total_admission = 0;
-$total_procedure = 0;
-$total_dnc = 0;
-$total_svd = 0;
-$total_usg = 0;
-$total_lab = 0;
+$s = 0;
 $total_opds = 0;
 $total_cons_opds = 0;
-$select = "SELECT DISTINCT `doctor_id` FROM `tokans` WHERE created like '$date%' AND `branch_id` = '$br_id' ORDER BY `doctor_id` ";
-$run = mysqli_query($con, $select);
-if(mysqli_num_rows($run) > 0)
-{
+$total_lab = 0;
+
+if (count($doctor_ids) > 0) {
     echo '<tbody>';
-    while($row = mysqli_fetch_array($run))
-    {
-        $s = $s + 1;
-        $doctor = $row['doctor_id'];
-
-        $opds = mysqli_num_rows(mysqli_query($con, "SELECT id FROM tokans WHERE `tokan_type_id` < 9 AND status = 1 and doctor_id = '$doctor' AND created like '$date%' "));
-        $total_opds = $total_opds + $opds;
-
-        $cons_opds = mysqli_num_rows(mysqli_query($con, "SELECT `tokan_no` FROM `item_by_doctor` WHERE tokan_no IN (SELECT id FROM tokans WHERE doctor_id = '$doctor' AND created like '$date%' AND status = 1) AND branch_id = '$br_id' AND `status` = 2 AND `item_id` IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (SELECT id FROM items WHERE category_id = 29) )"));
-        $total_cons_opds = $total_cons_opds + $cons_opds;
-
-        // $admissions = mysqli_num_rows(mysqli_query($con, "SELECT `tokan_no` FROM `item_by_doctor` WHERE tokan_no IN (SELECT id FROM tokans WHERE doctor_id = '$doctor' AND created like '$date%' AND status = 1) AND branch_id = '$br_id' AND `status` = 2 AND `item_id` IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (444, 448, 452, 456, 460, 945, 1124, 1125, 1128, 1131, 1132, 1145, 1186, 1285, 1289, 1293, 1297, 1301) )"));
-        // $total_admission = $total_admission + $admissions;
-
-        // $svds = mysqli_num_rows(mysqli_query($con, "SELECT `tokan_no` FROM `item_by_doctor` WHERE tokan_no IN (SELECT id FROM tokans WHERE doctor_id = '$doctor' AND created like '$date%' AND status = 1) AND branch_id = '$br_id' AND `status` = 2 AND `item_id` IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (472, 1118, 1313) )"));
-        // $total_svd = $total_svd + $svds;
-
-        // $dncs = mysqli_num_rows(mysqli_query($con, "SELECT `tokan_no` FROM `item_by_doctor` WHERE tokan_no IN (SELECT id FROM tokans WHERE doctor_id = '$doctor' AND created like '$date%' AND status = 1) AND branch_id = '$br_id' AND `status` = 2 AND `item_id` IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (473, 1119, 1314) )"));
-        // $total_dnc = $total_dnc + $dncs;
-
-        // $usgs = mysqli_num_rows(mysqli_query($con, "SELECT `tokan_no` FROM `item_by_doctor` WHERE tokan_no IN (SELECT id FROM tokans WHERE doctor_id = '$doctor' AND created like '$date%' AND status = 1) AND branch_id = '$br_id' AND `status` = 2 AND `item_id` IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (1138, 1185, 476, 477, 478, 1161, 1162, 1163, 1184, 1317, 1318))"));
-        // $total_usg = $total_usg + $usgs;
-
-        $select_lab = "SELECT SUM(`cash_received`) FROM tokans WHERE doctor_id = '$doctor' AND created like '$date%' AND status = 1 AND branch_id = '$br_id' AND `id` IN (SELECT `tokan_no` FROM `item_by_doctor` WHERE `item_id` IN (SELECT id FROM `item_register_to_branches` WHERE item_id IN (SELECT id FROM items WHERE category_id = 2)))";
-        $run_lab = mysqli_query($con, $select_lab);
-        if(mysqli_num_rows($run_lab) > 0)
-        {
-            while($row_lab = mysqli_fetch_array($run_lab))
-            {
-                $labs = $row_lab[0];
-                if($labs == 0)
-                {
-                    $labs = 'N/A';
-                }
-                else
-                {
-                    $total_lab = $total_lab + $labs;
-                }
-            }
-        }
-        else
-        {
-            $labs = 'N/A';
-        }
-        
-        // $procedures = mysqli_num_rows(mysqli_query($con, "SELECT `tokan_no` FROM `item_by_doctor` WHERE tokan_no IN (SELECT id FROM tokans WHERE doctor_id = '$doctor' AND created like '$date%' AND status = 1) AND branch_id = '$br_id' AND `status` = 2 AND `item_id` IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (SELECT id FROM items WHERE id NOT IN (473, 1119, 1314, 472, 1118, 1313) AND category_id = 3))"));
-        // $total_procedure = $total_procedure + $procedures;
-        
-        $doctor_name = get_uname_by_id($doctor);
-        echo ' <tr style = "text-align: right;">
-                <td>'.$s.'</td>
-                <td style = "text-align: left;">'.$doctor_name.'</td>
-                <td>'.$opds.'</td>
-                <td>'.$cons_opds.'</td>
-                <td>'.$labs.'</td>
-            </tr>';
-        // echo ' <tr style = "text-align: right;">
-        //         <td>'.$s.'</td>
-        //         <td style = "text-align: left;">'.$doctor_name.'</td>
-        //         <td>'.$opds.'</td>
-        //         <td>'.$cons_opds.'</td>
-        //         <td>'.$labs.'</td>
-        //         <td>'.$usgs.'</td>
-        //         <td>'.$svds.'</td>
-        //         <td>'.$dncs.'</td>
-        //         <td>'.$procedures.'</td>
-        //         <td>'.$admissions.'</td>
-        //     </tr>';
+    foreach ($doctor_ids as $doctor) {
+        $s++;
+        $opd = $opds[$doctor] ?? 0;
+        $cons = $cons_opds[$doctor] ?? 0;
+        $lab_cash = $lab_stats[$doctor]['cash'] ?? 0;
+        $labs = ($lab_cash == 0) ? 'N/A' : $lab_cash;
+        $total_opds += $opd;
+        $total_cons_opds += $cons;
+        $total_lab += is_numeric($labs) ? $labs : 0;
+        $doctor_name = $user_names[$doctor] ?? get_uname_by_id($doctor);
+        echo '<tr style="text-align: right;">';
+        echo '<td>' . $s . '</td>';
+        echo '<td style="text-align: left;">' . htmlspecialchars($doctor_name, ENT_QUOTES, 'UTF-8') . '</td>';
+        echo '<td>' . $opd . '</td><td>' . $cons . '</td><td>' . $labs . '</td>';
+        echo '</tr>';
     }
-    echo '</tbody>';
-    echo '<tfoot>
-            <tr style = "text-align: right;">
-                <th></th>
-                <th></th>
-                <th>'.$total_opds.'</th>
-                <th>'.$total_cons_opds.'</th>
-                <th>'.$total_lab.'</th>
-            </tr>
-        </tfoor>';
-    // echo '<tfoot>
-    //         <tr style = "text-align: right;">
-    //             <th></th>
-    //             <th></th>
-    //             <th>'.$total_opds.'</th>
-    //             <th>'.$total_cons_opds.'</th>
-    //             <th>'.$total_lab.'</th>
-    //             <th>'.$total_usg.'</th>
-    //             <th>'.$total_svd.'</th>
-    //             <th>'.$total_dnc.'</th>
-    //             <th>'.$total_procedure.'</th>
-    //             <th>'.$total_admission.'</th>
-    //         </tr>
-    //     </tfoor>';
+    echo '</tbody><tfoot><tr style="text-align: right;"><th></th><th></th>';
+    echo '<th>' . $total_opds . '</th><th>' . $total_cons_opds . '</th><th>' . $total_lab . '</th></tr></tfoot>';
+} else {
+    echo '<tbody><tr><td colspan="5">NO DATA FOUND</td></tr></tbody>';
 }
 ?>
 </table>
-
 </body>
 </html>
+<?php mysqli_close($con); ?>

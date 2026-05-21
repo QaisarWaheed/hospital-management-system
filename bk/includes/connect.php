@@ -14,6 +14,12 @@ if (!empty($_SESSION['bk_id'])) {
     // HR users open bookkeeping print reports (progress, gynae, etc.) in a new window.
     $bk_id = (int) $_SESSION['hr_id'];
     $bk_name = $_SESSION['hr_name'] ?? '';
+} elseif (!empty($_SESSION['dr_id'])) {
+    $bk_id = (int) $_SESSION['dr_id'];
+    $bk_name = $_SESSION['dr_name'] ?? '';
+} elseif (!empty($_SESSION['fr_id'])) {
+    $bk_id = (int) $_SESSION['fr_id'];
+    $bk_name = $_SESSION['admin_name'] ?? ($_SESSION['fr_name'] ?? '');
 } else {
     header('Location: logout.php');
     exit;
