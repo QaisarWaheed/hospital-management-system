@@ -42,11 +42,23 @@ include 'includes/head.php';
 	    <div class = "row">
 	        <div class = "col-md-12">
             <?php
-            if(isset($_POST['token_no']) && $_POST['token_no'] != '')
-            {
+            if (isset($_POST['token_no']) && $_POST['token_no'] !== '') {
                 $s = 0;
-                $token_no = $_POST['token_no'];
-                $query = "SELECT tokans.id, items.name AS test_name, tokans.created, tokans.cash, patients.name, patients.cnic, patients.phone, patients.age, branchs.tag_name FROM `tokans` INNER JOIN patients ON tokans.patient_id = patients.id INNER JOIN item_by_doctor ON tokans.id = item_by_doctor.tokan_no INNER JOIN item_register_to_branches ON item_by_doctor.item_id = item_register_to_branches.id INNER JOIN items ON item_register_to_branches.item_id = items.id INNER JOIN branchs ON tokans.branch_id = branchs.id WHERE (patients.phone = '$token_no' OR patients.cnic = '$token_no' OR tokans.id = '$token_no') AND tokans.tokan_type_id > 100 AND items.category_id = '2';";
+                $search = mysqli_real_escape_string($con, trim($_POST['token_no']));
+                $recent_from = date('Y-m-d', strtotime('-365 days'));
+                $query = "SELECT tokans.id, items.name AS test_name, tokans.created, tokans.cash, patients.name, patients.cnic, patients.phone, patients.age, branchs.tag_name
+                    FROM tokans
+                    INNER JOIN patients ON tokans.patient_id = patients.id
+                    INNER JOIN item_by_doctor ON tokans.id = item_by_doctor.tokan_no
+                    INNER JOIN item_register_to_branches ON item_by_doctor.item_id = item_register_to_branches.id
+                    INNER JOIN items ON item_register_to_branches.item_id = items.id
+                    INNER JOIN branchs ON tokans.branch_id = branchs.id
+                    WHERE (patients.phone = '$search' OR patients.cnic = '$search' OR tokans.id = '$search')
+                    AND tokans.tokan_type_id > 100
+                    AND items.category_id = '2'
+                    AND tokans.created >= '$recent_from'
+                    ORDER BY tokans.id DESC
+                    LIMIT 200";
                 $run = mysqli_query($con, $query);
                 if(mysqli_num_rows($run) > 0)
                 {

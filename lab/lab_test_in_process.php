@@ -1,38 +1,23 @@
-<?php 
-include 'includes/connect.php'; 
+<?php
+include 'includes/connect.php';
 include 'includes/config.php';
-$selected_branch = $lab_login_branch_id;
+require_once __DIR__ . '/includes/lab_test_list_helper.php';
 
-if(isset($_POST['update_lab_test_processed']) && $_POST['update_lab_test_processed'] != '')
-{
-    // echo '<pre>';
-    // print_r($_POST);
-    // echo '</pre>';
+if (isset($_POST['update_lab_test_processed']) && $_POST['update_lab_test_processed'] != '') {
     $lab_test_id = $_POST['lab_test_id'];
     $selected_branch = $_POST['selected_branch'];
     $lab_test_processed_comments = $_POST['lab_test_processed_comments'];
     $update = "UPDATE `lab_tests` SET `lab_test_processed_comments` = '$lab_test_processed_comments', `lab_test_processed_created_by` = '$lab_user_id', `lab_test_processed_created_at` = '$current_date', `lab_test_status_id` = '4' WHERE `lab_test_id` = '$lab_test_id' ";
     mysqli_query($con, $update);
-    header('location: lab_test_in_process.php?selected_branch='.$selected_branch.'&msg=updated#'.$lab_test_id);
+    header('location: lab_test_in_process.php?search=1&selected_branch=' . (int) $selected_branch . '&msg=updated#' . $lab_test_id);
     exit(0);
 }
-if(isset($_GET['selected_branch']) && $_GET['selected_branch'] != '')
-{
-    $selected_branch = $_GET['selected_branch'];
-    if($_GET['selected_branch'] == 0)
-    {    
-        $received_samples = "SELECT DISTINCT lab_tests.token_no, lab_test_id, patients.name, tokans.branch_id, patients.age, genders.gender_title, patients.phone, patients.cnic, branchs.tag_name AS main_branch_name, tokans.created AS register_at, doctor.u_name AS doctor_name FROM `lab_tests` INNER JOIN tokans ON lab_tests.token_no = tokans.id INNER JOIN patients ON tokans.patient_id = patients.id INNER JOIN genders ON patients.gender = genders.gender_id INNER JOIN users doctor ON tokans.doctor_id = doctor.id INNER JOIN branchs ON tokans.branch_id = branchs.id WHERE `lab_test_status_id` = '3' ORDER BY `lab_tests`.`token_no` DESC";
-    }
-    else
-    {
-        $selected_branch = $_GET['selected_branch'];
-        $received_samples = "SELECT DISTINCT lab_tests.token_no, lab_test_id, patients.name, tokans.branch_id, patients.age, genders.gender_title, patients.phone, patients.cnic, branchs.tag_name AS main_branch_name, tokans.created AS register_at, doctor.u_name AS doctor_name FROM `lab_tests` INNER JOIN tokans ON lab_tests.token_no = tokans.id INNER JOIN patients ON tokans.patient_id = patients.id INNER JOIN genders ON patients.gender = genders.gender_id INNER JOIN users doctor ON tokans.doctor_id = doctor.id INNER JOIN branchs ON tokans.branch_id = branchs.id WHERE tokans.branch_id = '$selected_branch' AND `lab_test_status_id` = '3' ORDER BY `lab_tests`.`token_no` DESC";
-    }
-}
-else
-{
-    $received_samples = "SELECT lab_tests.token_no, lab_tests.lab_test_id, items.name AS test_name, patients.name, patients.age, patients.phone, patients.cnic, branchs.tag_name AS main_branch_name, tokans.created AS register_at, register.u_name AS register_by, lab_tests.sample_date_time AS collected_at, collected.u_name AS collected_by FROM `lab_tests` INNER JOIN tokans ON lab_tests.token_no = tokans.id INNER JOIN patients ON tokans.patient_id = patients.id INNER JOIN users register ON tokans.user_id = register.id INNER JOIN users collected ON lab_tests.user_id = collected.id INNER JOIN items ON lab_tests.item_id = items.id INNER JOIN branchs ON tokans.branch_id = branchs.id WHERE tokans.branch_id = '$selected_branch' AND `lab_test_status_id` = '3' ORDER BY `lab_tests`.`token_no` DESC ";
-}
+
+$list_filters = lab_test_list_parse_filters($con, $lab_login_branch_id);
+$selected_branch = $list_filters['branch_id'];
+$list_result = lab_test_list_fetch($con, $list_filters, 3, 500, 'simple');
+$list_rows = $list_result['rows'];
+$list_truncated = $list_result['truncated'];
 
 ?>
 	<title>SAMPLES IN PROCCES PHASE FOR TEST (<?php echo date('d-m-Y'); ?>)- <?php echo $lab_login_branch_name; ?> - LAB - <?php echo $company_trademark; ?></title>
@@ -67,6 +52,11 @@ else
     	    <table class = "table table-bordered table-hover" style = "color: black'" id="myTable">
     	        <caption style = "text-align: center; caption-side: top;color: black;">
     	            <h1>SAMPLES IN PROCCES PHASE FOR TEST (<?php echo date('d-m-Y'); ?>)</h1>
+                    <?php if ($list_truncated) { ?>
+                        <p class="text-warning">Showing latest 500 records. Narrow dates or pick one branch.</p>
+                    <?php } elseif (!$list_filters['should_run']) { ?>
+                        <p class="text-info">Select branch and dates, then click Search (default: last 14 days).</p>
+                    <?php } ?>
     	        </caption>
     	        <thead>
 			<tr>
@@ -89,32 +79,33 @@ else
                             <input type = "text" class = "form-control" id="myInputPhone" onkeyup="myFunctionPhone()" />
                         </div>
                         <div class = "col-md-3">
-                        <form>
-                            <div class = "row">
-                                <div class = "col-md-12">
+                        <form method="get">
+                            <input type="hidden" name="search" value="1" />
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>From</label>
+                                    <input type="date" name="date_from" class="form-control" value="<?php echo htmlspecialchars($list_filters['date_from'], ENT_QUOTES, 'UTF-8'); ?>" required />
+                                </div>
+                                <div class="col-md-6">
+                                    <label>To</label>
+                                    <input type="date" name="date_to" class="form-control" value="<?php echo htmlspecialchars($list_filters['date_to'], ENT_QUOTES, 'UTF-8'); ?>" required />
+                                </div>
+                                <div class="col-md-12">
                                     <label>Branch</label>
-                                    <select name = "selected_branch" class = "form-control" required>
+                                    <select name="selected_branch" class="form-control" required>
                                         <?php
-                                        $query = "SELECT id, tag_name FROM branchs WHERE status = '1' ";
-                                        $run = mysqli_query($con,  $query);
-                                        if (mysqli_num_rows($run) > 0) 
-                                        {
-                                                    echo '<option value = "0">ALL</option>';
-                                            while ($row = mysqli_fetch_array($run)) 
-                                            {
-                                                if($selected_branch == $row['id'])
-                                                {
-                                                    echo '<option SELECTED value = "'.$row['id'].'">'.$row['tag_name'].'</option>';                                                    
-                                                }
-                                                else
-                                                {
-                                                    echo '<option value = "'.$row['id'].'">'.$row['tag_name'].'</option>';
-                                                }
-                                            }    
+                                        $query = "SELECT id, tag_name FROM branchs WHERE status = '1' ORDER BY tag_name";
+                                        $run = mysqli_query($con, $query);
+                                        if ($run) {
+                                            echo '<option value="0"' . ($selected_branch === 0 ? ' selected' : '') . '>ALL (max 7 days)</option>';
+                                            while ($row = mysqli_fetch_assoc($run)) {
+                                                $sel = ((int) $row['id'] === $selected_branch) ? ' selected' : '';
+                                                echo '<option value="' . (int) $row['id'] . '"' . $sel . '>' . htmlspecialchars($row['tag_name'], ENT_QUOTES, 'UTF-8') . '</option>';
+                                            }
                                         }
                                         ?>
                                     </select>
-                                    <input type = "submit" value = "SEARCH" class = " btn-sm btn-success" />
+                                    <button type="submit" class="btn btn-sm btn-success mt-2">Search</button>
                                 </div>
                             </div>
                         </form>
@@ -138,10 +129,9 @@ else
     	        <tbody>
     	            <?php
     	            $s = 0;
-    	            $run_sample = mysqli_query($con, $received_samples);
-    	            if(mysqli_num_rows($run_sample) > 0)
+    	            if (!empty($list_rows))
     	            {
-    	                while($row_sample = mysqli_fetch_array($run_sample))
+    	                foreach ($list_rows as $row_sample)
     	                {
     	                    $s++; ?>
     	            <form method = "POST">
