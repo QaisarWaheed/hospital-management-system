@@ -1,28 +1,25 @@
-<?php 
-include 'includes/connect.php'; 
-include 'includes/head.php'; 
+<?php
+include 'includes/connect.php';
 
-$roles = "SELECT * FROM roles WHERE id IN (SELECT role_id FROM users WHERE id = '$user_id') ";
+$role_title = '';
+$roles = "SELECT * FROM roles WHERE id IN (SELECT role_id FROM users WHERE id = '$hr_id') ";
 $run_roles = mysqli_query($con, $roles);
-if(mysqli_num_rows($run_roles) == 1)
-{
-    while($row_role = mysqli_fetch_array($run_roles))
-    {
+if (mysqli_num_rows($run_roles) == 1) {
+    while ($row_role = mysqli_fetch_array($run_roles)) {
         $role_title = $row_role['title'];
     }
 }
-else
-{
-    $role_title = '';
-}
 
-if( isset($_POST['date']) && $_POST['date'] != '')
-{
+$print_popup_script = '';
+if (isset($_POST['date']) && $_POST['date'] !== '') {
     $date = $_POST['date'];
-    $br_id = $_POST['br_id'];
-    echo '<script>window.open("../bk/print_progess_report_daily.php?date='.$date.'&br_id='.$br_id.'", "PROGRESS REPORT", "width=3000,height=3000");</script>';
+    $br_id = (int) $_POST['br_id'];
+    $print_url = '../bk/print_progess_report_daily.php?date=' . urlencode($date) . '&br_id=' . $br_id;
+    $print_popup_script = '<script>window.open(' . json_encode($print_url) . ', "PROGRESS REPORT", "width=3000,height=3000");</script>';
 }
 ?>
+<?php include 'includes/head.php'; ?>
+<?php echo $print_popup_script; ?>
 	<title>DAILY PROGRESS - <?php echo $company_trademark; ?></title>
 <script src="js/jquery.min.js"></script>
 <script src="js/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>

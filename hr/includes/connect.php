@@ -16,6 +16,7 @@ if (empty($_SESSION['hr_id'])) {
 
 $hr_id = (int) $_SESSION['hr_id'];
 $hr_name = $_SESSION['hr_name'] ?? '';
+$user_id = $hr_id;
 $hr_branch_id = $_SESSION['branch_id'] ?? 0;
 $hr_is_admin = $_SESSION['is_admin'] ?? 0;
 $hr_is_incharge = $_SESSION['is_incharge'] ?? 0;

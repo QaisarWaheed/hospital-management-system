@@ -7,13 +7,18 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-if (empty($_SESSION['bk_id'])) {
+if (!empty($_SESSION['bk_id'])) {
+    $bk_id = (int) $_SESSION['bk_id'];
+    $bk_name = $_SESSION['bk_name'] ?? '';
+} elseif (!empty($_SESSION['hr_id'])) {
+    // HR users open bookkeeping print reports (progress, gynae, etc.) in a new window.
+    $bk_id = (int) $_SESSION['hr_id'];
+    $bk_name = $_SESSION['hr_name'] ?? '';
+} else {
     header('Location: logout.php');
     exit;
 }
 
-$bk_id = (int) $_SESSION['bk_id'];
-$bk_name = $_SESSION['bk_name'] ?? '';
 $bk_branch_id = $_SESSION['branch_id'] ?? 0;
 $bk_is_admin = $_SESSION['is_admin'] ?? 0;
 $bk_is_incharge = $_SESSION['is_incharge'] ?? 0;
