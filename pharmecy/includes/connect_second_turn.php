@@ -295,41 +295,34 @@ function get_select_amount_array()
 }
 function branch_medicines_by_name()
 {
-    $branch_id = $GLOBALS['branch_id'];
+    $branch_id = (int) $GLOBALS['branch_id'];
     $output = '';
-    $run1 = mysqli_query($GLOBALS['con'], "SELECT item_register_to_branches.id AS item_register_id,items.id,items.category_id,items.name, categories.name AS cat_name, item_register_to_branches.quantity AS available_branch_stock FROM `items` INNER JOIN categories ON items.category_id = categories.id INNER JOIN item_register_to_branches ON items.id = item_register_to_branches.item_id WHERE item_register_to_branches.branch_id = '$branch_id' AND items.category_id IN (2, 8, 29, 31, 32, 33, 34, 36, 39, 40, 41, 42, 44) AND items.status = '1' AND item_register_to_branches.status = '1' ORDER BY items.`name` ");
-    $run2 = mysqli_query($GLOBALS['con'], "SELECT item_register_to_branches.id AS item_register_id,items.id,items.category_id,items.name, categories.name AS cat_name, item_register_to_branches.quantity AS available_branch_stock FROM `items` INNER JOIN categories ON items.category_id = categories.id INNER JOIN item_register_to_branches ON items.id = item_register_to_branches.item_id WHERE item_register_to_branches.branch_id = '$branch_id' AND items.category_id IN (1, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27) AND items.status = '1' AND item_register_to_branches.status = '1' ORDER BY items.`name` ");
-    if ($run1 && mysqli_num_rows($run1) > 0)  
-    {
-        while ($row1 = mysqli_fetch_array($run1)) 
-        {
-            $item_id = $row1['id'];
-            $category_id = $row1['category_id'];
-            $item_name = $row1['name'];
-            $category_name = $row1['cat_name'];
-            $reg_item_id = $row1['item_register_id'];
-                 $output .= '<option value="'.$reg_item_id.'">'.$item_name.' - '.$category_name.'</option>';   
-        }
-    }    
-    if ($run2 && mysqli_num_rows($run2) > 0)  
-    {
-        while ($row2 = mysqli_fetch_array($run2)) 
-        {
-            $available_branch_stock = $row2['available_branch_stock'];
-            $item_id2 = $row2['id'];
-            $category_id2 = $row2['category_id'];
-            $item_name2 = $row2['name'];
-            $category_name2 = $row2['cat_name'];
-            $reg_item_id2 = $row2['item_register_id'];
-            if ($available_branch_stock < 1) {
-                 $output .= '<option value="'.$reg_item_id2.'">OUT OF STOCK '.$item_name2.' - '.$category_name2.'</option>';
-            } else {
-                 $output .= '<option value="'.$reg_item_id2.'">'.$item_name2.' - '.$category_name2.'</option>';
-            }
-        }
+    if ($branch_id < 1) {
+        return '<option value="" disabled>No branch in session — log in with a branch user</option>';
+    }
+    // All items mapped to this branch (not only hard-coded category IDs).
+    $sql = "SELECT irb.id AS reg_item_id, i.name AS item_name, i.category_id, c.name AS cat_name, irb.quantity AS qty
+        FROM item_register_to_branches irb
+        INNER JOIN items i ON irb.item_id = i.id
+        INNER JOIN categories c ON i.category_id = c.id
+        WHERE irb.branch_id = $branch_id
+          AND irb.status = 1
+          AND i.status = 1
+          AND i.category_id NOT IN (3, 28)
+        ORDER BY i.name ASC";
+    $run = mysqli_query($GLOBALS['con'], $sql);
+    if (!$run) {
+        return '<option value="" disabled>Unable to load medicines list</option>';
+    }
+    while ($row = mysqli_fetch_assoc($run)) {
+        $reg_item_id = (int) $row['reg_item_id'];
+        $item_name = htmlspecialchars($row['item_name'], ENT_QUOTES, 'UTF-8');
+        $cat_name = htmlspecialchars($row['cat_name'], ENT_QUOTES, 'UTF-8');
+        $prefix = ((int) $row['qty'] < 1 && (int) $row['category_id'] !== 2) ? 'OUT OF STOCK ' : '';
+        $output .= '<option value="'.$reg_item_id.'">'.$prefix.$item_name.' - '.$cat_name.'</option>';
     }
     if ($output === '') {
-        return '<option value="" disabled>NO DATA FOUND — register items to this branch</option>';
+        return '<option value="" disabled>No items mapped to this branch in item_register_to_branches</option>';
     }
     return $output;
 }

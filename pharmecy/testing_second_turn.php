@@ -4,8 +4,6 @@ include_once 'includes/rehab_fingerprint.php';
 $amount_array = get_select_amount_array();
 include 'includes/head.php'; ?>
 	<title>SECOND TURN - <?php echo $company_trademark; ?></title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/js/selectize.min.js" integrity="sha512-IOebNkvA/HZjMM7MxL0NYeLYEalloZ8ckak+NDtOViP7oiYzG5vn6WVXyrJDiJPhl4yRdmNAG49iuLmhkUdVsQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/css/selectize.bootstrap3.min.css" integrity="sha512-cNefX8/Vd+UJbeYHzwdRZYEHI1K5Wj+gCdaK4R767/8SFhqMaHHg881hZONXpq4ainln9e330TalryDPKysm2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body class="background_image_ycdo" onkeydown="return (event.keyCode != 116)">
@@ -301,15 +299,16 @@ else
 	</div>
 </div>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/js/selectize.min.js" integrity="sha512-IOebNkvA/HZjMM7MxL0NYeLYEalloZ8ckak+NDtOViP7oiYzG5vn6WVXyrJDiJPhl4yRdmNAG49iuLmhkUdVsQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </body>
 
 </html>
 <script type="text/javascript">
-      $(document).ready(function () {
-  $('#select_item').selectize({
-      sortField: 'text'
-  });
-  $(".alert").alert();
+$(document).ready(function () {
+  if ($('#select_item').length && typeof $.fn.selectize === 'function') {
+    $('#select_item').selectize({ sortField: 'text' });
+  }
 });
 </script>
 
