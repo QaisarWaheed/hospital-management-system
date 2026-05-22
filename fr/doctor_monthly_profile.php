@@ -107,6 +107,8 @@ $usgs = 0;
 $reffered = 0;
 $reffered_opd = 0;
 $gynae_system = 0;
+$opd_count = 0;
+$opd_sum = 0;
 if(isset($_POST['date']))
 {
     echo '
@@ -309,7 +311,10 @@ if(isset($_POST['date']) && $_POST['date'] != '')
             ';
     }
 $get_referal = mysqli_query($con, "SELECT COUNT(`referral_patient_id`) AS count, SUM(`received_cash`) As sum FROM `referral_patients` WHERE `to_user_id` = '$doctor_id' AND `received_cash` > 0 AND `referral_patient_created` LIKE '$date%'; ");
-$row_referal = mysqli_fetch_array($get_referal);
+$row_referal = ($get_referal) ? mysqli_fetch_array($get_referal) : ['count' => 0, 'sum' => 0];
+if (!$row_referal) {
+    $row_referal = ['count' => 0, 'sum' => 0];
+}
 ?>
         <div class = "col-md-12">
                 <table class = "table">
