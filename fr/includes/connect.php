@@ -3,6 +3,11 @@ require_once __DIR__ . '/../../includes/ycdo_bootstrap.php';
 date_default_timezone_set("Asia/Karachi");
 $current_date = date('Y-m-d G:i:s A');
 
+if (defined('YCDO_FR_CONNECT_LOADED')) {
+    $con = $GLOBALS['con'] ?? ycdo_db_connect();
+    return;
+}
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -32,6 +37,8 @@ $con = ycdo_db_connect();
 $GLOBALS['con'] = $con;
 $GLOBALS['branch_id'] = $branch_id;
 $GLOBALS['user_id'] = $fr_id;
+define('YCDO_FR_CONNECT_LOADED', true);
+
 function available_items_in_store_by_register_item($branch_item_id)
 {
     $quanity = 0;

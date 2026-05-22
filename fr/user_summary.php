@@ -44,62 +44,44 @@ window.close();
 		
 		<div class="col-md-12 col-sm-12 col-xs-12">
 			
-		<form method="GET"  target="_blank">
-			
+		<form method="GET" target="_blank">
 			<div class="row">
-				
 				<div class="col-md-6 col-sm-6 col-xs-6">
-
 					<label for="from_date">From:</label>
-					<input type="date" name="from_date" class="form-control" required id="from_date">
-				
+					<input type="date" name="from_date" class="form-control" required id="from_date" value="<?php echo date('Y-m-d'); ?>">
 				</div>
 				<div class="col-md-6 col-sm-6 col-xs-6">
-
 					<label for="to_date">To:</label>
-					<input type="date" name="to_date" class="form-control" required id="to_date">
-				
+					<input type="date" name="to_date" class="form-control" required id="to_date" value="<?php echo date('Y-m-d'); ?>">
 				</div>
-
 				<div class="col-md-6 col-sm-6 col-xs-6">
-                <label> SELECT BRANCH</label>
-                <select class="form-control" style="min-width: 200px;text-transform: uppercase;" name="br_id">
-                    <option value="<?php echo $branch_id; ?>"><?php echo $branch_address; ?></option>
+                <label>SELECT BRANCH</label>
+                <select class="form-control" style="min-width: 200px;text-transform: uppercase;" name="br_id" required>
+                    <option value="<?php echo (int) $branch_id; ?>"><?php echo htmlspecialchars($branch_address); ?></option>
                 </select>
 				</div>
 				<div class="col-md-6 col-sm-6 col-xs-6">
                 <label>SELECT USER</label>
                 <select class="form-control" style="min-width: 200px;text-transform: uppercase;" name="user_id">
                     <option value="0">ALL</option>
-<?php 
-
-require_once __DIR__ . '/../includes/db_connect.php';
+<?php
 $user = "SELECT * FROM users WHERE role_id IN (1, 2, 7) AND status = 1 AND branch_id = '$branch_id' ORDER BY `u_name` ASC ";
 $run_user = mysqli_query($con, $user);
-if (mysqli_num_rows($run_user) > 0) 
-{
+if ($run_user && mysqli_num_rows($run_user) > 0) {
     while ($row_user = mysqli_fetch_array($run_user)) {
-        echo '<option value="'.$row_user['id'].'">'.$row_user['u_name'].'</option>';
+        echo '<option value="'.$row_user['id'].'">'.htmlspecialchars($row_user['u_name']).'</option>';
     }
-}
-else
-{
-    echo '<option value="">Add Doctors Data</option>';
+} else {
+    echo '<option value="">No users found</option>';
 }
 ?>
                 </select>
 				</div>
-
-				<div class="col-md-6 col-sm-6 col-xs-6">
-					<br>
+				<div class="col-md-12 col-sm-12 col-xs-12" style="margin-top: 1em;">
 					<input class="btn btn-sm btn-primary" type="submit" name="print_summary" value="PRINT SUMMARY" />
-
-					<input class="btn btn-sm btn-danger" type="reset" name="clear" value="CLEAR FORM" />
-
+					<input class="btn btn-sm btn-danger" type="reset" value="CLEAR FORM" />
 				</div>
-
 			</div>
-
 		</form>
 	
 		</div>

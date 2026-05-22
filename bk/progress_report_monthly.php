@@ -49,7 +49,7 @@ if( isset($_POST['date']) && $_POST['date'] != '')
 <div class="row" style="margin: 0px;" id = "submitBody">
 	<div class="col-md-12" style="text-align: center;background: lightgreen;"><label><h1><?php echo $company_name; ?> </h1></label></div>
 	<div class="col-md-3 background_whitesmoke">	<?php include 'left_navigation.php'; ?>	
-    	<h3 style="margin-top: 350px;text-align: center;"><?php echo $_SESSION['hr_name'];if($_SESSION['is_incharge'] == 2){ echo " Incharge ";} ?>(<?php echo $role_title; ?>)</h3>
+    	<h3 style="margin-top: 350px;text-align: center;"><?php echo htmlspecialchars($bk_name); if ($bk_is_incharge == 2) { echo ' Incharge '; } ?>(<?php echo htmlspecialchars($role_title); ?>)</h3>
     </div>
     <div class = "col-md-9">
         <form action = "print_progress_report_monthly.php" METHOD = "POST" class = "container" onsubmit="showProgress(); return true;">
@@ -58,32 +58,24 @@ if( isset($_POST['date']) && $_POST['date'] != '')
                 <label>BRANCH</label>
                 <select name = "br_id" class = "form-control" required>
                     <?php 
-                    if($hr_id == 1)
-                    {
+                    if ($user_id == 1) {
                         $select_br = "SELECT * FROM branchs WHERE status = '1' ";
                         $run_br = mysqli_query($con, $select_br);
-                        if(mysqli_num_rows($run_br) > 0)
-                        {
-                            while($row_br = mysqli_fetch_array($run_br))
-                            {
-                                $br_id = $row_br['id'];
-                                $br_address = $row_br['address'];
-                                echo '<option value = "'.$br_id.'">'.$br_address.'</option>';
+                        if ($run_br && mysqli_num_rows($run_br) > 0) {
+                            while ($row_br = mysqli_fetch_array($run_br)) {
+                                echo '<option value="' . (int) $row_br['id'] . '">' . htmlspecialchars($row_br['address']) . '</option>';
                             }
-                        }
-                        else
-                        { ?>
-                            <option value = "<?php echo $bk_branch_id; ?>"><?php echo $br_branch_address; ?></option>    
+                        } else { ?>
+                            <option value="<?php echo (int) $bk_branch_id; ?>"><?php echo htmlspecialchars($bk_branch_address); ?></option>
                         <?php }
-                    }
-                    else{ ?>
-                        <option value = "<?php echo $bk_branch_id; ?>"><?php echo $bk_branch_address; ?></option>
+                    } else { ?>
+                        <option value="<?php echo (int) $bk_branch_id; ?>"><?php echo htmlspecialchars($bk_branch_address); ?></option>
                     <?php } ?>
                 </select>
             </div>
             <div class = "col">
                 <label>DATE</label>
-                <input required type = "month" value = "<?php echo date('Y-m-d'); ?>" name = "date" id = "date" class = "form-control" />
+                <input required type = "month" value = "<?php echo date('Y-m'); ?>" name = "date" id = "date" class = "form-control" />
                 <input type = "submit" name = "progress" value = "PROGRESS" class = "btn btn-sm btn-info" />
                 <input type = "reset" name = "reset" value = "CLEAR" class = "btn btn-sm btn-danger" />
             </div>
