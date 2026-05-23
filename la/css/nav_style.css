@@ -57,3 +57,18 @@ a:hover {
   background-color: whitesmoke;
   color: #04AA6D;
 }
+
+#nav_1 li.active > a,
+#nav_1 a.active {
+  background-color: #dcefd4;
+  color: #1b4332;
+  font-weight: 600;
+  border-radius: 4px;
+  display: block;
+  padding: 0 8px;
+}
+
+#nav_1 li.active > a:hover,
+#nav_1 a.active:hover {
+  color: #1b4332;
+}

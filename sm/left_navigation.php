@@ -79,3 +79,4 @@ if($role_id == 0)
 		</li>
 	</ul>
 </nav>
+<?php include __DIR__ . '/../includes/nav_active_highlight.php'; ?>

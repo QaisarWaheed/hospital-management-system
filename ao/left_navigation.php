@@ -57,3 +57,4 @@ if(mysqli_num_rows($run_audit) == 1)
 		</li>
 	</ul>
 </nav>
+<?php include __DIR__ . '/../includes/nav_active_highlight.php'; ?>

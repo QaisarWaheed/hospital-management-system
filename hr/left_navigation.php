@@ -93,3 +93,4 @@ if ($hr_is_incharge == 1 || $hr_is_admin == 1)
 		</li>
 	</ul>
 </nav>
+<?php include __DIR__ . '/../includes/nav_active_highlight.php'; ?>

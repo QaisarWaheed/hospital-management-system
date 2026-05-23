@@ -121,3 +121,4 @@ if($branch_id != '0')
 	</ul>
 	<h5 style="margin-top: 150px;text-align: center;">USER: <?php echo htmlspecialchars($user_name); if ($is_incharge == 2) { echo ' Incharge '; } ?></h5>
 </nav>
+<?php include __DIR__ . '/../includes/nav_active_highlight.php'; ?>

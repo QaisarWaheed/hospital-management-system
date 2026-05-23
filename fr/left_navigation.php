@@ -112,3 +112,4 @@
 		</li>
 	</ul>
 </nav>
+<?php include __DIR__ . '/../includes/nav_active_highlight.php'; ?>
