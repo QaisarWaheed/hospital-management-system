@@ -1,15 +1,20 @@
-<?php include 'includes/connect.php'; ?>
-<?php include 'includes/head.php'; 
+<?php include 'includes/connect.php';
+$from = date('Y-m-d');
+$to = date('Y-m-d');
+$item_id = '';
+$br_id = (int) $branch_id;
+$end_date = date('Y-m-d 23:59:59');
 if(isset($_POST['item_id']) && isset($_POST['from']) && $_POST['item_id'] != '')
 {
     $item_id = $_POST['item_id'];
-    $br_id = $_POST['br_id'];
-    $from = $_POST['from'];
-    $to = $_POST['to'];
+    $br_id = (int) $_POST['br_id'];
+    $from = (string) $_POST['from'];
+    $to = (string) $_POST['to'];
     $end_date = date_format(date_create($to), "Y-m-d 23:59:59");
 }
 ?>
-	<title>PURCHASE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> - <?php echo $company_trademark; ?></title>
+<?php include 'includes/head.php'; ?>
+	<title>PURCHASE DETAIL FROM <?php echo htmlspecialchars($from, ENT_QUOTES, 'UTF-8'); ?> TO <?php echo htmlspecialchars($to, ENT_QUOTES, 'UTF-8'); ?> - <?php echo $company_trademark; ?></title>
     <script src= "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src= "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>	

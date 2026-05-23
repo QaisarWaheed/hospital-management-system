@@ -96,6 +96,62 @@ function progress_gynae_register_count_by_doctor($con, $br_id, $like)
     return progress_map_int($con, $sql, 'doctor_id', 'cnt');
 }
 
+function progress_opd_count_by_doctor_lte10($con, $br_id, $like)
+{
+    $br_id = (int) $br_id;
+    $sql = "SELECT doctor_id, COUNT(id) AS cnt FROM tokans
+        WHERE branch_id = '$br_id' AND status = 1 AND tokan_type_id <= 10 AND created LIKE '$like'
+        GROUP BY doctor_id";
+    return progress_map_int($con, $sql, 'doctor_id', 'cnt');
+}
+
+function progress_gynae_token_count_by_doctor($con, $br_id, $like)
+{
+    $br_id = (int) $br_id;
+    $like = mysqli_real_escape_string($con, $like);
+    $sql = "SELECT doctor_id, COUNT(id) AS cnt FROM item_by_doctor
+        WHERE branch_id = '$br_id' AND category_id = '41' AND created LIKE '$like'
+        GROUP BY doctor_id";
+    return progress_map_int($con, $sql, 'doctor_id', 'cnt');
+}
+
+function progress_gynae_register_count_by_doctor_since($con, $br_id, $since_date)
+{
+    $br_id = (int) $br_id;
+    $since_date = mysqli_real_escape_string($con, $since_date);
+    $sql = "SELECT doctor_id, COUNT(*) AS cnt FROM gynae_register
+        WHERE branch_id = '$br_id' AND created > '$since_date'
+        GROUP BY doctor_id";
+    return progress_map_int($con, $sql, 'doctor_id', 'cnt');
+}
+
+function progress_gynae_token_count_by_doctor_since($con, $br_id, $since_date)
+{
+    $br_id = (int) $br_id;
+    $since_date = mysqli_real_escape_string($con, $since_date);
+    $sql = "SELECT doctor_id, COUNT(id) AS cnt FROM item_by_doctor
+        WHERE branch_id = '$br_id' AND category_id = '41' AND created > '$since_date'
+        GROUP BY doctor_id";
+    return progress_map_int($con, $sql, 'doctor_id', 'cnt');
+}
+
+function progress_gynae_daily_doctor_ids($con, $br_id, $month_like)
+{
+    $br_id = (int) $br_id;
+    $month_like = mysqli_real_escape_string($con, $month_like);
+    $sql = "SELECT DISTINCT doctor_id AS id FROM item_by_doctor
+        WHERE branch_id = '$br_id' AND category_id = '41' AND created LIKE '$month_like'";
+    $ids = array();
+    $run = mysqli_query($con, $sql);
+    if ($run) {
+        while ($row = mysqli_fetch_assoc($run)) {
+            $ids[] = (int) $row['id'];
+        }
+    }
+    sort($ids, SORT_NUMERIC);
+    return $ids;
+}
+
 function progress_referral_from_count_by_doctor($con, $like, $only_successful = true)
 {
     $status_sql = $only_successful ? " AND referral_patient_status > '1' " : '';
