@@ -129,7 +129,6 @@ if (mysqli_num_rows($run) > 0)
 		{
 			while ($row_doctor = mysqli_fetch_array($run_doctor)) 
 			{
-			    $dr_len = strpos($dr_name, "(" );
 				$dr_name = $row_doctor['u_name'];
 			}
 		}

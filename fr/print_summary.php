@@ -1,22 +1,18 @@
 <?php
 include 'includes/connect.php';
+require_once __DIR__ . '/../includes/report_helpers.php';
 
-if (isset($_POST['s']) && $_POST['s'] != '') {
-	$from_date = $_POST['s'];
-	$to_date = $_POST['e'];
-	$u_id = $_POST['u'];
-	$br_id = $_POST['br_id'];
-	$u_name = $_POST['un'];
-} elseif (isset($_GET['s']) && $_GET['s'] != '') {
-	$from_date = $_GET['s'];
-	$to_date = $_GET['e'];
-	$u_id = $_GET['u'];
-	$br_id = $_GET['br_id'];
-	$u_name = $_GET['un'];
-} else {
+$params = summary_token_report_params($_GET, $_POST);
+if ($params === null) {
 	http_response_code(400);
 	exit('Date range is required.');
 }
+
+$from_date = $params['from'];
+$to_date = $params['to'];
+$u_id = $params['user_id'];
+$br_id = $params['branch_id'];
+$u_name = $params['user_name'];
 ?>
 <?php include 'includes/head.php'; ?>
 	<title>Print Summary - <?php echo $company_trademark; ?></title>
@@ -127,7 +123,6 @@ if (mysqli_num_rows($run) > 0)
 		{
 			while ($row_doctor = mysqli_fetch_array($run_doctor)) 
 			{
-			    $dr_len = strpos($dr_name, "(" );
 				$dr_name = $row_doctor['u_name'];
 			}
 		}

@@ -1,0 +1,41 @@
+name: PHP Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run PHPUnit
+        run: vendor/bin/phpunit
+
+      - name: Run standalone test runner
+        run: php tests/run_all.php
+
+      - name: Lint critical PHP files
+        run: |
+          files=(
+            fr/print_summary.php
+            fr/print_summary_login.php
+            fr/user_summary.php
+            bk/print_progress_report_daily_branch.php
+            includes/report_helpers.php
+          )
+          for f in "${files[@]}"; do
+            php -l "$f"
+          done

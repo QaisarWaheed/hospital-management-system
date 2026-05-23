@@ -1,20 +1,16 @@
 <?php
 include 'includes/connect.php';
+require_once __DIR__ . '/../includes/report_helpers.php';
 
-if (isset($_POST['s']) && $_POST['s'] != '') {
-	$from_date = $_POST['s'];
-	$to_date = $_POST['e'];
-	$b_id = $_POST['b_id'] ?? $_POST['u'] ?? $branch_id;
-} elseif (isset($_GET['s']) && $_GET['s'] != '') {
-	$from_date = $_GET['s'];
-	$to_date = $_GET['e'];
-	$b_id = $_GET['b_id'] ?? $_GET['u'] ?? $branch_id;
-} else {
+$loginParams = summary_login_report_params($_GET, $_POST, (int) $branch_id);
+if ($loginParams === null) {
 	http_response_code(400);
 	exit('Date range is required.');
 }
 
-$b_id = (int) $b_id;
+$from_date = $loginParams['from'];
+$to_date = $loginParams['to'];
+$b_id = $loginParams['branch_id'];
 $br_id = $b_id;
 ?>
 <?php include 'includes/head.php'; ?>
