@@ -1,5 +1,10 @@
 <?php
 require_once __DIR__ . '/ycdo_bootstrap.php';
+if (defined('YCDO_ROOT_CONNECT_LOADED')) {
+    $con = $GLOBALS['con'] ?? ycdo_db_connect();
+    return;
+}
+define('YCDO_ROOT_CONNECT_LOADED', true);
 date_default_timezone_set("Asia/Karachi");
 $current_date = date('Y-m-d h:i:s');
 error_reporting(getenv('YCDO_DEBUG') === '1' ? E_ALL : 1);

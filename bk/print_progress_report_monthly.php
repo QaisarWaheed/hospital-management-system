@@ -70,7 +70,10 @@ else
     <?php
     $total_refered = 0;
     $total_refered_to = 0;
-
+    $total_opd = 0;
+    $total_cash = 0;
+    $total_dia_patients = 0;
+    $total_gynae_system = 0;
 
     $s = 0; 
     $cash_collection = 0;
@@ -112,17 +115,18 @@ else
     // $select = "SELECT DISTINCT tokans.doctor_id, users.u_name , branchs.tag_name, COUNT(CASE WHEN tokans.tokan_type_id <= 100 THEN tokans.tokan_type_id END) AS opd, SUM(cash) AS cash_collection FROM `tokans` INNER JOIN users ON tokans.doctor_id = users.id INNER JOIN branchs ON users.branch_id = branchs.id WHERE tokans.created like '$date%' AND tokans.branch_id = '$br_id' AND tokans.status = '1' GROUP BY tokans.doctor_id ORDER BY tokans.doctor_id ";
     $select = "SELECT DISTINCT tokans.doctor_id, users.u_name , branchs.tag_name, COUNT(CASE WHEN tokans.tokan_type_id <= 100 THEN tokans.tokan_type_id END) AS opd, SUM(cash) AS cash_collection FROM `tokans` INNER JOIN users ON tokans.doctor_id = users.id INNER JOIN branchs ON users.branch_id = branchs.id WHERE tokans.created >= '$start_date' AND tokans.created < '$end_date' AND tokans.branch_id = '$br_id' AND tokans.status = '1' GROUP BY tokans.doctor_id ORDER BY tokans.doctor_id ";
     $run = mysqli_query($con, $select);
-    $count_run = mysqli_num_rows($run);
-    if(mysqli_num_rows($run) > 0)
+    $count_run = ($run && mysqli_num_rows($run) > 0) ? mysqli_num_rows($run) : 0;
+    if ($run && mysqli_num_rows($run) > 0)
     {
         while($row = mysqli_fetch_array($run))
         {
             $patients = 0;
             $opd = $row['opd'];
             $total_opd = $total_opd + $opd;
-            $cash_collection = $row['cash_collection'];
-            $total_cash = $total_cash + $cash_collection;
+            $cash_collection = $row['cash_collection'] ?? 0;
+            $total_cash = $total_cash + (float) $cash_collection;
             $doctor_id = $row['doctor_id'];
+            $count_dia_patient_cash = 0;
 
     $dia_patients = "SELECT COUNT(DISTINCT tokan_no), category_id, SUM(sale_price) FROM `item_by_doctor` WHERE `category_id` = '2' AND branch_id = '$br_id' AND created >= '$start_date' AND created < '$end_date' AND doctor_id = '$doctor_id' "; 
     $run_dia_patients = mysqli_query($con, $dia_patients);
@@ -247,7 +251,7 @@ FROM `item_by_doctor` WHERE  item_by_doctor.created >= '$start_date' AND item_by
                 }
                 ?>
             </td>
-            <td><?php echo number_format($count_dia_patient_cash); ?></td>
+            <td><?php echo number_format((float) $count_dia_patient_cash); ?></td>
             <td><?php echo $usgs; ?></td>
             <td><?php echo $svds; ?></td>
             <td><?php echo $dncs; ?></td>
@@ -262,7 +266,7 @@ FROM `item_by_doctor` WHERE  item_by_doctor.created >= '$start_date' AND item_by
             <td><?php echo $gynae_system; ?></td>
             <td><?php echo $refered; ?></td>
             <td><?php echo $refered_to; ?></td>            
-            <td style = "text-align: right;"><?php echo number_format($cash_collection); ?></td>
+            <td style = "text-align: right;"><?php echo number_format((float) $cash_collection); ?></td>
         </tr>
         <?php 
         $tests = 0;

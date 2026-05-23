@@ -49,13 +49,13 @@ else
 <div class="row" style="margin: 0px;">
 	<div class="col-md-12" style="text-align: center;background: lightgreen;"><label><h1><?php echo $company_name; ?> </h1></label></div>
 	<div class="col-md-3 background_whitesmoke no-print">	<?php include 'left_navigation.php'; ?>	
-    	<h3 style="margin-top: 350px;text-align: center;"><?php echo $_SESSION['dr_name'];if($_SESSION['is_incharge'] == 2){ echo " Incharge ";} ?>(<?php echo $role_title; ?>)</h3>
+    	<h3 style="margin-top: 350px;text-align: center;"><?php echo htmlspecialchars($user_name); if ($is_incharge == 2) { echo ' Incharge '; } ?>(<?php echo htmlspecialchars($role_title); ?>)</h3>
     </div>
     <div class = "col-md-9">
         <form METHOD = "POST">
         <div class = "row no-print">
             <div class = "col-md-12">
-                <h2 align = "center"><?php echo $branch_name; ?></h2>
+                <h2 align = "center"><?php echo htmlspecialchars($branch_name); ?></h2>
             </div>
             <div class = "col-md-12">
                 <label>DOCTOR</label>
@@ -91,12 +91,30 @@ $total_medicine = 0;
 $total_opds = 0;
 $total_cons_opds = 0;
 $total_gynae = 0;
+$total_collections = 0;
+$total_reffered = 0;
+$total_reffered_opd = 0;
+$total_gynae_system = 0;
+$total_cons_opds_cash = 0;
+$opds = 0;
+$cons_opds = 0;
+$svds = 0;
+$dncs = 0;
+$procedures = 0;
+$labs = 0;
+$admissions = 0;
+$usgs = 0;
+$reffered = 0;
+$reffered_opd = 0;
+$gynae_system = 0;
+$opd_count = 0;
+$opd_sum = 0;
 if(isset($_POST['date']))
 {
     echo '
     <table class = "table" border = "solid">
     <caption style = "caption-side: top; text-align: center;color: black;">
-        <h3>SUMMERY REPORT OF '.date_format(date_create($date), "F Y").'</h3>
+        <h3>SUMMERY REPORT OF '.ycdo_safe_date_format($date.'-01', 'F Y', $date).'</h3>
     </caption>
     <thead>
         <tr>
@@ -136,7 +154,7 @@ if(isset($_POST['date']))
 
         $select_cons_opd = "SELECT DISTINCT tokan_no, tokans.cash AS cash FROM item_by_doctor INNER JOIN tokans ON item_by_doctor.tokan_no = tokans.id INNER JOIN item_register_to_branches ON item_by_doctor.item_id = item_register_to_branches.id WHERE item_by_doctor.doctor_id LIKE '$doctor' AND item_by_doctor.created LIKE '$date%' AND item_by_doctor.branch_id = '$br_id' AND item_by_doctor.status = 2 AND item_register_to_branches.item_id IN( SELECT id FROM items WHERE category_id = '29' )";
         $run_cons_opd = mysqli_query($con,$select_cons_opd);
-        $cons_opds = mysqli_num_rows($run_cons_opd);
+        $cons_opds = ($run_cons_opd) ? mysqli_num_rows($run_cons_opd) : 0;
         $total_cons_opds = $total_cons_opds + $cons_opds;
         if($cons_opds > 0)
         {
@@ -293,7 +311,10 @@ if(isset($_POST['date']) && $_POST['date'] != '')
             ';
     }
 $get_referal = mysqli_query($con, "SELECT COUNT(`referral_patient_id`) AS count, SUM(`received_cash`) As sum FROM `referral_patients` WHERE `to_user_id` = '$doctor_id' AND `received_cash` > 0 AND `referral_patient_created` LIKE '$date%'; ");
-$row_referal = mysqli_fetch_array($get_referal);
+$row_referal = ($get_referal) ? mysqli_fetch_array($get_referal) : ['count' => 0, 'sum' => 0];
+if (!$row_referal) {
+    $row_referal = ['count' => 0, 'sum' => 0];
+}
 ?>
         <div class = "col-md-12">
                 <table class = "table">

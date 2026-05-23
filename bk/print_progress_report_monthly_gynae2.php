@@ -38,14 +38,23 @@ else
 $s = 0;
 $count_opd = 0;
 $count_consultant_opd = 0;
+$count_gynae_system = 0;
+$count_svd_dnc = 0;
+$count_procedure = 0;
+$total_reffered = 0;
 $select_dr = "SELECT * FROM users WHERE ( role_id = '3' AND id IN (SELECT `doctor_id` FROM `tokans` WHERE `branch_id` = '$br_id' AND created LIKE '$date%') AND id IN (SELECT DISTINCT `doctor_id` FROM `item_by_doctor` WHERE `branch_id` = '$br_id' AND created LIKE '$date%' AND item_id IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (483, 1159, 1321, 1414) )) ) OR (id IN (SELECT from_user_id FROM `referral_patients` WHERE referral_patient_created LIKE '$date%' AND branch_id = '$br_id' and referral_patient_status > 1 ) ) ORDER BY `u_name` ";
 $run_dr = mysqli_query($con, $select_dr);
-if(mysqli_num_rows($run_dr) > 0)
+if ($run_dr && mysqli_num_rows($run_dr) > 0)
 {
     while($row_dr = mysqli_fetch_array($run_dr))
     {
         $dr_id = $row_dr['id'];
         $dr_name = $row_dr['u_name'];
+        $opd = 0;
+        $svd_dnc_count = 0;
+        $procedure = 0;
+        $gynae_count_system = 0;
+        $reffered = 0;
 
         $select_opd = "SELECT COUNT(id) FROM tokans WHERE doctor_id = '$dr_id' AND created LIKE '$date%' AND branch_id = '$br_id' AND tokan_type_id <= 10 AND status = 1 ";
         $run_opd = mysqli_query($con, $select_opd);

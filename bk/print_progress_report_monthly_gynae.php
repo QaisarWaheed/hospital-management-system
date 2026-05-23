@@ -12,7 +12,7 @@ else
 ?>
 <html>
 <head>
-    <title>GYNAE PROGRESS MONTH <?php echo date_format(date_create($date), " F Y "); ?><?php echo get_branch_tag_name_by_id($br_id); ?></title>
+    <title>GYNAE PROGRESS MONTH <?php echo ycdo_safe_date_format($date.'-01', 'F Y', $date); ?><?php echo get_branch_tag_name_by_id($br_id); ?></title>
 </head>
 <body>
     
@@ -20,7 +20,7 @@ else
 <caption>
     <h2><?php echo $company_name; ?></h2>
     <h2><?php echo get_branch_name_by($br_id); ?></h2>
-    <h3>PROGRESS MONTH <?php echo date_format(date_create($date), " F Y"); ?></h3>
+    <h3>PROGRESS MONTH <?php echo ycdo_safe_date_format($date.'-01', 'F Y', $date); ?></h3>
 </caption>
     <thead>
         <tr>
@@ -40,14 +40,26 @@ else
 $s = 0;
 $count_opd = 0;
 $count_consultant_opd = 0;
+$count_gynae = 0;
+$count_gynae_system = 0;
+$count_svd_dnc = 0;
+$count_procedure = 0;
+$total_reffered = 0;
 $select_dr = "SELECT * FROM users WHERE ( role_id = '3' AND id IN (SELECT `doctor_id` FROM `tokans` WHERE `branch_id` = '$br_id' AND created LIKE '$date%') AND id IN (SELECT DISTINCT `doctor_id` FROM `item_by_doctor` WHERE `branch_id` = '$br_id' AND created LIKE '$date%' AND item_id IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (483, 1159, 1321, 1414) )) ) OR (id IN (SELECT from_user_id FROM `referral_patients` WHERE referral_patient_created LIKE '$date%' AND branch_id = '$br_id' and referral_patient_status > 1 ) ) ORDER BY `u_name` ";
 $run_dr = mysqli_query($con, $select_dr);
-if(mysqli_num_rows($run_dr) > 0)
+if ($run_dr && mysqli_num_rows($run_dr) > 0)
 {
     while($row_dr = mysqli_fetch_array($run_dr))
     {
         $dr_id = $row_dr['id'];
         $dr_name = $row_dr['u_name'];
+        $opd = 0;
+        $consultant_opd = 0;
+        $gynae_count = 0;
+        $gynae_count_system = 0;
+        $svd_dnc_count = 0;
+        $procedure = 0;
+        $reffered = 0;
 
         $select_opd = "SELECT COUNT(id) FROM tokans WHERE doctor_id = '$dr_id' AND created LIKE '$date%' AND branch_id = '$br_id' AND tokan_type_id <= 10 AND status = 1 ";
         $run_opd = mysqli_query($con, $select_opd);

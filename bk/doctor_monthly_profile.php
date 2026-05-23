@@ -85,7 +85,9 @@ $total_admission = 0;
 $total_procedure = 0;
 $total_dnc = 0;
 $total_svd = 0;
-$total_referred = 0;
+$total_reffered = 0;
+$total_reffered_opd = 0;
+$total_gynae_system = 0;
 $total_usg = 0;
 $total_lab = 0;
 $total_medicine = 0;
@@ -140,7 +142,7 @@ if (isset($_POST['date']) && isset($_POST['doctor_id']) && $doctor > 0)
         $total_cons_opds_cash = 0;
         $select_cons_opd = "SELECT DISTINCT tokan_no, tokans.cash AS cash FROM item_by_doctor INNER JOIN tokans ON item_by_doctor.tokan_no = tokans.id INNER JOIN item_register_to_branches ON item_by_doctor.item_id = item_register_to_branches.id WHERE item_by_doctor.doctor_id LIKE '$doctor' AND item_by_doctor.created LIKE '$date%' AND item_by_doctor.branch_id = '$br_id' AND item_by_doctor.status = 2 AND item_register_to_branches.item_id IN( SELECT id FROM items WHERE category_id = '29' )";
         $run_cons_opd = mysqli_query($con,$select_cons_opd);
-        $cons_opds = mysqli_num_rows($run_cons_opd);
+        $cons_opds = ($run_cons_opd) ? mysqli_num_rows($run_cons_opd) : 0;
         $total_cons_opds = $total_cons_opds + $cons_opds;
         if($cons_opds > 0)
         {
