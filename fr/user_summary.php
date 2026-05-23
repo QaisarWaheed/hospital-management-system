@@ -72,7 +72,11 @@ window.location.replace('user_summary.php');
 				<div class="col-md-6 col-sm-6 col-xs-12">
                 <label>SELECT BRANCH</label>
                 <select class="form-control" style="min-width: 200px;text-transform: uppercase;" name="br_id" required>
-                    <option value="<?php echo (int) $branch_id; ?>"><?php echo htmlspecialchars($branch_address); ?></option>
+<?php
+require_once __DIR__ . '/../includes/report_helpers.php';
+$fr_all_branches = summary_branch_may_select_all((int) $is_admin, (int) $is_incharge);
+echo summary_branch_select_html($con, (int) $branch_id, (int) $branch_id, $fr_all_branches, 'br_id');
+?>
                 </select>
 				</div>
 				<div class="col-md-6 col-sm-6 col-xs-6">

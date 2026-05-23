@@ -28,7 +28,7 @@ if(isset($_POST['category_idds']) && $_POST['category_idds'] != '')
         }
     if($category_idds > 0)
     {
-        $data = "SELECT items.name AS item_name, categories.name AS category_name, item_register_to_branches.quantity AS branch_stock, item_register_to_branches.min_limit, item_register_to_branches.max_limit FROM `item_register_to_branches` INNER JOIN items ON item_register_to_branches.item_id = items.id INNER JOIN categories ON items.category_id = categories.id WHERE item_register_to_branches.branch_id = '$filter_branch' AND item_register_to_branches.quantity <= 0 AND items.category_id = '$category_idds' AND item_register_to_branches.status = '1' ";
+        $data = "SELECT item_register_to_branches.id, items.name AS item_name, categories.name AS category_name, item_register_to_branches.quantity AS branch_stock, item_register_to_branches.min_limit, item_register_to_branches.max_limit FROM `item_register_to_branches` INNER JOIN items ON item_register_to_branches.item_id = items.id INNER JOIN categories ON items.category_id = categories.id WHERE item_register_to_branches.branch_id = '$filter_branch' AND item_register_to_branches.quantity <= 0 AND items.category_id = '$category_idds' AND item_register_to_branches.status = '1' ";
     }
     else
     {
@@ -37,7 +37,7 @@ if(isset($_POST['category_idds']) && $_POST['category_idds'] != '')
 }
 else
 {
-    $data = "SELECT * FROM `items` WHERE `status` = '1' AND category_id = '0' ";
+    $data = "SELECT item_register_to_branches.id, items.name AS item_name, categories.name AS category_name, item_register_to_branches.quantity AS branch_stock, item_register_to_branches.min_limit, item_register_to_branches.max_limit FROM `item_register_to_branches` INNER JOIN items ON item_register_to_branches.item_id = items.id INNER JOIN categories ON items.category_id = categories.id WHERE item_register_to_branches.branch_id = '$filter_branch' AND item_register_to_branches.quantity <= 0 AND item_register_to_branches.status = '1' ";
 }
 $select = mysqli_query($con, $data);
 ?>
@@ -132,9 +132,10 @@ if (mysqli_num_rows($select) > 0)
 	while ($row = mysqli_fetch_array($select)) 
 	{
 		$s = $s + 1;
+		$item_id = (int) $row['id'];
 echo '
 <tr>
-	<td id = "id'.$id.'">'.$s.'</td>
+	<td id = "id'.$item_id.'">'.$s.'</td>
 	<td>'.$row['item_name'].'</td>
 	<td>'.$row['category_name'].'</td>
 	<td>'.$row['branch_stock'].'</td>

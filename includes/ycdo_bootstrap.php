@@ -35,6 +35,15 @@ if (session_status() === PHP_SESSION_NONE) {
 function ycdo_db_connect()
 {
     require_once __DIR__ . '/ycdo_mysqli_vars.php';
+    global $ycdo_db_host, $ycdo_db_user, $ycdo_db_pass, $ycdo_db_name;
+
+    if (empty($ycdo_db_host) || empty($ycdo_db_name)) {
+        $ycdo_db_host = $GLOBALS['ycdo_db_host'] ?? null;
+        $ycdo_db_user = $GLOBALS['ycdo_db_user'] ?? null;
+        $ycdo_db_pass = $GLOBALS['ycdo_db_pass'] ?? null;
+        $ycdo_db_name = $GLOBALS['ycdo_db_name'] ?? null;
+    }
+
     $con = mysqli_connect($ycdo_db_host, $ycdo_db_user, $ycdo_db_pass, $ycdo_db_name);
     if (!$con) {
         if (getenv('YCDO_DEBUG') === '1') {

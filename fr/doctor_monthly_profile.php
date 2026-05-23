@@ -228,6 +228,7 @@ if(isset($_POST['date']) && $_POST['date'] != '')
 { 
     $sr = 1;
     $output_opd = '';
+    $output_procedure = '';
     $date = $_POST['date'];
     $doctor_id = $_POST['doctor_id'];
     $select_opd = "

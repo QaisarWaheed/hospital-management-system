@@ -1,4 +1,31 @@
-<?php include 'includes/connect.php'; ?>
+<?php
+include 'includes/connect.php';
+require_once __DIR__ . '/../includes/report_helpers.php';
+
+$loginParams = summary_login_report_params($_GET, $_POST, (int) $bk_branch_id);
+if ($loginParams === null) {
+	http_response_code(400);
+	exit('Date range is required.');
+}
+
+$from_date = $loginParams['from'];
+$to_date = $loginParams['to'];
+$b_id = $loginParams['branch_id'];
+$br_id = $b_id;
+
+$branch_name = $company_name;
+$branch_address = get_branch_name_by($b_id);
+$branch_lookup = mysqli_query($con, "SELECT name, address FROM branchs WHERE id = '$b_id' LIMIT 1");
+if ($branch_lookup && mysqli_num_rows($branch_lookup) === 1) {
+    $branch_row = mysqli_fetch_assoc($branch_lookup);
+    if (!empty($branch_row['name'])) {
+        $branch_name = $branch_row['name'];
+    }
+    if (!empty($branch_row['address'])) {
+        $branch_address = $branch_row['address'];
+    }
+}
+?>
 <?php include 'includes/head.php'; ?>
 	<title>Print Summary - <?php echo $company_trademark; ?></title>
 <style>
@@ -9,19 +36,6 @@
 </head>
 
 <body onload="window.print()">
-<?php
-if (isset($_POST['s']) && $_POST['s'] != '') {
-	$from_date = $_POST['s'];
-	$to_date = $_POST['e'];
-	$b_id = $_POST['b_id'];
-}
-elseif (isset($_GET['s']) && $_GET['s'] != '') {
-	$from_date = $_GET['s'];
-	$to_date = $_GET['e'];
-	$b_id = $_GET['b_id'];
-}
-
-?>
 
 <table class="table" style="font-size: 10px">
 
@@ -64,14 +78,6 @@ $total_extra = 0;
 $total_short = 0;
 $total_r_a = 0;
 $total_cash_received = 0;
-$select = "SELECT * FROM tokans WHERE 
-	`branch_id` = '$br_id' AND 
-	`created` <= '$last_date' AND 
-	`created` >= '$from_date' AND
-	`status` = '1' AND 
-	user_id IN (SELECT id FROM users WHERE branch_id = '$b_id') 
-	ORDER BY `created` ";
-// $run = mysqli_query($con, $select);
 
 $users = "SELECT * FROM `summary_details` WHERE login_id IN (SELECT id FROM logins_detail WHERE branch_id = '$b_id' AND login_at <= '$last_date' AND `login_at` >= '$from_date' AND `status` = '2') ORDER BY `created` ";
 $run_users = mysqli_query($con, $users);
@@ -82,6 +88,8 @@ if(mysqli_num_rows($run_users) > 0)
         $s = $s + 1;
         $user_login_id = $row_users['user_id'];
         $login_id = $row_users['login_id'];
+        $login_at = '';
+        $logout_at = '';
         $login_detail = "SELECT * FROM logins_detail WHERE id = '$login_id' ";
         $run = mysqli_query($con, $login_detail);
         if(mysqli_num_rows($run) == 1)
@@ -138,7 +146,6 @@ $select = "SELECT distinct tokan_type_id ,cash_received FROM tokans WHERE
 $run = mysqli_query($con, $select);
 if (mysqli_num_rows($run) > 0) 
 {
-    // echo $select;
 	while ($row = mysqli_fetch_array($run)) 
 	{
 		$tokan_type_id = $row['tokan_type_id'];
@@ -164,18 +171,7 @@ if (mysqli_num_rows($run) > 0)
 			<p style="text-align: center;"><strong>'.$title.' -> '.$count_tokens.' Amount('.intval($count_tokens * $row['cash_received']).')</strong></p>
 		';
 	}
-    // echo $select;
-}
-else
-{
-    // echo $select;
 }
 ?>
 </body>
 </html>
- <script type="text/javascript">
-    //   setTimeout(window.close, 50);
-</script>
-
-
-<?php mysqli_close($con); ?>

@@ -1,19 +1,19 @@
-<?php include 'includes/connect.php'; 
-if(isset($_GET['select_visit_date']) && $_GET['select_visit_date'] != '')
-{
-    $br_id = $_GET['br_id'];
-    $select_visit_date = $_GET['select_visit_date'];
-}
-else
-{
-    header('location: dashboard.php');
+<?php
+include 'includes/connect.php';
+
+$select_visit_date = isset($_GET['select_visit_date']) ? (string) $_GET['select_visit_date'] : '';
+$br_id = isset($_GET['br_id']) ? (int) $_GET['br_id'] : (int) $bk_branch_id;
+
+if ($select_visit_date === '') {
+    header('location: gynae_registeration.php');
+    exit;
 }
 ?>
 <?php include 'includes/head.php'; ?>
 	<title>Patient Registeration - <?php echo $company_trademark; ?></title>
 </head>
 
-<body class="background_image_ycdo" onkeydown="return (event.keyCode != 116)">
+<body onload="window.print()">
 	<div class="col-md-12" style="text-align: center;background: lightgreen;">
 		<label><h1><?php echo $company_name?> </h1></label>
 	</div>
@@ -46,7 +46,11 @@ else
 			        <tbody>
 			         <?php
 			         $s = 0;
-        			 $select = "SELECT * FROM `gynae_register` WHERE branch_id = '$br_id' AND status = 1 AND next_visit_date = '$select_visit_date' ORDER BY `next_visit_date` DESC ";
+        			 if ($br_id > 0) {
+        			     $select = "SELECT * FROM `gynae_register` WHERE branch_id = '$br_id' AND status = 1 AND next_visit_date = '$select_visit_date' ORDER BY `next_visit_date` DESC ";
+        			 } else {
+        			     $select = "SELECT * FROM `gynae_register` WHERE status = 1 AND next_visit_date = '$select_visit_date' ORDER BY `next_visit_date` DESC ";
+        			 }
 			         $run = mysqli_query($con, $select);
 			         if ($run && mysqli_num_rows($run) > 0)
 			         {

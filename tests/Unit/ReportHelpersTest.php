@@ -108,4 +108,17 @@ final class ReportHelpersTest extends TestCase
         $this->assertSame('03', $ym['month']);
         $this->assertSame(31, $ym['days']);
     }
+
+    public function testGynaeReportResolveParamsUsesBranchFromRequest(): void
+    {
+        $params = gynae_report_resolve_params(array('br_id' => '15', 'date' => '2026-04-01'), array(), 9);
+        $this->assertSame(15, $params['br_id']);
+        $this->assertSame('2026-04-01', $params['date']);
+    }
+
+    public function testReportSafeNumberFormatHandlesNull(): void
+    {
+        $this->assertSame('0', report_safe_number_format(null));
+        $this->assertSame('1,234', report_safe_number_format(1234));
+    }
 }

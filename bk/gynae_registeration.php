@@ -64,7 +64,7 @@ $select_visit_date = isset($_GET['select_visit_date']) && $_GET['select_visit_da
 			                    Next Visit
 			                    </th>
 			                <th>
-			                    <a href = "gynae_registeration_print.php?br_id=<?php echo (int) $br_id; ?>&select_visit_date=<?php echo htmlspecialchars($select_visit_date); ?>">PRINT</a>
+			                    <a target="_blank" href = "gynae_registeration_print.php?br_id=<?php echo (int) $br_id; ?>&select_visit_date=<?php echo htmlspecialchars($select_visit_date); ?>">PRINT</a>
 			                    <br>Update By
 			                </th>
 			                <th colspan = "3">

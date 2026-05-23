@@ -13,8 +13,9 @@ else
     $select_month = 0;
     $months = '+6 months';
 }
-$last_day = date('Y-m-d', strtotime($effectiveDate . $months) );
-$last_date = date('d-m-Y', strtotime($effectiveDate . $months) );
+$effectiveDate = $today;
+$last_day = date('Y-m-d', strtotime($effectiveDate . ' ' . $months) );
+$last_date = date('d-m-Y', strtotime($effectiveDate . ' ' . $months) );
 if (isset($_GET['category_idds']) && $_GET['category_idds'] != ''&& $_GET['category_idds'] != '0') 
 {
 $select_value = $_GET['category_idds'];

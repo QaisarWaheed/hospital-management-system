@@ -169,3 +169,78 @@ function ycdo_parse_year_month(string $date): array
         'days' => ycdo_days_in_month($year, $monthInt),
     );
 }
+
+/**
+ * @return array<int, array{id: int, address: string}>
+ */
+function summary_active_branches($con, bool $allBranches = true, int $sessionBranchId = 0): array
+{
+    if ($allBranches) {
+        $sql = "SELECT id, address FROM branchs WHERE status = '1' ORDER BY address";
+    } else {
+        $sessionBranchId = (int) $sessionBranchId;
+        $sql = "SELECT id, address FROM branchs WHERE status = '1' AND id = '$sessionBranchId' ORDER BY address";
+    }
+
+    $branches = array();
+    $run = mysqli_query($con, $sql);
+    if ($run) {
+        while ($row = mysqli_fetch_assoc($run)) {
+            $branches[] = array(
+                'id' => (int) $row['id'],
+                'address' => (string) $row['address'],
+            );
+        }
+    }
+
+    return $branches;
+}
+
+function summary_branch_may_select_all(int $isAdmin = 0, int $isIncharge = 0): bool
+{
+    return $isAdmin === 1 || $isIncharge === 2;
+}
+
+function summary_branch_select_html($con, int $selectedId, int $sessionBranchId, bool $allBranches, string $name = 'br_id'): string
+{
+    $html = '';
+    foreach (summary_active_branches($con, $allBranches, $sessionBranchId) as $branch) {
+        $selected = ((int) $branch['id'] === $selectedId) ? ' selected' : '';
+        $html .= '<option value="' . (int) $branch['id'] . '"' . $selected . '>'
+            . htmlspecialchars($branch['address'], ENT_QUOTES, 'UTF-8') . '</option>';
+    }
+
+    if ($html === '') {
+        $html = '<option value="">No branch found</option>';
+    }
+
+    return $html;
+}
+
+/**
+ * @return array{br_id: int, date: string}
+ */
+function gynae_report_resolve_params(array $get, array $post, int $sessionBranchId = 0): array
+{
+    $br_id = summary_resolve_branch_id($get, $post, $sessionBranchId);
+    $date = date('Y-m-d');
+    if (isset($get['date']) && $get['date'] !== '') {
+        $date = (string) $get['date'];
+    } elseif (isset($post['date']) && $post['date'] !== '') {
+        $date = (string) $post['date'];
+    }
+
+    return array(
+        'br_id' => $br_id,
+        'date' => $date,
+    );
+}
+
+function report_safe_number_format($value, int $decimals = 0): string
+{
+    if ($value === null || $value === '') {
+        return number_format(0, $decimals);
+    }
+
+    return number_format((float) $value, $decimals);
+}

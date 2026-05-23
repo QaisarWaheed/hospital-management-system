@@ -1,14 +1,17 @@
 <?php 
-include 'includes/connect.php'; 
+include 'includes/connect.php';
+require_once __DIR__ . '/../includes/report_helpers.php';
+require_once __DIR__ . '/includes/branch_select_options.php';
+
 if(isset($_GET['date']))
 {
     $date = $_GET['date'];
-    $br_id = $_GET['br_id'];
+    $br_id = (int) $_GET['br_id'];
 }
 elseif(isset($_POST['date']))
 {
     $date = $_POST['date'];
-    $br_id = $_POST['br_id'];
+    $br_id = (int) $_POST['br_id'];
 }
 else
 {
@@ -58,7 +61,7 @@ $total_medicine = 0;
 $total_opds = 0;
 $total_cons_opds = 0;
 $total_gynae = 0;
-$select = "SELECT DISTINCT `doctor_id` FROM `tokans` WHERE doctor_id =  '$br_id' AND created like '$date%' ORDER BY `doctor_id` ";
+$select = "SELECT DISTINCT `doctor_id` FROM `tokans` WHERE branch_id = '$br_id' AND created like '$date%' ORDER BY `doctor_id` ";
 $run = mysqli_query($con, $select);
 if(mysqli_num_rows($run) > 0)
 {
@@ -198,10 +201,8 @@ if(mysqli_num_rows($run) > 0)
     }
     echo '</tbody>';
 }
-mysqli_close($con);
 ?>
 </table>
 
 </body>
 </html>
-<?php mysqli_close($con); ?>

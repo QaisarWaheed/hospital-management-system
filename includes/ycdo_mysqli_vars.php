@@ -21,3 +21,8 @@ if (file_exists('/.dockerenv')) {
     $ycdo_db_pass = getenv('DB_PASS') ?: 'ycdoeh1';
     $ycdo_db_name = getenv('DB_NAME') ?: 'ycdomlt';
 }
+
+$GLOBALS['ycdo_db_host'] = $ycdo_db_host;
+$GLOBALS['ycdo_db_user'] = $ycdo_db_user;
+$GLOBALS['ycdo_db_pass'] = $ycdo_db_pass;
+$GLOBALS['ycdo_db_name'] = $ycdo_db_name;

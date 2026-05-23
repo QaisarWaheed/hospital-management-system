@@ -15,6 +15,9 @@ else
 {
     $role_title = '';
 }
+require_once __DIR__ . '/includes/branch_select_options.php';
+$gynae_branch_options = bk_branch_select_options($con, (int) $bk_branch_id);
+$gynae_date_value = date('Y-m-d');
 ?>
 	<title>Gynae Section - <?php echo $company_trademark; ?></title>
 <script src="js/jquery.min.js"></script>
@@ -51,10 +54,23 @@ else
             </div>
             <div class = "col-md-12">
                 <div class = "row p-3">
-                    <div class = "col"><form method = "GET" action = "gyane_report_less_then_four_month.php"><input type = "submit" value = "< 4 MONTH" name = "less_then_four_month" class = "btn-success" /></form></div>
-                    <div class = "col"><form method = "GET" action = "gyane_report_less_then_four_month_and_greater_then_eight_month.php"><input type = "submit" value = "> 4 MONTH & < 8 MONTH" name = "less_then_four_month_and_greater_then_eight_month" class = "btn-info" /></form></div>
-                    <div class = "col"><form method = "GET" action = "gyane_report_greater_then_eight_month.php"><input type = "submit" value = "> 8 MONTH" name = "greater_then_eight_month" class = "btn-dark" /></form></div>
-                    <div class = "col"><form method = "GET" action = "gyane_report_discontinued.php"><input type = "submit" value = "DISCONTINUED" name = "discontinued" class = "btn-danger" /></form></div>
+                    <?php
+                    $gynae_forms = array(
+                        array('action' => 'gyane_report_less_then_four_month.php', 'label' => '< 4 MONTH', 'class' => 'btn-success', 'name' => 'less_then_four_month'),
+                        array('action' => 'gyane_report_less_then_four_month_and_greater_then_eight_month.php', 'label' => '> 4 MONTH & < 8 MONTH', 'class' => 'btn-info', 'name' => 'less_then_four_month_and_greater_then_eight_month'),
+                        array('action' => 'gyane_report_greater_then_eight_month.php', 'label' => '> 8 MONTH', 'class' => 'btn-dark', 'name' => 'greater_then_eight_month'),
+                        array('action' => 'gyane_report_discontinued.php', 'label' => 'DISCONTINUED', 'class' => 'btn-danger', 'name' => 'discontinued'),
+                    );
+                    foreach ($gynae_forms as $gynae_form) {
+                    ?>
+                    <div class="col mb-2">
+                        <form method="GET" action="<?php echo htmlspecialchars($gynae_form['action'], ENT_QUOTES, 'UTF-8'); ?>">
+                            <select name="br_id" class="form-control mb-1" required><?php echo $gynae_branch_options; ?></select>
+                            <input type="date" name="date" class="form-control mb-1" value="<?php echo $gynae_date_value; ?>" required />
+                            <input type="submit" value="<?php echo htmlspecialchars($gynae_form['label'], ENT_QUOTES, 'UTF-8'); ?>" name="<?php echo htmlspecialchars($gynae_form['name'], ENT_QUOTES, 'UTF-8'); ?>" class="<?php echo htmlspecialchars($gynae_form['class'], ENT_QUOTES, 'UTF-8'); ?>" />
+                        </form>
+                    </div>
+                    <?php } ?>
                 </div>
             </div>
             <div class = "col-md-12">
@@ -72,12 +88,8 @@ else
                             <form action = "gyane_total_record.php" onsubmit="showProgress(); return true;">
                             <tr>
                                 <td>ALL CONTINUE RECORD FROM ONLINE</td>
-                                <td><select name = "br_id" class = "form-control" required>
-                                    <?php $select_br = "SELECT * FROM branchs WHERE status = '1' "; $run_br = mysqli_query($con, $select_br);
-                                        if(mysqli_num_rows($run_br) > 0){   while($row_br = mysqli_fetch_array($run_br)){   $br_id = $row_br['id'];    $br_address = $row_br['address'];   echo '<option value = "'.$br_id.'">'.$br_address.'</option>';   }    }
-                                        else{ ?><option value = "<?php echo $bk_branch_id; ?>"><?php echo $br_branch_address; ?></option> <?php }?>
-                                </select></td>
-                                <td><input class = "form-control" type = "date" name = "date" value = "<?php echo date('Y-m-d'); ?>" /></td>
+                                <td><select name = "br_id" class = "form-control" required><?php echo $gynae_branch_options; ?></select></td>
+                                <td><input class = "form-control" type = "date" name = "date" value = "<?php echo $gynae_date_value; ?>" /></td>
                                 <td></td>
                                 <td><input type = "submit" class = "btn btn-primary" name = "generate" value = "generate" /></td>
                             </tr>
@@ -85,12 +97,8 @@ else
                             <form action = "print_progress_report_daily_gynae.php" onsubmit="showProgress(); return true;">
                             <tr>
                                 <td>GYNAE PROGRESS REPORT</td>
-                                <td><select name = "br_id" class = "form-control" required>
-                                    <?php $select_br = "SELECT * FROM branchs WHERE status = '1' "; $run_br = mysqli_query($con, $select_br);
-                                        if(mysqli_num_rows($run_br) > 0){   while($row_br = mysqli_fetch_array($run_br)){   $br_id = $row_br['id'];    $br_address = $row_br['address'];   echo '<option value = "'.$br_id.'">'.$br_address.'</option>';   }    }
-                                        else{ ?><option value = "<?php echo $bk_branch_id; ?>"><?php echo $br_branch_address; ?></option> <?php }?>
-                                </select></td>
-                                <td><input class = "form-control" type = "date" name = "date" value = "<?php echo date('Y-m-d'); ?>" /></td>
+                                <td><select name = "br_id" class = "form-control" required><?php echo $gynae_branch_options; ?></select></td>
+                                <td><input class = "form-control" type = "date" name = "date" value = "<?php echo $gynae_date_value; ?>" /></td>
                                 <td></td>
                                 <td><input type = "submit" class = "btn btn-primary" name = "generate" value = "generate" /></td>
                             </tr>

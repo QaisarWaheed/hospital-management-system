@@ -99,7 +99,7 @@ if(mysqli_num_rows($run) > 0)
             }
         }
         echo
-        '<tr id = "show'.$audit_branch_form_id.'">
+        '<tr id = "show'.$row['id'].'">
             <td>'.$s.'</td>
             <td>'.$branch_item_id.' - '.$row['item_name'].'</td>
             <td>'.$row['item_poor_price'].'</td>

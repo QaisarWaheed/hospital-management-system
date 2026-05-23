@@ -79,7 +79,8 @@ if(mysqli_num_rows($run_member) > 0)
     while($row_member = mysqli_fetch_array($run_member))
     {
         $member_id = $row_member['member_id'];
-        $total_balance = $total_balance + $balance; ?>
+        $member_amount = $row_member['6'];
+        $total_balance = $total_balance + $member_amount; ?>
 	            <tr>
 	                <th class ="noprint"><?php echo $s++; ?></th>
 	                <th class ="noprint"><?php echo $member_id; ?></th>

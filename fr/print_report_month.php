@@ -133,26 +133,26 @@ else
         echo ' <tr style = "text-align: right;">
                 <td>'.$s.'</td>
                 <td>'.$select_date.'</td>
-                <td>'.number_format($cash_amount).'</td>
-                <td>'.number_format($return_token_amount).'</td>
-                <td>'.number_format($collection_amount).'</td>
-                <td>'.number_format($received_amount).'</td>
-                <td>'.number_format($extra_amount).'</td>
-                <td>'.number_format($short_amount).'</td>
-                <td>'.number_format($received_amount+$extra_amount).'</td>
+                <td>'.report_safe_number_format((float) ($cash_amount ?? 0)).'</td>
+                <td>'.report_safe_number_format($return_token_amount).'</td>
+                <td>'.report_safe_number_format($collection_amount).'</td>
+                <td>'.report_safe_number_format($received_amount).'</td>
+                <td>'.report_safe_number_format($extra_amount).'</td>
+                <td>'.report_safe_number_format($short_amount).'</td>
+                <td>'.report_safe_number_format($received_amount+$extra_amount).'</td>
             </tr>';
 }
     echo '</tbody>';
     echo '<tfoot>
             <tr style = "text-align: right;">
                 <th colspan = "2">TOTAL</th>
-                <th>'.number_format($total_cash).'</th>
-                <th>'.number_format($total_return_token).'</th>
-                <th>'.number_format($total_collection).'</th>
-                <th>'.number_format($total_login).'</th>
-                <th>'.number_format($total_extra_amount).'</th>
-                <th>'.number_format($total_short_amount).'</th>
-                <th>'.number_format($total_login+$total_extra_amount).'</th>
+                <th>'.report_safe_number_format($total_cash).'</th>
+                <th>'.report_safe_number_format($total_return_token).'</th>
+                <th>'.report_safe_number_format($total_collection).'</th>
+                <th>'.report_safe_number_format($total_login).'</th>
+                <th>'.report_safe_number_format($total_extra_amount).'</th>
+                <th>'.report_safe_number_format($total_short_amount).'</th>
+                <th>'.report_safe_number_format($total_login+$total_extra_amount).'</th>
             </tr>
         </tfoot>';
 ?>

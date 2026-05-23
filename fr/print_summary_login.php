@@ -12,6 +12,19 @@ $from_date = $loginParams['from'];
 $to_date = $loginParams['to'];
 $b_id = $loginParams['branch_id'];
 $br_id = $b_id;
+
+$branch_name = $company_name;
+$branch_address = get_branch_address($b_id);
+$branch_lookup = mysqli_query($con, "SELECT name, address FROM branchs WHERE id = '$b_id' LIMIT 1");
+if ($branch_lookup && mysqli_num_rows($branch_lookup) === 1) {
+    $branch_row = mysqli_fetch_assoc($branch_lookup);
+    if (!empty($branch_row['name'])) {
+        $branch_name = $branch_row['name'];
+    }
+    if (!empty($branch_row['address'])) {
+        $branch_address = $branch_row['address'];
+    }
+}
 ?>
 <?php include 'includes/head.php'; ?>
 	<title>Print Summary - <?php echo $company_trademark; ?></title>

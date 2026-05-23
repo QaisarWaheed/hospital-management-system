@@ -61,15 +61,8 @@ window.location.replace('user_summary_login.php');
                 <label>SELECT BRANCH</label>
                 <select class="form-control" style="min-width: 200px;text-transform: uppercase;" name="b_id" required>
 <?php
-$user = "SELECT * FROM branchs WHERE id = '$bk_branch_id' AND status = 1 ";
-$run_user = mysqli_query($con, $user);
-if ($run_user && mysqli_num_rows($run_user) > 0) {
-    while ($row_user = mysqli_fetch_array($run_user)) {
-        echo '<option value="'.$row_user['id'].'">'.htmlspecialchars($row_user['address']).'</option>';
-    }
-} else {
-    echo '<option value="">No branch found</option>';
-}
+require_once __DIR__ . '/../includes/report_helpers.php';
+echo summary_branch_select_html($con, (int) $bk_branch_id, (int) $bk_branch_id, true, 'b_id');
 ?>
                 </select>
 				</div>
