@@ -88,6 +88,10 @@ assert_true(
     'branch report uses batch category counts'
 );
 
+$userSummaryTime = file_get_contents($root . '/fr/user_summary_time.php');
+assert_true(strpos($userSummaryTime, 'PRINT SUMMARY') !== false, 'summary time print button');
+assert_true(strpos($userSummaryTime, 'CLEAR FORM') !== false, 'summary time clear button');
+
 $userSummary = file_get_contents($root . '/fr/user_summary.php');
 assert_true(strpos($userSummary, 'http_build_query') !== false, 'user summary build query');
 assert_true(strpos($userSummary, 'target="_blank"') === false, 'user summary no blank target');

@@ -101,6 +101,16 @@ final class CriticalPhpPagesQualityTest extends TestCase
         $this->assertStringNotContainsString('mysqli_num_rows(mysqli_query($con, "SELECT * FROM `gynae_register` WHERE doctor_id', $contents);
     }
 
+    public function testUserSummaryTimeHasPrintAndClearButtons(): void
+    {
+        $path = dirname(__DIR__, 2) . '/fr/user_summary_time.php';
+        $contents = file_get_contents($path);
+        $this->assertIsString($contents);
+        $this->assertStringContainsString('name="print_summary"', $contents);
+        $this->assertStringContainsString('PRINT SUMMARY', $contents);
+        $this->assertStringContainsString('CLEAR FORM', $contents);
+        $this->assertStringContainsString('col-md-12', $contents);
+    }
     public function testUserSummaryOpensPrintWithHttpBuildQuery(): void
     {
         $path = dirname(__DIR__, 2) . '/fr/user_summary.php';
