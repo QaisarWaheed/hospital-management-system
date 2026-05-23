@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: text/plain; charset=utf-8');
-echo 'YCDO deploy marker: 2026-05-23-qa-batch-2' . "\n";
+echo 'YCDO deploy marker: 2026-05-23-qa-batch-3' . "\n";
+echo 'Git commit: 60fde68c+' . "\n";
 echo 'PHP: ' . PHP_VERSION . "\n";
 if (is_readable(__DIR__ . '/includes/ycdo_bootstrap.php')) {
     require_once __DIR__ . '/includes/ycdo_bootstrap.php';

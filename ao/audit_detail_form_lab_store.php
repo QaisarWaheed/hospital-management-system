@@ -43,6 +43,15 @@ if (isset($_POST['save']))
  exit(0);
 }
 $current_audit_id = mysqli_num_rows(mysqli_query($con, "SELECT audit_lab_store_form_id FROM `audit_lab_store_form` ")) + 1;
+$max_audit_id = 0;
+$max_audit_run = mysqli_query($con, "SELECT MAX(audit_lab_store_form_id) AS max_id FROM `audit_lab_store_form`");
+if ($max_audit_run && ($max_row = mysqli_fetch_assoc($max_audit_run))) {
+    $max_audit_id = (int) ($max_row['max_id'] ?? 0);
+}
+if ($max_audit_id < 1) {
+    $max_audit_id = $current_audit_id;
+}
+$search_bill_no = isset($_GET['bill_no']) ? (int) $_GET['bill_no'] : 0;
 ?>
 <?php include 'includes/head.php'; ?>
 	<title> STORE - <?php echo $company_trademark; ?></title>
@@ -117,7 +126,7 @@ html, body
 				        <thead>
 				            <tr class = "noprint">
 				                <form method = "GET">
-				                    <td colspan = "4"><input required type = "number" min = "1" value = "<?php echo ($_GET['bill_no']>0 ? $_GET['bill_no'] : $current_purchase_no); ?>" max = "<?php echo $current_purchase_no; ?>" name = "bill_no" class = "form-control" /></td>
+				                    <td colspan = "4"><input required type = "number" min = "1" value = "<?php echo $search_bill_no > 0 ? $search_bill_no : ''; ?>" max = "<?php echo $max_audit_id; ?>" name = "bill_no" class = "form-control" /></td>
 				                    <td><input type = "submit" value = "SEARCH" class = "btn btn-sm btn-info" /></td>
 				                </form>
 				                <td>
