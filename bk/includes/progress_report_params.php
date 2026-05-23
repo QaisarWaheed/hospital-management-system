@@ -469,3 +469,65 @@ function progress_referral_to_count_by_doctor_range($con, $start_at, $end_at)
         GROUP BY to_user_id";
     return progress_map_int($con, $sql, 'doctor_id', 'cnt');
 }
+
+function progress_cons_opd_count_by_doctor($con, $br_id, $like)
+{
+    return progress_item_count_by_doctor(
+        $con,
+        $br_id,
+        $like,
+        '489, 849, 850, 1415, 1327, 1139, 1141, 1477, 1154'
+    );
+}
+
+function progress_usg_count_by_doctor($con, $br_id, $like)
+{
+    return progress_item_count_by_doctor(
+        $con,
+        $br_id,
+        $like,
+        '476, 477, 478, 479, 1138, 1185, 1161, 1162, 1163, 1164, 1184, 1317, 1318, 1319, 1411, 1435'
+    );
+}
+
+/**
+ * Cash collection for Progress Monthly (Doctors) print report.
+ *
+ * @return array<int, float>
+ */
+function progress_doctor_progress_collection_by_doctor($con, $br_id, $like)
+{
+    $br_id = (int) $br_id;
+    $tokens = progress_tokans_subquery($br_id, $like);
+    $cons_items = '489, 849, 850, 1415, 1327, 1139, 1141, 1477, 1154, 476, 477, 478, 479, 1138, 1185, 1161, 1162, 1163, 1164, 1184, 1317, 1318, 1319, 1411, 1435';
+    $sql = "SELECT doctor_id, COALESCE(SUM(cash), 0) AS total FROM tokans
+        WHERE status = 1 AND branch_id = '$br_id' AND created LIKE '$like'
+        AND (
+            tokan_type_id < 9
+            OR id IN (
+                SELECT tokan_no FROM item_by_doctor
+                WHERE status = '2' AND tokan_no IN $tokens
+                AND item_id IN (
+                    SELECT id FROM item_register_to_branches WHERE item_id IN ($cons_items)
+                )
+            )
+        )
+        GROUP BY doctor_id";
+    return progress_map_float($con, $sql, 'doctor_id', 'total');
+}
+
+/**
+ * Month window for YYYY-MM style progress reports.
+ *
+ * @return array{start_date: string, end_date: string}
+ */
+function progress_month_date_range($date)
+{
+    $month = substr((string) $date, 0, 7);
+    $timestamp = strtotime('first day of next month', strtotime($month . '-01'));
+
+    return array(
+        'start_date' => $month . '-01',
+        'end_date' => date('Y-m-d', $timestamp),
+    );
+}

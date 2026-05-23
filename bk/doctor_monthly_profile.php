@@ -220,6 +220,10 @@ if (isset($_POST['date']) && $_POST['date'] !== '' && isset($_POST['doctor_id'])
 { 
     $sr = 1;
     $output_opd = '';
+    $opd_count = 0;
+    $opd_sum = 0;
+    $cons_opds = 0;
+    $output_procedure = '';
     $date = $_POST['date'];
     $doctor_id = (int) $_POST['doctor_id'];
     $select_opd = "
@@ -303,7 +307,12 @@ if (isset($_POST['date']) && $_POST['date'] !== '' && isset($_POST['doctor_id'])
             ';
     }
 $get_referal = mysqli_query($con, "SELECT COUNT(`referral_patient_id`) AS count, SUM(`received_cash`) As sum FROM `referral_patients` WHERE `to_user_id` = '$doctor_id' AND `received_cash` > 0 AND `referral_patient_created` LIKE '$date%'; ");
-$row_referal = mysqli_fetch_array($get_referal);
+$row_referal = ($get_referal) ? mysqli_fetch_array($get_referal) : array('count' => 0, 'sum' => 0);
+if (!$row_referal) {
+    $row_referal = array('count' => 0, 'sum' => 0);
+}
+$row_referal['count'] = (int) ($row_referal['count'] ?? 0);
+$row_referal['sum'] = (float) ($row_referal['sum'] ?? 0);
 ?>
         <div class = "col-md-12">
                 <table class = "table">

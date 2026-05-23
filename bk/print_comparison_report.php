@@ -1,11 +1,18 @@
 <?php
 include 'includes/connect.php';
+require_once __DIR__ . '/includes/comparison_report_helpers.php';
+
+set_time_limit(120);
+
 if (!isset($_GET['s'], $_GET['e'])) {
     header('Location: logout.php');
     exit;
 }
-$first_month = $_GET['s'];
-$second_month = $_GET['e'];
+$first_month = (string) $_GET['s'];
+$second_month = (string) $_GET['e'];
+
+$first_stats = comparison_branch_month_stats($con, $first_month);
+$second_stats = comparison_branch_month_stats($con, $second_month);
 ?>
 <html>
 <head>
@@ -18,50 +25,24 @@ $second_month = $_GET['e'];
             <h1>Comparison All Branches — <?php echo ycdo_safe_date_format($first_month . '-01', 'F Y', $first_month); ?> &amp; <?php echo ycdo_safe_date_format($second_month . '-01', 'F Y', $second_month); ?></h1>
         </div>
 <?php
-$select_branch = "SELECT * FROM `branchs` WHERE `status` = 1 ";
+$select_branch = "SELECT * FROM `branchs` WHERE `status` = 1 ORDER BY id";
 $run_branch = mysqli_query($con, $select_branch);
 if ($run_branch && mysqli_num_rows($run_branch) > 0) {
     while ($row_branch = mysqli_fetch_array($run_branch)) {
-        $comparision_branch_id = $row_branch['id'];
+        $comparision_branch_id = (int) $row_branch['id'];
         $comparision_branch_address = $row_branch['address'];
 
-        $patient_first_month = mysqli_num_rows(mysqli_query($con, "SELECT `id` FROM `tokans` WHERE `status` = 1 AND `branch_id` = '$comparision_branch_id' AND `created` LIKE '$first_month%' AND `tokan_type_id` <= 10 "));
-        $cons_first_month = mysqli_num_rows(mysqli_query($con, "SELECT `tokan_no` FROM `item_by_doctor` WHERE tokan_no IN (SELECT id FROM tokans WHERE created like '$first_month%' AND status = 1) AND branch_id = '$comparision_branch_id' AND `status` = 2 AND `item_id` IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (SELECT id FROM items WHERE category_id = 29) )"));
+        $patient_first_month = comparison_branch_stat($first_stats, $comparision_branch_id, 'patients');
+        $cons_first_month = comparison_branch_stat($first_stats, $comparision_branch_id, 'cons');
+        $collection_first_month = comparison_branch_stat($first_stats, $comparision_branch_id, 'collection');
+        $select_procedure = comparison_branch_stat($first_stats, $comparision_branch_id, 'procedures');
+        $lab_first_month = comparison_branch_stat($first_stats, $comparision_branch_id, 'lab');
 
-        $collection_first_month = 0;
-        $run_collection = mysqli_query($con, "SELECT SUM(`cash_received`) FROM `tokans` WHERE `status` = 1 AND `created` LIKE '$first_month%' AND `branch_id` = '$comparision_branch_id' ");
-        if ($run_collection && mysqli_num_rows($run_collection) == 1) {
-            $row_collection = mysqli_fetch_array($run_collection);
-            $collection_first_month = $row_collection[0];
-        }
-
-        $select_procedure = mysqli_num_rows(mysqli_query($con, "SELECT `id` FROM `tokans` WHERE `status` = 1 AND `branch_id` = '$comparision_branch_id' AND created LIKE '$first_month%' AND id IN (SELECT `tokan_no` FROM `item_by_doctor` WHERE branch_id = $comparision_branch_id AND `created` LIKE '$first_month%' AND `item_id` IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (SELECT id FROM items WHERE category_id = 3)))"));
-
-        $lab_first_month = 0;
-        $run_lab = mysqli_query($con, "SELECT SUM(`cash_received`) FROM `tokans` WHERE `status` = 1 AND `branch_id` = '$comparision_branch_id' AND created LIKE '$first_month%' AND id IN(SELECT `tokan_no` FROM `item_by_doctor` WHERE branch_id = '$comparision_branch_id' AND `created` LIKE '$first_month%' AND `item_id` IN(SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN(SELECT id FROM items WHERE category_id = 2)))");
-        if ($run_lab && mysqli_num_rows($run_lab) == 1) {
-            $row_lab = mysqli_fetch_array($run_lab);
-            $lab_first_month = $row_lab[0];
-        }
-
-        $patient_second_month = mysqli_num_rows(mysqli_query($con, "SELECT `id` FROM `tokans` WHERE `status` = 1 AND `branch_id` = '$comparision_branch_id' AND `created` LIKE '$second_month%' AND `tokan_type_id` <= 10 "));
-        $cons_second_month = mysqli_num_rows(mysqli_query($con, "SELECT `tokan_no` FROM `item_by_doctor` WHERE tokan_no IN (SELECT id FROM tokans WHERE created like '$second_month%' AND status = 1) AND branch_id = '$comparision_branch_id' AND `status` = 2 AND `item_id` IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (SELECT id FROM items WHERE category_id = 29) )"));
-
-        $collection_second_month = 0;
-        $run_collection_2 = mysqli_query($con, "SELECT SUM(`cash_received`) FROM `tokans` WHERE `status` = 1 AND `created` LIKE '$second_month%' AND `branch_id` = '$comparision_branch_id' ");
-        if ($run_collection_2 && mysqli_num_rows($run_collection_2) == 1) {
-            $row_collection_2 = mysqli_fetch_array($run_collection_2);
-            $collection_second_month = $row_collection_2[0];
-        }
-
-        $select_procedure_2 = mysqli_num_rows(mysqli_query($con, "SELECT `id` FROM `tokans` WHERE `status` = 1 AND `branch_id` = '$comparision_branch_id' AND created LIKE '$second_month%' AND id IN (SELECT `tokan_no` FROM `item_by_doctor` WHERE branch_id = $comparision_branch_id AND `created` LIKE '$second_month%' AND `item_id` IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (SELECT id FROM items WHERE category_id = 3)))"));
-
-        $lab_second_month = 0;
-        $run_lab_2 = mysqli_query($con, "SELECT SUM(`cash_received`) FROM `tokans` WHERE `status` = 1 AND `branch_id` = '$comparision_branch_id' AND created LIKE '$second_month%' AND id IN (SELECT `tokan_no` FROM `item_by_doctor` WHERE branch_id = $comparision_branch_id AND `created` LIKE '$second_month%' AND `item_id` IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (SELECT id FROM items WHERE category_id = 2)))");
-        if ($run_lab_2 && mysqli_num_rows($run_lab_2) == 1) {
-            $row_lab_2 = mysqli_fetch_array($run_lab_2);
-            $lab_second_month = $row_lab_2[0];
-        }
+        $patient_second_month = comparison_branch_stat($second_stats, $comparision_branch_id, 'patients');
+        $cons_second_month = comparison_branch_stat($second_stats, $comparision_branch_id, 'cons');
+        $collection_second_month = comparison_branch_stat($second_stats, $comparision_branch_id, 'collection');
+        $select_procedure_2 = comparison_branch_stat($second_stats, $comparision_branch_id, 'procedures');
+        $lab_second_month = comparison_branch_stat($second_stats, $comparision_branch_id, 'lab');
 ?>
         <div class="col-md-12">
             <div class="panel panel-info">

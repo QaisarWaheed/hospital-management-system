@@ -1,4 +1,4 @@
-    <?php include 'includes/connect.php'; ?>
+<?php include 'includes/connect.php'; ?>
 <?php include 'includes/head.php'; ?>
 	<title>Print Summary - <?php echo $company_trademark; ?></title>
 <style>
