@@ -1,4 +1,17 @@
-    <?php include 'includes/connect.php'; ?>
+<?php
+include 'includes/connect.php';
+
+if (isset($_GET['month']) && $_GET['month'] != '') 
+{
+	$br_id = $_GET['br_id'];
+	$month = $_GET['month'];
+	$year = intval(date_format(date_create($month), 'Y'));
+	$total_days_of_month = cal_days_in_month(CAL_GREGORIAN,date_format(date_create($month), 'm'),date_format(date_create($month), 'Y'));
+} else {
+	http_response_code(400);
+	exit('Month is required.');
+}
+?>
 <?php include 'includes/head.php'; ?>
 	<title>Print Account Summary - <?php echo $company_trademark; ?></title>
 <style>
@@ -9,15 +22,6 @@
 </head>
 
 <body onload="window.print()">
-<?php
-if (isset($_GET['month']) && $_GET['month'] != '') 
-{
-	$br_id = $_GET['br_id'];
-	$month = $_GET['month'];
-	$year = intval(date_format(date_create($month), 'Y'));
-	$total_days_of_month = cal_days_in_month(CAL_GREGORIAN,date_format(date_create($month), 'm'),date_format(date_create($month), 'Y'));
-}
-?>
 
 <table class="table" style="font-size: 8px">
 

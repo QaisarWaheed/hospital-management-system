@@ -1,30 +1,46 @@
-<?php include 'includes/connect.php'; 
-if (isset($_GET['print_summary'])) {
-	$from_date = $_GET['from_date'];
- 	$to_date = $_GET['to_date'];
-	$br_id = $_GET['br_id'];
-	$user_id_s = $_GET['user_id'];
-        $user = "SELECT * FROM users WHERE id = '$user_id_s' ";
-        $run_user = mysqli_query($con, $user);
-        if (mysqli_num_rows($run_user) > 0) 
-        {
-            while ($row_user = mysqli_fetch_array($run_user)) {
-                $user_name_s = $row_user['u_name'];
-            }
-        }
-        else
-        {
-            $user_name_s = "ALL";
-        }
-
-// 	$user_name_s = $_GET['user_name'];
-?>
-<script>
-window.open("print_summary.php?s=<?php echo $from_date; ?>&e=<?php echo $to_date; ?>&u=<?php echo $user_id_s; ?>&un=<?php echo $user_name_s; ?>&br_id=<?php echo $br_id; ?>", "_blank", "toolbar=no,scrollbars=no,resizable=no,top=50,left=50,status=no");
-	  location.replace("user_summary.php");
-window.close();
-</script>
 <?php
+include 'includes/connect.php';
+
+if (isset($_GET['print_summary'])) {
+	$from_date = $_GET['from_date'] ?? '';
+	$to_date = $_GET['to_date'] ?? '';
+	$br_id = $_GET['br_id'] ?? $branch_id;
+	$user_id_s = $_GET['user_id'] ?? '0';
+
+	if ($from_date === '' || $to_date === '') {
+		http_response_code(400);
+		exit('From and to dates are required.');
+	}
+
+	$user_name_s = 'ALL';
+	if ($user_id_s != '0' && $user_id_s !== 0) {
+		$user = "SELECT u_name FROM users WHERE id = '$user_id_s' LIMIT 1";
+		$run_user = mysqli_query($con, $user);
+		if ($run_user && ($row_user = mysqli_fetch_assoc($run_user))) {
+			$user_name_s = $row_user['u_name'];
+		}
+	}
+
+	$print_url = 'print_summary.php?' . http_build_query(array(
+		's' => $from_date,
+		'e' => $to_date,
+		'u' => $user_id_s,
+		'un' => $user_name_s,
+		'br_id' => $br_id,
+	));
+	?>
+<!DOCTYPE html>
+<html>
+<head><title>Opening summary...</title></head>
+<body>
+<script>
+window.open(<?php echo json_encode($print_url); ?>, '_blank');
+window.location.replace('user_summary.php');
+</script>
+</body>
+</html>
+<?php
+	exit;
 }
 ?>
 <?php include 'includes/head.php'; ?>
@@ -44,7 +60,7 @@ window.close();
 		
 		<div class="col-md-12 col-sm-12 col-xs-12">
 			
-		<form method="GET"  target="_blank">
+		<form method="GET">
 			
 			<div class="row">
 				

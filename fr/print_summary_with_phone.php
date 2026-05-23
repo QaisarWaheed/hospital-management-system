@@ -1,4 +1,23 @@
-    <?php include 'includes/connect.php'; ?>
+<?php
+include 'includes/connect.php';
+
+if (isset($_POST['s']) && $_POST['s'] != '') {
+	$from_date = $_POST['s'];
+	$to_date = $_POST['e'];
+	$u_id = $_POST['u'];
+	$br_id = $_POST['br_id'];
+	$u_name = $_POST['un'];
+} elseif (isset($_GET['s']) && $_GET['s'] != '') {
+	$from_date = $_GET['s'];
+	$to_date = $_GET['e'];
+	$u_id = $_GET['u'];
+	$br_id = $_GET['br_id'];
+	$u_name = $_GET['un'];
+} else {
+	http_response_code(400);
+	exit('Date range is required.');
+}
+?>
 <?php include 'includes/head.php'; ?>
 	<title>Print Summary - <?php echo $company_trademark; ?></title>
 <style>
@@ -10,25 +29,6 @@
 </head>
 
 <body>
-<?php
-if (isset($_POST['s']) && $_POST['s'] != '') {
-	$from_date = $_POST['s'];
-	$to_date = $_POST['e'];
-	$u_id = $_POST['u'];
-	$br_id = $_POST['br_id'];
-	$u_name = $_POST['un'];
-	//echo print_summary($from_date, $to_date, $user_id, $user_name); 
-}
-elseif (isset($_GET['s']) && $_GET['s'] != '') {
-	$from_date = $_GET['s'];
-	$to_date = $_GET['e'];
-	$u_id = $_GET['u'];
-	$br_id = $_GET['br_id'];
-	$u_name = $_GET['un'];
-	//echo print_summary($from_date, $to_date, $user_id, $user_name);
-}
-
-?>
 
 <table class="table" style="font-size: 10px">
 

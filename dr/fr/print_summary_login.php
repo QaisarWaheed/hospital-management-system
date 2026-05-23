@@ -1,4 +1,22 @@
-<?php include 'includes/connect.php'; ?>
+<?php
+include 'includes/connect.php';
+
+if (isset($_POST['s']) && $_POST['s'] != '') {
+	$from_date = $_POST['s'];
+	$to_date = $_POST['e'];
+	$b_id = $_POST['b_id'] ?? $_POST['u'] ?? $branch_id;
+} elseif (isset($_GET['s']) && $_GET['s'] != '') {
+	$from_date = $_GET['s'];
+	$to_date = $_GET['e'];
+	$b_id = $_GET['b_id'] ?? $_GET['u'] ?? $branch_id;
+} else {
+	http_response_code(400);
+	exit('Date range is required.');
+}
+
+$b_id = (int) $b_id;
+$br_id = $b_id;
+?>
 <?php include 'includes/head.php'; ?>
 	<title>Print Summary - <?php echo $company_trademark; ?></title>
 <style>
@@ -9,19 +27,6 @@
 </head>
 
 <body onload="window.print()">
-<?php
-if (isset($_POST['s']) && $_POST['s'] != '') {
-	$from_date = $_POST['s'];
-	$to_date = $_POST['e'];
-	$b_id = $_POST['b_id'];
-}
-elseif (isset($_GET['s']) && $_GET['s'] != '') {
-	$from_date = $_GET['s'];
-	$to_date = $_GET['e'];
-	$b_id = $_GET['b_id'];
-}
-
-?>
 
 <table class="table" style="font-size: 10px">
 
