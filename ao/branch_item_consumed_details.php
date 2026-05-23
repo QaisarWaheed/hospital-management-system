@@ -113,7 +113,7 @@ if(mysqli_num_rows($run) > 0)
                     <input type = "hidden" value = "'.$br_id.'" name = "br_id" />
                     <input type = "hidden" value = "'.$branch_item_id.'" name = "branch_item_id" />
                     <input type = "hidden" value = "'.$updated_at.'" name = "updated_at" />
-                    <input type = "submit" value = "SHOW DATA" name = "show_consumed_data" />
+                    <input type = "submit" value = "VIEW DETAILS" name = "show_consumed_data" class = "btn btn-default btn-sm" />
                 </form>
             </td>
             <td>'.$row['available_quantity'].'</td>
