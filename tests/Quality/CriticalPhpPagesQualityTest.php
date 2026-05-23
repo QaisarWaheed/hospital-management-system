@@ -101,16 +101,29 @@ final class CriticalPhpPagesQualityTest extends TestCase
         $this->assertStringNotContainsString('mysqli_num_rows(mysqli_query($con, "SELECT * FROM `gynae_register` WHERE doctor_id', $contents);
     }
 
-    public function testUserSummaryTimeHasPrintAndClearButtons(): void
+    public function testFrSummaryPagesUseVisibleActionButtons(): void
     {
-        $path = dirname(__DIR__, 2) . '/fr/user_summary_time.php';
-        $contents = file_get_contents($path);
-        $this->assertIsString($contents);
-        $this->assertStringContainsString('name="print_summary"', $contents);
-        $this->assertStringContainsString('PRINT SUMMARY', $contents);
-        $this->assertStringContainsString('CLEAR FORM', $contents);
-        $this->assertStringContainsString('col-md-12', $contents);
+        $root = dirname(__DIR__, 2);
+        $pages = array(
+            'fr/user_summary.php',
+            'fr/user_summary_time.php',
+            'fr/user_summary_login.php',
+            'fr/user_complete_summary.php',
+            'fr/account_summary.php',
+            'fr/comparision_all_branches.php',
+            'dr/fr/user_summary.php',
+            'bk/user_summary.php',
+            'mm/user_summary.php',
+        );
+
+        foreach ($pages as $page) {
+            $contents = file_get_contents($root . '/' . $page);
+            $this->assertIsString($contents, $page);
+            $this->assertStringContainsString('fr_summary_form_actions', $contents, $page);
+            $this->assertStringNotContainsString('target="_blank"', $contents, $page);
+        }
     }
+
     public function testUserSummaryOpensPrintWithHttpBuildQuery(): void
     {
         $path = dirname(__DIR__, 2) . '/fr/user_summary.php';

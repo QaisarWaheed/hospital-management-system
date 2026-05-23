@@ -1,5 +1,6 @@
 <?php
 include 'includes/connect.php';
+require_once __DIR__ . '/../includes/summary_form_actions.php';
 
 if (isset($_GET['print_summary'])) {
 	$select_month = $_GET['select_month'] ?? '';
@@ -41,12 +42,10 @@ window.location.replace('account_summary.php');
 	<div class="col-md-3 background_whitesmoke" style="min-height: 450px">
 		<?php include 'left_navigation.php'; ?>
 	</div>
-	<div class="col-md-9 background_image_ycdo">
+	<?php fr_summary_content_open(); ?>
 	<div class="row">
-		
 		<div class="col-md-12 col-sm-12 col-xs-12">
-			
-		<form method="GET">
+		<form method="GET" class="container-fluid">
 			
 			<div class="row">
 				
@@ -79,13 +78,7 @@ window.location.replace('account_summary.php');
 				
 				</div>
 
-				<div class="col-md-12 col-sm-12 col-xs-12">
-					<br>
-					<input class="btn btn-sm btn-primary" type="submit" name="print_summary" value="PRINT SUMMARY" />
-
-					<input class="btn btn-sm btn-danger" type="reset" name="clear" value="CLEAR FORM" />
-
-				</div>
+				<?php fr_summary_form_actions('print_summary', 'PRINT SUMMARY'); ?>
 
 			</div>
 

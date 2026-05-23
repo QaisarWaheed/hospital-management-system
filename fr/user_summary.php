@@ -1,5 +1,6 @@
 <?php
 include 'includes/connect.php';
+require_once __DIR__ . '/../includes/summary_form_actions.php';
 
 if (isset($_GET['print_summary'])) {
 	$from_date = $_GET['from_date'] ?? '';
@@ -55,22 +56,20 @@ window.location.replace('user_summary.php');
 	<div class="col-md-3 background_whitesmoke" style="min-height: 450px">
 		<?php include 'left_navigation.php'; ?>
 	</div>
-	<div class="col-md-9 background_image_ycdo">
+	<?php fr_summary_content_open(); ?>
 	<div class="row">
-		
 		<div class="col-md-12 col-sm-12 col-xs-12">
-			
-		<form method="GET">
+		<form method="GET" class="container-fluid">
 			<div class="row">
-				<div class="col-md-6 col-sm-6 col-xs-6">
+				<div class="col-md-6 col-sm-6 col-xs-12">
 					<label for="from_date">From:</label>
 					<input type="date" name="from_date" class="form-control" required id="from_date" value="<?php echo date('Y-m-d'); ?>">
 				</div>
-				<div class="col-md-6 col-sm-6 col-xs-6">
+				<div class="col-md-6 col-sm-6 col-xs-12">
 					<label for="to_date">To:</label>
 					<input type="date" name="to_date" class="form-control" required id="to_date" value="<?php echo date('Y-m-d'); ?>">
 				</div>
-				<div class="col-md-6 col-sm-6 col-xs-6">
+				<div class="col-md-6 col-sm-6 col-xs-12">
                 <label>SELECT BRANCH</label>
                 <select class="form-control" style="min-width: 200px;text-transform: uppercase;" name="br_id" required>
                     <option value="<?php echo (int) $branch_id; ?>"><?php echo htmlspecialchars($branch_address); ?></option>
@@ -93,16 +92,11 @@ if ($run_user && mysqli_num_rows($run_user) > 0) {
 ?>
                 </select>
 				</div>
-				<div class="col-md-12 col-sm-12 col-xs-12" style="margin-top: 1em;">
-					<input class="btn btn-sm btn-primary" type="submit" name="print_summary" value="PRINT SUMMARY" />
-					<input class="btn btn-sm btn-danger" type="reset" value="CLEAR FORM" />
-				</div>
+				<?php fr_summary_form_actions('print_summary', 'PRINT SUMMARY'); ?>
 			</div>
 		</form>
-	
 		</div>
-
-	</div>		
+	</div>
 	</div>
 </div>
 </body>
