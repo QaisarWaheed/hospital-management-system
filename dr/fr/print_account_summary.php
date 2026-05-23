@@ -1,4 +1,6 @@
-    <?php include 'includes/connect.php'; ?>
+<?php include 'includes/connect.php';
+require_once __DIR__ . '/../../includes/report_helpers.php';
+?>
 <?php include 'includes/head.php'; ?>
 	<title>Print Account Summary - <?php echo $company_trademark; ?></title>
 <style>
@@ -14,8 +16,9 @@ if (isset($_GET['month']) && $_GET['month'] != '')
 {
 	$br_id = $_GET['br_id'];
 	$month = $_GET['month'];
-	$year = intval(date_format(date_create($month), 'Y'));
-	$total_days_of_month = cal_days_in_month(CAL_GREGORIAN,date_format(date_create($month), 'm'),date_format(date_create($month), 'Y'));
+	$ym = ycdo_parse_year_month($month);
+	$year = $ym['year'];
+	$total_days_of_month = $ym['days'];
 }
 ?>
 

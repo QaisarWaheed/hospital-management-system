@@ -15,6 +15,9 @@ final class CriticalPhpPagesQualityTest extends TestCase
             'fr/print_summary_login.php',
             'fr/print_summary_time.php',
             'fr/print_account_summary.php',
+            'fr/print_report_account.php',
+            'fr/print_report_month.php',
+            'fr/print_accounts_monthly_report.php',
             'fr/user_summary.php',
             'fr/user_summary_login.php',
             'fr/user_summary_time.php',
@@ -140,5 +143,27 @@ final class CriticalPhpPagesQualityTest extends TestCase
         $this->assertIsString($contents);
         $this->assertStringContainsString('$br_id = $b_id', $contents);
         $this->assertStringContainsString("?? \$_GET['u']", $contents);
+    }
+
+    public function testAccountMonthReportsDoNotUseCalendarExtension(): void
+    {
+        $root = dirname(__DIR__, 2);
+        $paths = array(
+            'fr/print_report_account.php',
+            'fr/print_report_month.php',
+            'fr/print_accounts_monthly_report.php',
+            'fr/print_account_summary.php',
+            'dr/fr/print_report_account.php',
+            'dr/fr/print_report_month.php',
+            'dr/fr/print_accounts_monthly_report.php',
+            'dr/fr/print_account_summary.php',
+        );
+
+        foreach ($paths as $path) {
+            $contents = file_get_contents($root . '/' . $path);
+            $this->assertIsString($contents, $path);
+            $this->assertStringNotContainsString('cal_days_in_month', $contents, $path);
+            $this->assertStringContainsString('ycdo_', $contents, $path);
+        }
     }
 }

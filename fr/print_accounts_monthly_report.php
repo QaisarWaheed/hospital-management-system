@@ -1,14 +1,18 @@
-<?php 
-include 'includes/connect.php'; 
-if(isset($_GET['date']))
-{
-    $date = $_GET['date'];
-    $br_id = $_GET['br_id'];
+<?php
+include 'includes/connect.php';
+require_once __DIR__ . '/../includes/report_helpers.php';
+
+if (!isset($_GET['date'], $_GET['br_id']) || $_GET['date'] === '') {
+    http_response_code(400);
+    exit('Date and branch are required.');
 }
-else
-{
-    exit(0);
-}
+
+$date = $_GET['date'];
+$br_id = (int) $_GET['br_id'];
+$ym = ycdo_parse_year_month($date);
+$year = $ym['year'];
+$month = $ym['month'];
+$days = $ym['days'];
 ?>
 <html>
 <head>
@@ -39,9 +43,11 @@ else
             <th>COLLECTION</th>
         </tr>
     </thead>
+    <tbody>
 <?php
-$s = 0; 
+$s = 0;
 $total_procedure = 0;
+$total_medicine = 0;
 $total_collection = 0;
 $total_poor = 0;
 $total_lab = 0;
@@ -49,9 +55,6 @@ $total_general = 0;
 $total_private = 0;
 $total_urgent = 0;
 $total_consultent = 0;
-$month = substr($date, 5);
-$year = substr($date, 0,4);
-$days = cal_days_in_month(CAL_GREGORIAN,$month,$year);
 
 for ($x = 1; $x <= $days; $x++) 
 {
@@ -169,7 +172,6 @@ $total_urgent = $total_urgent + $count_urgent;
 
 //TOTAL
 $total = $count_poor + $count_general + $count_private + $count_urgent;
-$total_all = $total_all + $total;
         echo ' <tr style = "text-align: right;">
                 <td>'.$s.'</td>
                 <td>'.$select_date.'</td>
@@ -200,7 +202,7 @@ $total_all = $total_all + $total;
                 <th>'.$total_lab.'</th>
                 <th>'.number_format($total_collection).'</th>
             </tr>
-        </tfoor>';
+        </tfoot>';
 ?>
 </table>
 

@@ -133,3 +133,39 @@ function progress_tokans_subquery_sql(int $br_id, string $like): string
     $br_id = (int) $br_id;
     return "(SELECT id FROM tokans WHERE branch_id = '$br_id' AND status = 1 AND created LIKE '$like')";
 }
+
+/**
+ * Days in month without PHP calendar extension (replaces cal_days_in_month).
+ */
+function ycdo_days_in_month(int $year, int $month): int
+{
+    if ($month < 1 || $month > 12) {
+        return 0;
+    }
+
+    return (int) date('t', mktime(0, 0, 0, $month, 1, $year));
+}
+
+/**
+ * Parse YYYY-MM or YYYY-MM-DD into year, zero-padded month, and day count.
+ *
+ * @return array{year: int, month: string, month_int: int, days: int}
+ */
+function ycdo_parse_year_month(string $date): array
+{
+    $dt = date_create($date);
+    if ($dt === false) {
+        $year = (int) date('Y');
+        $monthInt = (int) date('m');
+    } else {
+        $year = (int) $dt->format('Y');
+        $monthInt = (int) $dt->format('m');
+    }
+
+    return array(
+        'year' => $year,
+        'month' => sprintf('%02d', $monthInt),
+        'month_int' => $monthInt,
+        'days' => ycdo_days_in_month($year, $monthInt),
+    );
+}

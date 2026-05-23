@@ -1,14 +1,18 @@
-<?php 
-include 'includes/connect.php'; 
-if(isset($_GET['date']))
-{
-    $date = $_GET['date'];
-    $br_id = $_GET['br_id'];
+<?php
+include 'includes/connect.php';
+require_once __DIR__ . '/../includes/report_helpers.php';
+
+if (!isset($_GET['date'], $_GET['br_id']) || $_GET['date'] === '') {
+    http_response_code(400);
+    exit('Date and branch are required.');
 }
-else
-{
-    exit(0);
-}
+
+$date = $_GET['date'];
+$br_id = (int) $_GET['br_id'];
+$ym = ycdo_parse_year_month($date);
+$year = $ym['year'];
+$month = $ym['month'];
+$days = $ym['days'];
 ?>
 <html>
 <head>
@@ -35,29 +39,30 @@ else
             <th>LOGIN TOTAl</th>
         </tr>
     </thead>
+    <tbody>
 <?php
-$s = 0; 
+$s = 0;
 $total_cash = 0;
 $total_login = 0;
 $total_extra_amount = 0;
 $total_short_amount = 0;
 $total_collection = 0;
 $total_return_token = 0;
-$month = substr($date, 5);
-$year = substr($date, 0,4);
-$days = cal_days_in_month(CAL_GREGORIAN,$month,$year);
 
-for ($x = 1; $x <= $days; $x++) 
+for ($x = 1; $x <= $days; $x++)
 {
-    $total = 0;
     $s++;
-    if($x < 10)
-    {
-        $x = "0".$x;
-    }
-$select_date = $x.'-'.$month.'-'.$year;
+    $day = $x < 10 ? '0' . $x : (string) $x;
+    $select_date = $day . '-' . $month . '-' . $year;
+    $collection_amount = 0;
+    $cash_amount = 0;
+    $return_token_amount = 0;
+    $received_amount = 0;
+    $extra_amount = 0;
+    $short_amount = 0;
+
 //COLLECTION
-$collection = "SELECT SUM(`cash_received`),SUM(`cash`) FROM tokans WHERE branch_id = '$br_id' AND created LIKE '$year-$month-$x%' AND status = 1 ";
+$collection = "SELECT SUM(`cash_received`),SUM(`cash`) FROM tokans WHERE branch_id = '$br_id' AND created LIKE '$year-$month-$day%' AND status = 1 ";
 $run_collection = mysqli_query($con, $collection);
 if(mysqli_num_rows($run_collection) == 1)
 {
@@ -80,7 +85,7 @@ else
 }
 
 //Return Tokens
-$return_token = "SELECT SUM(`cash_received`) FROM tokans WHERE branch_id = '$br_id' AND created LIKE '$year-$month-$x%' AND status = 3 ";
+$return_token = "SELECT SUM(`cash_received`) FROM tokans WHERE branch_id = '$br_id' AND created LIKE '$year-$month-$day%' AND status = 3 ";
 $run_return_token = mysqli_query($con, $return_token);
 if(mysqli_num_rows($run_return_token) == 1)
 {
@@ -97,7 +102,7 @@ else
 }
 
 //Total Login
-$users = "SELECT sum(`received_amount`) AS received_amount ,SUM(extra_amount) AS extra_amount ,SUM(short_amount) AS short_amount FROM `summary_details` WHERE login_id IN (SELECT id FROM logins_detail WHERE branch_id = '$br_id' AND login_at LIKE '$year-$month-$x%' AND `status` = '2') ";
+$users = "SELECT sum(`received_amount`) AS received_amount ,SUM(extra_amount) AS extra_amount ,SUM(short_amount) AS short_amount FROM `summary_details` WHERE login_id IN (SELECT id FROM logins_detail WHERE branch_id = '$br_id' AND login_at LIKE '$year-$month-$day%' AND `status` = '2') ";
 $run_users = mysqli_query($con, $users);
 if(mysqli_num_rows($run_users) > 0)
 {
@@ -125,14 +130,6 @@ else
         $total_short_amount = $total_short_amount + $short_amount;
 }
 
-//POOR
-$poor = "SELECT * FROM tokans WHERE branch_id = '$br_id' AND created LIKE '$year-$month-$x%' AND tokan_type_id = '1' AND status = 1 ";
-$count_poor = mysqli_num_rows(mysqli_query($con, $poor));
-$total_poor = $total_poor + $count_poor;
-
-//TOTAL
-$total = $count_poor + $count_general + $count_private + $count_urgent;
-$total_all = $total_all + $total;
         echo ' <tr style = "text-align: right;">
                 <td>'.$s.'</td>
                 <td>'.$select_date.'</td>
@@ -157,7 +154,7 @@ $total_all = $total_all + $total;
                 <th>'.number_format($total_short_amount).'</th>
                 <th>'.number_format($total_login+$total_extra_amount).'</th>
             </tr>
-        </tfoor>';
+        </tfoot>';
 ?>
 </table>
 

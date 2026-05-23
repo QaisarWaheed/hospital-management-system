@@ -93,4 +93,19 @@ final class ReportHelpersTest extends TestCase
         $this->assertStringContainsString("branch_id = '9'", $sql);
         $this->assertStringContainsString("created LIKE '2026-04-23%'", $sql);
     }
+
+    public function testYcdoDaysInMonth(): void
+    {
+        $this->assertSame(31, ycdo_days_in_month(2026, 3));
+        $this->assertSame(29, ycdo_days_in_month(2024, 2));
+        $this->assertSame(0, ycdo_days_in_month(2026, 0));
+    }
+
+    public function testYcdoParseYearMonth(): void
+    {
+        $ym = ycdo_parse_year_month('2026-03');
+        $this->assertSame(2026, $ym['year']);
+        $this->assertSame('03', $ym['month']);
+        $this->assertSame(31, $ym['days']);
+    }
 }
