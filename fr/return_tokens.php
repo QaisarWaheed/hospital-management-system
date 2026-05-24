@@ -53,7 +53,7 @@ html, body
                             {
                                 while ($row_branch = mysqli_fetch_array($run_branch)) {
                                     
-                                    echo '<option '; if($_POST['br_id'] == $row_branch['id']){echo ' SELECTED ';} echo 'value="'.$row_branch['id'].'">'.$row_branch['address'].'</option>';
+                                    echo '<option '; if (isset($_POST['br_id']) && (string) $_POST['br_id'] === (string) $row_branch['id']) { echo ' SELECTED '; } echo 'value="'.$row_branch['id'].'">'.$row_branch['address'].'</option>';
                                 }
                             }
                             else
@@ -88,36 +88,28 @@ html, body
 	        <tbody>
         <?php
         $s = 0;
-        $to_date .= '';
         $total_cash = 0;
         $total_cash_received = 0;
-        if(isset($_POST['br_id']) && $_POST['br_id'] != '')
-        {
-            $br_id = $_POST['br_id'];
-        }
-        else
-        {
+        if (isset($_POST['br_id']) && $_POST['br_id'] !== '') {
+            $br_id = (int) $_POST['br_id'];
+        } else {
             $br_id = 0;
         }
-        if(isset($_POST['date']) && $_POST['date'] != '')
-        {
-            $today = $_POST['date'];
-            $from_date = $_POST['from_date'];
-        }
-        else
-        {
+        if (isset($_POST['date']) && $_POST['date'] !== '') {
+            $today = substr((string) $_POST['date'], 0, 10);
+            $from_date = isset($_POST['from_date']) && $_POST['from_date'] !== ''
+                ? substr((string) $_POST['from_date'], 0, 10)
+                : $today;
+        } else {
             $today = date('Y-m-d');
             $from_date = date('Y-m-d');
         }
-        $to_date .= $today;
-        $to_date .= ' 23:59:59';
-        if($br_id == 0)
-        {
-            $select_query = "SELECT * FROM `tokans` WHERE `status` = 3 AND `created` <= '$to_date' AND `created` >= '$from_date' ";
-        }
-        else
-        {
-            $select_query = "SELECT * FROM `tokans` WHERE `status` = 3 AND `created` <= '$to_date' AND `created` >= '$from_date' AND branch_id = '$br_id' ";
+        $from_start = mysqli_real_escape_string($con, $from_date . ' 00:00:00');
+        $to_date = mysqli_real_escape_string($con, $today . ' 23:59:59');
+        if ($br_id === 0) {
+            $select_query = "SELECT * FROM `tokans` WHERE `status` = 3 AND `created` <= '$to_date' AND `created` >= '$from_start' ";
+        } else {
+            $select_query = "SELECT * FROM `tokans` WHERE `status` = 3 AND `created` <= '$to_date' AND `created` >= '$from_start' AND branch_id = '$br_id' ";
         }
         $run_query = mysqli_query($con, $select_query);
         if(mysqli_num_rows($run_query) > 0)
