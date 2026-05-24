@@ -29,12 +29,14 @@ if (function_exists('ob_flush')) {
 
 $byDay = account_report_month_by_day($con, $br_id, $year, $month);
 $monthTitle = ycdo_safe_date_format($date, 'F Y', $date);
+$branchHeader = summary_branch_header($con, $br_id, $company_name);
+$branch_label = $branchHeader['address'] !== '' ? $branchHeader['address'] : $branchHeader['name'];
 ?>
 <link rel="stylesheet" type="text/css" href="../../fr/css/bootstrap.min.css">
 <table border="solid">
 <caption>
     <h2><?php echo htmlspecialchars($company_name); ?></h2>
-    <h2><?php echo htmlspecialchars(get_branch_name_by($br_id)); ?></h2>
+    <h2><?php echo htmlspecialchars($branch_label); ?></h2>
     <h4>Progress For The Month Of <?php echo htmlspecialchars($monthTitle); ?></h4>
 </caption>
     <thead>
