@@ -91,7 +91,7 @@ $gynae_date_value = date('Y-m-d');
                             </tr>
                         </thead>
                         <tbody>
-                            <form action = "gyane_total_record.php" onsubmit="showProgress(); return true;">
+                            <form action = "gyane_total_record.php" method = "POST" target = "_blank">
                             <tr>
                                 <td>ALL CONTINUE RECORD FROM ONLINE</td>
                                 <td><select name = "br_id" class = "form-control" required><?php echo $gynae_branch_options; ?></select></td>
@@ -99,7 +99,7 @@ $gynae_date_value = date('Y-m-d');
                                 <td><input type = "submit" class = "btn btn-primary" name = "generate" value = "generate" /></td>
                             </tr>
                             </form>
-                            <form action = "print_progress_report_daily_gynae.php" onsubmit="showProgress(); return true;">
+                            <form action = "print_progress_report_daily_gynae.php" method = "POST" target = "_blank">
                             <tr>
                                 <td>GYNAE PROGRESS REPORT</td>
                                 <td><select name = "br_id" class = "form-control" required><?php echo $gynae_branch_options; ?></select></td>

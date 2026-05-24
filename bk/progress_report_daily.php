@@ -4,7 +4,7 @@ include 'includes/head.php';
 
 $roles = "SELECT * FROM roles WHERE id IN (SELECT role_id FROM users WHERE id = '$user_id') ";
 $run_roles = mysqli_query($con, $roles);
-if(mysqli_num_rows($run_roles) == 1)
+if ($run_roles && mysqli_num_rows($run_roles) == 1)
 {
     while($row_role = mysqli_fetch_array($run_roles))
     {
@@ -16,49 +16,32 @@ else
     $role_title = '';
 }
 
-// if( isset($_POST['date']) && $_POST['date'] != '')
-// {
-//     $date = $_POST['date'];
-//     $br_id = $_POST['br_id'];
-//     echo '<script>window.open("print_progess_report_daily.php?date='.$date.'&br_id='.$br_id.'", "PROGRESS REPORT", "width=3000,height=3000");</script>';
-// }
+require_once __DIR__ . '/includes/branch_select_options.php';
+$branch_options = bk_branch_select_options($con, (int) $bk_branch_id);
+
+if (isset($_POST['date']) && $_POST['date'] !== '')
+{
+    $date = urlencode((string) $_POST['date']);
+    $br_id = (int) $_POST['br_id'];
+    echo '<script>window.open("print_progess_report_daily_gynae.php?date=' . $date . '&br_id=' . $br_id . '", "PROGRESS REPORT", "width=1200,height=800");</script>';
+}
 ?>
 	<title>DAILY PROGRESS - <?php echo $company_trademark; ?></title>
-<script src="js/jquery.min.js"></script>
-<script src="js/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
 
 </head>
 
 <body class="background_image">
-<div id="loadingSpinner" style="display: none;">
-    <div class = "container">
-        <div class = "row p-5 g-5">
-            <div class = "col text-center">
-                <div aria-busy="true" aria-describedby="progress-bar">
-                    <h2>LOADING...</h2>
-                    <p>Please Wait Untill Processing Completed.</p>
-                    <p>Data Processing...</p>
-                </div>
-                <progress id="progress-bar" aria-label="Content loading…"></progress>    
-                
-            </div>
-        </div>        
-    </div>
-</div>
-<div class="row" style="margin: 0px;" id = "submitBody">
+<div class="row" style="margin: 0px;">
 	<div class="col-md-12" style="text-align: center;background: lightgreen;"><label><h1><?php echo $company_name; ?> </h1></label></div>
 	<div class="col-md-3 background_whitesmoke">	<?php include 'left_navigation.php'; ?>	
-    	<h3 style="margin-top: 350px;text-align: center;"><?php echo $_SESSION['dr_name'];if($_SESSION['is_incharge'] == 2){ echo " Incharge ";} ?>(<?php echo $role_title; ?>)</h3>
+    	<h3 style="margin-top: 350px;text-align: center;"><?php echo htmlspecialchars((string) ($_SESSION['hr_name'] ?? ''), ENT_QUOTES, 'UTF-8'); ?><?php if(($_SESSION['is_incharge'] ?? 0) == 2){ echo " Incharge ";} ?>(<?php echo htmlspecialchars($role_title, ENT_QUOTES, 'UTF-8'); ?>)</h3>
     </div>
     <div class = "col-md-9">
-        <form action = "print_progess_report_daily_gynae.php" METHOD = "POST" class = "container" onsubmit="showProgress(); return true;">
+        <form action = "progress_report_daily.php" method = "POST" class = "container">
         <div class = "row">
             <div class = "col">
                 <label>BRANCH</label>
-                <select name = "br_id" class = "form-control" required>
-                    <option value = "<?php echo $bk_branch_id; ?>"><?php echo $bk_branch_address; ?></option>
-                </select>
+                <select name = "br_id" class = "form-control" required><?php echo $branch_options; ?></select>
             </div>
             <div class = "col">
                 <label>DATE</label>
@@ -72,11 +55,4 @@ else
 </div>
 </body>
 </html>
-<script>
-function showProgress() {
-  document.getElementById('submitBody').style.display = 'none';
-//   document.getElementById('submitButton').style.display = 'none';
-  document.getElementById('loadingSpinner').style.display = 'block';
-}    
-</script>
 <?php mysqli_close($con); ?>
