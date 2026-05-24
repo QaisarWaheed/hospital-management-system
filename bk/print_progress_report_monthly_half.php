@@ -142,41 +142,36 @@ $refer_to = progress_referral_to_count_by_doctor($con, $like);
             $total_dia_patients = $total_dia_patients + $count_dia_patients;
             $total_lab_test_cash = $total_lab_test_cash + $lab_test_cash;
 
-            $row_data = $item_rows[$doctor_id] ?? array(
-                'tests' => 0, 'procedures' => 0, 'consultants' => 0, 'dentals' => 0,
-                'skins' => 0, 'eyes' => 0, 'physiotherapies' => 0, 'minir_procedures' => 0,
-                'svds' => 0, 'dncs' => 0, 'usgs' => 0, 'admissions' => 0, 'gyneas' => 0,
-                'emergency' => 0, 'ecgs' => 0,
-            );
-            $tests = $row_data['tests'];
+            $row_data = $item_rows[$doctor_id] ?? array();
+            $tests = (int) ($row_data['tests'] ?? 0);
             $total_tests = $total_tests + $tests;
-            $procedures = $row_data['procedures'];
+            $procedures = (int) ($row_data['procedures'] ?? 0);
             $total_procedures = $total_procedures + $procedures;
-            $consultants = $row_data['consultants'];
+            $consultants = (int) ($row_data['consultants'] ?? 0);
             $total_consultants = $total_consultants + $consultants;
-            $dentals = $row_data['dentals'];
+            $dentals = (int) ($row_data['dentals'] ?? 0);
             $total_dentals = $total_dentals + $dentals;
-            $skins = $row_data['skins'];
+            $skins = (int) ($row_data['skins'] ?? 0);
             $total_skins = $total_skins + $skins;
-            $eyes = $row_data['eyes'];
+            $eyes = (int) ($row_data['eyes'] ?? 0);
             $total_eyes = $total_eyes + $eyes;
-            $physiotherapies = $row_data['physiotherapies'];
+            $physiotherapies = (int) ($row_data['physiotherapies'] ?? 0);
             $total_physiotherapies = $total_physiotherapies + $physiotherapies;
-            $minir_procedures = $row_data['minir_procedures'];
+            $minir_procedures = (int) ($row_data['minir_procedures'] ?? 0);
             $total_minir_procedures = $total_minir_procedures + $minir_procedures;
-            $svds = $row_data['svds'];
+            $svds = (int) ($row_data['svds'] ?? 0);
             $total_svds = $total_svds + $svds;
-            $dncs = $row_data['dncs'];
+            $dncs = (int) ($row_data['dncs'] ?? 0);
             $total_dncs = $total_dncs + $dncs;
-            $usgs = $row_data['usgs'];
+            $usgs = (int) ($row_data['usgs'] ?? 0);
             $total_usgs = $total_usgs + $usgs;
-            $admissions = $row_data['admissions'];
+            $admissions = (int) ($row_data['admissions'] ?? 0);
             $total_admissions = $total_admissions + $admissions;
-            $gyneas = $row_data['gyneas'];
+            $gyneas = (int) ($row_data['gyneas'] ?? 0);
             $total_gyneas = $total_gyneas + $gyneas;
-            $emergency = $row_data['emergency'];
+            $emergency = (int) ($row_data['emergency'] ?? 0);
             $total_emergency = $total_emergency + $emergency;
-            $ecgs = $row_data['ecgs'];
+            $ecgs = (int) ($row_data['ecgs'] ?? 0);
             $total_ecgs = $total_ecgs + $ecgs;
 
             $gynae_system = $gynae_system_map[$doctor_id] ?? 0;

@@ -286,6 +286,7 @@ function progress_item_row_counts_by_doctor($con, $br_id, $like)
         COUNT(CASE WHEN category_id = 31 THEN 1 END) AS dentals,
         COUNT(CASE WHEN category_id = 32 THEN 1 END) AS skins,
         COUNT(CASE WHEN category_id = 33 THEN 1 END) AS eyes,
+        COUNT(CASE WHEN category_id = 34 THEN 1 END) AS physiotherapies,
         COUNT(CASE WHEN category_id = 36 THEN 1 END) AS minir_procedures,
         COUNT(CASE WHEN category_id = 37 THEN 1 END) AS svds,
         COUNT(CASE WHEN category_id = 38 THEN 1 END) AS dncs,
@@ -309,6 +310,7 @@ function progress_item_row_counts_by_doctor($con, $br_id, $like)
                 'dentals' => (int) $row['dentals'],
                 'skins' => (int) $row['skins'],
                 'eyes' => (int) $row['eyes'],
+                'physiotherapies' => (int) $row['physiotherapies'],
                 'minir_procedures' => (int) $row['minir_procedures'],
                 'svds' => (int) $row['svds'],
                 'dncs' => (int) $row['dncs'],
@@ -376,7 +378,7 @@ function progress_dia_patient_stats_by_doctor_range($con, $br_id, $start_at, $en
     $sql = "SELECT doctor_id, COUNT(DISTINCT tokan_no) AS cnt, COALESCE(SUM(sale_price), 0) AS cash_sum
         FROM item_by_doctor
         WHERE category_id = 2 AND branch_id = '$br_id'
-        AND created >= '$start_at' AND created <= '$end_at'
+        AND created >= '$start_at' AND created < '$end_at'
         GROUP BY doctor_id";
     $stats = array();
     $run = mysqli_query($con, $sql);
@@ -404,6 +406,7 @@ function progress_item_row_counts_by_doctor_range($con, $br_id, $start_at, $end_
         COUNT(CASE WHEN category_id = 31 THEN 1 END) AS dentals,
         COUNT(CASE WHEN category_id = 32 THEN 1 END) AS skins,
         COUNT(CASE WHEN category_id = 33 THEN 1 END) AS eyes,
+        COUNT(CASE WHEN category_id = 34 THEN 1 END) AS physiotherapies,
         COUNT(CASE WHEN category_id = 36 THEN 1 END) AS minir_procedures,
         COUNT(CASE WHEN category_id = 37 THEN 1 END) AS svds,
         COUNT(CASE WHEN category_id = 38 THEN 1 END) AS dncs,
@@ -414,7 +417,7 @@ function progress_item_row_counts_by_doctor_range($con, $br_id, $start_at, $end_
         COUNT(CASE WHEN category_id = 44 THEN 1 END) AS ecgs
         FROM item_by_doctor
         WHERE branch_id = '$br_id'
-        AND created >= '$start_at' AND created <= '$end_at'
+        AND created >= '$start_at' AND created < '$end_at'
         AND category_id IN (2, 3, 29, 31, 32, 33, 34, 36, 37, 38, 39, 40, 41, 42, 44)
         GROUP BY doctor_id";
     $stats = array();
@@ -428,6 +431,7 @@ function progress_item_row_counts_by_doctor_range($con, $br_id, $start_at, $end_
                 'dentals' => (int) $row['dentals'],
                 'skins' => (int) $row['skins'],
                 'eyes' => (int) $row['eyes'],
+                'physiotherapies' => (int) $row['physiotherapies'],
                 'minir_procedures' => (int) $row['minir_procedures'],
                 'svds' => (int) $row['svds'],
                 'dncs' => (int) $row['dncs'],
@@ -446,7 +450,7 @@ function progress_gynae_register_count_by_doctor_range($con, $br_id, $start_at, 
 {
     $br_id = (int) $br_id;
     $sql = "SELECT doctor_id, COUNT(*) AS cnt FROM gynae_register
-        WHERE branch_id = '$br_id' AND created >= '$start_at' AND created <= '$end_at'
+        WHERE branch_id = '$br_id' AND created >= '$start_at' AND created < '$end_at'
         GROUP BY doctor_id";
     return progress_map_int($con, $sql, 'doctor_id', 'cnt');
 }
@@ -529,5 +533,116 @@ function progress_month_date_range($date)
     return array(
         'start_date' => $month . '-01',
         'end_date' => date('Y-m-d', $timestamp),
+    );
+}
+
+/**
+ * Branch IDs with token activity on a given day.
+ *
+ * @return int[]
+ */
+function progress_branch_ids_for_date($con, $like)
+{
+    $like = mysqli_real_escape_string($con, $like);
+    $ids = array();
+    $run = mysqli_query($con, "SELECT DISTINCT branch_id FROM tokans WHERE created LIKE '$like' ORDER BY branch_id");
+    if ($run) {
+        while ($row = mysqli_fetch_assoc($run)) {
+            $ids[] = (int) $row['branch_id'];
+        }
+    }
+    return $ids;
+}
+
+/**
+ * @return array<int, int>
+ */
+function progress_opd_count_by_branch($con, $like)
+{
+    $like = mysqli_real_escape_string($con, $like);
+    $sql = "SELECT branch_id, COUNT(id) AS cnt FROM tokans
+        WHERE tokan_type_id < 9 AND status = 1 AND created LIKE '$like'
+        GROUP BY branch_id";
+    return progress_map_int($con, $sql, 'branch_id', 'cnt');
+}
+
+/**
+ * Distinct item_by_doctor rows (tokan_no) per branch for mapped items.
+ *
+ * @return array<int, int>
+ */
+function progress_item_tokan_count_by_branch($con, $like, $item_ids_sql)
+{
+    $like = mysqli_real_escape_string($con, $like);
+    $sql = "SELECT ibd.branch_id, COUNT(ibd.tokan_no) AS cnt
+        FROM item_by_doctor ibd
+        INNER JOIN tokans t ON t.id = ibd.tokan_no AND t.branch_id = ibd.branch_id
+        INNER JOIN item_register_to_branches ir ON ibd.item_id = ir.id AND ir.branch_id = ibd.branch_id
+        WHERE t.created LIKE '$like' AND t.status = 1 AND ibd.status = '2'
+        AND ir.item_id IN ($item_ids_sql)
+        GROUP BY ibd.branch_id";
+    return progress_map_int($con, $sql, 'branch_id', 'cnt');
+}
+
+/**
+ * @return array<int, int>
+ */
+function progress_procedure_tokan_count_by_branch($con, $like)
+{
+    $like = mysqli_real_escape_string($con, $like);
+    $sql = "SELECT ibd.branch_id, COUNT(ibd.tokan_no) AS cnt
+        FROM item_by_doctor ibd
+        INNER JOIN tokans t ON t.id = ibd.tokan_no AND t.branch_id = ibd.branch_id
+        INNER JOIN item_register_to_branches ir ON ibd.item_id = ir.id AND ir.branch_id = ibd.branch_id
+        INNER JOIN items i ON ir.item_id = i.id
+        WHERE t.created LIKE '$like' AND t.status = 1 AND ibd.status = '2'
+        AND i.category_id = '3'
+        GROUP BY ibd.branch_id";
+    return progress_map_int($con, $sql, 'branch_id', 'cnt');
+}
+
+/**
+ * @return array<int, int>
+ */
+function progress_gynae_register_count_by_branch($con, $like)
+{
+    $like = mysqli_real_escape_string($con, $like);
+    $sql = "SELECT branch_id, COUNT(*) AS cnt FROM gynae_register
+        WHERE created LIKE '$like'
+        GROUP BY branch_id";
+    return progress_map_int($con, $sql, 'branch_id', 'cnt');
+}
+
+/**
+ * All-branches daily progress summary (organization-wide print_progess_report.php).
+ *
+ * @return array{
+ *   branch_ids: int[],
+ *   opd: array<int, int>,
+ *   cons: array<int, int>,
+ *   admissions: array<int, int>,
+ *   procedures: array<int, int>,
+ *   svds: array<int, int>,
+ *   dncs: array<int, int>,
+ *   usgs: array<int, int>,
+ *   gynae: array<int, int>,
+ *   gynae_system: array<int, int>
+ * }
+ */
+function progress_organization_daily_branch_summary($con, $like)
+{
+    $like = mysqli_real_escape_string($con, $like);
+
+    return array(
+        'branch_ids' => progress_branch_ids_for_date($con, $like),
+        'opd' => progress_opd_count_by_branch($con, $like),
+        'cons' => progress_item_tokan_count_by_branch($con, $like, '489, 849, 850, 1415, 1327, 1139, 1141, 1477, 1154'),
+        'admissions' => progress_item_tokan_count_by_branch($con, $like, '444, 448, 452, 456, 457, 460, 461, 945, 1124, 1125, 1128, 1131, 1132, 1145, 1186, 1285, 1289, 1293, 1297, 1301'),
+        'procedures' => progress_procedure_tokan_count_by_branch($con, $like),
+        'svds' => progress_item_tokan_count_by_branch($con, $like, '472, 1118, 1313'),
+        'dncs' => progress_item_tokan_count_by_branch($con, $like, '473, 1119, 1314'),
+        'usgs' => progress_item_tokan_count_by_branch($con, $like, '476, 477, 478, 479, 1138, 1185, 1161, 1162, 1163, 1164, 1184, 1317, 1318, 1319, 1411, 1435'),
+        'gynae' => progress_item_tokan_count_by_branch($con, $like, '483, 1159, 1321, 1414, 1576'),
+        'gynae_system' => progress_gynae_register_count_by_branch($con, $like),
     );
 }

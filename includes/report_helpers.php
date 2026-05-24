@@ -67,6 +67,45 @@ function summary_previous_tokan_display($previousTokanNo): string
 }
 
 /**
+ * Branch title block for token summary printouts.
+ *
+ * @return array{name: string, address: string}
+ */
+function summary_branch_header(mysqli $con, int $br_id, string $defaultName = ''): array
+{
+    $branch_name = $defaultName !== '' ? $defaultName : 'YCDO';
+    $branch_address = '';
+    $br_id = (int) $br_id;
+    if ($br_id < 1) {
+        return array('name' => $branch_name, 'address' => $branch_address);
+    }
+    $run = mysqli_query($con, "SELECT name, address FROM branchs WHERE id = '$br_id' LIMIT 1");
+    if ($run && ($row = mysqli_fetch_assoc($run))) {
+        if (!empty($row['name'])) {
+            $branch_name = (string) $row['name'];
+        } elseif (!empty($row['address'])) {
+            $branch_name = (string) $row['address'];
+        }
+        $branch_address = (string) ($row['address'] ?? '');
+    }
+    return array('name' => $branch_name, 'address' => $branch_address);
+}
+
+function summary_tokans_date_sql(string $from_date, string $to_date, mysqli $con): string
+{
+    $from = mysqli_real_escape_string($con, $from_date);
+    $to = mysqli_real_escape_string($con, $to_date);
+    return "DATE(`created`) >= '$from' AND DATE(`created`) <= '$to'";
+}
+
+function summary_pending_date_sql(string $from_date, string $to_date, mysqli $con): string
+{
+    $from = mysqli_real_escape_string($con, $from_date);
+    $to = mysqli_real_escape_string($con, $to_date);
+    return "DATE(`created`) >= '$from' AND DATE(`created`) <= '$to'";
+}
+
+/**
  * @return array{from: string, to: string, branch_id: int, user_id: int, user_name: string}|null
  */
 function summary_token_report_params(array $get, array $post): ?array
