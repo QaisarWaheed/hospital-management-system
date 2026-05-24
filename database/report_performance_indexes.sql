@@ -14,3 +14,4 @@ ALTER TABLE item_by_doctor ADD INDEX idx_ibd_tokan_branch_status_cat (tokan_no, 
 
 -- gynae_register
 ALTER TABLE gynae_register ADD INDEX idx_gynae_created_branch (created, branch_id);
+ALTER TABLE gynae_register ADD INDEX idx_gynae_token_status (token_no, status);

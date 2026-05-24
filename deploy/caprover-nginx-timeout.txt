@@ -1,0 +1,3 @@
+# CapRover app "ycdo" → App Configs → Environment variables
+# Prevents 504 Gateway Timeout on slow reports and heavy pages.
+CAPROVER_OVERRIDE_PROXY_TIMEOUT=300

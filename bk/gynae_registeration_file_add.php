@@ -1,10 +1,8 @@
-<?php include 'includes/connect.php'; 
-if(isset($_GET['select_visit_date']) && $_GET['select_visit_date'] != '')
-{
-    $select_visit_date = $_GET['select_visit_date'];
-}
-if (isset($_POST['save'])) 
-{
+<?php
+include 'includes/connect.php';
+require_once __DIR__ . '/../includes/gynae_helpers.php';
+
+if (isset($_POST['save'])) {
     $token_no = $_POST['token_no'];
     $weeks = $_POST['weeks'];
     $remarks = $_POST['remarks'];
@@ -27,21 +25,29 @@ if (isset($_POST['save']))
     (`id`, `token_no`, `phone`, `weeks`, `gravide`, `next_visit_date`, `update_by`, `status`, `remarks`, `created`, `branch_id`, `doctor_id`, `user_id`, `husband_name`, `husband_phone`, `lmp`, `years_marriage`, `height`, `weight`, `blood_group`, `husband_blood_group`, `menstrual_cycle`, `psh`, `pmh`, `register_by_doctor`)
     VALUES
     (NULL, '$token_no', '$phone', '$weeks', '$gravida', '$next_visit_date', '$user_id', '1', '$remarks', '$current_date', '$bk_branch_id', '$doctor_id', '$user_id', '$husband_name', '$husband_phone', '$lmp', '$years_marriage', '$height', '$weight', '$blood_group', '$husband_blood_group', '$menstrual_cycle', '$psh', '$pmh', '$doctor_id')";
-    if(mysqli_query($con, $insert))
-    { 
-    	$last_id = mysqli_insert_id($con);
-    ?>
-     <script>
-         window.open("gynae_registeration_file_print.php?reg_id=<?php echo $last_id; ?>", "_blank", "toolbar=no,scrollbars=no,resizable=no,top=500,left=500,width=400,height=400,status=no");
-         window.location.replace("gynae_registeration.php");
-     </script>   
-<?php 
-    exit(0);
+    if (mysqli_query($con, $insert)) {
+        $last_id = (int) mysqli_insert_id($con);
+        $print_url = 'gynae_registeration_file_print.php?reg_id=' . $last_id;
+        ?>
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Saving…</title></head>
+<body>
+<script>
+window.open(<?php echo json_encode($print_url); ?>, '_blank', 'toolbar=no,scrollbars=no,resizable=no,width=400,height=400');
+window.location.replace('gynae_registeration.php');
+</script>
+</body>
+</html>
+<?php
+        exit;
+    }
+    header('Location: gynae_registeration_file_add.php?msg=ERROR-SAVE');
+    exit;
 }
-    exit(0);
-}
+
+include 'includes/head.php';
 ?>
-<?php include 'includes/head.php'; ?>
 	<title>Patient Registeration - <?php echo $company_trademark; ?></title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
@@ -78,16 +84,14 @@ if (isset($_POST['save']))
 			                            <label>TOKEN NO</label>
         			                    <select name = 'token_no' class = "form-control" required>
         			                    <?php
-        			                    $select = "SELECT tokans.id AS token_no, patients.name FROM tokans INNER join patients ON tokans.patient_id = patients.id INNER JOIN item_by_doctor ON tokans.id = item_by_doctor.tokan_no WHERE item_by_doctor.category_id = 41 AND tokans.branch_id = '$bk_branch_id' ";
-        			                    $run = mysqli_query($con, $select);
-        			                    if(mysqli_num_rows($run) > 0)
-        			                    {
-        			                        while($row = mysqli_fetch_array($run))
-        			                        {
-        			                            $token_no = $row['token_no'];
-        			                            $patinet_name = $row['name'];
-        			                            echo '<option value = "'.$token_no.'">'.$token_no.' - '.$patinet_name.'</option>';
-        			                        }
+        			                    $eligible_tokens = ycdo_gynae_eligible_tokens_list($con, $bk_branch_id);
+        			                    if (count($eligible_tokens) === 0) {
+        			                        echo '<option value="">No gynae tokens available</option>';
+        			                    }
+        			                    foreach ($eligible_tokens as $row) {
+        			                        $token_no = (int) $row['token_no'];
+        			                        $patinet_name = htmlspecialchars($row['patient_name'], ENT_QUOTES, 'UTF-8');
+        			                        echo '<option value="' . $token_no . '">' . $token_no . ' - ' . $patinet_name . '</option>';
         			                    }
         			                    ?>
         			                    </select>

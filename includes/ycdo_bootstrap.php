@@ -101,9 +101,6 @@ function ycdo_sql_day_range($date)
 }
 
 /**
- * Safe date formatting for PHP 8.2 (date_create false no longer allowed in date_format).
- */
-/**
  * Value safe for HTML &lt;input type="date"&gt; (Y-m-d).
  */
 function ycdo_date_input_value($value, $fallback = null)

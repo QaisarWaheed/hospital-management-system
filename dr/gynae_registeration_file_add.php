@@ -1,5 +1,6 @@
 <?php
 include 'includes/connect.php';
+require_once __DIR__ . '/../includes/gynae_helpers.php';
 
 if (isset($_POST['save'])) {
     $token_no = $_POST['token_no'];
@@ -83,18 +84,14 @@ include 'includes/head.php';
 			                            <label>TOKEN NO</label>
         			                    <select name = 'token_no' class = "form-control" required>
         			                    <?php
-        			                    $select = "SELECT * FROM tokans WHERE id NOT IN (SELECT `token_no` FROM `gynae_register`) AND id IN (SELECT DISTINCT `tokan_no` FROM `item_by_doctor` WHERE status = 2 AND `item_id` IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (483, 1159, 1321, 1414, 1576) AND branch_id = '$branch_id')) ORDER BY id DESC ";
-        			                    $run = mysqli_query($con, $select);
-        			                    if(mysqli_num_rows($run) > 0)
-        			                    {
-        			                        while($row = mysqli_fetch_array($run))
-        			                        {
-        			                            $token_no = $row['id'];
-        			                            $patient_id = $row['patient_id'];
-        			                            $patinet_name = get_patient_name_by_token_no($token_no);
-        			                         //   $patinet_phone = get_patient_phone_by_token_no($token_no);
-        			                            echo '<option value = "'.$token_no.'">'.$token_no.' - '.$patinet_name.'</option>';
-        			                        }
+        			                    $eligible_tokens = ycdo_gynae_eligible_tokens_list($con, $branch_id);
+        			                    if (count($eligible_tokens) === 0) {
+        			                        echo '<option value="">No gynae tokens available</option>';
+        			                    }
+        			                    foreach ($eligible_tokens as $row) {
+        			                        $token_no = (int) $row['token_no'];
+        			                        $patinet_name = htmlspecialchars($row['patient_name'], ENT_QUOTES, 'UTF-8');
+        			                        echo '<option value="' . $token_no . '">' . $token_no . ' - ' . $patinet_name . '</option>';
         			                    }
         			                    ?>
         			                    </select>
