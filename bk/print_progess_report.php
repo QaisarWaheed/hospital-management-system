@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/includes/connect.php';
+require_once __DIR__ . '/includes/connect_report.php';
 require_once __DIR__ . '/includes/progress_report_params.php';
 
 @set_time_limit(180);

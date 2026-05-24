@@ -633,31 +633,39 @@ function progress_branch_tag_map($con)
  */
 function progress_opd_count_by_branch_day($con, $date_esc)
 {
+    $range = ycdo_sql_day_range($date_esc);
+    $start = mysqli_real_escape_string($con, $range['start']);
+    $end = mysqli_real_escape_string($con, $range['end']);
     $sql = "SELECT branch_id, COUNT(id) AS cnt FROM tokans
-        WHERE tokan_type_id < 9 AND status = 1 AND DATE(created) = '$date_esc'
+        WHERE tokan_type_id < 9 AND status = 1
+        AND created >= '$start' AND created < '$end'
         GROUP BY branch_id";
     return progress_map_int($con, $sql, 'branch_id', 'cnt');
 }
 
 /**
- * Single scan on item_by_doctor by category (no heavy item_register join).
+ * Aggregate item rows for tokens created on the report day (tokans-led join).
  *
  * @return array<int, array<string, int>>
  */
 function progress_item_metrics_by_branch_day($con, $date_esc)
 {
-    $sql = "SELECT branch_id,
-        COUNT(CASE WHEN category_id = 29 THEN 1 END) AS cons,
-        COUNT(CASE WHEN category_id = 40 THEN 1 END) AS admissions,
-        COUNT(CASE WHEN category_id = 3 THEN 1 END) AS procedures,
-        COUNT(CASE WHEN category_id = 37 THEN 1 END) AS svds,
-        COUNT(CASE WHEN category_id = 38 THEN 1 END) AS dncs,
-        COUNT(CASE WHEN category_id = 39 THEN 1 END) AS usgs,
-        COUNT(CASE WHEN category_id = 41 THEN 1 END) AS gynae
-    FROM item_by_doctor
-    WHERE status = 2 AND DATE(created) = '$date_esc'
-        AND category_id IN (3, 29, 37, 38, 39, 40, 41)
-    GROUP BY branch_id";
+    $range = ycdo_sql_day_range($date_esc);
+    $start = mysqli_real_escape_string($con, $range['start']);
+    $end = mysqli_real_escape_string($con, $range['end']);
+    $sql = "SELECT t.branch_id,
+        COUNT(CASE WHEN ibd.category_id = 29 THEN 1 END) AS cons,
+        COUNT(CASE WHEN ibd.category_id = 40 THEN 1 END) AS admissions,
+        COUNT(CASE WHEN ibd.category_id = 3 THEN 1 END) AS procedures,
+        COUNT(CASE WHEN ibd.category_id = 37 THEN 1 END) AS svds,
+        COUNT(CASE WHEN ibd.category_id = 38 THEN 1 END) AS dncs,
+        COUNT(CASE WHEN ibd.category_id = 39 THEN 1 END) AS usgs,
+        COUNT(CASE WHEN ibd.category_id = 41 THEN 1 END) AS gynae
+    FROM tokans t
+    INNER JOIN item_by_doctor ibd ON ibd.tokan_no = t.id AND ibd.branch_id = t.branch_id
+        AND ibd.status = 2 AND ibd.category_id IN (3, 29, 37, 38, 39, 40, 41)
+    WHERE t.status = 1 AND t.created >= '$start' AND t.created < '$end'
+    GROUP BY t.branch_id";
 
     $stats = array();
     $run = mysqli_query($con, $sql);
@@ -683,8 +691,11 @@ function progress_item_metrics_by_branch_day($con, $date_esc)
  */
 function progress_gynae_register_count_by_branch_day($con, $date_esc)
 {
+    $range = ycdo_sql_day_range($date_esc);
+    $start = mysqli_real_escape_string($con, $range['start']);
+    $end = mysqli_real_escape_string($con, $range['end']);
     $sql = "SELECT branch_id, COUNT(*) AS cnt FROM gynae_register
-        WHERE DATE(created) = '$date_esc'
+        WHERE created >= '$start' AND created < '$end'
         GROUP BY branch_id";
     return progress_map_int($con, $sql, 'branch_id', 'cnt');
 }
@@ -701,7 +712,7 @@ function progress_gynae_register_count_by_branch_day($con, $date_esc)
  */
 function progress_organization_daily_branch_summary($con, $date)
 {
-    $date_esc = mysqli_real_escape_string($con, $date);
+    $date_esc = mysqli_real_escape_string($con, substr((string) $date, 0, 10));
     $opd = progress_opd_count_by_branch_day($con, $date_esc);
     $item = progress_item_metrics_by_branch_day($con, $date_esc);
     $gynae_system = progress_gynae_register_count_by_branch_day($con, $date_esc);
@@ -713,9 +724,20 @@ function progress_organization_daily_branch_summary($con, $date)
     ));
     sort($branch_ids, SORT_NUMERIC);
 
+    $branch_tags = array();
+    if (count($branch_ids) > 0) {
+        $id_list = implode(',', array_map('intval', $branch_ids));
+        $run = mysqli_query($con, "SELECT id, tag_name FROM branchs WHERE id IN ($id_list)");
+        if ($run) {
+            while ($row = mysqli_fetch_assoc($run)) {
+                $branch_tags[(int) $row['id']] = (string) $row['tag_name'];
+            }
+        }
+    }
+
     return array(
         'branch_ids' => $branch_ids,
-        'branch_tags' => progress_branch_tag_map($con),
+        'branch_tags' => $branch_tags,
         'opd' => $opd,
         'item' => $item,
         'gynae_system' => $gynae_system,

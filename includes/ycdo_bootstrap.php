@@ -57,6 +57,50 @@ function ycdo_db_connect()
 }
 
 /**
+ * Longer read timeout for heavy report pages (still subject to nginx proxy limit).
+ *
+ * @return mysqli|false
+ */
+function ycdo_db_connect_report()
+{
+    require_once __DIR__ . '/ycdo_mysqli_vars.php';
+    global $ycdo_db_host, $ycdo_db_user, $ycdo_db_pass, $ycdo_db_name;
+
+    if (empty($ycdo_db_host) || empty($ycdo_db_name)) {
+        $ycdo_db_host = $GLOBALS['ycdo_db_host'] ?? null;
+        $ycdo_db_user = $GLOBALS['ycdo_db_user'] ?? null;
+        $ycdo_db_pass = $GLOBALS['ycdo_db_pass'] ?? null;
+        $ycdo_db_name = $GLOBALS['ycdo_db_name'] ?? null;
+    }
+
+    $mysqli = mysqli_init();
+    if (!$mysqli) {
+        return false;
+    }
+    mysqli_options($mysqli, MYSQLI_OPT_CONNECT_TIMEOUT, 15);
+    if (defined('MYSQLI_OPT_READ_TIMEOUT')) {
+        mysqli_options($mysqli, MYSQLI_OPT_READ_TIMEOUT, 300);
+    }
+    if (!mysqli_real_connect($mysqli, $ycdo_db_host, $ycdo_db_user, $ycdo_db_pass, $ycdo_db_name)) {
+        return false;
+    }
+    mysqli_set_charset($mysqli, 'utf8mb4');
+    return $mysqli;
+}
+
+/**
+ * @return array{start: string, end: string}
+ */
+function ycdo_sql_day_range($date)
+{
+    $date = substr((string) $date, 0, 10);
+    $start = $date . ' 00:00:00';
+    $end = date('Y-m-d H:i:s', strtotime($date . ' +1 day'));
+
+    return array('start' => $start, 'end' => $end);
+}
+
+/**
  * Safe date formatting for PHP 8.2 (date_create false no longer allowed in date_format).
  */
 function ycdo_safe_date_format($value, $format = 'd-M-Y', $default = '')

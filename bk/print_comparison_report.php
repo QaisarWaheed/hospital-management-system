@@ -1,10 +1,10 @@
 <?php
-require_once __DIR__ . '/includes/connect.php';
+require_once __DIR__ . '/includes/connect_report.php';
 require_once __DIR__ . '/includes/comparison_report_helpers.php';
 
-@set_time_limit(180);
+@set_time_limit(300);
 if (function_exists('ini_set')) {
-    @ini_set('max_execution_time', '180');
+    @ini_set('max_execution_time', '300');
 }
 
 if (!isset($_GET['s'], $_GET['e'])) {
@@ -26,6 +26,20 @@ $pair = comparison_two_month_stats($con, $first_month, $second_month);
 $first_stats = $pair['first'];
 $second_stats = $pair['second'];
 
+$branch_ids = array_unique(array_merge(array_keys($first_stats), array_keys($second_stats)));
+sort($branch_ids, SORT_NUMERIC);
+
+$branches = array();
+if (count($branch_ids) > 0) {
+    $id_list = implode(',', array_map('intval', $branch_ids));
+    $run_branch = mysqli_query($con, "SELECT id, address FROM branchs WHERE id IN ($id_list) ORDER BY id");
+    if ($run_branch) {
+        while ($row = mysqli_fetch_array($run_branch)) {
+            $branches[] = $row;
+        }
+    }
+}
+
 $month1_label = ycdo_safe_date_format($first_month . '-01', 'M-y', $first_month);
 $month2_label = ycdo_safe_date_format($second_month . '-01', 'M-y', $second_month);
 ?>
@@ -36,10 +50,8 @@ $month2_label = ycdo_safe_date_format($second_month . '-01', 'M-y', $second_mont
             <h1>Comparison All Branches — <?php echo htmlspecialchars($month1_label); ?> &amp; <?php echo htmlspecialchars($month2_label); ?></h1>
         </div>
 <?php
-$select_branch = "SELECT id, address FROM branchs WHERE status = 1 ORDER BY id";
-$run_branch = mysqli_query($con, $select_branch);
-if ($run_branch && mysqli_num_rows($run_branch) > 0) {
-    while ($row_branch = mysqli_fetch_array($run_branch)) {
+if (count($branches) > 0) {
+    foreach ($branches as $row_branch) {
         $comparision_branch_id = (int) $row_branch['id'];
         $comparision_branch_address = $row_branch['address'];
 
@@ -99,7 +111,7 @@ if ($run_branch && mysqli_num_rows($run_branch) > 0) {
 } else {
 ?>
         <div class="col-md-12">
-            <label>PLEASE ADD BRANCH FIRST</label>
+            <label>No activity for the selected months.</label>
         </div>
 <?php } ?>
     </div>

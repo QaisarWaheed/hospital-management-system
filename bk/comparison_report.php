@@ -2,9 +2,26 @@
 include 'includes/connect.php';
 
 if (isset($_GET['print_comparison'], $_GET['first_month'], $_GET['second_month'])) {
-    $first_month = $_GET['first_month'];
-    $second_month = $_GET['second_month'];
-    echo '<script>window.open("print_comparison_report.php?s=' . urlencode($first_month) . '&e=' . urlencode($second_month) . '", "_blank", "toolbar=no,scrollbars=yes,resizable=yes,width=1200,height=800");</script>';
+	$first_month = $_GET['first_month'];
+	$second_month = $_GET['second_month'];
+	if ($first_month === '' || $second_month === '') {
+		http_response_code(400);
+		exit('Both months are required.');
+	}
+	$print_url = 'print_comparison_report.php?s=' . urlencode($first_month) . '&e=' . urlencode($second_month);
+	?>
+<!DOCTYPE html>
+<html>
+<head><title>Opening comparison report…</title></head>
+<body>
+<script>
+window.open(<?php echo json_encode($print_url); ?>, '_blank', 'toolbar=no,scrollbars=yes,resizable=yes,width=1200,height=800');
+window.location.replace('comparison_report.php');
+</script>
+</body>
+</html>
+<?php
+	exit;
 }
 
 include 'includes/head.php';
@@ -20,7 +37,7 @@ include 'includes/head.php';
 		<?php include 'left_navigation.php'; ?>
 	</div>
 	<div class="col-md-9 background_image_ycdo">
-		<form method="GET" target="_blank" class="container" style="margin-top: 2em;">
+		<form method="GET" class="container" style="margin-top: 2em;">
 			<div class="row">
 				<div class="col-md-12" style="text-align: center;">
             		<label><h2>Comparison Report (All Branches)</h2></label>

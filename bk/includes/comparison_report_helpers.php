@@ -77,7 +77,7 @@ function comparison_two_month_stats($con, $first_month, $second_month)
         COUNT(DISTINCT CASE WHEN created >= '$m2s' AND created < '$m2e' AND category_id = 3 THEN tokan_no END) AS procedures_m2
     FROM item_by_doctor
     WHERE status = 2 AND created >= '$rs' AND created < '$re'
-        AND category_id IN (2, 3, 29)
+        AND category_id IN (3, 29)
     GROUP BY branch_id";
 
     $run = mysqli_query($con, $ibd_sql);
@@ -93,14 +93,13 @@ function comparison_two_month_stats($con, $first_month, $second_month)
         }
     }
 
-    $lab_sql = "SELECT ibd.branch_id,
-        COALESCE(SUM(CASE WHEN t.created >= '$m1s' AND t.created < '$m1e' THEN t.cash_received ELSE 0 END), 0) AS lab_m1,
-        COALESCE(SUM(CASE WHEN t.created >= '$m2s' AND t.created < '$m2e' THEN t.cash_received ELSE 0 END), 0) AS lab_m2
-    FROM item_by_doctor ibd
-    INNER JOIN tokans t ON t.id = ibd.tokan_no AND t.branch_id = ibd.branch_id AND t.status = 1
-    WHERE ibd.status = 2 AND ibd.category_id = 2
-        AND t.created >= '$rs' AND t.created < '$re'
-    GROUP BY ibd.branch_id";
+    $lab_sql = "SELECT branch_id,
+        COALESCE(SUM(CASE WHEN created >= '$m1s' AND created < '$m1e' THEN sale_price ELSE 0 END), 0) AS lab_m1,
+        COALESCE(SUM(CASE WHEN created >= '$m2s' AND created < '$m2e' THEN sale_price ELSE 0 END), 0) AS lab_m2
+    FROM item_by_doctor
+    WHERE status = 2 AND category_id = 2
+        AND created >= '$rs' AND created < '$re'
+    GROUP BY branch_id";
 
     $run = mysqli_query($con, $lab_sql);
     if ($run) {
