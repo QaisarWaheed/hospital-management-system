@@ -614,35 +614,113 @@ function progress_gynae_register_count_by_branch($con, $like)
 }
 
 /**
- * All-branches daily progress summary (organization-wide print_progess_report.php).
+ * @return array<int, string>
+ */
+function progress_branch_tag_map($con)
+{
+    $map = array();
+    $run = mysqli_query($con, "SELECT id, tag_name FROM branchs WHERE status = '1' ORDER BY id");
+    if ($run) {
+        while ($row = mysqli_fetch_assoc($run)) {
+            $map[(int) $row['id']] = (string) $row['tag_name'];
+        }
+    }
+    return $map;
+}
+
+/**
+ * @return array<int, int>
+ */
+function progress_opd_count_by_branch_day($con, $date_esc)
+{
+    $sql = "SELECT branch_id, COUNT(id) AS cnt FROM tokans
+        WHERE tokan_type_id < 9 AND status = 1 AND DATE(created) = '$date_esc'
+        GROUP BY branch_id";
+    return progress_map_int($con, $sql, 'branch_id', 'cnt');
+}
+
+/**
+ * Single scan for all item_by_doctor metrics (org daily progress report).
  *
+ * @return array<int, array<string, int>>
+ */
+function progress_item_metrics_by_branch_day($con, $date_esc)
+{
+    $sql = "SELECT ibd.branch_id,
+        COUNT(CASE WHEN ir.item_id IN (489, 849, 850, 1415, 1327, 1139, 1141, 1477, 1154) THEN 1 END) AS cons,
+        COUNT(CASE WHEN ir.item_id IN (444, 448, 452, 456, 457, 460, 461, 945, 1124, 1125, 1128, 1131, 1132, 1145, 1186, 1285, 1289, 1293, 1297, 1301) THEN 1 END) AS admissions,
+        COUNT(CASE WHEN i.category_id = 3 THEN 1 END) AS procedures,
+        COUNT(CASE WHEN ir.item_id IN (472, 1118, 1313) THEN 1 END) AS svds,
+        COUNT(CASE WHEN ir.item_id IN (473, 1119, 1314) THEN 1 END) AS dncs,
+        COUNT(CASE WHEN ir.item_id IN (476, 477, 478, 479, 1138, 1185, 1161, 1162, 1163, 1164, 1184, 1317, 1318, 1319, 1411, 1435) THEN 1 END) AS usgs,
+        COUNT(CASE WHEN ir.item_id IN (483, 1159, 1321, 1414, 1576) THEN 1 END) AS gynae
+    FROM item_by_doctor ibd
+    INNER JOIN tokans t ON t.id = ibd.tokan_no AND t.branch_id = ibd.branch_id
+        AND t.status = 1 AND DATE(t.created) = '$date_esc'
+    INNER JOIN item_register_to_branches ir ON ibd.item_id = ir.id AND ir.branch_id = ibd.branch_id
+    LEFT JOIN items i ON ir.item_id = i.id
+    WHERE ibd.status = '2'
+    GROUP BY ibd.branch_id";
+
+    $stats = array();
+    $run = mysqli_query($con, $sql);
+    if ($run) {
+        while ($row = mysqli_fetch_assoc($run)) {
+            $bid = (int) $row['branch_id'];
+            $stats[$bid] = array(
+                'cons' => (int) $row['cons'],
+                'admissions' => (int) $row['admissions'],
+                'procedures' => (int) $row['procedures'],
+                'svds' => (int) $row['svds'],
+                'dncs' => (int) $row['dncs'],
+                'usgs' => (int) $row['usgs'],
+                'gynae' => (int) $row['gynae'],
+            );
+        }
+    }
+    return $stats;
+}
+
+/**
+ * @return array<int, int>
+ */
+function progress_gynae_register_count_by_branch_day($con, $date_esc)
+{
+    $sql = "SELECT branch_id, COUNT(*) AS cnt FROM gynae_register
+        WHERE DATE(created) = '$date_esc'
+        GROUP BY branch_id";
+    return progress_map_int($con, $sql, 'branch_id', 'cnt');
+}
+
+/**
+ * @param string $date Y-m-d
  * @return array{
  *   branch_ids: int[],
+ *   branch_tags: array<int, string>,
  *   opd: array<int, int>,
- *   cons: array<int, int>,
- *   admissions: array<int, int>,
- *   procedures: array<int, int>,
- *   svds: array<int, int>,
- *   dncs: array<int, int>,
- *   usgs: array<int, int>,
- *   gynae: array<int, int>,
+ *   item: array<int, array<string, int>>,
  *   gynae_system: array<int, int>
  * }
  */
-function progress_organization_daily_branch_summary($con, $like)
+function progress_organization_daily_branch_summary($con, $date)
 {
-    $like = mysqli_real_escape_string($con, $like);
+    $date_esc = mysqli_real_escape_string($con, $date);
+    $opd = progress_opd_count_by_branch_day($con, $date_esc);
+    $item = progress_item_metrics_by_branch_day($con, $date_esc);
+    $gynae_system = progress_gynae_register_count_by_branch_day($con, $date_esc);
+
+    $branch_ids = array_unique(array_merge(
+        array_keys($opd),
+        array_keys($item),
+        array_keys($gynae_system)
+    ));
+    sort($branch_ids, SORT_NUMERIC);
 
     return array(
-        'branch_ids' => progress_branch_ids_for_date($con, $like),
-        'opd' => progress_opd_count_by_branch($con, $like),
-        'cons' => progress_item_tokan_count_by_branch($con, $like, '489, 849, 850, 1415, 1327, 1139, 1141, 1477, 1154'),
-        'admissions' => progress_item_tokan_count_by_branch($con, $like, '444, 448, 452, 456, 457, 460, 461, 945, 1124, 1125, 1128, 1131, 1132, 1145, 1186, 1285, 1289, 1293, 1297, 1301'),
-        'procedures' => progress_procedure_tokan_count_by_branch($con, $like),
-        'svds' => progress_item_tokan_count_by_branch($con, $like, '472, 1118, 1313'),
-        'dncs' => progress_item_tokan_count_by_branch($con, $like, '473, 1119, 1314'),
-        'usgs' => progress_item_tokan_count_by_branch($con, $like, '476, 477, 478, 479, 1138, 1185, 1161, 1162, 1163, 1164, 1184, 1317, 1318, 1319, 1411, 1435'),
-        'gynae' => progress_item_tokan_count_by_branch($con, $like, '483, 1159, 1321, 1414, 1576'),
-        'gynae_system' => progress_gynae_register_count_by_branch($con, $like),
+        'branch_ids' => $branch_ids,
+        'branch_tags' => progress_branch_tag_map($con),
+        'opd' => $opd,
+        'item' => $item,
+        'gynae_system' => $gynae_system,
     );
 }

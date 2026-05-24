@@ -2,14 +2,17 @@
 require_once __DIR__ . '/includes/connect.php';
 require_once __DIR__ . '/includes/progress_report_params.php';
 
-@set_time_limit(120);
+@set_time_limit(180);
+if (function_exists('ini_set')) {
+    @ini_set('max_execution_time', '180');
+}
 
 $req = progress_report_resolve_request($con);
 $date = $req['date'];
-$like = $req['like'];
 
-$summary = progress_organization_daily_branch_summary($con, $like);
+$summary = progress_organization_daily_branch_summary($con, $date);
 $branch_ids = $summary['branch_ids'];
+$branch_tags = $summary['branch_tags'];
 
 $report_date_label = ycdo_safe_date_format($date, 'd F Y', $date);
 
@@ -57,14 +60,15 @@ if (count($branch_ids) > 0) {
     $s = 0;
     foreach ($branch_ids as $branch_id) {
         $s++;
+        $item = $summary['item'][$branch_id] ?? array();
         $opds = $summary['opd'][$branch_id] ?? 0;
-        $cons_opds = $summary['cons'][$branch_id] ?? 0;
-        $admissions = $summary['admissions'][$branch_id] ?? 0;
-        $procedures = $summary['procedures'][$branch_id] ?? 0;
-        $svds = $summary['svds'][$branch_id] ?? 0;
-        $dncs = $summary['dncs'][$branch_id] ?? 0;
-        $usgs = $summary['usgs'][$branch_id] ?? 0;
-        $gynae = $summary['gynae'][$branch_id] ?? 0;
+        $cons_opds = (int) ($item['cons'] ?? 0);
+        $admissions = (int) ($item['admissions'] ?? 0);
+        $procedures = (int) ($item['procedures'] ?? 0);
+        $svds = (int) ($item['svds'] ?? 0);
+        $dncs = (int) ($item['dncs'] ?? 0);
+        $usgs = (int) ($item['usgs'] ?? 0);
+        $gynae = (int) ($item['gynae'] ?? 0);
         $gynae_system = $summary['gynae_system'][$branch_id] ?? 0;
 
         $total_opds += $opds;
@@ -77,7 +81,7 @@ if (count($branch_ids) > 0) {
         $total_gynae += $gynae;
         $total_gynae_system += $gynae_system;
 
-        $branch_tag = htmlspecialchars(get_branch_tag_name_by_id($branch_id));
+        $branch_tag = htmlspecialchars($branch_tags[$branch_id] ?? get_branch_tag_name_by_id($branch_id));
         echo '<tr style="text-align: right;">';
         echo '<td>' . $s . '</td>';
         echo '<td style="text-align: left;">' . $branch_tag . '</td>';
