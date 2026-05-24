@@ -19,3 +19,10 @@ ALTER TABLE gynae_register ADD INDEX idx_gynae_token_status (token_no, status);
 -- logins_detail / summary_details: FR month report
 ALTER TABLE logins_detail ADD INDEX idx_login_branch_status_at (branch_id, status, login_at);
 ALTER TABLE summary_details ADD INDEX idx_summary_login_id (login_id);
+
+-- Doctor monthly profile: filter by doctor + branch + month
+ALTER TABLE tokans ADD INDEX idx_tokans_doctor_branch_status_created (doctor_id, branch_id, status, created);
+ALTER TABLE item_by_doctor ADD INDEX idx_ibd_doctor_branch_status_created (doctor_id, branch_id, status, created);
+ALTER TABLE gynae_register ADD INDEX idx_gynae_doctor_branch_created (doctor_id, branch_id, created);
+ALTER TABLE referral_patients ADD INDEX idx_ref_created_to_user (referral_patient_created, to_user_id);
+ALTER TABLE referral_patients ADD INDEX idx_ref_created_from_user (referral_patient_created, from_user_id);
