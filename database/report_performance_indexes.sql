@@ -30,3 +30,6 @@ ALTER TABLE referral_patients ADD INDEX idx_ref_created_from_user (referral_pati
 -- General pending LG / detail
 ALTER TABLE branch_daily_pending_details ADD INDEX idx_bdpd_created (created);
 ALTER TABLE branch_daily_pending_details ADD INDEX idx_bdpd_token_created (token_no, created);
+
+-- HR monthly progress (doctor): item_by_doctor by doctor + month
+ALTER TABLE item_by_doctor ADD INDEX idx_ibd_doctor_branch_created_cat (doctor_id, branch_id, created, category_id);

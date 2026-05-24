@@ -34,10 +34,9 @@ function hr_progress_bootstrap($con, $hr_id, array $opts)
             $params['br_id'] = (int) ($_POST['br_id'] ?? 0);
         }
         $print_url = $opts['print'] . '?' . http_build_query($params);
-        $popup_script = '<script>window.open('
-            . json_encode($print_url) . ', '
-            . json_encode($opts['window_title'])
-            . ', "width=3000,height=3000");</script>';
+        $popup_script = '<script>
+window.open(' . json_encode($print_url) . ', "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,width=1400,height=900");
+</script>';
     }
 
     return array(
