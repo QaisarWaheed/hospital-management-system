@@ -53,7 +53,7 @@ $gynae_date_value = date('Y-m-d');
                 <h2>GYNAE SECTION</h2>
             </div>
             <div class = "col-md-12">
-                <p class="text-muted">Select branch, then click a gestational-age report (filtered by months from LMP date).</p>
+                <p class="text-muted">Select branch, then open a gestational-age report (months from LMP date).</p>
                 <div class="row p-3 align-items-end">
                     <div class="col-md-5">
                         <label for="gynae_filter_br_id">Branch</label>
@@ -63,8 +63,6 @@ $gynae_date_value = date('Y-m-d');
                 <div class = "row p-3">
                     <?php
                     $gynae_forms = array(
-                        array('action' => 'gyane_report_less_then_four_month.php', 'label' => '< 4 MONTH', 'class' => 'btn-success'),
-                        array('action' => 'gyane_report_less_then_four_month_and_greater_then_eight_month.php', 'label' => '> 4 MONTH & < 8 MONTH', 'class' => 'btn-info'),
                         array('action' => 'gyane_report_greater_then_eight_month.php', 'label' => '> 8 MONTH', 'class' => 'btn-dark'),
                         array('action' => 'gyane_report_discontinued.php', 'label' => 'DISCONTINUED', 'class' => 'btn-danger'),
                     );
