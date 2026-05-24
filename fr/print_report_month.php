@@ -1,30 +1,42 @@
 <?php
-include 'includes/connect.php';
+require_once __DIR__ . '/includes/connect_report.php';
 require_once __DIR__ . '/../includes/report_helpers.php';
+require_once __DIR__ . '/../includes/month_report_helpers.php';
+
+@set_time_limit(300);
+if (function_exists('ini_set')) {
+    @ini_set('max_execution_time', '300');
+}
 
 if (!isset($_GET['date'], $_GET['br_id']) || $_GET['date'] === '') {
     http_response_code(400);
     exit('Date and branch are required.');
 }
 
-$date = $_GET['date'];
+$date = substr((string) $_GET['date'], 0, 10);
 $br_id = (int) $_GET['br_id'];
 $ym = ycdo_parse_year_month($date);
 $year = $ym['year'];
 $month = $ym['month'];
 $days = $ym['days'];
+
+header('Content-Type: text/html; charset=utf-8');
+echo '<html><head><meta charset="utf-8"><title>Month Report</title></head><body><p>Loading month report…</p>';
+if (function_exists('ob_flush')) {
+    @ob_flush();
+}
+@flush();
+
+$byDay = month_report_month_by_day($con, $br_id, $year, $month);
+$monthTitle = ycdo_safe_date_format($date, 'F Y', $date);
+$branchHeader = summary_branch_header($con, $br_id, $company_name);
+$branch_label = $branchHeader['address'] !== '' ? $branchHeader['address'] : $branchHeader['name'];
 ?>
-<html>
-<head>
-    <title>PRINT MONTHLY PROGRESS REPORT</title>
-</head>
-<body>
-    
-<table border = "solid">
+<table border="solid">
 <caption>
-    <h2><?php echo $company_name; ?></h2>
-    <h2><?php echo get_branch_name_by($br_id); ?></h2>
-    <h4>Progress For The Month Of <?php echo date_format(date_create($date), " F Y"); ?></h4>
+    <h2><?php echo htmlspecialchars($company_name); ?></h2>
+    <h2><?php echo htmlspecialchars($branch_label); ?></h2>
+    <h4>Progress For The Month Of <?php echo htmlspecialchars($monthTitle); ?></h4>
 </caption>
     <thead>
         <tr>
@@ -42,121 +54,56 @@ $days = $ym['days'];
     <tbody>
 <?php
 $s = 0;
-$total_cash = 0;
-$total_login = 0;
-$total_extra_amount = 0;
-$total_short_amount = 0;
-$total_collection = 0;
-$total_return_token = 0;
+$totals = month_report_empty_day();
 
-for ($x = 1; $x <= $days; $x++)
-{
+for ($day = 1; $day <= $days; $day++) {
+    $row = isset($byDay[$day]) ? $byDay[$day] : month_report_empty_day();
     $s++;
-    $day = $x < 10 ? '0' . $x : (string) $x;
-    $select_date = $day . '-' . $month . '-' . $year;
-    $collection_amount = 0;
-    $cash_amount = 0;
-    $return_token_amount = 0;
-    $received_amount = 0;
-    $extra_amount = 0;
-    $short_amount = 0;
+    $dayPad = $day < 10 ? '0' . $day : (string) $day;
+    $select_date = $dayPad . '-' . $month . '-' . $year;
+    $cash_amount = (float) $row['cash'];
+    $collection_amount = (float) $row['collection'];
+    $return_token_amount = (float) $row['return_token'];
+    $received_amount = (float) $row['received_amount'];
+    $extra_amount = (float) $row['extra_amount'];
+    $short_amount = (float) $row['short_amount'];
 
-//COLLECTION
-$collection = "SELECT SUM(`cash_received`),SUM(`cash`) FROM tokans WHERE branch_id = '$br_id' AND created LIKE '$year-$month-$day%' AND status = 1 ";
-$run_collection = mysqli_query($con, $collection);
-if(mysqli_num_rows($run_collection) == 1)
-{
-    while($row_collection = mysqli_fetch_array($run_collection))
-    {
-        $collection_amount = $row_collection['0'];
-        $total_collection = $total_collection + $collection_amount;
-        
-        $cash_amount = $row_collection['1'];
-        $total_cash = $total_cash + $cash_amount;
-    }
-}
-else
-{
-        $collection_amount = 0;
-        $total_collection = $total_collection + $collection_amount;
-        
-        $cash_amount = 0;
-        $total_cash = $total_cash + $cash_amount;
-}
-
-//Return Tokens
-$return_token = "SELECT SUM(`cash_received`) FROM tokans WHERE branch_id = '$br_id' AND created LIKE '$year-$month-$day%' AND status = 3 ";
-$run_return_token = mysqli_query($con, $return_token);
-if(mysqli_num_rows($run_return_token) == 1)
-{
-    while($row_return_token = mysqli_fetch_array($run_return_token))
-    {
-        $return_token_amount = $row_return_token['0'];
-        $total_return_token = $total_return_token + $return_token_amount;
-    }
-}
-else
-{
-        $return_token_amount = 0;
-        $total_return_token = $total_return_token + $return_token_amount;
-}
-
-//Total Login
-$users = "SELECT sum(`received_amount`) AS received_amount ,SUM(extra_amount) AS extra_amount ,SUM(short_amount) AS short_amount FROM `summary_details` WHERE login_id IN (SELECT id FROM logins_detail WHERE branch_id = '$br_id' AND login_at LIKE '$year-$month-$day%' AND `status` = '2') ";
-$run_users = mysqli_query($con, $users);
-if(mysqli_num_rows($run_users) > 0)
-{
-    while($row_users = mysqli_fetch_array($run_users))
-    {
-        $received_amount= $row_users['received_amount'];
-        $total_login = $total_login + $received_amount;
-        
-        $extra_amount= $row_users['extra_amount'];
-        $total_extra_amount = $total_extra_amount + $extra_amount;
-        
-        $short_amount= $row_users['short_amount'];
-        $total_short_amount = $total_short_amount + $short_amount;
-    }
-}
-else
-{
-        $received_amount = 0;
-        $total_login = $total_login + $received_amount;
-        
-        $extra_amount = 0;
-        $total_extra_amount = $total_extra_amount + $extra_amount;
-        
-        $short_amount = 0;
-        $total_short_amount = $total_short_amount + $short_amount;
-}
-
-        echo ' <tr style = "text-align: right;">
-                <td>'.$s.'</td>
-                <td>'.$select_date.'</td>
-                <td>'.report_safe_number_format((float) ($cash_amount ?? 0)).'</td>
-                <td>'.report_safe_number_format($return_token_amount).'</td>
-                <td>'.report_safe_number_format($collection_amount).'</td>
-                <td>'.report_safe_number_format($received_amount).'</td>
-                <td>'.report_safe_number_format($extra_amount).'</td>
-                <td>'.report_safe_number_format($short_amount).'</td>
-                <td>'.report_safe_number_format($received_amount+$extra_amount).'</td>
-            </tr>';
-}
-    echo '</tbody>';
-    echo '<tfoot>
-            <tr style = "text-align: right;">
-                <th colspan = "2">TOTAL</th>
-                <th>'.report_safe_number_format($total_cash).'</th>
-                <th>'.report_safe_number_format($total_return_token).'</th>
-                <th>'.report_safe_number_format($total_collection).'</th>
-                <th>'.report_safe_number_format($total_login).'</th>
-                <th>'.report_safe_number_format($total_extra_amount).'</th>
-                <th>'.report_safe_number_format($total_short_amount).'</th>
-                <th>'.report_safe_number_format($total_login+$total_extra_amount).'</th>
-            </tr>
-        </tfoot>';
+    $totals['cash'] += $cash_amount;
+    $totals['collection'] += $collection_amount;
+    $totals['return_token'] += $return_token_amount;
+    $totals['received_amount'] += $received_amount;
+    $totals['extra_amount'] += $extra_amount;
+    $totals['short_amount'] += $short_amount;
 ?>
+        <tr style="text-align: right;">
+            <td><?php echo $s; ?></td>
+            <td><?php echo htmlspecialchars($select_date); ?></td>
+            <td><?php echo report_safe_number_format($cash_amount); ?></td>
+            <td><?php echo report_safe_number_format($return_token_amount); ?></td>
+            <td><?php echo report_safe_number_format($collection_amount); ?></td>
+            <td><?php echo report_safe_number_format($received_amount); ?></td>
+            <td><?php echo report_safe_number_format($extra_amount); ?></td>
+            <td><?php echo report_safe_number_format($short_amount); ?></td>
+            <td><?php echo report_safe_number_format($received_amount + $extra_amount); ?></td>
+        </tr>
+<?php } ?>
+    </tbody>
+    <tfoot>
+        <tr style="text-align: right;">
+            <th colspan="2">TOTAL</th>
+            <th><?php echo report_safe_number_format($totals['cash']); ?></th>
+            <th><?php echo report_safe_number_format($totals['return_token']); ?></th>
+            <th><?php echo report_safe_number_format($totals['collection']); ?></th>
+            <th><?php echo report_safe_number_format($totals['received_amount']); ?></th>
+            <th><?php echo report_safe_number_format($totals['extra_amount']); ?></th>
+            <th><?php echo report_safe_number_format($totals['short_amount']); ?></th>
+            <th><?php echo report_safe_number_format($totals['received_amount'] + $totals['extra_amount']); ?></th>
+        </tr>
+    </tfoot>
 </table>
-
 </body>
 </html>
+<?php
+if ($con instanceof mysqli) {
+    mysqli_close($con);
+}

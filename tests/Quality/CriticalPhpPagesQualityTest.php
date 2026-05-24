@@ -27,6 +27,7 @@ final class CriticalPhpPagesQualityTest extends TestCase
             'bk/includes/progress_report_params.php',
             'includes/report_helpers.php',
             'includes/account_report_helpers.php',
+            'includes/month_report_helpers.php',
             'dr/fr/print_summary.php',
             'dr/fr/print_summary_login.php',
         );

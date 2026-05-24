@@ -15,3 +15,7 @@ ALTER TABLE item_by_doctor ADD INDEX idx_ibd_tokan_branch_status_cat (tokan_no, 
 -- gynae_register
 ALTER TABLE gynae_register ADD INDEX idx_gynae_created_branch (created, branch_id);
 ALTER TABLE gynae_register ADD INDEX idx_gynae_token_status (token_no, status);
+
+-- logins_detail / summary_details: FR month report
+ALTER TABLE logins_detail ADD INDEX idx_login_branch_status_at (branch_id, status, login_at);
+ALTER TABLE summary_details ADD INDEX idx_summary_login_id (login_id);
