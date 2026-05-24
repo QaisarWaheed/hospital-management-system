@@ -37,8 +37,42 @@ report_time_query($con, 'progress_full', static function ($con) use ($date) {
     progress_organization_daily_branch_summary($con, $date);
 });
 
-$m2 = date('Y-m', strtotime($month . '-01 +1 month'));
-report_time_query($con, 'comparison_two_months', static function ($con) use ($month, $m2) {
+$m2 = isset($_GET['month2']) ? substr((string) $_GET['month2'], 0, 7) : date('Y-m', strtotime($month . '-01 +1 month'));
+$m1b = comparison_month_bounds($month);
+$m2b = comparison_month_bounds($m2);
+$rs = min($m1b[0], $m2b[0]);
+$re = max($m1b[1], $m2b[1]);
+
+report_time_query($con, 'comparison_tokans', static function ($con) use ($m1b, $m2b, $rs, $re) {
+    $first = array();
+    $second = array();
+    comparison_load_tokans_both_months($con, $m1b, $m2b, $rs, $re, $first, $second);
+});
+report_time_query($con, 'comparison_cons_m1', static function ($con) use ($m1b) {
+    $b = array();
+    comparison_load_cons_month($con, $m1b[0], $m1b[1], $b);
+});
+report_time_query($con, 'comparison_cons_m2', static function ($con) use ($m2b) {
+    $b = array();
+    comparison_load_cons_month($con, $m2b[0], $m2b[1], $b);
+});
+report_time_query($con, 'comparison_procedures_m1', static function ($con) use ($m1b) {
+    $b = array();
+    comparison_load_procedures_month($con, $m1b[0], $m1b[1], $b);
+});
+report_time_query($con, 'comparison_procedures_m2', static function ($con) use ($m2b) {
+    $b = array();
+    comparison_load_procedures_month($con, $m2b[0], $m2b[1], $b);
+});
+report_time_query($con, 'comparison_lab_m1', static function ($con) use ($m1b) {
+    $b = array();
+    comparison_load_lab_month($con, $m1b[0], $m1b[1], $b);
+});
+report_time_query($con, 'comparison_lab_m2', static function ($con) use ($m2b) {
+    $b = array();
+    comparison_load_lab_month($con, $m2b[0], $m2b[1], $b);
+});
+report_time_query($con, 'comparison_total', static function ($con) use ($month, $m2) {
     comparison_two_month_stats($con, $month, $m2);
 });
 

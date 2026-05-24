@@ -1,8 +1,25 @@
-// Minimal service worker — cache login shell only; never intercept BK reports or POST.
+// Service worker v2 — login shell cache only; never intercept BK or report URLs.
+var CACHE_NAME = 'sw-cache-v2';
+
 self.addEventListener('install', function (event) {
+  self.skipWaiting();
   event.waitUntil(
-    caches.open('sw-cache').then(function (cache) {
+    caches.open(CACHE_NAME).then(function (cache) {
       return cache.add('index.php').catch(function () {});
+    })
+  );
+});
+
+self.addEventListener('activate', function (event) {
+  event.waitUntil(
+    caches.keys().then(function (keys) {
+      return Promise.all(
+        keys.filter(function (k) { return k !== CACHE_NAME; }).map(function (k) {
+          return caches.delete(k);
+        })
+      );
+    }).then(function () {
+      return self.clients.claim();
     })
   );
 });

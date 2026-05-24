@@ -7,8 +7,19 @@ if (isset($_POST['date']) && $_POST['date'] !== '') {
 	?>
 <!DOCTYPE html>
 <html>
-<head><title>Opening progress report…</title></head>
+<head>
+<meta charset="utf-8">
+<title>Opening progress report…</title>
+<script>
+if ('serviceWorker' in navigator) {
+	navigator.serviceWorker.getRegistrations().then(function (regs) {
+		regs.forEach(function (reg) { reg.unregister(); });
+	});
+}
+</script>
+</head>
 <body>
+<p>Opening progress report…</p>
 <script>
 window.open(<?php echo json_encode($print_url); ?>, '_blank', 'toolbar=no,scrollbars=yes,resizable=yes,width=1200,height=800');
 window.location.replace('progress_report.php');

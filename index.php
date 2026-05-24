@@ -56,9 +56,15 @@ $ip_address = get_client_ip();
     <link rel="manifest" href="manifest.json">
     <script>
         //if browser support service worker
-        if('serviceWorker' in navigator) {
-          navigator.serviceWorker.register('sw.js');
-        };
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('sw.js?v=2').then(function () {
+            return navigator.serviceWorker.ready;
+          }).then(function (reg) {
+            if (reg && reg.update) {
+              reg.update();
+            }
+          });
+        }
       </script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">

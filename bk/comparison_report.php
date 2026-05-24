@@ -12,8 +12,19 @@ if (isset($_GET['print_comparison'], $_GET['first_month'], $_GET['second_month']
 	?>
 <!DOCTYPE html>
 <html>
-<head><title>Opening comparison report…</title></head>
+<head>
+<meta charset="utf-8">
+<title>Opening comparison report…</title>
+<script>
+if ('serviceWorker' in navigator) {
+	navigator.serviceWorker.getRegistrations().then(function (regs) {
+		regs.forEach(function (reg) { reg.unregister(); });
+	});
+}
+</script>
+</head>
 <body>
+<p>Opening comparison report…</p>
 <script>
 window.open(<?php echo json_encode($print_url); ?>, '_blank', 'toolbar=no,scrollbars=yes,resizable=yes,width=1200,height=800');
 window.location.replace('comparison_report.php');
