@@ -1,4 +1,5 @@
 <?php
+// OPTIMIZED: replaced per-row queries with pre-aggregated batch queries
 include 'includes/connect.php';
 require_once __DIR__ . '/includes/progress_report_params.php';
 
@@ -19,7 +20,7 @@ $select = "SELECT tokans.doctor_id, users.u_name, branchs.tag_name,
     FROM tokans
     INNER JOIN users ON tokans.doctor_id = users.id
     INNER JOIN branchs ON users.branch_id = branchs.id
-    WHERE tokans.created LIKE '$like' AND tokans.branch_id = '$br_id' AND tokans.status = '1'
+    WHERE " . progress_sql_date_clause($con, $like, 'tokans.created') . " AND tokans.branch_id = '$br_id' AND tokans.status = '1'
     GROUP BY tokans.doctor_id
     ORDER BY tokans.doctor_id";
 $run = mysqli_query($con, $select);

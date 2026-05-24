@@ -1,14 +1,23 @@
-<?php 
-include 'includes/connect.php'; 
-if(isset($_GET['date']))
-{
-    $date = $_GET['date'];
-    $br_id = $_GET['br_id'];
-}
-else
-{
-    exit(0);
-}
+<?php
+// OPTIMIZED: replaced per-row queries with pre-aggregated batch queries
+include 'includes/connect.php';
+require_once __DIR__ . '/includes/progress_report_params.php';
+
+set_time_limit(120);
+
+$req = progress_report_resolve_request($con);
+$date = $req['date'];
+$br_id = $req['br_id'];
+$like = $req['like'];
+
+$doctors = progress_gynae_progress_monthly_doctors($con, $br_id, $like);
+$opd_map = progress_opd_count_by_doctor_lte10($con, $br_id, $like);
+$cons_map = progress_tokan_count_by_item_category_doctor($con, $br_id, $like, 29);
+$gynae_token_map = progress_item_count_by_doctor($con, $br_id, $like, '483, 1159, 1321, 1414');
+$gynae_system_map = progress_gynae_register_count_by_doctor($con, $br_id, $like);
+$svd_dnc_map = progress_item_count_by_doctor($con, $br_id, $like, '472, 473, 1118, 1119, 1313, 1314');
+$procedure_map = progress_tokan_count_by_item_category_doctor($con, $br_id, $like, 3);
+$refer_map = progress_referral_from_count_by_branch($con, $br_id, $like);
 ?>
 <html>
 <head>
@@ -45,98 +54,27 @@ $count_gynae_system = 0;
 $count_svd_dnc = 0;
 $count_procedure = 0;
 $total_reffered = 0;
-$select_dr = "SELECT * FROM users WHERE ( role_id = '3' AND id IN (SELECT `doctor_id` FROM `tokans` WHERE `branch_id` = '$br_id' AND created LIKE '$date%') AND id IN (SELECT DISTINCT `doctor_id` FROM `item_by_doctor` WHERE `branch_id` = '$br_id' AND created LIKE '$date%' AND item_id IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (483, 1159, 1321, 1414) )) ) OR (id IN (SELECT from_user_id FROM `referral_patients` WHERE referral_patient_created LIKE '$date%' AND branch_id = '$br_id' and referral_patient_status > 1 ) ) ORDER BY `u_name` ";
-$run_dr = mysqli_query($con, $select_dr);
-if ($run_dr && mysqli_num_rows($run_dr) > 0)
-{
-    while($row_dr = mysqli_fetch_array($run_dr))
-    {
-        $dr_id = $row_dr['id'];
+
+if (count($doctors) > 0) {
+    foreach ($doctors as $dr_id => $row_dr) {
+        $dr_id = (int) $dr_id;
         $dr_name = $row_dr['u_name'];
-        $opd = 0;
-        $consultant_opd = 0;
-        $gynae_count = 0;
-        $gynae_count_system = 0;
-        $svd_dnc_count = 0;
-        $procedure = 0;
-        $reffered = 0;
+        $opd = $opd_map[$dr_id] ?? 0;
+        $consultant_opd = $cons_map[$dr_id] ?? 0;
+        $gynae_count = $gynae_token_map[$dr_id] ?? 0;
+        $gynae_count_system = $gynae_system_map[$dr_id] ?? 0;
+        $svd_dnc_count = $svd_dnc_map[$dr_id] ?? 0;
+        $procedure = $procedure_map[$dr_id] ?? 0;
+        $reffered = $refer_map[$dr_id] ?? 0;
 
-        $select_opd = "SELECT COUNT(id) FROM tokans WHERE doctor_id = '$dr_id' AND created LIKE '$date%' AND branch_id = '$br_id' AND tokan_type_id <= 10 AND status = 1 ";
-        $run_opd = mysqli_query($con, $select_opd);
-        $opds = mysqli_num_rows($run_opd);
-        if($opds == 1)
-        {
-            while($row_opd = mysqli_fetch_array($run_opd))
-            {
-                $opd = $row_opd[0];
-                $count_opd = $count_opd + $opd;
-            }
-        }
-        $select_consultant_opd = "SELECT COUNT(id) FROM `tokans` WHERE `id` IN (SELECT `tokan_no` FROM `item_by_doctor` WHERE tokan_no IN (SELECT id FROM tokans WHERE created like '$date%' AND status = 1 AND doctor_id = '$dr_id') AND branch_id = '$br_id' AND `status` = 2 AND `item_id` IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (SELECT id FROM items WHERE category_id = '29') ))";
-        // $select_consultant_opd = "SELECT COUNT(`tokan_no`) FROM `item_by_doctor` WHERE `item_id` IN (SELECT `id` FROM item_register_to_branches WHERE item_id IN (489, 849, 850, 1139, 1140, 1141, 1412, 1415)) AND branch_id = '$br_id' AND `tokan_no` IN (SELECT id FROM tokans WHERE created LIKE '$date%' AND branch_id = '$br_id' AND doctor_id = '$dr_id')";
-        $run_consultant_opd = mysqli_query($con, $select_consultant_opd);
-        $consultant_opds = mysqli_num_rows($run_consultant_opd);
-        if($consultant_opds == 1)
-        {
-            while($row_consultant_opd = mysqli_fetch_array($run_consultant_opd))
-            {
-                $consultant_opd = $row_consultant_opd[0];
-                $count_consultant_opd = $count_consultant_opd + $consultant_opd;
-            }
-        }
-        
-        $select_gynae = "SELECT COUNT(id) FROM tokans WHERE status = 1 AND doctor_id = '$dr_id' AND created LIKE '$date%' AND branch_id = '$br_id' AND id IN (SELECT DISTINCT `tokan_no` FROM `item_by_doctor` WHERE item_id IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (483, 1159, 1321, 1414) ) AND `doctor_id` = '$dr_id' AND `branch_id` = '$br_id' AND `created` LIKE '$date%')";
-        $run_gynae = mysqli_query($con, $select_gynae);
-        $gynaes = mysqli_num_rows($run_gynae);
-        if($gynaes > 0)
-        {
-            while($row_gynae = mysqli_fetch_array($run_gynae))
-            {
-                $gynae_count = $row_gynae[0];
-                $count_gynae = $count_gynae + $gynae_count;
-            }
-        }
-        
-        $gynae_system = "SELECT count(*) FROM `gynae_register` WHERE doctor_id = '$dr_id' AND created like '$date%' AND branch_id = '$br_id'";
-        $run_gynae_system = mysqli_query($con, $gynae_system);
-        $gynaes_system = mysqli_num_rows($run_gynae_system);
-        if($gynaes_system > 0)
-        {
-            while($row_gynae_system = mysqli_fetch_array($run_gynae_system))
-            {
-                $gynae_count_system = $row_gynae_system[0];
-                $count_gynae_system = $count_gynae_system + $gynae_count_system;
-            }
-        }
+        $count_opd += $opd;
+        $count_consultant_opd += $consultant_opd;
+        $count_gynae += $gynae_count;
+        $count_gynae_system += $gynae_count_system;
+        $count_svd_dnc += $svd_dnc_count;
+        $count_procedure += $procedure;
+        $total_reffered += $reffered;
 
-        $select_svd_dnc = "SELECT COUNT(id) FROM tokans WHERE status = 1 AND doctor_id = '$dr_id' AND created LIKE '$date%' AND branch_id = '$br_id' AND id IN (SELECT DISTINCT `tokan_no` FROM `item_by_doctor` WHERE item_id IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (472, 473, 1118, 1119, 1313, 1314) ) AND `doctor_id` = '$dr_id' AND `branch_id` = '$br_id' AND `created` LIKE '$date%')";
-        $run_svd_dnc = mysqli_query($con, $select_svd_dnc);
-        $svd_dncs = mysqli_num_rows($run_svd_dnc);
-        if($svd_dncs > 0)
-        {
-            while($row_svd_dnc = mysqli_fetch_array($run_svd_dnc))
-            {
-                $svd_dnc_count = $row_svd_dnc[0];
-                $count_svd_dnc = $count_svd_dnc + $svd_dnc_count;
-            }
-        }
-        
-        $select_procedure = "SELECT COUNT(id) FROM `tokans` WHERE `id` IN (SELECT `tokan_no` FROM `item_by_doctor` WHERE tokan_no IN (SELECT id FROM tokans WHERE created like '$date%' AND status = 1 AND doctor_id = '$dr_id') AND branch_id = '$br_id' AND `status` = 2 AND `item_id` IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (SELECT id FROM items WHERE category_id = '3') ))";
-        $run_procedure = mysqli_query($con, $select_procedure);
-        $procedures = mysqli_num_rows($run_procedure);
-        if($procedures == 1)
-        {
-            while($row_procedure = mysqli_fetch_array($run_procedure))
-            {
-                $procedure = $row_procedure[0];
-                $count_procedure = $count_procedure + $procedure;
-            }
-        }
-
-        $reffered = mysqli_num_rows(mysqli_query($con, "SELECT * FROM `referral_patients` WHERE referral_patient_created LIKE '$date%' AND from_user_id = '$dr_id' and referral_patient_status > 1 "));
-        $total_reffered = $total_reffered + $reffered;
-
-        
         $s++;
         echo '
         <tr style = "text-align: center;">

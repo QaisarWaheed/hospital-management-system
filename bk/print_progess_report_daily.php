@@ -1,4 +1,5 @@
 <?php
+// OPTIMIZED: replaced per-row queries with pre-aggregated batch queries
 include 'includes/connect.php';
 require_once __DIR__ . '/includes/progress_report_params.php';
 
@@ -14,9 +15,10 @@ $gynae_system_map = progress_gynae_register_count_by_doctor($con, $br_id, $like)
 $refer_from = progress_referral_from_count_by_doctor($con, $like);
 $refer_to = progress_referral_to_count_by_doctor($con, $like);
 
+$tok_date_clause = progress_sql_date_clause($con, $like);
 $doctor_sql = "SELECT DISTINCT doctor_id FROM tokans
     WHERE doctor_id IN (SELECT id FROM users WHERE branch_id = '$br_id')
-    AND created LIKE '$like' AND branch_id = '$br_id' ORDER BY doctor_id";
+    AND $tok_date_clause AND branch_id = '$br_id' ORDER BY doctor_id";
 $doctor_ids = array();
 $run_doctors = mysqli_query($con, $doctor_sql);
 if ($run_doctors) {

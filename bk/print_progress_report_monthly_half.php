@@ -1,4 +1,5 @@
-<?php 
+<?php
+// OPTIMIZED: replaced per-row queries with pre-aggregated batch queries
 include 'includes/connect.php';
 require_once __DIR__ . '/includes/progress_report_params.php';
 
@@ -123,7 +124,8 @@ $refer_to = progress_referral_to_count_by_doctor($con, $like);
     $total_emergency = 0;
     $total_ecgs = 0;
     
-    $select = "SELECT DISTINCT tokans.doctor_id, users.u_name , branchs.tag_name, COUNT(CASE WHEN tokans.tokan_type_id <= 100 THEN tokans.tokan_type_id END) AS opd FROM `tokans` INNER JOIN users ON tokans.doctor_id = users.id INNER JOIN branchs ON users.branch_id = branchs.id WHERE tokans.created LIKE '$like' AND tokans.branch_id = '$br_id' AND tokans.status = '1' GROUP BY tokans.doctor_id ORDER BY tokans.doctor_id ";
+    $tok_date_clause = progress_sql_date_clause($con, $like, 'tokans.created');
+    $select = "SELECT DISTINCT tokans.doctor_id, users.u_name , branchs.tag_name, COUNT(CASE WHEN tokans.tokan_type_id <= 100 THEN tokans.tokan_type_id END) AS opd FROM `tokans` INNER JOIN users ON tokans.doctor_id = users.id INNER JOIN branchs ON users.branch_id = branchs.id WHERE $tok_date_clause AND tokans.branch_id = '$br_id' AND tokans.status = '1' GROUP BY tokans.doctor_id ORDER BY tokans.doctor_id ";
     $run = mysqli_query($con, $select);
     $count_run = mysqli_num_rows($run);
     if(mysqli_num_rows($run) > 0)

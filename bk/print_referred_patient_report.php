@@ -1,4 +1,7 @@
-<?php include 'includes/connect.php'; 
+<?php
+// OPTIMIZED: replaced per-row queries with pre-aggregated batch queries
+include 'includes/connect.php';
+require_once __DIR__ . '/includes/progress_report_params.php';
 include 'includes/head.php'; 
 if(isset($_GET['date']) && $_GET['date'] != '')
 {
@@ -63,7 +66,9 @@ else
 		    <tbody>
 <?php
 $s = 0;
-$select_referral_token = "SELECT * FROM `referral_patients` WHERE opd_token_id > 0 AND referral_patient_status > 0 AND referral_patient_created LIKE '$date%' ORDER BY branch_id, referral_patient_status ";
+$date_esc = mysqli_real_escape_string($con, (string) $date);
+$ref_date_clause = progress_sql_date_clause($con, $date_esc . '%', 'referral_patient_created');
+$select_referral_token = "SELECT * FROM `referral_patients` WHERE opd_token_id > 0 AND referral_patient_status > 0 AND $ref_date_clause ORDER BY branch_id, referral_patient_status ";
 $run_referral_token = mysqli_query($con, $select_referral_token);
 if(mysqli_num_rows($run_referral_token) > 0)
 {

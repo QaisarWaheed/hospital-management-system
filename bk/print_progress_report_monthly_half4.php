@@ -1,19 +1,34 @@
-<?php 
-include 'includes/connect.php'; 
+<?php
+// OPTIMIZED: replaced per-row queries with pre-aggregated batch queries
+include 'includes/connect.php';
+require_once __DIR__ . '/includes/progress_report_params.php';
+
+set_time_limit(120);
+
 if(isset($_GET['date']))
 {
     $date = $_GET['date'];
-    $br_id = $_GET['br_id'];
+    $br_id = (int) $_GET['br_id'];
 }
 elseif(isset($_POST['date']))
 {
     $date = $_POST['date'];
-        $br_id = $_POST['br_id'];
+    $br_id = (int) $_POST['br_id'];
 }
 else
 {
     exit(0);
 }
+
+$like = mysqli_real_escape_string($con, (string) $date) . '%';
+$half_batch = progress_monthly_half_batch_maps($con, $br_id, $like);
+$cash_map = $half_batch['cash_map'];
+$dia_stats = $half_batch['dia_stats'];
+$item_rows = $half_batch['item_rows'];
+$gynae_system_map = $half_batch['gynae_system_map'];
+$refer_from = $half_batch['refer_from'];
+$refer_to = $half_batch['refer_to'];
+$doctor_rows = progress_monthly_doctors_opd_cash_rows($con, $br_id, $like, 60, 20);
 ?>
 <html>
 <head>
@@ -107,114 +122,59 @@ else
     $total_emergency = 0;
     $total_ecgs = 0;
     
-    $select = "SELECT DISTINCT tokans.doctor_id, users.u_name , branchs.tag_name, COUNT(CASE WHEN tokans.tokan_type_id <= 100 THEN tokans.tokan_type_id END) AS opd, SUM(cash) AS cash_collection FROM `tokans` INNER JOIN users ON tokans.doctor_id = users.id INNER JOIN branchs ON users.branch_id = branchs.id WHERE tokans.created like '$date%' AND tokans.branch_id = '$br_id' AND tokans.status = '1' GROUP BY tokans.doctor_id ORDER BY tokans.doctor_id limit 60, 20 ";
-    $run = mysqli_query($con, $select);
-    $count_run = mysqli_num_rows($run);
-    if(mysqli_num_rows($run) > 0)
-    {
-        while($row = mysqli_fetch_array($run))
-        {
-            $patients = 0;
+    $count_run = count($doctor_rows);
+    if ($count_run > 0) {
+        foreach ($doctor_rows as $row) {
             $opd = $row['opd'];
             $total_opd = $total_opd + $opd;
             $cash_collection = $row['cash_collection'];
             $total_cash = $total_cash + $cash_collection;
             $doctor_id = $row['doctor_id'];
 
-    $dia_patients = "SELECT COUNT(DISTINCT tokan_no), category_id, SUM(sale_price) FROM `item_by_doctor` WHERE `category_id` = '2' AND branch_id = '$br_id' AND created LIKE '$date%' AND doctor_id = '$doctor_id' "; 
-    $run_dia_patients = mysqli_query($con, $dia_patients);
-    if(mysqli_num_rows($run_dia_patients) > 0)
-    {
-        while($row_dia_patients = mysqli_fetch_array($run_dia_patients))
-        {
-            $count_dia_patients = $row_dia_patients['0'];
-            $count_dia_patient_cash = $row_dia_patients['2'];
+            $dia_row = $dia_stats[$doctor_id] ?? array('count' => 0, 'cash' => 0.0);
+            $count_dia_patients = $dia_row['count'];
+            $count_dia_patient_cash = $dia_row['cash'];
             $total_lab_test_cash = $total_lab_test_cash + $count_dia_patient_cash;
-        }
-    }
-    else
-    {
-        $count_dia_patients = 0;
-    }
-    $total_dia_patients = $total_dia_patients + $count_dia_patients;
-        $select_data = "SELECT
-    COUNT( CASE WHEN item_by_doctor.category_id = 2 THEN 1 END)tests,
-    COUNT( CASE WHEN item_by_doctor.category_id = 3 THEN 1 END)procedures,
-    COUNT( CASE WHEN item_by_doctor.category_id = 29 THEN 1 END)consultants,
-    COUNT( CASE WHEN item_by_doctor.category_id = 31 THEN 1 END)dentals,
-    COUNT( CASE WHEN item_by_doctor.category_id = 32 THEN 1 END)skins,
-    COUNT( CASE WHEN item_by_doctor.category_id = 33 THEN 1 END)eyes,
-    COUNT( CASE WHEN item_by_doctor.category_id = 34 THEN 1 END)physiotherapies,
-    COUNT( CASE WHEN item_by_doctor.category_id = 36 THEN 1 END)minir_procedures,
-    COUNT( CASE WHEN item_by_doctor.category_id = 37 THEN 1 END)svds,
-    COUNT( CASE WHEN item_by_doctor.category_id = 38 THEN 1 END)dncs,
-    COUNT( CASE WHEN item_by_doctor.category_id = 39 THEN 1 END)usgs,
-    COUNT( CASE WHEN item_by_doctor.category_id = 40 THEN 1 END)admissions,
-    COUNT( CASE WHEN item_by_doctor.category_id = 41 THEN 1 END)gyneas,
-    COUNT( CASE WHEN item_by_doctor.category_id = 42 THEN 1 END)emergency,
-    COUNT( CASE WHEN item_by_doctor.category_id = 44 THEN 1 END)ecgs
-FROM `item_by_doctor` WHERE item_by_doctor.created LIKE '$date%' AND item_by_doctor.doctor_id = '$doctor_id' AND item_by_doctor.branch_id = '$br_id' AND item_by_doctor.category_id IN(2, 3, 29, 31, 32, 33, 34, 36, 37, 38, 39, 40, 41, 42, 44); ";
-        $run_data = mysqli_query($con, $select_data);
-        if(mysqli_num_rows($run_data) > 0)
-        {
-            while($row_data = mysqli_fetch_array($run_data))
-            {
-                $tests = $row_data['tests'];
-                $total_tests = $total_tests + $tests;
-                
-                $procedures = $row_data['procedures'];
-                $total_procedures = $total_procedures + $procedures;
-                
-                $consultants = $row_data['consultants'];
-                $total_consultants = $total_consultants + $consultants;
-                
-                $dentals = $row_data['dentals'];
-                $total_dentals = $total_dentals + $dentals;
-                
-                $skins = $row_data['skins'];
-                $total_skins = $total_skins + $skins;
-                
-                $eyes = $row_data['eyes'];
-                $total_eyes = $total_eyes + $eyes;
-                
-                $physiotherapies = $row_data['physiotherapies'];
-                $total_physiotherapies = $total_physiotherapies + $physiotherapies;
-                
-                $minir_procedures = $row_data['minir_procedures'];
-                $total_minir_procedures = $total_minir_procedures + $minir_procedures;
-                
-                $svds = $row_data['svds'];
-                $total_svds = $total_svds + $svds;
-                
-                $dncs = $row_data['dncs'];
-                $total_dncs = $total_dncs + $dncs;
-                
-                $usgs = $row_data['usgs'];
-                $total_usgs = $total_usgs + $usgs;
-                
-                $admissions = $row_data['admissions'];
-                $total_admissions = $total_admissions + $admissions;
-                
-                $gyneas = $row_data['gyneas'];
-                $total_gyneas = $total_gyneas + $gyneas;
-                
-                $emergency = $row_data['emergency'];
-                $total_emergency = $total_emergency + $emergency;
-                
-                $ecgs = $row_data['ecgs'];
-                $total_ecgs = $total_ecgs + $ecgs;
-                
-            }
-        }
+            $total_dia_patients = $total_dia_patients + $count_dia_patients;
 
-        $gynae_system = mysqli_num_rows(mysqli_query($con, "SELECT * FROM `gynae_register` WHERE doctor_id = '$doctor_id' AND created like '$date%' AND branch_id = '$br_id'"));
-        $total_gynae_system = $total_gynae_system + $gynae_system;
-        
-        $refered = mysqli_num_rows(mysqli_query($con, "SELECT * FROM `referral_patients` WHERE `from_user_id` = '$doctor_id' AND `referral_patient_status` > '1' AND `referral_patient_created` like '$date%' AND branch_id = '$br_id' "));
-        $total_refered = $total_refered + $refered;
-        
-        $refered_to = mysqli_num_rows(mysqli_query($con, "SELECT * FROM `referral_patients` WHERE `to_user_id` = '$doctor_id' AND `referral_patient_status` > '1' AND `referral_patient_created` like '$date%' "));
-        $total_refered_to = $total_refered_to + $refered_to;
+            $row_data = $item_rows[$doctor_id] ?? array();
+            $tests = (int) ($row_data['tests'] ?? 0);
+            $total_tests = $total_tests + $tests;
+            $procedures = (int) ($row_data['procedures'] ?? 0);
+            $total_procedures = $total_procedures + $procedures;
+            $consultants = (int) ($row_data['consultants'] ?? 0);
+            $total_consultants = $total_consultants + $consultants;
+            $dentals = (int) ($row_data['dentals'] ?? 0);
+            $total_dentals = $total_dentals + $dentals;
+            $skins = (int) ($row_data['skins'] ?? 0);
+            $total_skins = $total_skins + $skins;
+            $eyes = (int) ($row_data['eyes'] ?? 0);
+            $total_eyes = $total_eyes + $eyes;
+            $physiotherapies = (int) ($row_data['physiotherapies'] ?? 0);
+            $total_physiotherapies = $total_physiotherapies + $physiotherapies;
+            $minir_procedures = (int) ($row_data['minir_procedures'] ?? 0);
+            $total_minir_procedures = $total_minir_procedures + $minir_procedures;
+            $svds = (int) ($row_data['svds'] ?? 0);
+            $total_svds = $total_svds + $svds;
+            $dncs = (int) ($row_data['dncs'] ?? 0);
+            $total_dncs = $total_dncs + $dncs;
+            $usgs = (int) ($row_data['usgs'] ?? 0);
+            $total_usgs = $total_usgs + $usgs;
+            $admissions = (int) ($row_data['admissions'] ?? 0);
+            $total_admissions = $total_admissions + $admissions;
+            $gyneas = (int) ($row_data['gyneas'] ?? 0);
+            $total_gyneas = $total_gyneas + $gyneas;
+            $emergency = (int) ($row_data['emergency'] ?? 0);
+            $total_emergency = $total_emergency + $emergency;
+            $ecgs = (int) ($row_data['ecgs'] ?? 0);
+            $total_ecgs = $total_ecgs + $ecgs;
+
+            $gynae_system = $gynae_system_map[$doctor_id] ?? 0;
+            $total_gynae_system = $total_gynae_system + $gynae_system;
+            $refered = $refer_from[$doctor_id] ?? 0;
+            $total_refered = $total_refered + $refered;
+            $refered_to = $refer_to[$doctor_id] ?? 0;
+            $total_refered_to = $total_refered_to + $refered_to;
 
             $s++; ?>
         <tr>

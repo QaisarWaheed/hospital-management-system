@@ -1,5 +1,7 @@
 <?php
+// OPTIMIZED: replaced per-row queries with pre-aggregated batch queries
 include 'includes/connect.php';
+require_once __DIR__ . '/includes/progress_report_params.php';
 
 if (isset($_GET['date'])) {
     $date = $_GET['date'];
@@ -14,12 +16,13 @@ if (isset($_GET['date'])) {
 $br_id = (int) $br_id;
 $date_esc = mysqli_real_escape_string($con, $date);
 $month_prefix = $date_esc . '%';
+$tok_date_clause = progress_sql_date_clause($con, $month_prefix);
 
 $stats = array();
 $aggregate_sql = "SELECT user_id, tokan_type_id, COUNT(*) AS token_count, COALESCE(SUM(cash), 0) AS cash_total
     FROM tokans
     WHERE branch_id = '$br_id'
-    AND created LIKE '$month_prefix'
+    AND $tok_date_clause
     AND tokan_type_id IN ('1', '2', '3', '4')
     AND status = '1'
     GROUP BY user_id, tokan_type_id";

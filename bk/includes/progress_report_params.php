@@ -1,4 +1,52 @@
 <?php
+// OPTIMIZED: replaced per-row queries with pre-aggregated batch queries
+
+require_once __DIR__ . '/../../includes/ycdo_bootstrap.php';
+
+/**
+ * Convert YYYY-MM or YYYY-MM-DD (with optional %) to [start, end) datetime strings.
+ *
+ * @return array{start: string, end: string}
+ */
+function progress_range_from_like($con, $like)
+{
+    $prefix = rtrim((string) $like, '%');
+    $prefix = mysqli_real_escape_string($con, $prefix);
+
+    if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $prefix)) {
+        $day = ycdo_sql_day_range($prefix);
+
+        return array(
+            'start' => mysqli_real_escape_string($con, $day['start']),
+            'end' => mysqli_real_escape_string($con, $day['end']),
+        );
+    }
+
+    if (preg_match('/^\d{4}-\d{2}$/', $prefix)) {
+        $month = progress_month_date_range($prefix);
+
+        return array(
+            'start' => mysqli_real_escape_string($con, $month['start_date'] . ' 00:00:00'),
+            'end' => mysqli_real_escape_string($con, $month['end_date'] . ' 00:00:00'),
+        );
+    }
+
+    return array(
+        'start' => $prefix,
+        'end' => date('Y-m-d H:i:s', strtotime($prefix . ' +1 day')),
+    );
+}
+
+/**
+ * @return string SQL fragment for tokans.created (or other column)
+ */
+function progress_sql_date_clause($con, $like, $column = 'created')
+{
+    $range = progress_range_from_like($con, $like);
+    $column = preg_replace('/[^a-zA-Z0-9_.]/', '', $column);
+
+    return $column . " >= '" . $range['start'] . "' AND " . $column . " < '" . $range['end'] . "'";
+}
 
 /**
  * Resolve date / branch for progress print pages.
@@ -27,11 +75,20 @@ function progress_report_resolve_request($con)
     );
 }
 
-function progress_tokans_subquery($br_id, $like)
+function progress_tokans_subquery($con, $br_id, $like)
 {
     $br_id = (int) $br_id;
-    return "(SELECT id FROM tokans WHERE branch_id = '$br_id' AND status = 1 AND created LIKE '$like')";
+    if ($con) {
+        $date_clause = progress_sql_date_clause($con, $like);
+    } else {
+        $like_esc = addslashes(rtrim((string) $like, '%'));
+        $date_clause = "created LIKE '" . $like_esc . "%'";
+    }
+
+    return "(SELECT id FROM tokans WHERE branch_id = '$br_id' AND status = 1 AND $date_clause)";
 }
+
+/** @deprecated Use JOIN + progress_sql_date_clause instead of IN (subquery). */
 
 /**
  * @return array<int, int>
@@ -68,21 +125,122 @@ function progress_map_float($con, $sql, $key_col, $val_col)
 function progress_item_count_by_doctor($con, $br_id, $like, $item_ids_sql)
 {
     $br_id = (int) $br_id;
-    $tokens = progress_tokans_subquery($br_id, $like);
-    $sql = "SELECT doctor_id, COUNT(DISTINCT tokan_no) AS cnt
-        FROM item_by_doctor
-        WHERE branch_id = '$br_id' AND status = '2'
-        AND tokan_no IN $tokens
-        AND item_id IN (SELECT id FROM item_register_to_branches WHERE item_id IN ($item_ids_sql))
-        GROUP BY doctor_id";
+    $date_clause = progress_sql_date_clause($con, $like, 't.created');
+    $sql = "SELECT ibd.doctor_id, COUNT(DISTINCT ibd.tokan_no) AS cnt
+        FROM item_by_doctor ibd
+        INNER JOIN tokans t ON t.id = ibd.tokan_no AND t.branch_id = ibd.branch_id
+        INNER JOIN item_register_to_branches ir ON ibd.item_id = ir.id AND ir.branch_id = ibd.branch_id
+        WHERE ibd.branch_id = '$br_id' AND ibd.status = '2' AND t.status = 1
+        AND $date_clause
+        AND ir.item_id IN ($item_ids_sql)
+        GROUP BY ibd.doctor_id";
     return progress_map_int($con, $sql, 'doctor_id', 'cnt');
+}
+
+/**
+ * Count item_by_doctor.tokan_no rows (legacy reports used mysqli_num_rows on tokan_no list).
+ *
+ * @return array<int, int>
+ */
+function progress_ibd_tokan_row_count_by_doctor($con, $br_id, $like, $item_ids_sql)
+{
+    $br_id = (int) $br_id;
+    $date_clause = progress_sql_date_clause($con, $like, 't.created');
+    $sql = "SELECT ibd.doctor_id, COUNT(ibd.tokan_no) AS cnt
+        FROM item_by_doctor ibd
+        INNER JOIN tokans t ON t.id = ibd.tokan_no AND t.branch_id = ibd.branch_id
+        INNER JOIN item_register_to_branches ir ON ibd.item_id = ir.id AND ir.branch_id = ibd.branch_id
+        WHERE ibd.branch_id = '$br_id' AND ibd.status = '2' AND t.status = 1
+        AND $date_clause
+        AND ir.item_id IN ($item_ids_sql)
+        GROUP BY ibd.doctor_id";
+    return progress_map_int($con, $sql, 'doctor_id', 'cnt');
+}
+
+/**
+ * Procedure tokan rows excluding SVD/DNC catalog items (gynae daily report).
+ *
+ * @return array<int, int>
+ */
+function progress_gynae_procedure_tokan_count_by_doctor($con, $br_id, $like)
+{
+    $br_id = (int) $br_id;
+    $date_clause = progress_sql_date_clause($con, $like, 't.created');
+    $exclude_proc = '473, 1119, 1314, 472, 1118, 1313';
+    $sql = "SELECT ibd.doctor_id, COUNT(ibd.tokan_no) AS cnt
+        FROM item_by_doctor ibd
+        INNER JOIN tokans t ON t.id = ibd.tokan_no AND t.branch_id = ibd.branch_id
+        INNER JOIN item_register_to_branches ir ON ibd.item_id = ir.id AND ir.branch_id = ibd.branch_id
+        INNER JOIN items i ON ir.item_id = i.id
+        WHERE ibd.branch_id = '$br_id' AND ibd.status = '2' AND t.status = 1
+        AND $date_clause AND i.category_id = 3 AND i.id NOT IN ($exclude_proc)
+        GROUP BY ibd.doctor_id";
+    return progress_map_int($con, $sql, 'doctor_id', 'cnt');
+}
+
+/**
+ * Branch list for organization gynae print report.
+ *
+ * @return array<int, array{id: int, address: string, tag_name: string}>
+ */
+function progress_gynae_report_branches($con, $month_like)
+{
+    $date_clause = progress_sql_date_clause($con, $month_like, 'ibd.created');
+    $gynae_items = '483, 1159, 1321, 1414, 473, 1119, 1314, 472, 1118, 1313';
+    $sql = "SELECT DISTINCT b.id, b.address, b.tag_name FROM branchs b
+        INNER JOIN item_by_doctor ibd ON ibd.branch_id = b.id
+        INNER JOIN item_register_to_branches ir ON ibd.item_id = ir.id AND ir.branch_id = ibd.branch_id
+        WHERE b.status = '1' AND $date_clause AND ir.item_id IN ($gynae_items)
+        ORDER BY b.id";
+    $branches = array();
+    $run = mysqli_query($con, $sql);
+    if ($run) {
+        while ($row = mysqli_fetch_assoc($run)) {
+            $id = (int) $row['id'];
+            $branches[$id] = array(
+                'id' => $id,
+                'address' => (string) $row['address'],
+                'tag_name' => (string) $row['tag_name'],
+            );
+        }
+    }
+    return $branches;
+}
+
+/**
+ * Doctor IDs for gynae organization report (branch + month activity).
+ *
+ * @return int[]
+ */
+function progress_gynae_report_doctor_ids($con, $br_id, $month_like)
+{
+    $br_id = (int) $br_id;
+    $date_clause = progress_sql_date_clause($con, $month_like, 'ibd.created');
+    $gynae_items = '483, 1159, 1321, 1414, 473, 1119, 1314, 472, 1118, 1313';
+    $sql = "SELECT DISTINCT t.doctor_id FROM tokans t
+        WHERE t.doctor_id IN (
+            SELECT DISTINCT ibd.doctor_id FROM item_by_doctor ibd
+            INNER JOIN item_register_to_branches ir ON ibd.item_id = ir.id AND ir.branch_id = ibd.branch_id
+            WHERE ibd.branch_id = '$br_id' AND $date_clause AND ir.item_id IN ($gynae_items)
+        )
+        AND t.doctor_id IN (SELECT id FROM users WHERE branch_id = '$br_id')
+        ORDER BY t.doctor_id";
+    $ids = array();
+    $run = mysqli_query($con, $sql);
+    if ($run) {
+        while ($row = mysqli_fetch_assoc($run)) {
+            $ids[] = (int) $row['doctor_id'];
+        }
+    }
+    return $ids;
 }
 
 function progress_opd_count_by_doctor($con, $br_id, $like)
 {
     $br_id = (int) $br_id;
+    $date_clause = progress_sql_date_clause($con, $like);
     $sql = "SELECT doctor_id, COUNT(id) AS cnt FROM tokans
-        WHERE tokan_type_id < 9 AND status = 1 AND branch_id = '$br_id' AND created LIKE '$like'
+        WHERE tokan_type_id < 9 AND status = 1 AND branch_id = '$br_id' AND $date_clause
         GROUP BY doctor_id";
     return progress_map_int($con, $sql, 'doctor_id', 'cnt');
 }
@@ -90,8 +248,9 @@ function progress_opd_count_by_doctor($con, $br_id, $like)
 function progress_gynae_register_count_by_doctor($con, $br_id, $like)
 {
     $br_id = (int) $br_id;
+    $date_clause = progress_sql_date_clause($con, $like);
     $sql = "SELECT doctor_id, COUNT(*) AS cnt FROM gynae_register
-        WHERE branch_id = '$br_id' AND created LIKE '$like'
+        WHERE branch_id = '$br_id' AND $date_clause
         GROUP BY doctor_id";
     return progress_map_int($con, $sql, 'doctor_id', 'cnt');
 }
@@ -99,8 +258,9 @@ function progress_gynae_register_count_by_doctor($con, $br_id, $like)
 function progress_opd_count_by_doctor_lte10($con, $br_id, $like)
 {
     $br_id = (int) $br_id;
+    $date_clause = progress_sql_date_clause($con, $like);
     $sql = "SELECT doctor_id, COUNT(id) AS cnt FROM tokans
-        WHERE branch_id = '$br_id' AND status = 1 AND tokan_type_id <= 10 AND created LIKE '$like'
+        WHERE branch_id = '$br_id' AND status = 1 AND tokan_type_id <= 10 AND $date_clause
         GROUP BY doctor_id";
     return progress_map_int($con, $sql, 'doctor_id', 'cnt');
 }
@@ -108,9 +268,27 @@ function progress_opd_count_by_doctor_lte10($con, $br_id, $like)
 function progress_gynae_token_count_by_doctor($con, $br_id, $like)
 {
     $br_id = (int) $br_id;
-    $like = mysqli_real_escape_string($con, $like);
+    $date_clause = progress_sql_date_clause($con, $like, 'ibd.created');
+    $sql = "SELECT ibd.doctor_id, COUNT(DISTINCT ibd.tokan_no) AS cnt
+        FROM item_by_doctor ibd
+        INNER JOIN tokans t ON t.id = ibd.tokan_no AND t.branch_id = ibd.branch_id
+        WHERE ibd.branch_id = '$br_id' AND ibd.category_id = '41' AND ibd.status = '2' AND t.status = 1
+        AND $date_clause
+        GROUP BY ibd.doctor_id";
+    return progress_map_int($con, $sql, 'doctor_id', 'cnt');
+}
+
+/**
+ * Gynae item_by_doctor row counts (matches legacy COUNT(id) on category 41).
+ *
+ * @return array<int, int>
+ */
+function progress_gynae_ibd_row_count_by_doctor($con, $br_id, $like)
+{
+    $br_id = (int) $br_id;
+    $date_clause = progress_sql_date_clause($con, $like, 'created');
     $sql = "SELECT doctor_id, COUNT(id) AS cnt FROM item_by_doctor
-        WHERE branch_id = '$br_id' AND category_id = '41' AND created LIKE '$like'
+        WHERE branch_id = '$br_id' AND category_id = '41' AND $date_clause
         GROUP BY doctor_id";
     return progress_map_int($con, $sql, 'doctor_id', 'cnt');
 }
@@ -138,9 +316,9 @@ function progress_gynae_token_count_by_doctor_since($con, $br_id, $since_date)
 function progress_gynae_daily_doctor_ids($con, $br_id, $month_like)
 {
     $br_id = (int) $br_id;
-    $month_like = mysqli_real_escape_string($con, $month_like);
-    $sql = "SELECT DISTINCT doctor_id AS id FROM item_by_doctor
-        WHERE branch_id = '$br_id' AND category_id = '41' AND created LIKE '$month_like'";
+    $date_clause = progress_sql_date_clause($con, $month_like, 'ibd.created');
+    $sql = "SELECT DISTINCT ibd.doctor_id AS id FROM item_by_doctor ibd
+        WHERE ibd.branch_id = '$br_id' AND ibd.category_id = '41' AND $date_clause";
     $ids = array();
     $run = mysqli_query($con, $sql);
     if ($run) {
@@ -155,8 +333,9 @@ function progress_gynae_daily_doctor_ids($con, $br_id, $month_like)
 function progress_referral_from_count_by_doctor($con, $like, $only_successful = true)
 {
     $status_sql = $only_successful ? " AND referral_patient_status > '1' " : '';
+    $date_clause = progress_sql_date_clause($con, $like, 'referral_patient_created');
     $sql = "SELECT from_user_id AS doctor_id, COUNT(*) AS cnt FROM referral_patients
-        WHERE referral_patient_created LIKE '$like' $status_sql
+        WHERE $date_clause $status_sql
         GROUP BY from_user_id";
     return progress_map_int($con, $sql, 'doctor_id', 'cnt');
 }
@@ -167,6 +346,7 @@ function progress_referral_from_count_by_doctor($con, $like, $only_successful = 
 function progress_category_stats_by_doctor($con, $br_id, $like)
 {
     $br_id = (int) $br_id;
+    $date_clause = progress_sql_date_clause($con, $like, 'item_by_doctor.created');
     $sql = "SELECT doctor_id, category_id,
         COUNT(item_by_doctor.category_id) AS count_data,
         COUNT(DISTINCT item_by_doctor.tokan_no) AS count_token,
@@ -182,7 +362,7 @@ function progress_category_stats_by_doctor($con, $br_id, $like)
             END
         ) AS total_cash
         FROM item_by_doctor
-        WHERE created LIKE '$like' AND branch_id = '$br_id'
+        WHERE $date_clause AND branch_id = '$br_id'
         AND category_id IN (2, 3, 29, 31, 32, 33, 34, 36, 37, 38, 39, 40, 41, 42, 44)
         GROUP BY doctor_id, category_id";
     $stats = array();
@@ -205,8 +385,9 @@ function progress_category_stats_by_doctor($con, $br_id, $like)
 
 function progress_referral_to_count_by_doctor($con, $like)
 {
+    $date_clause = progress_sql_date_clause($con, $like, 'referral_patient_created');
     $sql = "SELECT to_user_id AS doctor_id, COUNT(*) AS cnt FROM referral_patients
-        WHERE referral_patient_created LIKE '$like' AND referral_patient_status > '1'
+        WHERE $date_clause AND referral_patient_status > '1'
         GROUP BY to_user_id";
     return progress_map_int($con, $sql, 'doctor_id', 'cnt');
 }
@@ -214,27 +395,91 @@ function progress_referral_to_count_by_doctor($con, $like)
 function progress_cash_sum_by_doctor($con, $br_id, $like)
 {
     $br_id = (int) $br_id;
+    $date_clause = progress_sql_date_clause($con, $like);
     $sql = "SELECT doctor_id, COALESCE(SUM(cash), 0) AS total FROM tokans
-        WHERE status = 1 AND branch_id = '$br_id' AND created LIKE '$like'
+        WHERE status = 1 AND branch_id = '$br_id' AND $date_clause
         GROUP BY doctor_id";
     return progress_map_float($con, $sql, 'doctor_id', 'total');
+}
+
+/**
+ * @return array<int, float>
+ */
+function progress_cash_received_sum_by_doctor($con, $br_id, $like)
+{
+    $br_id = (int) $br_id;
+    $date_clause = progress_sql_date_clause($con, $like);
+    $sql = "SELECT doctor_id, COALESCE(SUM(cash_received), 0) AS total FROM tokans
+        WHERE status = 1 AND branch_id = '$br_id' AND $date_clause
+        GROUP BY doctor_id";
+    return progress_map_float($con, $sql, 'doctor_id', 'total');
+}
+
+/**
+ * Lab token cash/count per doctor (monthly lab progress report).
+ *
+ * @return array<int, array{lab_cash: float, lab_count: int}>
+ */
+function progress_lab_token_cash_by_doctor($con, $br_id, $like)
+{
+    $br_id = (int) $br_id;
+    $date_clause = progress_sql_date_clause($con, $like, 't.created');
+    $sql = "SELECT t.doctor_id, COALESCE(SUM(t.cash), 0) AS lab_cash, COUNT(t.cash) AS lab_count
+        FROM tokans t
+        INNER JOIN item_by_doctor ibd ON ibd.tokan_no = t.id AND ibd.branch_id = t.branch_id AND ibd.status = '2'
+        INNER JOIN item_register_to_branches ir ON ibd.item_id = ir.id AND ir.branch_id = ibd.branch_id
+        INNER JOIN items i ON ir.item_id = i.id AND i.category_id = 2
+        WHERE t.status = 1 AND t.branch_id = '$br_id' AND $date_clause
+        GROUP BY t.doctor_id";
+    $stats = array();
+    $run = mysqli_query($con, $sql);
+    if ($run) {
+        while ($row = mysqli_fetch_assoc($run)) {
+            $stats[(int) $row['doctor_id']] = array(
+                'lab_cash' => (float) $row['lab_cash'],
+                'lab_count' => (int) $row['lab_count'],
+            );
+        }
+    }
+    return $stats;
+}
+
+/**
+ * @return array<int, array{id: int, u_name: string}>
+ */
+function progress_lab_monthly_doctors($con, $br_id, $like)
+{
+    $br_id = (int) $br_id;
+    $date_clause = progress_sql_date_clause($con, $like);
+    $sql = "SELECT DISTINCT u.id, u.u_name FROM users u
+        INNER JOIN tokans t ON t.doctor_id = u.id
+        WHERE u.role_id = '3' AND t.branch_id = '$br_id' AND $date_clause
+        ORDER BY u.u_name";
+    $doctors = array();
+    $run = mysqli_query($con, $sql);
+    if ($run) {
+        while ($row = mysqli_fetch_assoc($run)) {
+            $id = (int) $row['id'];
+            $doctors[$id] = array(
+                'id' => $id,
+                'u_name' => (string) $row['u_name'],
+            );
+        }
+    }
+    return $doctors;
 }
 
 function progress_lab_stats_by_doctor($con, $br_id, $like)
 {
     $br_id = (int) $br_id;
-    $tokens = progress_tokans_subquery($br_id, $like);
-    $sql = "SELECT doctor_id, COUNT(cash_received) AS token_cnt, COALESCE(SUM(cash_received), 0) AS cash_sum
-        FROM tokans
-        WHERE doctor_id > 0 AND status = 1 AND branch_id = '$br_id' AND created LIKE '$like'
-        AND id IN (
-            SELECT tokan_no FROM item_by_doctor
-            WHERE item_id IN (
-                SELECT id FROM item_register_to_branches
-                WHERE branch_id = '$br_id' AND item_id IN (SELECT id FROM items WHERE category_id = 2)
-            )
-        )
-        GROUP BY doctor_id";
+    $date_clause = progress_sql_date_clause($con, $like, 't.created');
+    $sql = "SELECT t.doctor_id, COUNT(t.id) AS token_cnt, COALESCE(SUM(t.cash_received), 0) AS cash_sum
+        FROM tokans t
+        INNER JOIN item_by_doctor ibd ON ibd.tokan_no = t.id AND ibd.branch_id = t.branch_id AND ibd.status = '2'
+        INNER JOIN item_register_to_branches ir ON ibd.item_id = ir.id AND ir.branch_id = ibd.branch_id
+        INNER JOIN items i ON ir.item_id = i.id AND i.category_id = 2
+        WHERE t.doctor_id > 0 AND t.status = 1 AND t.branch_id = '$br_id' AND $date_clause
+        GROUP BY t.doctor_id";
     $stats = array();
     $run = mysqli_query($con, $sql);
     if ($run) {
@@ -254,9 +499,10 @@ function progress_lab_stats_by_doctor($con, $br_id, $like)
 function progress_dia_patient_stats_by_doctor($con, $br_id, $like)
 {
     $br_id = (int) $br_id;
+    $date_clause = progress_sql_date_clause($con, $like);
     $sql = "SELECT doctor_id, COUNT(DISTINCT tokan_no) AS cnt, COALESCE(SUM(sale_price), 0) AS cash_sum
         FROM item_by_doctor
-        WHERE category_id = 2 AND branch_id = '$br_id' AND created LIKE '$like'
+        WHERE category_id = 2 AND branch_id = '$br_id' AND $date_clause
         GROUP BY doctor_id";
     $stats = array();
     $run = mysqli_query($con, $sql);
@@ -279,6 +525,7 @@ function progress_dia_patient_stats_by_doctor($con, $br_id, $like)
 function progress_item_row_counts_by_doctor($con, $br_id, $like)
 {
     $br_id = (int) $br_id;
+    $date_clause = progress_sql_date_clause($con, $like);
     $sql = "SELECT doctor_id,
         COUNT(CASE WHEN category_id = 2 THEN 1 END) AS tests,
         COUNT(CASE WHEN category_id = 3 THEN 1 END) AS procedures,
@@ -296,7 +543,7 @@ function progress_item_row_counts_by_doctor($con, $br_id, $like)
         COUNT(CASE WHEN category_id = 42 THEN 1 END) AS emergency,
         COUNT(CASE WHEN category_id = 44 THEN 1 END) AS ecgs
         FROM item_by_doctor
-        WHERE created LIKE '$like' AND branch_id = '$br_id'
+        WHERE $date_clause AND branch_id = '$br_id'
         AND category_id IN (2, 3, 29, 31, 32, 33, 34, 36, 37, 38, 39, 40, 41, 42, 44)
         GROUP BY doctor_id";
     $stats = array();
@@ -328,8 +575,9 @@ function progress_item_row_counts_by_doctor($con, $br_id, $like)
 function progress_referral_from_count_by_branch($con, $br_id, $like)
 {
     $br_id = (int) $br_id;
+    $date_clause = progress_sql_date_clause($con, $like, 'referral_patient_created');
     $sql = "SELECT from_user_id AS doctor_id, COUNT(*) AS cnt FROM referral_patients
-        WHERE referral_patient_created LIKE '$like' AND referral_patient_status > '1' AND branch_id = '$br_id'
+        WHERE $date_clause AND referral_patient_status > '1' AND branch_id = '$br_id'
         GROUP BY from_user_id";
     return progress_map_int($con, $sql, 'doctor_id', 'cnt');
 }
@@ -502,21 +750,19 @@ function progress_usg_count_by_doctor($con, $br_id, $like)
 function progress_doctor_progress_collection_by_doctor($con, $br_id, $like)
 {
     $br_id = (int) $br_id;
-    $tokens = progress_tokans_subquery($br_id, $like);
+    $date_clause = progress_sql_date_clause($con, $like, 't.created');
     $cons_items = '489, 849, 850, 1415, 1327, 1139, 1141, 1477, 1154, 476, 477, 478, 479, 1138, 1185, 1161, 1162, 1163, 1164, 1184, 1317, 1318, 1319, 1411, 1435';
-    $sql = "SELECT doctor_id, COALESCE(SUM(cash), 0) AS total FROM tokans
-        WHERE status = 1 AND branch_id = '$br_id' AND created LIKE '$like'
+    $sql = "SELECT t.doctor_id, COALESCE(SUM(t.cash), 0) AS total FROM tokans t
+        WHERE t.status = 1 AND t.branch_id = '$br_id' AND $date_clause
         AND (
-            tokan_type_id < 9
-            OR id IN (
-                SELECT tokan_no FROM item_by_doctor
-                WHERE status = '2' AND tokan_no IN $tokens
-                AND item_id IN (
-                    SELECT id FROM item_register_to_branches WHERE item_id IN ($cons_items)
-                )
+            t.tokan_type_id < 9
+            OR EXISTS (
+                SELECT 1 FROM item_by_doctor ibd
+                INNER JOIN item_register_to_branches ir ON ibd.item_id = ir.id AND ir.branch_id = ibd.branch_id
+                WHERE ibd.tokan_no = t.id AND ibd.status = '2' AND ir.item_id IN ($cons_items)
             )
         )
-        GROUP BY doctor_id";
+        GROUP BY t.doctor_id";
     return progress_map_float($con, $sql, 'doctor_id', 'total');
 }
 
@@ -543,9 +789,9 @@ function progress_month_date_range($date)
  */
 function progress_branch_ids_for_date($con, $like)
 {
-    $like = mysqli_real_escape_string($con, $like);
+    $date_clause = progress_sql_date_clause($con, $like);
     $ids = array();
-    $run = mysqli_query($con, "SELECT DISTINCT branch_id FROM tokans WHERE created LIKE '$like' ORDER BY branch_id");
+    $run = mysqli_query($con, "SELECT DISTINCT branch_id FROM tokans WHERE $date_clause ORDER BY branch_id");
     if ($run) {
         while ($row = mysqli_fetch_assoc($run)) {
             $ids[] = (int) $row['branch_id'];
@@ -559,9 +805,9 @@ function progress_branch_ids_for_date($con, $like)
  */
 function progress_opd_count_by_branch($con, $like)
 {
-    $like = mysqli_real_escape_string($con, $like);
+    $date_clause = progress_sql_date_clause($con, $like);
     $sql = "SELECT branch_id, COUNT(id) AS cnt FROM tokans
-        WHERE tokan_type_id < 9 AND status = 1 AND created LIKE '$like'
+        WHERE tokan_type_id < 9 AND status = 1 AND $date_clause
         GROUP BY branch_id";
     return progress_map_int($con, $sql, 'branch_id', 'cnt');
 }
@@ -573,12 +819,12 @@ function progress_opd_count_by_branch($con, $like)
  */
 function progress_item_tokan_count_by_branch($con, $like, $item_ids_sql)
 {
-    $like = mysqli_real_escape_string($con, $like);
+    $date_clause = progress_sql_date_clause($con, $like, 't.created');
     $sql = "SELECT ibd.branch_id, COUNT(ibd.tokan_no) AS cnt
         FROM item_by_doctor ibd
         INNER JOIN tokans t ON t.id = ibd.tokan_no AND t.branch_id = ibd.branch_id
         INNER JOIN item_register_to_branches ir ON ibd.item_id = ir.id AND ir.branch_id = ibd.branch_id
-        WHERE t.created LIKE '$like' AND t.status = 1 AND ibd.status = '2'
+        WHERE $date_clause AND t.status = 1 AND ibd.status = '2'
         AND ir.item_id IN ($item_ids_sql)
         GROUP BY ibd.branch_id";
     return progress_map_int($con, $sql, 'branch_id', 'cnt');
@@ -589,13 +835,13 @@ function progress_item_tokan_count_by_branch($con, $like, $item_ids_sql)
  */
 function progress_procedure_tokan_count_by_branch($con, $like)
 {
-    $like = mysqli_real_escape_string($con, $like);
+    $date_clause = progress_sql_date_clause($con, $like, 't.created');
     $sql = "SELECT ibd.branch_id, COUNT(ibd.tokan_no) AS cnt
         FROM item_by_doctor ibd
         INNER JOIN tokans t ON t.id = ibd.tokan_no AND t.branch_id = ibd.branch_id
         INNER JOIN item_register_to_branches ir ON ibd.item_id = ir.id AND ir.branch_id = ibd.branch_id
         INNER JOIN items i ON ir.item_id = i.id
-        WHERE t.created LIKE '$like' AND t.status = 1 AND ibd.status = '2'
+        WHERE $date_clause AND t.status = 1 AND ibd.status = '2'
         AND i.category_id = '3'
         GROUP BY ibd.branch_id";
     return progress_map_int($con, $sql, 'branch_id', 'cnt');
@@ -606,11 +852,254 @@ function progress_procedure_tokan_count_by_branch($con, $like)
  */
 function progress_gynae_register_count_by_branch($con, $like)
 {
-    $like = mysqli_real_escape_string($con, $like);
+    $date_clause = progress_sql_date_clause($con, $like);
     $sql = "SELECT branch_id, COUNT(*) AS cnt FROM gynae_register
-        WHERE created LIKE '$like'
+        WHERE $date_clause
         GROUP BY branch_id";
     return progress_map_int($con, $sql, 'branch_id', 'cnt');
+}
+
+/**
+ * Distinct tokans per doctor for items in a catalog category (e.g. consultant OPD, procedures).
+ *
+ * @return array<int, int>
+ */
+function progress_tokan_count_by_item_category_doctor($con, $br_id, $like, $category_id)
+{
+    $br_id = (int) $br_id;
+    $category_id = (int) $category_id;
+    $date_clause = progress_sql_date_clause($con, $like, 't.created');
+    $sql = "SELECT t.doctor_id, COUNT(DISTINCT t.id) AS cnt
+        FROM tokans t
+        INNER JOIN item_by_doctor ibd ON ibd.tokan_no = t.id AND ibd.branch_id = t.branch_id AND ibd.status = '2'
+        INNER JOIN item_register_to_branches ir ON ibd.item_id = ir.id AND ir.branch_id = ibd.branch_id
+        INNER JOIN items i ON ir.item_id = i.id AND i.category_id = '$category_id'
+        WHERE t.status = 1 AND t.branch_id = '$br_id' AND $date_clause
+        GROUP BY t.doctor_id";
+    return progress_map_int($con, $sql, 'doctor_id', 'cnt');
+}
+
+/**
+ * Doctors for BK gynae monthly progress (OPD + gynae items + referrals in month).
+ *
+ * @return array<int, array{id: int, u_name: string}>
+ */
+function progress_gynae_progress_monthly_doctors($con, $br_id, $like)
+{
+    $br_id = (int) $br_id;
+    $t_clause = progress_sql_date_clause($con, $like, 't.created');
+    $ibd_clause = progress_sql_date_clause($con, $like, 'ibd.created');
+    $ref_clause = progress_sql_date_clause($con, $like, 'rp.referral_patient_created');
+    $gynae_items = '483, 1159, 1321, 1414';
+
+    $sql = "SELECT u.id, u.u_name FROM users u
+        WHERE (
+            u.role_id = '3'
+            AND u.id IN (SELECT DISTINCT t.doctor_id FROM tokans t WHERE t.branch_id = '$br_id' AND $t_clause)
+            AND u.id IN (
+                SELECT DISTINCT ibd.doctor_id FROM item_by_doctor ibd
+                INNER JOIN item_register_to_branches ir ON ibd.item_id = ir.id AND ir.branch_id = ibd.branch_id
+                WHERE ibd.branch_id = '$br_id' AND $ibd_clause AND ir.item_id IN ($gynae_items)
+            )
+        ) OR u.id IN (
+            SELECT rp.from_user_id FROM referral_patients rp
+            WHERE rp.branch_id = '$br_id' AND $ref_clause AND rp.referral_patient_status > 1
+        )
+        ORDER BY u.u_name";
+
+    $doctors = array();
+    $run = mysqli_query($con, $sql);
+    if ($run) {
+        while ($row = mysqli_fetch_assoc($run)) {
+            $id = (int) $row['id'];
+            $doctors[$id] = array(
+                'id' => $id,
+                'u_name' => (string) $row['u_name'],
+            );
+        }
+    }
+    return $doctors;
+}
+
+/**
+ * Doctor rows for paginated monthly progress (half1–half6).
+ *
+ * @return array<int, array{doctor_id: int, u_name: string, tag_name: string, opd: int, cash_collection: float}>
+ */
+/**
+ * Pre-aggregated maps for monthly progress half1–half6 pages.
+ *
+ * @return array<string, mixed>
+ */
+function progress_monthly_half_batch_maps($con, $br_id, $like)
+{
+    return array(
+        'cash_map' => progress_cash_sum_by_doctor($con, $br_id, $like),
+        'dia_stats' => progress_dia_patient_stats_by_doctor($con, $br_id, $like),
+        'item_rows' => progress_item_row_counts_by_doctor($con, $br_id, $like),
+        'gynae_system_map' => progress_gynae_register_count_by_doctor($con, $br_id, $like),
+        'refer_from' => progress_referral_from_count_by_branch($con, $br_id, $like),
+        'refer_to' => progress_referral_to_count_by_doctor($con, $like),
+    );
+}
+
+function progress_monthly_doctors_opd_cash_rows($con, $br_id, $like, $offset = null, $limit = null)
+{
+    $br_id = (int) $br_id;
+    $date_clause = progress_sql_date_clause($con, $like, 'tokans.created');
+    $limit_sql = '';
+    if ($offset !== null && $limit !== null) {
+        $limit_sql = ' LIMIT ' . (int) $offset . ', ' . (int) $limit;
+    }
+
+    $sql = "SELECT tokans.doctor_id, users.u_name, branchs.tag_name,
+        COUNT(CASE WHEN tokans.tokan_type_id <= 100 THEN tokans.tokan_type_id END) AS opd,
+        COALESCE(SUM(tokans.cash), 0) AS cash_collection
+        FROM tokans
+        INNER JOIN users ON tokans.doctor_id = users.id
+        INNER JOIN branchs ON users.branch_id = branchs.id
+        WHERE $date_clause AND tokans.branch_id = '$br_id' AND tokans.status = '1'
+        GROUP BY tokans.doctor_id, users.u_name, branchs.tag_name
+        ORDER BY tokans.doctor_id" . $limit_sql;
+
+    $rows = array();
+    $run = mysqli_query($con, $sql);
+    if ($run) {
+        while ($row = mysqli_fetch_assoc($run)) {
+            $rows[] = array(
+                'doctor_id' => (int) $row['doctor_id'],
+                'u_name' => (string) $row['u_name'],
+                'tag_name' => (string) $row['tag_name'],
+                'opd' => (int) $row['opd'],
+                'cash_collection' => (float) $row['cash_collection'],
+            );
+        }
+    }
+    return $rows;
+}
+
+/**
+ * Single-branch daily summary metrics (replaces many LIKE queries on one row).
+ *
+ * @return array<string, float|int>
+ */
+function progress_single_branch_day_summary($con, $br_id, $like)
+{
+    $br_id = (int) $br_id;
+    $date_clause_t = progress_sql_date_clause($con, $like, 't.created');
+    $date_clause_ibd = progress_sql_date_clause($con, $like, 'ibd.created');
+    $date_clause_gr = progress_sql_date_clause($con, $like);
+    $date_clause_ref = progress_sql_date_clause($con, $like, 'referral_patient_created');
+
+    $out = array(
+        'collection' => 0.0,
+        'opd' => 0,
+        'cons_opd' => 0,
+        'svd' => 0,
+        'dnc' => 0,
+        'procedure' => 0,
+        'admission' => 0,
+        'referred' => 0,
+        'usg' => 0,
+        'gynae_system' => 0,
+        'lab_cash' => 0.0,
+    );
+
+    $run = mysqli_query($con, "SELECT COALESCE(SUM(cash_received), 0) AS total FROM tokans
+        WHERE status = 1 AND branch_id = '$br_id' AND $date_clause_t");
+    if ($run && ($row = mysqli_fetch_assoc($run))) {
+        $out['collection'] = (float) $row['total'];
+    }
+
+    $run = mysqli_query($con, "SELECT COUNT(id) AS total FROM tokans
+        WHERE tokan_type_id < 9 AND status = 1 AND branch_id = '$br_id' AND $date_clause_t");
+    if ($run && ($row = mysqli_fetch_assoc($run))) {
+        $out['opd'] = (int) $row['total'];
+    }
+
+    $cons_items = '489, 849, 850, 1415, 1327, 1139, 1141, 1477, 1154';
+    $run = mysqli_query($con, "SELECT COUNT(ibd.tokan_no) AS total FROM item_by_doctor ibd
+        INNER JOIN tokans t ON t.id = ibd.tokan_no AND t.branch_id = ibd.branch_id
+        INNER JOIN item_register_to_branches ir ON ibd.item_id = ir.id AND ir.branch_id = ibd.branch_id
+        WHERE t.status = 1 AND ibd.branch_id = '$br_id' AND ibd.status = '2'
+        AND $date_clause_t AND ir.item_id IN ($cons_items)");
+    if ($run && ($row = mysqli_fetch_assoc($run))) {
+        $out['cons_opd'] = (int) $row['total'];
+    }
+
+    $svd_items = '472, 1118, 1313, 1577';
+    $run = mysqli_query($con, "SELECT COUNT(ibd.tokan_no) AS total FROM item_by_doctor ibd
+        INNER JOIN tokans t ON t.id = ibd.tokan_no AND t.branch_id = ibd.branch_id
+        INNER JOIN item_register_to_branches ir ON ibd.item_id = ir.id AND ir.branch_id = ibd.branch_id
+        WHERE t.status = 1 AND ibd.branch_id = '$br_id' AND ibd.status = '2'
+        AND $date_clause_t AND ir.item_id IN ($svd_items)");
+    if ($run && ($row = mysqli_fetch_assoc($run))) {
+        $out['svd'] = (int) $row['total'];
+    }
+
+    $dnc_items = '473, 1119, 1314, 1578';
+    $run = mysqli_query($con, "SELECT COUNT(ibd.tokan_no) AS total FROM item_by_doctor ibd
+        INNER JOIN tokans t ON t.id = ibd.tokan_no AND t.branch_id = ibd.branch_id
+        INNER JOIN item_register_to_branches ir ON ibd.item_id = ir.id AND ir.branch_id = ibd.branch_id
+        WHERE t.status = 1 AND ibd.branch_id = '$br_id' AND ibd.status = '2'
+        AND $date_clause_t AND ir.item_id IN ($dnc_items)");
+    if ($run && ($row = mysqli_fetch_assoc($run))) {
+        $out['dnc'] = (int) $row['total'];
+    }
+
+    $exclude_proc = '473, 1119, 1314, 472, 1118, 1313';
+    $run = mysqli_query($con, "SELECT COUNT(DISTINCT ibd.tokan_no) AS total FROM item_by_doctor ibd
+        INNER JOIN tokans t ON t.id = ibd.tokan_no AND t.branch_id = ibd.branch_id
+        INNER JOIN item_register_to_branches ir ON ibd.item_id = ir.id AND ir.branch_id = ibd.branch_id
+        INNER JOIN items i ON ir.item_id = i.id
+        WHERE t.status = 1 AND ibd.branch_id = '$br_id' AND ibd.status = '2'
+        AND $date_clause_t AND i.category_id = 3 AND i.id NOT IN ($exclude_proc)");
+    if ($run && ($row = mysqli_fetch_assoc($run))) {
+        $out['procedure'] = (int) $row['total'];
+    }
+
+    $admission_items = '444, 448, 452, 456, 457, 460, 461, 945, 1124, 1125, 1128, 1131, 1132, 1145, 1186, 1285, 1289, 1293, 1297, 1301, 1579, 1580, 1741, 1742, 1743, 1744';
+    $run = mysqli_query($con, "SELECT COUNT(ibd.tokan_no) AS total FROM item_by_doctor ibd
+        INNER JOIN tokans t ON t.id = ibd.tokan_no AND t.branch_id = ibd.branch_id
+        INNER JOIN item_register_to_branches ir ON ibd.item_id = ir.id AND ir.branch_id = ibd.branch_id
+        WHERE t.status = 1 AND ibd.branch_id = '$br_id' AND ibd.status = '2'
+        AND $date_clause_t AND ir.item_id IN ($admission_items)");
+    if ($run && ($row = mysqli_fetch_assoc($run))) {
+        $out['admission'] = (int) $row['total'];
+    }
+
+    $run = mysqli_query($con, "SELECT COUNT(*) AS total FROM referral_patients
+        WHERE $date_clause_ref AND referral_patient_status > '1'");
+    if ($run && ($row = mysqli_fetch_assoc($run))) {
+        $out['referred'] = (int) $row['total'];
+    }
+
+    $usg_items = '476, 477, 478, 479, 1138, 1185, 1161, 1162, 1163, 1164, 1184, 1317, 1318, 1319, 1411, 1435';
+    $run = mysqli_query($con, "SELECT COUNT(ibd.tokan_no) AS total FROM item_by_doctor ibd
+        INNER JOIN tokans t ON t.id = ibd.tokan_no AND t.branch_id = ibd.branch_id
+        INNER JOIN item_register_to_branches ir ON ibd.item_id = ir.id AND ir.branch_id = ibd.branch_id
+        WHERE t.status = 1 AND ibd.branch_id = '$br_id' AND ibd.status = '2'
+        AND $date_clause_t AND ir.item_id IN ($usg_items)");
+    if ($run && ($row = mysqli_fetch_assoc($run))) {
+        $out['usg'] = (int) $row['total'];
+    }
+
+    $run = mysqli_query($con, "SELECT COUNT(*) AS total FROM gynae_register
+        WHERE branch_id = '$br_id' AND $date_clause_gr");
+    if ($run && ($row = mysqli_fetch_assoc($run))) {
+        $out['gynae_system'] = (int) $row['total'];
+    }
+
+    $run = mysqli_query($con, "SELECT COALESCE(SUM(t.cash_received), 0) AS total FROM tokans t
+        INNER JOIN item_by_doctor ibd ON ibd.tokan_no = t.id AND ibd.branch_id = t.branch_id AND ibd.status = '2'
+        INNER JOIN item_register_to_branches ir ON ibd.item_id = ir.id AND ir.branch_id = ibd.branch_id
+        INNER JOIN items i ON ir.item_id = i.id AND i.category_id = 2
+        WHERE t.status = 1 AND t.branch_id = '$br_id' AND $date_clause_t");
+    if ($run && ($row = mysqli_fetch_assoc($run))) {
+        $out['lab_cash'] = (float) $row['total'];
+    }
+
+    return $out;
 }
 
 /**

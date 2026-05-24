@@ -1,19 +1,49 @@
-<?php 
-include 'includes/connect.php'; 
+<?php
+// OPTIMIZED: replaced per-row queries with pre-aggregated batch queries
+include 'includes/connect.php';
+require_once __DIR__ . '/includes/progress_report_params.php';
+
+set_time_limit(120);
+
 if(isset($_GET['date']))
 {
     $date = $_GET['date'];
-    $br_id = $_GET['br_id'];
+    $br_id = (int) $_GET['br_id'];
 }
 elseif(isset($_POST['date']))
 {
     $date = $_POST['date'];
-    $br_id = $_POST['br_id'];
+    $br_id = (int) $_POST['br_id'];
 }
 else
 {
     exit(0);
 }
+
+$date_esc = mysqli_real_escape_string($con, (string) $date);
+$day_like = $date_esc . '%';
+$month_like = mysqli_real_escape_string($con, substr((string) $date, 0, 7)) . '%';
+$all_since = '2025-03-31';
+
+$doctor_ids = progress_gynae_daily_doctor_ids($con, $br_id, $month_like);
+$doctor_names = array();
+if (count($doctor_ids) > 0) {
+    $id_list = implode(',', array_map('intval', $doctor_ids));
+    $run_names = mysqli_query($con, "SELECT id, u_name FROM users WHERE id IN ($id_list) ORDER BY u_name");
+    if ($run_names) {
+        while ($row = mysqli_fetch_assoc($run_names)) {
+            $doctor_names[(int) $row['id']] = (string) $row['u_name'];
+        }
+    }
+}
+
+$opd_day = progress_opd_count_by_doctor_lte10($con, $br_id, $day_like);
+$token_day = progress_gynae_ibd_row_count_by_doctor($con, $br_id, $day_like);
+$system_day = progress_gynae_register_count_by_doctor($con, $br_id, $day_like);
+$token_month = progress_gynae_ibd_row_count_by_doctor($con, $br_id, $month_like);
+$system_month = progress_gynae_register_count_by_doctor($con, $br_id, $month_like);
+$token_all = progress_gynae_token_count_by_doctor_since($con, $br_id, $all_since);
+$system_all = progress_gynae_register_count_by_doctor_since($con, $br_id, $all_since);
 ?>
 <!DOCTYPE html>
 <html>
@@ -82,11 +112,6 @@ else
     <tbody>
 <?php
 $s = 0;
-$opd = 0;
-$gynae_count_system_token = 0;
-$gynae_count_system = 0;
-$gynae_count_system_all = 0;
-$gynae_count_system_token_all = 0;
 $count_opd = 0;
 $count_gynae_system = 0;
 $count_gynae_system_token = 0;
@@ -94,98 +119,26 @@ $count_gynae_system_token_current = 0;
 $count_gynae_system_current = 0;
 $count_gynae_system_token_all = 0;
 $count_gynae_system_all = 0;
-$current_month = substr($date, 0, 4);
-$select_dr = "SELECT users.id, users.u_name FROM `item_by_doctor` INNER JOIN users ON item_by_doctor.doctor_id = users.id WHERE item_by_doctor.branch_id = '$br_id' AND item_by_doctor.created LIKE '$current_month%' AND item_by_doctor.category_id = '41' GROUP BY item_by_doctor.doctor_id ";
-$run_dr = mysqli_query($con, $select_dr);
-if(mysqli_num_rows($run_dr) > 0)
-{
-    while($row_dr = mysqli_fetch_array($run_dr))
-    {
-        $dr_id = $row_dr['id'];
-        $dr_name = $row_dr['u_name'];
 
-        $select_opd = "SELECT COUNT(id) FROM tokans WHERE doctor_id = '$dr_id' AND created LIKE '$date%' AND branch_id = '$br_id' AND tokan_type_id <= 10 AND status = 1 ";
-        $run_opd = mysqli_query($con, $select_opd);
-        $opds = mysqli_num_rows($run_opd);
-        if($opds == 1)
-        {
-            while($row_opd = mysqli_fetch_array($run_opd))
-            {
-                $opd = $row_opd[0];
-                $count_opd = $count_opd + $opd;
-            }
-        }
-        
-        $gynae_token = "SELECT COUNT(id) FROM `item_by_doctor` WHERE doctor_id = '$dr_id' AND item_by_doctor.branch_id = '$br_id' AND item_by_doctor.created LIKE '$date%' AND item_by_doctor.category_id = '41' ";
-        $run_gynae_system_token = mysqli_query($con, $gynae_token);
-        $gynaes_system_token = mysqli_num_rows($run_gynae_system_token);
-        if($gynaes_system_token == 1)
-        {
-            while($row_gynae_system_token = mysqli_fetch_array($run_gynae_system_token))
-            {
-                $gynae_count_system_token = $row_gynae_system_token[0];
-                $count_gynae_system_token = $count_gynae_system_token + $gynae_count_system_token;
-            }
-        }
-        $gynae_system = "SELECT count(id) FROM `gynae_register` WHERE doctor_id = '$dr_id' AND created like '$date%' AND branch_id = '$br_id'";
-        $run_gynae_system = mysqli_query($con, $gynae_system);
-        $gynaes_system = mysqli_num_rows($run_gynae_system);
-        if($gynaes_system == 1)
-        {
-            while($row_gynae_system = mysqli_fetch_array($run_gynae_system))
-            {
-                $gynae_count_system = $row_gynae_system[0];
-                $count_gynae_system = $count_gynae_system + $gynae_count_system;
-            }
-        }
+if (count($doctor_ids) > 0) {
+    foreach ($doctor_ids as $dr_id) {
+        $dr_name = $doctor_names[$dr_id] ?? get_uname_by_id($dr_id);
+        $opd = $opd_day[$dr_id] ?? 0;
+        $gynae_count_system_token = $token_day[$dr_id] ?? 0;
+        $gynae_count_system = $system_day[$dr_id] ?? 0;
+        $gynae_count_system_token_current = $token_month[$dr_id] ?? 0;
+        $gynae_count_system_current = $system_month[$dr_id] ?? 0;
+        $gynae_count_system_token_all = $token_all[$dr_id] ?? 0;
+        $gynae_count_system_all = $system_all[$dr_id] ?? 0;
 
-        
-        $gynae_token_current = "SELECT COUNT(id) FROM `item_by_doctor` WHERE doctor_id = '$dr_id' AND item_by_doctor.branch_id = '$br_id' AND item_by_doctor.created LIKE '$current_month%' AND item_by_doctor.category_id = '41' ";
-        $run_gynae_system_token_current = mysqli_query($con, $gynae_token_current);
-        $gynaes_system_token_current = mysqli_num_rows($run_gynae_system_token_current);
-        if($gynaes_system_token_current == 1)
-        {
-            while($row_gynae_system_token_current = mysqli_fetch_array($run_gynae_system_token_current))
-            {
-                $gynae_count_system_token_current = $row_gynae_system_token_current[0];
-                $count_gynae_system_token_current = $count_gynae_system_token_current + $gynae_count_system_token_current;
-            }
-        }
-        $gynae_system_current = "SELECT count(id) FROM `gynae_register` WHERE doctor_id = '$dr_id' AND created LIKE '$current_month%' AND branch_id = '$br_id'";
-        $run_gynae_system_current = mysqli_query($con, $gynae_system_current);
-        $gynaes_system_current = mysqli_num_rows($run_gynae_system_current);
-        if($gynaes_system_current == 1)
-        {
-            while($row_gynae_system_current = mysqli_fetch_array($run_gynae_system_current))
-            {
-                $gynae_count_system_current = $row_gynae_system_current[0];
-                $count_gynae_system_current = $count_gynae_system_current + $gynae_count_system_current;
-            }
-        }          
-        
-        
-        $gynae_token_all = "SELECT COUNT(id) FROM `item_by_doctor` WHERE doctor_id = '$dr_id' AND item_by_doctor.branch_id = '$br_id' AND item_by_doctor.created > '2025-03-31' AND item_by_doctor.category_id = '41' ";
-        $run_gynae_system_token_all = mysqli_query($con, $gynae_token_all);
-        $gynaes_system_token_all = mysqli_num_rows($run_gynae_system_token_all);
-        if($gynaes_system_token_all == 1)
-        {
-            while($row_gynae_system_token_all = mysqli_fetch_array($run_gynae_system_token_all))
-            {
-                $gynae_count_system_token_all = $row_gynae_system_token_all[0];
-                $count_gynae_system_token_all = $count_gynae_system_token_all + $gynae_count_system_token_all;
-            }
-        }
-        $gynae_system_all = "SELECT count(id) FROM `gynae_register` WHERE doctor_id = '$dr_id' AND created > '2025-03-31' AND branch_id = '$br_id'";
-        $run_gynae_system_all = mysqli_query($con, $gynae_system_all);
-        $gynaes_system_all = mysqli_num_rows($run_gynae_system_all);
-        if($gynaes_system_all == 1)
-        {
-            while($row_gynae_system_all = mysqli_fetch_array($run_gynae_system_all))
-            {
-                $gynae_count_system_all = $row_gynae_system_all[0];
-                $count_gynae_system_all = $count_gynae_system_all + $gynae_count_system_all;
-            }
-        }        
+        $count_opd += $opd;
+        $count_gynae_system_token += $gynae_count_system_token;
+        $count_gynae_system += $gynae_count_system;
+        $count_gynae_system_token_current += $gynae_count_system_token_current;
+        $count_gynae_system_current += $gynae_count_system_current;
+        $count_gynae_system_token_all += $gynae_count_system_token_all;
+        $count_gynae_system_all += $gynae_count_system_all;
+
         $s++;
         echo '
         <tr style = "text-align: center;">
@@ -204,13 +157,6 @@ if(mysqli_num_rows($run_dr) > 0)
             <td>'.$gynae_count_system_all.'</td>
             <td>'.$gynae_count_system_all-$gynae_count_system_token_all.'</td>
         </tr>';
-        $opd = 0;
-        $gynae_count_system = 0;
-        $gynae_count_system_token = 0;
-        $gynae_count_system_current = 0;
-        $gynae_count_system_token_current = 0;
-        $gynae_count_system_all = 0;
-        $gynae_count_system_token_all = 0;
     }
 }
 ?>
