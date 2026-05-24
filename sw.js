@@ -29,7 +29,7 @@ function shouldBypassServiceWorker(url) {
   if (/\.php$/i.test(path)) {
     return true;
   }
-  if (/\/(bk|dr|hr|fr|sm|mm|lab|pharmecy)\//i.test(path)) {
+  if (/\/(bk|dr|hr|fr|sm|mm|lab|pharmecy)\//i.test(path) || /\/fr\//i.test(path)) {
     return true;
   }
   if (/print_|report_query_timing|comparison_report|progress_report|gynae_registeration/i.test(path)) {
