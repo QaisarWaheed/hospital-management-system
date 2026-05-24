@@ -26,3 +26,7 @@ ALTER TABLE item_by_doctor ADD INDEX idx_ibd_doctor_branch_status_created (docto
 ALTER TABLE gynae_register ADD INDEX idx_gynae_doctor_branch_created (doctor_id, branch_id, created);
 ALTER TABLE referral_patients ADD INDEX idx_ref_created_to_user (referral_patient_created, to_user_id);
 ALTER TABLE referral_patients ADD INDEX idx_ref_created_from_user (referral_patient_created, from_user_id);
+
+-- General pending LG / detail
+ALTER TABLE branch_daily_pending_details ADD INDEX idx_bdpd_created (created);
+ALTER TABLE branch_daily_pending_details ADD INDEX idx_bdpd_token_created (token_no, created);

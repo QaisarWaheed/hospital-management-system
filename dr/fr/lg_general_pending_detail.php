@@ -1,16 +1,26 @@
 <?php
 include 'includes/connect.php';
-require_once __DIR__ . '/../includes/general_pending_helpers.php';
+require_once __DIR__ . '/../../../includes/general_pending_helpers.php';
 
-$filters = general_pending_parse_filters($_GET, (int) $branch_id, true);
+@set_time_limit(120);
+
+$filters = general_pending_parse_filters($_GET, (int) $branch_id, false);
 $br_id = $filters['br_id'];
 $from_date = $filters['from_date'];
-$to_date_label = $filters['to_date_label'];
 $from_input = $filters['from_input'];
-$to_input = $filters['to_input'];
 $branch_label = get_branch_name_by($br_id);
 $select = general_pending_list_sql($con, $br_id, $from_date, $filters['to_date_end']);
 $pendingRows = general_pending_fetch_rows($con, $select);
+
+$tokenIds = array();
+foreach ($pendingRows as $row) {
+    $total = (float) $row['cash'];
+    $received = (float) $row['cash_received'];
+    if ($total - $received > 0) {
+        $tokenIds[] = (int) $row['token_no'];
+    }
+}
+$itemsByToken = general_pending_items_by_tokens($con, $tokenIds);
 
 include 'includes/head.php';
 ?>
@@ -22,7 +32,7 @@ include 'includes/head.php';
 }
 </style>
 
-	<title>General Pending - <?php echo htmlspecialchars($company_trademark); ?></title>
+	<title>General Pending Detail - <?php echo htmlspecialchars($company_trademark); ?></title>
 </head>
 
 <body class="background_image">
@@ -36,9 +46,8 @@ include 'includes/head.php';
 	<div class="col-md-12">
 	    <table class="table table-bordered">
 	        <caption id="table-caption" class="h2" style="caption-side: top;text-align: center;">
-	            GENERAL PENDING (<?php echo htmlspecialchars($branch_label); ?>)
-	            FROM: <?php echo htmlspecialchars(ycdo_safe_date_format($from_date, 'd-M-Y', $from_date)); ?>
-	            TO: <?php echo htmlspecialchars(ycdo_safe_date_format($to_date_label, 'd-M-Y', $to_date_label)); ?>
+	            GENERAL PENDING DETAIL (<?php echo htmlspecialchars($branch_label); ?>)
+	            DATED: <?php echo htmlspecialchars(ycdo_safe_date_format($from_date, 'd-M-Y', $from_date)); ?>
 	        </caption>
 	        <thead>
 	            <tr class="noprint">
@@ -61,13 +70,9 @@ include 'includes/head.php';
 	                                ?>
 	                            </select>
 	                        </div>
-	                        <div class="col" style="text-align: right;"><label for="from_date">From Date:</label></div>
+	                        <div class="col" style="text-align: right;"><label for="from_date">Date:</label></div>
 	                        <div class="col">
 	                            <input type="date" name="from_date" value="<?php echo $from_input; ?>" id="from_date" class="form-control" required />
-	                        </div>
-	                        <div class="col" style="text-align: right;"><label for="to_date">To Date:</label></div>
-	                        <div class="col">
-	                            <input type="date" name="to_date" value="<?php echo $to_input; ?>" id="to_date" class="form-control" required />
 	                        </div>
 	                        <div class="col" style="text-align: center;">
 	                            <input type="submit" value="SEARCH" name="submit" class="btn btn-sm btn-info" style="min-width:100%;min-height:100%;" />
@@ -103,6 +108,7 @@ foreach ($pendingRows as $row) {
         continue;
     }
     $s++;
+    $token_no = (int) $row['token_no'];
     echo '<tr>
         <td class="h6">' . $s . '</td>
         <td class="noprint h6">' . (int) $row['id'] . '</td>
@@ -113,11 +119,19 @@ foreach ($pendingRows as $row) {
         <td class="h6">' . htmlspecialchars($row['name']) . '</td>
         <td class="noprint h6">' . htmlspecialchars($row['ref_name']) . '</td>
         <td class="noprint h6">' . htmlspecialchars($row['recommended_by']) . '</td>
-        <td class="h6">' . (int) $row['token_no'] . '</td>
+        <td class="h6">' . $token_no . '</td>
         <td class="h6" style="text-align:center;">' . number_format($total_amount) . '</td>
         <td class="h6" style="text-align:center;">' . number_format($receive_amount) . '</td>
         <td class="h6" style="text-align:center;">' . number_format($pending_amount) . '</td>
     </tr>';
+
+    if (isset($itemsByToken[$token_no]) && $itemsByToken[$token_no] !== array()) {
+        echo '<tr><td colspan="13"><ol>';
+        foreach ($itemsByToken[$token_no] as $item) {
+            echo '<li>' . htmlspecialchars($item['item_name']) . ' ' . htmlspecialchars((string) $item['quantity']) . '</li>';
+        }
+        echo '</ol></td></tr>';
+    }
 }
 ?>
 	        </tbody>
