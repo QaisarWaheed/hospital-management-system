@@ -71,9 +71,7 @@ function account_report_merge_day(array &$byDay, $day, array $values)
         $byDay[$day] = account_report_empty_day();
     }
     foreach ($values as $key => $value) {
-        if (array_key_exists($key, $byDay[$day])) {
-            $byDay[$day][$key] = $value;
-        }
+        $byDay[$day][$key] = $value;
     }
 }
 
@@ -164,6 +162,120 @@ function account_report_month_by_day($con, $branch_id, $year, $month)
                 'minor_procedure' => (int) $row['minor_procedure'],
                 'procedure' => (int) $row['procedure'],
             ));
+        }
+    }
+
+    return $byDay;
+}
+
+/**
+ * @return array<string, int|float>
+ */
+function accounts_monthly_empty_day()
+{
+    return array(
+        'collection' => 0.0,
+        'poor' => 0,
+        'general' => 0,
+        'private' => 0,
+        'urgent' => 0,
+        'consultant' => 0,
+        'procedure' => 0.0,
+        'medicine' => 0.0,
+        'lab' => 0.0,
+    );
+}
+
+/**
+ * FR accounts monthly report (procedure/medicine/lab as cash_received sums).
+ *
+ * @return array<int, array<string, int|float>>
+ */
+function accounts_monthly_report_month_by_day($con, $branch_id, $year, $month)
+{
+    $byDay = account_report_month_by_day($con, $branch_id, $year, $month);
+    $branch_id = (int) $branch_id;
+    $bounds = account_report_month_datetime_bounds($year, $month);
+    $start = mysqli_real_escape_string($con, $bounds['start']);
+    $end = mysqli_real_escape_string($con, $bounds['end']);
+
+    $procSql = "SELECT DATE(t.created) AS day_key,
+            COALESCE(SUM(t.cash_received), 0) AS procedure_sum
+        FROM tokans t
+        WHERE t.branch_id = $branch_id AND t.status = 1
+            AND t.created >= '$start' AND t.created < '$end'
+            AND EXISTS (
+                SELECT 1 FROM item_by_doctor ibd
+                INNER JOIN item_register_to_branches irb ON irb.id = ibd.item_id
+                INNER JOIN items i ON i.id = irb.item_id AND i.category_id = 3
+                WHERE ibd.tokan_no = t.id AND ibd.branch_id = t.branch_id AND ibd.status = 2
+            )
+        GROUP BY DATE(t.created)";
+    $run = mysqli_query($con, $procSql);
+    if ($run) {
+        while ($row = mysqli_fetch_assoc($run)) {
+            $day = (int) date('j', strtotime($row['day_key']));
+            account_report_merge_day($byDay, $day, array('procedure' => (float) $row['procedure_sum']));
+        }
+    }
+
+    $medSql = "SELECT DATE(t.created) AS day_key,
+            COALESCE(SUM(t.cash_received), 0) AS medicine_sum
+        FROM tokans t
+        WHERE t.branch_id = $branch_id AND t.status = 1
+            AND t.created >= '$start' AND t.created < '$end'
+            AND EXISTS (
+                SELECT 1 FROM item_by_doctor ibd
+                INNER JOIN item_register_to_branches irb ON irb.id = ibd.item_id
+                INNER JOIN items i ON i.id = irb.item_id
+                    AND i.category_id NOT IN (2, 3, 8, 17, 20, 28)
+                WHERE ibd.tokan_no = t.id AND ibd.branch_id = t.branch_id AND ibd.status = 2
+            )
+        GROUP BY DATE(t.created)";
+    $run = mysqli_query($con, $medSql);
+    if ($run) {
+        while ($row = mysqli_fetch_assoc($run)) {
+            $day = (int) date('j', strtotime($row['day_key']));
+            account_report_merge_day($byDay, $day, array('medicine' => (float) $row['medicine_sum']));
+        }
+    }
+
+    $labSql = "SELECT DATE(t.created) AS day_key,
+            COALESCE(SUM(t.cash_received), 0) AS lab_sum
+        FROM tokans t
+        WHERE t.branch_id = $branch_id AND t.status = 1
+            AND t.created >= '$start' AND t.created < '$end'
+            AND EXISTS (
+                SELECT 1 FROM item_by_doctor ibd
+                INNER JOIN item_register_to_branches irb ON irb.id = ibd.item_id
+                INNER JOIN items i ON i.id = irb.item_id AND i.category_id = 2
+                WHERE ibd.tokan_no = t.id AND ibd.branch_id = t.branch_id AND ibd.status = 2
+            )
+        GROUP BY DATE(t.created)";
+    $run = mysqli_query($con, $labSql);
+    if ($run) {
+        while ($row = mysqli_fetch_assoc($run)) {
+            $day = (int) date('j', strtotime($row['day_key']));
+            account_report_merge_day($byDay, $day, array('lab' => (float) $row['lab_sum']));
+        }
+    }
+
+    $consSql = "SELECT DATE(t.created) AS day_key, COUNT(DISTINCT t.id) AS consultant
+        FROM tokans t
+        WHERE t.branch_id = $branch_id AND t.status = 1
+            AND t.created >= '$start' AND t.created < '$end'
+            AND EXISTS (
+                SELECT 1 FROM item_by_doctor ibd
+                INNER JOIN item_register_to_branches irb ON irb.id = ibd.item_id
+                WHERE ibd.tokan_no = t.id AND ibd.branch_id = t.branch_id AND ibd.status = 2
+                    AND irb.item_id = 489
+            )
+        GROUP BY DATE(t.created)";
+    $run = mysqli_query($con, $consSql);
+    if ($run) {
+        while ($row = mysqli_fetch_assoc($run)) {
+            $day = (int) date('j', strtotime($row['day_key']));
+            account_report_merge_day($byDay, $day, array('consultant' => (int) $row['consultant']));
         }
     }
 

@@ -26,6 +26,7 @@ if (isset($_GET['print_summary'])) {
 		'e' => $to_date,
 		'u' => $user_id_s,
 		'un' => $user_name_s,
+		'br_id' => (int) $branch_id,
 	));
 	fr_summary_print_redirect($print_url, 'user_complete_summary.php');
 	exit;

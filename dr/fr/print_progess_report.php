@@ -1,82 +1,93 @@
 <?php
-include 'includes/connect.php';
-require_once __DIR__ . '/../../bk/includes/progress_report_params.php';
+require_once __DIR__ . '/includes/connect_report.php';
+require_once __DIR__ . '/../../../includes/report_helpers.php';
+require_once __DIR__ . '/../../../includes/fr_summary_report_helpers.php';
 
-$req = progress_report_resolve_request($con);
-$date = $req['date'];
-$br_id = $req['br_id'];
-$like = $req['like'];
-
-$opds = progress_opd_count_by_doctor($con, $br_id, $like);
-$cons_opds = progress_item_count_by_doctor($con, $br_id, $like, '(SELECT id FROM items WHERE category_id = 29)');
-$lab_stats = progress_lab_stats_by_doctor($con, $br_id, $like);
-
-$doctor_sql = "SELECT DISTINCT doctor_id FROM tokans WHERE created LIKE '$like' AND branch_id = '$br_id' ORDER BY doctor_id";
-$doctor_ids = array();
-$run = mysqli_query($con, $doctor_sql);
-if ($run) {
-    while ($row = mysqli_fetch_assoc($run)) {
-        $doctor_ids[] = (int) $row['doctor_id'];
-    }
+@set_time_limit(300);
+if (function_exists('ini_set')) {
+    @ini_set('max_execution_time', '300');
 }
 
-$user_names = array();
-if (count($doctor_ids) > 0) {
-    $ids = implode(',', $doctor_ids);
-    $run_names = mysqli_query($con, "SELECT id, u_name FROM users WHERE id IN ($ids)");
-    if ($run_names) {
-        while ($row = mysqli_fetch_assoc($run_names)) {
-            $user_names[(int) $row['id']] = $row['u_name'];
-        }
-    }
+if (!isset($_GET['date'], $_GET['br_id']) || $_GET['date'] === '') {
+    http_response_code(400);
+    exit('Date and branch are required.');
 }
-?>
-<html>
-<head>
-    <title>PRINT PROGRESS REPORT</title>
-</head>
-<body>
 
-<table border="solid">
-<caption>
-    <h2><?php echo $company_name; ?></h2>
-    <h2><?php echo get_branch_name_by($br_id); ?></h2>
-    <h3>PROGRESS DATE <?php echo date_format(date_create($date), ' d F Y'); ?></h3>
-</caption>
-    <thead>
-        <tr><th>S#</th><th>NAME</th><th>OPD</th><th>CONS</th><th>LAB</th></tr>
-    </thead>
-<?php
+$date = substr((string) $_GET['date'], 0, 10);
+$br_id = (int) $_GET['br_id'];
+$branchHeader = summary_branch_header($con, $br_id, $company_name);
+$dateTitle = ycdo_safe_date_format($date, 'd F Y', $date);
+$doctors = fr_progress_doctors_day($con, $br_id, $date);
+
+header('Content-Type: text/html; charset=utf-8');
+echo '<html><head><meta charset="utf-8"><title>Progress Report</title></head><body><p>Loading progress report…</p>';
+if (function_exists('ob_flush')) {
+    @ob_flush();
+}
+@flush();
+
 $s = 0;
 $total_opds = 0;
 $total_cons_opds = 0;
-$total_lab = 0;
-
-if (count($doctor_ids) > 0) {
-    echo '<tbody>';
-    foreach ($doctor_ids as $doctor) {
-        $s++;
-        $opd = $opds[$doctor] ?? 0;
-        $cons = $cons_opds[$doctor] ?? 0;
-        $lab_cash = $lab_stats[$doctor]['cash'] ?? 0;
-        $labs = ($lab_cash == 0) ? 'N/A' : $lab_cash;
-        $total_opds += $opd;
-        $total_cons_opds += $cons;
-        $total_lab += is_numeric($labs) ? $labs : 0;
-        $doctor_name = $user_names[$doctor] ?? get_uname_by_id($doctor);
-        echo '<tr style="text-align: right;">';
-        echo '<td>' . $s . '</td>';
-        echo '<td style="text-align: left;">' . htmlspecialchars($doctor_name, ENT_QUOTES, 'UTF-8') . '</td>';
-        echo '<td>' . $opd . '</td><td>' . $cons . '</td><td>' . $labs . '</td>';
-        echo '</tr>';
+$total_lab = 0.0;
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>PRINT PROGRESS REPORT</title>
+</head>
+<body onload="window.print()">
+<table border="solid">
+<caption>
+    <h2><?php echo htmlspecialchars($company_name); ?></h2>
+    <h2><?php echo htmlspecialchars($branchHeader['name']); ?></h2>
+    <h3>PROGRESS DATE <?php echo htmlspecialchars($dateTitle); ?></h3>
+</caption>
+    <thead>
+        <tr>
+            <th>S#</th>
+            <th>NAME</th>
+            <th>OPD</th>
+            <th>CONS</th>
+            <th>LAB</th>
+        </tr>
+    </thead>
+    <tbody>
+<?php
+foreach ($doctors as $doc) {
+    $s++;
+    $opds = (int) $doc['opd'];
+    $cons_opds = (int) $doc['cons'];
+    $labs = (float) $doc['lab'];
+    $labsDisplay = $labs > 0 ? number_format($labs) : 'N/A';
+    if ($labs > 0) {
+        $total_lab += $labs;
     }
-    echo '</tbody><tfoot><tr style="text-align: right;"><th></th><th></th>';
-    echo '<th>' . $total_opds . '</th><th>' . $total_cons_opds . '</th><th>' . $total_lab . '</th></tr></tfoot>';
-} else {
-    echo '<tbody><tr><td colspan="5">NO DATA FOUND</td></tr></tbody>';
+    $total_opds += $opds;
+    $total_cons_opds += $cons_opds;
+    echo '<tr style="text-align: right;">
+        <td>' . $s . '</td>
+        <td style="text-align: left;">' . htmlspecialchars($doc['name']) . '</td>
+        <td>' . $opds . '</td>
+        <td>' . $cons_opds . '</td>
+        <td>' . $labsDisplay . '</td>
+    </tr>';
 }
 ?>
+    </tbody>
+    <tfoot>
+        <tr style="text-align: right;">
+            <th colspan="2">TOTAL</th>
+            <th><?php echo $total_opds; ?></th>
+            <th><?php echo $total_cons_opds; ?></th>
+            <th><?php echo $total_lab > 0 ? number_format($total_lab) : 'N/A'; ?></th>
+        </tr>
+    </tfoot>
 </table>
 </body>
 </html>
-<?php mysqli_close($con); ?>
+<?php
+if ($con instanceof mysqli) {
+    mysqli_close($con);
+}

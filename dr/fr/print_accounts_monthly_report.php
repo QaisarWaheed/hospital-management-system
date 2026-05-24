@@ -1,30 +1,50 @@
 <?php
-include 'includes/connect.php';
-require_once __DIR__ . '/../../includes/report_helpers.php';
+require_once __DIR__ . '/includes/connect_report.php';
+require_once __DIR__ . '/../../../includes/report_helpers.php';
+require_once __DIR__ . '/../../../includes/account_report_helpers.php';
+
+@set_time_limit(300);
+if (function_exists('ini_set')) {
+    @ini_set('max_execution_time', '300');
+}
 
 if (!isset($_GET['date'], $_GET['br_id']) || $_GET['date'] === '') {
     http_response_code(400);
     exit('Date and branch are required.');
 }
 
-$date = $_GET['date'];
+$date = substr((string) $_GET['date'], 0, 10);
 $br_id = (int) $_GET['br_id'];
 $ym = ycdo_parse_year_month($date);
 $year = $ym['year'];
 $month = $ym['month'];
 $days = $ym['days'];
+
+header('Content-Type: text/html; charset=utf-8');
+echo '<html><head><meta charset="utf-8"><title>Monthly Accounts</title></head><body><p>Loading monthly report…</p>';
+if (function_exists('ob_flush')) {
+    @ob_flush();
+}
+@flush();
+
+$byDay = accounts_monthly_report_month_by_day($con, $br_id, $year, $month);
+$branchHeader = summary_branch_header($con, $br_id, $company_name);
+$monthTitle = ycdo_safe_date_format($date, 'F Y', $date);
+$empty = accounts_monthly_empty_day();
+$totals = $empty;
 ?>
+<!DOCTYPE html>
 <html>
 <head>
-    <title>PRINT MONTHLY PROGRESS REPORT</title>
+    <meta charset="utf-8">
+    <title>PRINT MONTHLY ACCOUNTS REPORT</title>
 </head>
-<body>
-    
-<table border = "solid">
+<body onload="window.print()">
+<table border="solid">
 <caption>
-    <h2><?php echo $company_name; ?></h2>
-    <h2><?php echo get_branch_name_by($br_id); ?></h2>
-    <h4>Progress For The Month Of <?php echo date_format(date_create($date), " F Y"); ?></h4>
+    <h2><?php echo htmlspecialchars($company_name); ?></h2>
+    <h2><?php echo htmlspecialchars($branchHeader['name']); ?></h2>
+    <h4>Progress For The Month Of <?php echo htmlspecialchars($monthTitle); ?></h4>
 </caption>
     <thead>
         <tr>
@@ -39,172 +59,79 @@ $days = $ym['days'];
             <th>PROCEDURE</th>
             <th>MEDICINE</th>
             <th>LAB</th>
-            <th>ADDMISSIOM</th>
             <th>COLLECTION</th>
         </tr>
     </thead>
     <tbody>
 <?php
-$s = 0;
-$total_procedure = 0;
-$total_medicine = 0;
-$total_collection = 0;
-$total_poor = 0;
-$total_lab = 0;
-$total_general = 0;
-$total_private = 0;
-$total_urgent = 0;
-$total_consultent = 0;
-
-for ($x = 1; $x <= $days; $x++) 
-{
-    $total = 0;
-    $count_procedure = 0;
-    $count_medicine = 0;
-    $count_lab = 0;
-    $count_poor = 0;      
-    $count_general = 0;      
-    $count_urgent = 0;      
-    $count_private = 0;      
-    $s++;
-    if($x < 10)
-    {
-        $x = "0".$x;
+for ($day = 1; $day <= $days; $day++) {
+    $row = isset($byDay[$day]) ? $byDay[$day] : $empty;
+    if (!isset($row['medicine'])) {
+        $row['medicine'] = 0.0;
     }
-$select_date = $x.'-'.$month.'-'.$year;    
-//COLLECTION
-$collection = "SELECT SUM(`cash_received`) FROM tokans WHERE branch_id = '$br_id' AND created LIKE '$year-$month-$x%' AND status = 1 ";
-$run_collection = mysqli_query($con, $collection);
-if(mysqli_num_rows($run_collection) == 1)
-{
-    while($row_collection = mysqli_fetch_array($run_collection))
-    {
-        $collection_amount = $row_collection['0'];
-        $total_collection = $total_collection + $collection_amount;
+    if (!isset($row['lab'])) {
+        $row['lab'] = 0.0;
     }
+    $dayPad = $day < 10 ? '0' . $day : (string) $day;
+    $select_date = $dayPad . '-' . $month . '-' . $year;
+    $count_poor = (int) $row['poor'];
+    $count_general = (int) $row['general'];
+    $count_private = (int) $row['private'];
+    $count_urgent = (int) $row['urgent'];
+    $total = $count_poor + $count_general + $count_private + $count_urgent;
+    $collection_amount = (float) $row['collection'];
+    $cash_received_procedure = (float) ($row['procedure'] ?? 0);
+    $cash_received_medicine = (float) $row['medicine'];
+    $cash_received_lab = (float) $row['lab'];
+    $count_consultent = (int) $row['consultant'];
+
+    $totals['poor'] += $count_poor;
+    $totals['general'] += $count_general;
+    $totals['private'] += $count_private;
+    $totals['urgent'] += $count_urgent;
+    $totals['consultant'] += $count_consultent;
+    $totals['procedure'] += $cash_received_procedure;
+    $totals['medicine'] += $cash_received_medicine;
+    $totals['lab'] += $cash_received_lab;
+    $totals['collection'] += $collection_amount;
+
+    echo '<tr style="text-align: right;">
+        <td>' . $day . '</td>
+        <td>' . htmlspecialchars($select_date) . '</td>
+        <td>' . $count_poor . '</td>
+        <td>' . $count_general . '</td>
+        <td>' . $count_private . '</td>
+        <td>' . $count_urgent . '</td>
+        <td>' . $total . '</td>
+        <td>' . $count_consultent . '</td>
+        <td>' . number_format($cash_received_procedure) . '</td>
+        <td>' . number_format($cash_received_medicine) . '</td>
+        <td>' . number_format($cash_received_lab) . '</td>
+        <td>' . number_format($collection_amount) . '</td>
+    </tr>';
 }
-else
-{
-        $collection_amount = 0;
-        $total_collection = $total_collection + $collection_amount;
-}
-
-//POOR
-$poor = "SELECT * FROM tokans WHERE branch_id = '$br_id' AND created LIKE '$year-$month-$x%' AND tokan_type_id = '1' AND status = 1 ";
-$count_poor = mysqli_num_rows(mysqli_query($con, $poor));
-$total_poor = $total_poor + $count_poor;
-
-//GENERAL
-$general = "SELECT * FROM tokans WHERE branch_id = '$br_id' AND created LIKE '$year-$month-$x%' AND tokan_type_id = '2' AND status = 1 ";
-$count_general = mysqli_num_rows(mysqli_query($con, $general));
-$total_general = $total_general + $count_general;
-
-//PRIVATE
-$private = "SELECT * FROM tokans WHERE branch_id = '$br_id' AND created LIKE '$year-$month-$x%' AND tokan_type_id = '3' AND status = 1 ";
-$count_private = mysqli_num_rows(mysqli_query($con, $private));
-$total_private = $total_private + $count_private;
-
-//URGENT
-$urgent = "SELECT * FROM tokans WHERE branch_id = '$br_id' AND created LIKE '$year-$month-$x%' AND tokan_type_id = '4' AND status = 1 ";
-$count_urgent = mysqli_num_rows(mysqli_query($con, $urgent));
-$total_urgent = $total_urgent + $count_urgent;
-
-//CONSULTENT
-$consultent = "SELECT * FROM `tokans` WHERE `id` IN (SELECT `tokan_no` FROM `item_by_doctor` WHERE tokan_no IN (SELECT id FROM tokans WHERE created like '$year-$month-$x%' AND status = 1) AND branch_id = '$br_id' AND `status` = 2 AND `item_id` IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` = 489))";
-$count_consultent = mysqli_num_rows(mysqli_query($con, $consultent));
-$total_consultent = $total_consultent + $count_consultent;
-
-//USG
-// $usg = "SELECT `tokan_no` FROM `item_by_doctor` WHERE tokan_no IN (SELECT id FROM tokans WHERE created like '$year-$month-$x%' AND status = 1) AND branch_id = '$br_id' AND `status` = 2 AND `item_id` IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (476, 477, 478))";
-// $count_usg = mysqli_num_rows(mysqli_query($con, $usg));
-// $total_usg = $total_usg + $count_usg;
-
-//ADDMISSION
-// $addmission = "SELECT `tokan_no` FROM `item_by_doctor` WHERE tokan_no IN (SELECT id FROM tokans WHERE created like '$year-$month-$x%' AND status = 1) AND branch_id = '$br_id' AND `status` = 2 AND `item_id` IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (444, 448, 452, 456, 460, 945))";
-// $count_addmission = mysqli_num_rows(mysqli_query($con, $addmission));
-// $total_addmission = $total_addmission + $count_addmission;
-
-
-//PROCEDURE
-// $procedure = "SELECT * FROM `tokans` WHERE `id` IN (SELECT `tokan_no` FROM `item_by_doctor` WHERE tokan_no IN (SELECT id FROM tokans WHERE created like '$year-$month-$x%' AND status = 1) AND branch_id = '$br_id' AND `status` = 2 AND `item_id` IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (SELECT id FROM items WHERE category_id = 3)))";
-// $count_procedure = mysqli_num_rows(mysqli_query($con, $procedure));
-// $total_procedure = $total_procedure + $count_procedure;
-
-//PROCEDURE
-$procedure = "SELECT sum(`cash_received`) AS cash_received FROM `tokans` WHERE `id` IN (SELECT `tokan_no` FROM `item_by_doctor` WHERE tokan_no IN (SELECT id FROM tokans WHERE created like '$year-$month-$x%' AND status = 1) AND branch_id = '$br_id' AND `status` = 2 AND `item_id` IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (SELECT id FROM items WHERE category_id = 3 )))";
-$run_procedure = mysqli_query($con, $procedure);
-if(mysqli_num_rows($run_procedure) == 1)
-{
-    while($row_procedure = mysqli_fetch_array($run_procedure))
-    {
-        $cash_received_procedure = $row_procedure['cash_received'];
-    }
-}
-$total_procedure = $total_procedure + $cash_received_procedure;
-
-//MEDICINE
-$medicine = "SELECT sum(`cash_received`) AS cash_received FROM `tokans` WHERE `id` IN (SELECT `tokan_no` FROM `item_by_doctor` WHERE tokan_no IN (SELECT id FROM tokans WHERE created like '$year-$month-$x%' AND status = 1) AND branch_id = '$br_id' AND `status` = 2 AND `item_id` IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (SELECT id FROM items WHERE category_id NOT IN (2,3,8,17,20,28) )))";
-$run_medicine = mysqli_query($con, $medicine);
-if(mysqli_num_rows($run_medicine) == 1)
-{
-    while($row_medicine = mysqli_fetch_array($run_medicine))
-    {
-        $cash_received_medicine = $row_medicine['cash_received'];
-    }
-}
-$total_medicine = $total_medicine + $cash_received_medicine;
-
-//LAB
-$lab = "SELECT sum(`cash_received`) AS cash_received FROM `tokans` WHERE `id` IN (SELECT `tokan_no` FROM `item_by_doctor` WHERE tokan_no IN (SELECT id FROM tokans WHERE created like '$year-$month-$x%' AND status = 1) AND branch_id = '$br_id' AND `status` = 2 AND `item_id` IN (SELECT `id` FROM `item_register_to_branches` WHERE `item_id` IN (SELECT id FROM items WHERE category_id = 2)))";
-$run_lab = mysqli_query($con, $lab);
-if(mysqli_num_rows($run_lab) == 1)
-{
-    while($row_lab = mysqli_fetch_array($run_lab))
-    {
-        $cash_received = $row_lab['cash_received'];
-    }
-}
-$total_lab = $total_lab + $cash_received;
-
-$urgent = "SELECT * FROM tokans WHERE branch_id = '$br_id' AND created LIKE '$year-$month-$x%' AND tokan_type_id = '4' AND status = 1 ";
-$count_urgent = mysqli_num_rows(mysqli_query($con, $urgent));
-$total_urgent = $total_urgent + $count_urgent;
-
-//TOTAL
-$total = $count_poor + $count_general + $count_private + $count_urgent;
-        echo ' <tr style = "text-align: right;">
-                <td>'.$s.'</td>
-                <td>'.$select_date.'</td>
-                <td>'.$count_poor.'</td>
-                <td>'.$count_general.'</td>
-                <td>'.$count_private.'</td>
-                <td>'.$count_urgent.'</td>
-                <td>'.$total.'</td>
-                <td>'.$count_consultent.'</td>
-                <td>'.$cash_received_procedure.'</td>
-                <td>'.$cash_received_medicine.'</td>
-                <td>'.$cash_received.'</td>
-                <td>'.number_format($collection_amount).'</td>
-            </tr>';
-}
-    echo '</tbody>';
-    echo '<tfoot>
-            <tr style = "text-align: right;">
-                <th colspan = "2">TOTAL</th>
-                <th>'.$total_poor.'</th>
-                <th>'.$total_general.'</th>
-                <th>'.$total_private.'</th>
-                <th>'.$total_urgent.'</th>
-                <th>'.$total_poor+$total_general+$total_private+$total_urgent.'</th>
-                <th>'.$total_consultent.'</th>
-                <th>'.$total_procedure.'</th>
-                <th>'.$total_medicine.'</th>
-                <th>'.$total_lab.'</th>
-                <th>'.number_format($total_collection).'</th>
-            </tr>
-        </tfoot>';
+$grandTotal = (int) $totals['poor'] + (int) $totals['general'] + (int) $totals['private'] + (int) $totals['urgent'];
 ?>
+    </tbody>
+    <tfoot>
+        <tr style="text-align: right;">
+            <th colspan="2">TOTAL</th>
+            <th><?php echo (int) $totals['poor']; ?></th>
+            <th><?php echo (int) $totals['general']; ?></th>
+            <th><?php echo (int) $totals['private']; ?></th>
+            <th><?php echo (int) $totals['urgent']; ?></th>
+            <th><?php echo $grandTotal; ?></th>
+            <th><?php echo (int) $totals['consultant']; ?></th>
+            <th><?php echo number_format((float) $totals['procedure']); ?></th>
+            <th><?php echo number_format((float) $totals['medicine']); ?></th>
+            <th><?php echo number_format((float) $totals['lab']); ?></th>
+            <th><?php echo number_format((float) $totals['collection']); ?></th>
+        </tr>
+    </tfoot>
 </table>
-
 </body>
 </html>
+<?php
+if ($con instanceof mysqli) {
+    mysqli_close($con);
+}

@@ -1,61 +1,68 @@
 <?php
-include 'includes/connect.php';
+require_once __DIR__ . '/includes/connect_report.php';
 require_once __DIR__ . '/../includes/report_helpers.php';
+require_once __DIR__ . '/../includes/fr_summary_report_helpers.php';
+
+@set_time_limit(300);
+if (function_exists('ini_set')) {
+    @ini_set('max_execution_time', '300');
+}
 
 $loginParams = summary_login_report_params($_GET, $_POST, (int) $branch_id);
 if ($loginParams === null) {
-	http_response_code(400);
-	exit('Date range is required.');
+    http_response_code(400);
+    exit('Date range is required.');
 }
 
 $from_date = $loginParams['from'];
 $to_date = $loginParams['to'];
 $b_id = $loginParams['branch_id'];
-$br_id = $b_id;
+$branchHeader = summary_branch_header($con, $b_id, $company_name);
+$fromLabel = ycdo_safe_date_format($from_date, 'd-m-Y', $from_date);
+$toLabel = ycdo_safe_date_format($to_date, 'd-m-Y', $to_date);
 
-$branch_name = $company_name;
-$branch_address = get_branch_address($b_id);
-$branch_lookup = mysqli_query($con, "SELECT name, address FROM branchs WHERE id = '$b_id' LIMIT 1");
-if ($branch_lookup && mysqli_num_rows($branch_lookup) === 1) {
-    $branch_row = mysqli_fetch_assoc($branch_lookup);
-    if (!empty($branch_row['name'])) {
-        $branch_name = $branch_row['name'];
-    }
-    if (!empty($branch_row['address'])) {
-        $branch_address = $branch_row['address'];
-    }
+$bounds = fr_summary_range_bounds($from_date, $to_date, false);
+$start = mysqli_real_escape_string($con, $bounds['start']);
+$end = mysqli_real_escape_string($con, $bounds['end']);
+$b_id = (int) $b_id;
+
+header('Content-Type: text/html; charset=utf-8');
+echo '<html><head><meta charset="utf-8"><title>Login Summary</title></head><body><p>Loading login summary…</p>';
+if (function_exists('ob_flush')) {
+    @ob_flush();
 }
+@flush();
+
+$sql = "SELECT sd.user_id, sd.computer_total, sd.received_amount, sd.short_amount, sd.extra_amount,
+        ld.login_at, ld.logout_at, COALESCE(u.u_name, '') AS user_name
+    FROM summary_details sd
+    INNER JOIN logins_detail ld ON ld.id = sd.login_id
+    LEFT JOIN users u ON u.id = sd.user_id
+    WHERE ld.branch_id = $b_id AND ld.status = '2'
+        AND ld.login_at >= '$start' AND ld.login_at < '$end'
+    ORDER BY sd.created";
+$run_users = mysqli_query($con, $sql);
 ?>
-<?php include 'includes/head.php'; ?>
-	<title>Print Summary - <?php echo $company_trademark; ?></title>
-<style>
-*{
-    font-size: 16px;
-}
-</style>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Print Summary - <?php echo htmlspecialchars($company_trademark); ?></title>
+<style>* { font-size: 16px; }</style>
 </head>
-
 <body onload="window.print()">
-
 <table class="table" style="font-size: 10px">
-
 	<thead>
 	<tr style="caption-side: top;text-align: center;">
 	    <td colspan="9">
-	    <?php echo $branch_name; ?>
-    	<h6><?php echo $branch_address; ?></h6>
+	    <?php echo htmlspecialchars($branchHeader['name']); ?>
+    	<h6><?php echo htmlspecialchars($branchHeader['address']); ?></h6>
     	<h5>Token Summary</h5>
-
-         <div style="float:left"><strong>Date:</strong><span style="text-align: left;"><?php echo date_format(date_create($from_date), 'd-m-Y'); ?> To <?php echo date_format(date_create($to_date), 'd-m-Y'); ?></span></div>
-
-         <div style="float:right">Print Time: <?php echo date('h:i:s A'); ?></div>
-         </br>
-
-         <div style="float:left"><strong>User Login:</strong> <span style="text-align: left;">All Logins</span></div>
-
-         <div style="float:right">Print Date:<?php echo date('d-m-Y'); ?></div>
+         <div style="float:left"><strong>Date:</strong> <?php echo htmlspecialchars($fromLabel); ?> To <?php echo htmlspecialchars($toLabel); ?></div>
+         <div style="float:right">Print Time: <?php echo date('h:i:s A'); ?></div><br>
+         <div style="float:left"><strong>User Login:</strong> All Logins</div>
+         <div style="float:right">Print Date: <?php echo date('d-m-Y'); ?></div>
          </td>
-
 	</tr>
 		<tr>
 			<th>S #</th>
@@ -70,108 +77,61 @@ if ($branch_lookup && mysqli_num_rows($branch_lookup) === 1) {
 		</tr>
 	</thead>
 	<tbody>
-<?php 
-$last_date = date('Y-m-d', strtotime('+1 day', strtotime($to_date)));
+<?php
 $s = 0;
-$total_cash = 0;
-$total_extra = 0;
-$total_short = 0;
-$total_r_a = 0;
-$total_cash_received = 0;
-
-$users = "SELECT * FROM `summary_details` WHERE login_id IN (SELECT id FROM logins_detail WHERE branch_id = '$b_id' AND login_at <= '$last_date' AND `login_at` >= '$from_date' AND `status` = '2') ORDER BY `created` ";
-$run_users = mysqli_query($con, $users);
-if(mysqli_num_rows($run_users) > 0)
-{
-    while($row_users = mysqli_fetch_array($run_users))
-    {
-        $s = $s + 1;
-        $user_login_id = $row_users['user_id'];
-        $login_id = $row_users['login_id'];
-        $login_at = '';
-        $logout_at = '';
-        $login_detail = "SELECT * FROM logins_detail WHERE id = '$login_id' ";
-        $run = mysqli_query($con, $login_detail);
-        if(mysqli_num_rows($run) == 1)
-        {
-            while($row = mysqli_fetch_array($run))
-            {
-                $login_at = $row['login_at'];
-                $logout_at = $row['logout_at'];
-            }
-        }        
-        $computer_total= $row_users['computer_total'];
-        $total_cash = $total_cash + $computer_total;
-        $received_amount= $row_users['received_amount'];
-        $total_cash_received = $total_cash_received + $received_amount;
-        $short_amount = $row_users['short_amount'];
-        $total_short = $total_short + $short_amount;
-        $extra_amount = $row_users['extra_amount'];
-        $total_extra = $total_extra + $extra_amount;
+$total_cash = 0.0;
+$total_extra = 0.0;
+$total_short = 0.0;
+$total_r_a = 0.0;
+$total_cash_received = 0.0;
+if ($run_users) {
+    while ($row_users = mysqli_fetch_assoc($run_users)) {
+        $s++;
+        $computer_total = (float) $row_users['computer_total'];
+        $received_amount = (float) $row_users['received_amount'];
+        $short_amount = (float) $row_users['short_amount'];
+        $extra_amount = (float) $row_users['extra_amount'];
+        $total_cash += $computer_total;
+        $total_cash_received += $received_amount;
+        $total_short += $short_amount;
+        $total_extra += $extra_amount;
         $total_receiveable = $received_amount + $extra_amount;
-        $total_r_a = $total_r_a + $total_receiveable;
-        echo '
-		<tr>
-			<td>'.$s.'</td>
-			<td>'.get_uname_by_id($user_login_id).'</td>
-			<td>'.$login_at.'</td>
-			<td>'.$logout_at.'</td>
-			<td>'.$computer_total.'</td>
-			<td>'.$received_amount.'</td>
-			<td>'.$extra_amount.'</td>
-			<td>'.$short_amount.'</td>
-			<td>'.$total_receiveable.'</td>
-		</tr>';
+        $total_r_a += $total_receiveable;
+        $userName = $row_users['user_name'] !== '' ? $row_users['user_name'] : 'Unknown';
+        echo '<tr>
+            <td>' . $s . '</td>
+            <td>' . htmlspecialchars($userName) . '</td>
+            <td>' . htmlspecialchars((string) $row_users['login_at']) . '</td>
+            <td>' . htmlspecialchars((string) $row_users['logout_at']) . '</td>
+            <td>' . number_format($computer_total) . '</td>
+            <td>' . number_format($received_amount) . '</td>
+            <td>' . number_format($extra_amount) . '</td>
+            <td>' . number_format($short_amount) . '</td>
+            <td>' . number_format($total_receiveable) . '</td>
+        </tr>';
     }
 }
 ?>
 		<tr>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th><?php echo $total_cash;?></th>
-			<th><?php echo $total_cash_received;?></th>
-			<th><?php echo $total_extra;?></th>
-			<th><?php echo $total_short;?></th>
-			<th><?php echo $total_r_a;?></th>
+			<th colspan="4"></th>
+			<th><?php echo number_format($total_cash); ?></th>
+			<th><?php echo number_format($total_cash_received); ?></th>
+			<th><?php echo number_format($total_extra); ?></th>
+			<th><?php echo number_format($total_short); ?></th>
+			<th><?php echo number_format($total_r_a); ?></th>
 		</tr>
 	</tbody>
 </table>
 <?php
-$select = "SELECT distinct tokan_type_id ,cash_received FROM tokans WHERE 
-	(`branch_id` = '$br_id' AND `created` like '$to_date%' AND tokan_type_id < 100 ) OR 
-	(`branch_id` = '$br_id' AND `created` <= '$to_date' AND `created` >= '$from_date' AND tokan_type_id < 100 )
-	ORDER BY `tokan_type_id` ";
-$run = mysqli_query($con, $select);
-if (mysqli_num_rows($run) > 0) 
-{
-	while ($row = mysqli_fetch_array($run)) 
-	{
-		$tokan_type_id = $row['tokan_type_id'];
-			$select_count = "SELECT * FROM tokans WHERE 
-            	(`branch_id` = '$br_id' AND `created` like '$to_date%' AND tokan_type_id = '$tokan_type_id' AND `status` = '1') OR 
-	(`branch_id` = '$br_id' AND `created` <= '$to_date' AND `created` >= '$from_date' AND tokan_type_id = '$tokan_type_id' AND `status` = '1' ) ";
-			$count_tokens = mysqli_num_rows(mysqli_query($con, $select_count));
-		$select_tokan_type = "SELECT * FROM tokan_types WHERE id = '$tokan_type_id' AND `status` = '1' ";
-		$run_tokan_type = mysqli_query($con, $select_tokan_type);
-		if (mysqli_num_rows($run_tokan_type) > 0) 
-		{
-			while ($row_tokan_type = mysqli_fetch_array($run_tokan_type)) 
-			{
-				$title = $row_tokan_type['title'];
-			}
-		}
-		else
-		{
-				$title = "No Title";
-		}		
-		echo 
-		'
-			<p style="text-align: center;"><strong>'.$title.' -> '.$count_tokens.' Amount('.intval($count_tokens * $row['cash_received']).')</strong></p>
-		';
-	}
+foreach (fr_summary_tokan_type_breakdown($con, $from_date, $to_date, 0, $b_id, false) as $typeRow) {
+    echo '<p style="text-align: center;"><strong>'
+        . htmlspecialchars($typeRow['title']) . ' -> ' . (int) $typeRow['count']
+        . ' Amount(' . number_format($typeRow['amount']) . ')</strong></p>';
 }
 ?>
 </body>
 </html>
+<?php
+if ($con instanceof mysqli) {
+    mysqli_close($con);
+}
