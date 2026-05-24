@@ -73,8 +73,8 @@ window.location.replace('account_summary.php');
 
 				<div class="col-md-12 col-sm-12 col-xs-12">
 
-					<label for="select_month">From:</label>
-					<input type="month" name="select_month" class="form-control" required id="select_month">
+					<label for="select_month">Month:</label>
+					<input type="month" name="select_month" class="form-control" required id="select_month" value="<?php echo htmlspecialchars(date('Y-m'), ENT_QUOTES, 'UTF-8'); ?>">
 				
 				</div>
 
@@ -91,4 +91,3 @@ window.location.replace('account_summary.php');
 </div>
 </body>
 </html>
-<script type="text/javascript" src="js/bootstrap.min.js"></script>
