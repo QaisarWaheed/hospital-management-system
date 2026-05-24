@@ -1,57 +1,33 @@
-<?php 
-// header('location: dashboard.php');
-include 'includes/connect.php'; 
-include 'includes/head.php'; 
+<?php
+include 'includes/connect.php';
 
-$role_title = '';
-$roles = "SELECT * FROM roles WHERE id IN (SELECT role_id FROM users WHERE id = '$user_id') ";
-$run_roles = mysqli_query($con, $roles);
-if(mysqli_num_rows($run_roles) == 1)
-{
-    while($row_role = mysqli_fetch_array($run_roles))
-    {
-        $role_title = $row_role['title'];
-    }
-}
-
-if(isset($_GET['patient_history']) && $_GET['patient_history'] != '')
-{
-    $token_id = $_GET['token_id'];
+if (isset($_GET['patient_history']) && $_GET['patient_history'] !== '') {
+    $token_id = $_GET['token_id'] ?? '';
     $patient_history = $_GET['patient_history'];
     $insert = "INSERT INTO `patient_histories`
     (`token_no`, `doctor_id`, `patient_history_created_at`, `patient_history_status`, `patient_history_detail`)
-    VALUES 
+    VALUES
     ('$token_id', '$user_id', '$current_date', '1', '$patient_history')";
-    if(mysqli_query($con, $insert))
-    {
-        header('location: patient_by_token.php?msg=SUCCESS-SAVE-HISTORY&token_id='.$token_id);
-    }
-    else
-    {
-        header('location: patient_by_token.php?msg=ERROR-SAVE-HISTORY&token_id='.$token_id);
-    }
-        header('location: patient_by_token.php?msg=SUCCESS-SAVE-HISTORY&token_id='.$token_id);
+    $msg = mysqli_query($con, $insert) ? 'SUCCESS-SAVE-HISTORY' : 'ERROR-SAVE-HISTORY';
+    header('Location: patient_by_token.php?msg=' . $msg . '&token_id=' . urlencode($token_id));
+    exit;
 }
 
-if (isset($_GET['del_medicine']) && $_GET['del_medicine'] != '') 
-{
-    $token_id = $_GET['token_id'];
+if (isset($_GET['del_medicine']) && $_GET['del_medicine'] !== '') {
+    $token_id = $_GET['token_id'] ?? '';
     $del_id = $_GET['del_medicine'];
     $update = "UPDATE `select_by_doctor` SET `status` = '2' WHERE `id` = '$del_id' AND `tokan_no` = '$token_id' ";
-    if (mysqli_query($con, $update)) 
-    {
-        echo '<script type="text/javascript">
-            // alert("Data Deleted Successfully...");
-            location.replace("patient_by_token.php?token_id="'.$token_id.');
-        </script>';
+    if (mysqli_query($con, $update)) {
+        header('Location: patient_by_token.php?token_id=' . urlencode($token_id));
+        exit;
     }
 }
-if (isset($_GET['save_test'])) 
-{
-    $token_id = $_GET['token_id'];
-    $reg_item_id = ycdo_resolve_register_item_id($branch_id, $_GET['reg_item_id']);
+
+if (isset($_GET['save_test'])) {
+    $token_id = $_GET['token_id'] ?? '';
+    $reg_item_id = ycdo_resolve_register_item_id($branch_id, $_GET['reg_item_id'] ?? '');
     if ($reg_item_id < 1) {
-        header('location: patient_by_token.php?token_id='.$token_id.'&msg=ERROR-INVALID-ITEM');
+        header('Location: patient_by_token.php?token_id=' . urlencode($token_id) . '&msg=ERROR-INVALID-ITEM');
         exit;
     }
     $item_id = get_item_id_by_register_item_id($reg_item_id);
@@ -59,28 +35,29 @@ if (isset($_GET['save_test']))
     $dose = $_GET['dose'];
     $feed = $_GET['feed'];
     $days = $_GET['days'];
-    if ($fix_dose == 0) 
-    {
-            $quantity = $dose * $days * $feed;
-    }
-    else
-    {
-            $quantity = $fix_dose;
-    }
     $insert = "INSERT INTO `select_by_doctor`
-    (`tokan_no`, `item_id`, `dose`,  `feed`,  `days`,  `user_id`,  `branch_id`, `fix_dose`, `created`, `items_table_id`) VALUES 
+    (`tokan_no`, `item_id`, `dose`,  `feed`,  `days`,  `user_id`,  `branch_id`, `fix_dose`, `created`, `items_table_id`) VALUES
     ('$token_id', '$reg_item_id', '$dose', '$feed', '$days', '$user_id','$branch_id', '$fix_dose', '$current_date', '$item_id')";
-        if (mysqli_query($con, $insert))        
-        { 
-            $token_doctor_id = get_doctor_id_by_token_no($token_id);
-            $query = "INSERT INTO `doctor_tokens`(`doctor_token`, `token_no`, `doctor_id`, `user_id`, `status`, `created`) VALUES (NULL, '$token_id', '$token_doctor_id', '$user_id', '1', '$current_date')";
-            if(mysqli_query($con, $query))
-            {
-                mysqli_query($con, "UPDATE tokans SET doctor_id = '$user_id'  WHERE id = '$token_id' ");
-            }
-            header('location: patient_by_token.php?token_id='.$token_id.'&days='.$days);
-            exit();
+    if (mysqli_query($con, $insert)) {
+        $token_doctor_id = get_doctor_id_by_token_no($token_id);
+        $query = "INSERT INTO `doctor_tokens`(`doctor_token`, `token_no`, `doctor_id`, `user_id`, `status`, `created`) VALUES (NULL, '$token_id', '$token_doctor_id', '$user_id', '1', '$current_date')";
+        if (mysqli_query($con, $query)) {
+            mysqli_query($con, "UPDATE tokans SET doctor_id = '$user_id'  WHERE id = '$token_id' ");
         }
+        header('Location: patient_by_token.php?token_id=' . urlencode($token_id) . '&days=' . urlencode((string) $days));
+        exit;
+    }
+}
+
+include 'includes/head.php';
+
+$role_title = '';
+$roles = "SELECT * FROM roles WHERE id IN (SELECT role_id FROM users WHERE id = '$user_id') ";
+$run_roles = mysqli_query($con, $roles);
+if (mysqli_num_rows($run_roles) == 1) {
+    while ($row_role = mysqli_fetch_array($run_roles)) {
+        $role_title = $row_role['title'];
+    }
 }
 ?>
     <title>OPD Patients - <?php echo $company_trademark; ?></title>
