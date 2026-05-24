@@ -27,22 +27,7 @@ $gynae_date_value = date('Y-m-d');
 </head>
 
 <body class="background_image">
-<div id="loadingSpinner" style="display: none;">
-    <div class = "container">
-        <div class = "row p-5 g-5">
-            <div class = "col text-center">
-                <div aria-busy="true" aria-describedby="progress-bar">
-                    <h2>LOADING...</h2>
-                    <p>Please Wait Untill Processing Completed.</p>
-                    <p>Data Processing...</p>
-                </div>
-                <progress id="progress-bar" aria-label="Content loading…"></progress>    
-                
-            </div>
-        </div>        
-    </div>
-</div>
-<div class="row" style="margin: 0px;" id = "submitBody">
+<div class="row" style="margin: 0px;">
 	<div class="col-md-12" style="text-align: center;background: lightgreen;"><label><h1><?php echo $company_name; ?> </h1></label></div>
 	<div class="col-md-3 background_whitesmoke">	<?php include 'left_navigation.php'; ?>	
     	<h3 style="margin-top: 350px;text-align: center;"><?php echo htmlspecialchars($bk_name); if ($bk_is_incharge == 2) { echo ' Incharge '; } ?>(<?php echo htmlspecialchars($role_title); ?>)</h3>
@@ -88,7 +73,7 @@ $gynae_date_value = date('Y-m-d');
                             </tr>
                         </thead>
                         <tbody>
-                            <form action = "gyane_total_record.php" method = "POST" target = "_blank" onsubmit="showProgress(); return true;">
+                            <form action = "gyane_total_record.php" method = "POST" target = "_blank">
                             <tr>
                                 <td>ALL CONTINUE RECORD FROM ONLINE</td>
                                 <td><select name = "br_id" class = "form-control" required><?php echo $gynae_branch_options; ?></select></td>
@@ -96,7 +81,7 @@ $gynae_date_value = date('Y-m-d');
                                 <td><input type = "submit" class = "btn btn-primary" name = "generate" value = "generate" /></td>
                             </tr>
                             </form>
-                            <form action = "print_progress_report_daily_gynae.php" method = "POST" target = "_blank" onsubmit="showProgress(); return true;">
+                            <form action = "print_progress_report_daily_gynae.php" method = "POST" target = "_blank">
                             <tr>
                                 <td>GYNAE PROGRESS REPORT</td>
                                 <td><select name = "br_id" class = "form-control" required><?php echo $gynae_branch_options; ?></select></td>
@@ -114,10 +99,4 @@ $gynae_date_value = date('Y-m-d');
 </div>
 </body>
 </html>
-<script>
-function showProgress() {
-  document.getElementById('submitBody').style.display = 'none';
-  document.getElementById('loadingSpinner').style.display = 'block';
-}
-</script>
 <?php mysqli_close($con); ?>
