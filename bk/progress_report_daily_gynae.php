@@ -1,6 +1,6 @@
-<?php 
-include 'includes/connect.php'; 
-include 'includes/head.php'; 
+<?php
+require_once __DIR__ . '/includes/connect.php';
+include 'includes/head.php';
 
 $roles = "SELECT * FROM roles WHERE id IN (SELECT role_id FROM users WHERE id = '$user_id') ";
 $run_roles = mysqli_query($con, $roles);
@@ -45,7 +45,7 @@ $gynae_date_value = date('Y-m-d');
 <div class="row" style="margin: 0px;" id = "submitBody">
 	<div class="col-md-12" style="text-align: center;background: lightgreen;"><label><h1><?php echo $company_name; ?> </h1></label></div>
 	<div class="col-md-3 background_whitesmoke">	<?php include 'left_navigation.php'; ?>	
-    	<h3 style="margin-top: 350px;text-align: center;"><?php echo $_SESSION['hr_name'];if($_SESSION['is_incharge'] == 2){ echo " Incharge ";} ?>(<?php echo $role_title; ?>)</h3>
+    	<h3 style="margin-top: 350px;text-align: center;"><?php echo htmlspecialchars($bk_name); if ($bk_is_incharge == 2) { echo ' Incharge '; } ?>(<?php echo htmlspecialchars($role_title); ?>)</h3>
     </div>
     <div class = "col-md-9">
         <div class = "row">
@@ -53,14 +53,11 @@ $gynae_date_value = date('Y-m-d');
                 <h2>GYNAE SECTION</h2>
             </div>
             <div class = "col-md-12">
+                <p class="text-muted">Select branch, then click a gestational-age report (filtered by months from LMP date).</p>
                 <div class="row p-3 align-items-end">
                     <div class="col-md-5">
                         <label for="gynae_filter_br_id">Branch</label>
                         <select id="gynae_filter_br_id" class="form-control" required><?php echo $gynae_branch_options; ?></select>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="gynae_filter_date">Date</label>
-                        <input type="date" id="gynae_filter_date" class="form-control" value="<?php echo $gynae_date_value; ?>" required />
                     </div>
                 </div>
                 <div class = "row p-3">
@@ -123,13 +120,12 @@ function showProgress() {
   document.getElementById('loadingSpinner').style.display = 'block';
 }
 function openGynaeReport(action) {
-  var br = document.getElementById('gynae_filter_br_id').value;
-  var date = document.getElementById('gynae_filter_date').value;
-  if (!br || !date) {
-    alert('Please select branch and date.');
+  var sel = document.getElementById('gynae_filter_br_id');
+  if (!sel || sel.value === '') {
+    alert('Please select branch.');
     return;
   }
-  window.location.href = action + '?br_id=' + encodeURIComponent(br) + '&date=' + encodeURIComponent(date);
+  window.open(action + '?br_id=' + encodeURIComponent(sel.value), '_blank');
 }
 </script>
 <?php mysqli_close($con); ?>

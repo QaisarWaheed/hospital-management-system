@@ -1,66 +1,92 @@
 <?php
-include 'includes/connect.php';
-require_once __DIR__ . '/../includes/report_helpers.php';
+require_once __DIR__ . '/includes/connect.php';
 
-$params = gynae_report_resolve_params($_GET, $_POST, (int) $bk_branch_id);
-$br_id = (int) $params['br_id'];
-$date = $params['date'];
-
+$br_id = isset($_GET['br_id']) ? (int) $_GET['br_id'] : 0;
+$report_date = date('Y-m-d');
 $start_date = '2025-03-31';
-$end_date = date('Y-m-d', strtotime('-1 month', strtotime(date('Y-m-d'))));
-$branch_filter = $br_id > 0 ? " AND gynae_register.branch_id = '$br_id' " : '';
+$end_date = date('Y-m-d', strtotime('-1 month'));
 
-$select_dr = "SELECT gynae_register.id, gynae_register.token_no, gynae_register.next_visit_date, gynae_register.weeks, patients.id, patients.name, gynae_register.phone, gynae_register.created, branchs.tag_name, users.u_name, COUNT(gynae_register_history.id) AS total_visits FROM `gynae_register` INNER JOIN users ON register_by_doctor = users.id INNER JOIN branchs ON gynae_register.branch_id = branchs.id LEFT JOIN gynae_register_history ON gynae_register.id = gynae_register_history.gynae_register_id INNER JOIN tokans ON gynae_register.token_no = tokans.id INNER JOIN patients ON tokans.patient_id = patients.id WHERE gynae_register.created > '$start_date' AND gynae_register.created <= '$end_date' $branch_filter AND gynae_register.status = '1' AND gynae_register.id NOT IN (SELECT gynae_register_history.gynae_register_id FROM gynae_register_history) GROUP BY gynae_register.id ORDER BY weeks";
+$branch_filter = $br_id > 0 ? " AND gynae_register.branch_id = '{$br_id}' " : '';
+
+$select_dr = "SELECT gynae_register.id, gynae_register.token_no, gynae_register.next_visit_date, gynae_register.weeks, patients.name, gynae_register.phone, gynae_register.created, branchs.tag_name, users.u_name, COUNT(gynae_register_history.id) AS total_visits
+FROM gynae_register
+INNER JOIN users ON users.id = gynae_register.doctor_id
+INNER JOIN branchs ON gynae_register.branch_id = branchs.id
+LEFT JOIN gynae_register_history ON gynae_register.id = gynae_register_history.gynae_register_id
+INNER JOIN tokans ON gynae_register.token_no = tokans.id
+INNER JOIN patients ON tokans.patient_id = patients.id
+WHERE gynae_register.created > '$start_date'
+AND gynae_register.created <= '$end_date'
+AND gynae_register.status = '1'
+AND gynae_register.id NOT IN (SELECT gynae_register_history.gynae_register_id FROM gynae_register_history)
+{$branch_filter}
+GROUP BY gynae_register.id
+ORDER BY gynae_register.weeks";
+
+$run_dr = mysqli_query($con, $select_dr);
 ?>
 <!DOCTYPE html>
 <html>
 <head>
 	<meta charset="utf-8">
-	<meta lang="en">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" type="text/css" href="css/nav_style.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"> 
-    <script src="js/jquery.min.js"></script>    
-    <script src="js/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
-    <title>GYNAE PROGRESS <?php echo ycdo_safe_date_format($date, 'd-m-Y'); ?><?php echo get_branch_tag_name_by_id($br_id); ?></title>
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <title>DISCONTINUED GYNAE - <?php echo htmlspecialchars($company_trademark); ?></title>
 <style>
-@media print { @page { size: 210mm 297mm; } body { font-size:xx-small; } }   
+@media print {
+    @page { size: 210mm 297mm; }
+    body { font-size: xx-small; }
+}
 </style>
 </head>
 <body>
-<div class="row" id = "submitBody">
-	<div class="col-md-12" style="text-align: center;background: lightgreen;"><label><h1>YCDO </h1></label></div>
+<div class="row">
+	<div class="col-md-12 text-center bg-success py-2"><h1>YCDO</h1></div>
 	<div class="col-md-12 background_whitesmoke"><?php include 'navigation_top.php'; ?></div>
-<table border = "solid" class = "table table-bordered py-3">
-<caption style = "text-align: center; caption-side: top; color: black;">
-    <h2><?php echo $company_name; ?></h2>
-    <h2><?php echo get_branch_name_by($br_id); ?></h2>
-    <h3>GYNAE PROGRESS <?php echo ycdo_safe_date_format($date, 'd-m-Y'); ?></h3>
+<table border="solid" class="table table-bordered py-3">
+<caption class="text-center">
+    <h2><?php echo htmlspecialchars($company_name); ?></h2>
+    <h2><?php echo $br_id > 0 ? htmlspecialchars(get_branch_name_by($br_id)) : 'ALL BRANCHES'; ?></h2>
+    <h3>DISCONTINUED (no follow-up visit recorded)</h3>
+    <p>Report date: <?php echo ycdo_safe_date_format($report_date, 'd-m-Y', $report_date); ?></p>
 </caption>
     <thead>
         <tr>
-            <th>S#</th><th>ID</th><th>TOKEN</th><th>DATE</th><th>PATIENT</th><th>PHONE</th><th>BRANCH</th><th>DOCTOR</th><th>E.E.D</th><th>VISIT DATE</th><th>TOTAL VISITS</th>
+            <th>S#</th>
+            <th>ID</th>
+            <th>TOKEN</th>
+            <th>DATE</th>
+            <th>PATIENT</th>
+            <th>PHONE</th>
+            <th>BRANCH</th>
+            <th>DOCTOR</th>
+            <th>LMP / EDD</th>
+            <th>VISIT DATE</th>
+            <th>TOTAL VISITS</th>
         </tr>
     </thead>
     <tbody>
 <?php
 $s = 0;
-$run_dr = mysqli_query($con, $select_dr);
-if(mysqli_num_rows($run_dr) > 0)
-{
-    while($row_dr = mysqli_fetch_array($run_dr))
-    {
+if ($run_dr && mysqli_num_rows($run_dr) > 0) {
+    while ($row_dr = mysqli_fetch_array($run_dr)) {
         $s++;
-        echo '<tr style="text-align: center;">
-            <td>'.$s.'</td><td>'.$row_dr['id'].'</td><td>'.$row_dr['token_no'].'</td>
-            <td>'.ycdo_safe_date_format($row_dr['created'], 'd-m-y').'</td><td>'.$row_dr['name'].'</td><td>'.$row_dr['phone'].'</td>
-            <td>'.$row_dr['tag_name'].'</td><td>'.$row_dr['u_name'].'</td>
-            <td>'.ycdo_safe_date_format($row_dr['weeks'], 'd-m-y').'</td>
-            <td>'.ycdo_safe_date_format($row_dr['next_visit_date'], 'd-m-y').'</td><td>'.$row_dr['total_visits'].'</td>
-        </tr>';
+        echo '<tr class="text-center">';
+        echo '<td>' . $s . '</td>';
+        echo '<td>' . (int) $row_dr['id'] . '</td>';
+        echo '<td>' . htmlspecialchars($row_dr['token_no']) . '</td>';
+        echo '<td>' . ycdo_safe_date_format($row_dr['created'], 'd-m-y', '') . '</td>';
+        echo '<td>' . htmlspecialchars($row_dr['name']) . '</td>';
+        echo '<td>' . htmlspecialchars($row_dr['phone']) . '</td>';
+        echo '<td>' . htmlspecialchars($row_dr['tag_name']) . '</td>';
+        echo '<td>' . htmlspecialchars($row_dr['u_name']) . '</td>';
+        echo '<td>' . ycdo_safe_date_format($row_dr['weeks'], 'd-m-y', '') . '</td>';
+        echo '<td>' . ycdo_safe_date_format($row_dr['next_visit_date'], 'd-m-y', '') . '</td>';
+        echo '<td>' . (int) $row_dr['total_visits'] . '</td>';
+        echo '</tr>';
     }
+} else {
+    echo '<tr><td colspan="11">No discontinued records found.</td></tr>';
 }
 ?>
     </tbody>
@@ -68,4 +94,7 @@ if(mysqli_num_rows($run_dr) > 0)
 </div>
 </body>
 </html>
-<?php mysqli_close($con); ?>
+<?php
+if ($con instanceof mysqli) {
+    mysqli_close($con);
+}
