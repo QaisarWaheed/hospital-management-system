@@ -57,7 +57,7 @@ $ip_address = get_client_ip();
     <script>
         //if browser support service worker
         if ('serviceWorker' in navigator) {
-          navigator.serviceWorker.register('sw.js?v=2').then(function () {
+          navigator.serviceWorker.register('sw.js?v=3').then(function () {
             return navigator.serviceWorker.ready;
           }).then(function (reg) {
             if (reg && reg.update) {

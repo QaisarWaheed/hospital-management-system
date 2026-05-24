@@ -103,6 +103,24 @@ function ycdo_sql_day_range($date)
 /**
  * Safe date formatting for PHP 8.2 (date_create false no longer allowed in date_format).
  */
+/**
+ * Value safe for HTML &lt;input type="date"&gt; (Y-m-d).
+ */
+function ycdo_date_input_value($value, $fallback = null)
+{
+    if ($fallback === null) {
+        $fallback = date('Y-m-d');
+    }
+    if ($value === null || $value === '' || $value === '0000-00-00' || $value === '0000-00-00 00:00:00') {
+        return $fallback;
+    }
+    if (preg_match('/^(\d{4}-\d{2}-\d{2})/', (string) $value, $m)) {
+        return $m[1];
+    }
+
+    return $fallback;
+}
+
 function ycdo_safe_date_format($value, $format = 'd-M-Y', $default = '')
 {
     if ($value === null || $value === '' || $value === '0000-00-00' || $value === '0000-00-00 00:00:00') {

@@ -1,10 +1,7 @@
-<?php include 'includes/connect.php'; 
-if(isset($_GET['select_visit_date']) && $_GET['select_visit_date'] != '')
-{
-    $select_visit_date = $_GET['select_visit_date'];
-}
-if (isset($_POST['save'])) 
-{
+<?php
+include 'includes/connect.php';
+
+if (isset($_POST['save'])) {
     $token_no = $_POST['token_no'];
     $weeks = $_POST['weeks'];
     $remarks = $_POST['remarks'];
@@ -27,21 +24,29 @@ if (isset($_POST['save']))
     (`id`, `token_no`, `phone`, `weeks`, `gravide`, `next_visit_date`, `update_by`, `status`, `remarks`, `created`, `branch_id`, `doctor_id`, `user_id`, `husband_name`, `husband_phone`, `lmp`, `years_marriage`, `height`, `weight`, `blood_group`, `husband_blood_group`, `menstrual_cycle`, `psh`, `pmh`, `register_by_doctor`)
     VALUES
     (NULL, '$token_no', '$phone', '$weeks', '$gravida', '$next_visit_date', '$user_id', '1', '$remarks', '$current_date', '$branch_id', '$doctor_id', '$user_id', '$husband_name', '$husband_phone', '$lmp', '$years_marriage', '$height', '$weight', '$blood_group', '$husband_blood_group', '$menstrual_cycle', '$psh', '$pmh', '$doctor_id')";
-    if(mysqli_query($con, $insert))
-    { 
-    	$last_id = mysqli_insert_id($con);
-    ?>
-     <script>
-         window.open("gynae_registeration_file_print.php?reg_id=<?php echo $last_id; ?>", "_blank", "toolbar=no,scrollbars=no,resizable=no,top=500,left=500,width=400,height=400,status=no");
-         window.location.replace("gynae_registeration.php");
-     </script>   
-<?php 
-    exit(0);
+    if (mysqli_query($con, $insert)) {
+        $last_id = (int) mysqli_insert_id($con);
+        $print_url = 'gynae_registeration_file_print.php?reg_id=' . $last_id;
+        ?>
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Saving…</title></head>
+<body>
+<script>
+window.open(<?php echo json_encode($print_url); ?>, '_blank', 'toolbar=no,scrollbars=no,resizable=no,width=400,height=400');
+window.location.replace('gynae_registeration.php');
+</script>
+</body>
+</html>
+<?php
+        exit;
+    }
+    header('Location: gynae_registeration_file_add.php?msg=ERROR-SAVE');
+    exit;
 }
-    exit(0);
-}
+
+include 'includes/head.php';
 ?>
-<?php include 'includes/head.php'; ?>
 	<title>Patient Registeration - <?php echo $company_trademark; ?></title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>

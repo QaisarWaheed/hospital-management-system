@@ -1,14 +1,12 @@
-<?php 
-include 'includes/connect.php'; 
-if(isset($_GET['select_visit_date']) && $_GET['select_visit_date'] != '')
-{
-    $select_visit_date = $_GET['select_visit_date'];
-}
+<?php
+include 'includes/connect.php';
 
-if(isset($_GET['search_token']) && $_GET['search_token'] != '')
-{
-    $search_token = $_GET['search_token'];
-}
+$select_visit_date = isset($_GET['select_visit_date']) && $_GET['select_visit_date'] !== ''
+    ? ycdo_date_input_value($_GET['select_visit_date'])
+    : date('Y-m-d');
+$search_token = isset($_GET['search_token']) && $_GET['search_token'] !== ''
+    ? preg_replace('/\D/', '', (string) $_GET['search_token'])
+    : '';
 ?>
 <?php include 'includes/head.php'; ?>
 	<title>Patient Registeration - <?php echo $company_trademark; ?></title>
@@ -34,7 +32,7 @@ if(isset($_GET['search_token']) && $_GET['search_token'] != '')
 			                <th>Sr</th>
 			                <th>
 			                    <form>
-			                        <input maxlength = "11" onchange = "this.form.submit()" type = "number" name = "search_token" value = <?php if(isset($search_token)){echo '"'.$search_token.'"';}else{echo '"'.date('Y-m-d').'"';} ?> />
+			                        <input maxlength="11" onchange="this.form.submit()" type="number" name="search_token" value="<?php echo htmlspecialchars($search_token, ENT_QUOTES, 'UTF-8'); ?>" />
 			                    </form>
 			                    Token
 		                    </th>
@@ -45,7 +43,7 @@ if(isset($_GET['search_token']) && $_GET['search_token'] != '')
 			                <th>Gravida</th>
 			                <th>
 			                    <form>
-			                        <input onchange = "this.form.submit()" type = "date" name = "select_visit_date" value = <?php if(isset($select_visit_date)){echo '"'.$select_visit_date.'"';}else{echo '"'.date('Y-m-d').'"';} ?> />
+			                        <input onchange="this.form.submit()" type="date" name="select_visit_date" value="<?php echo htmlspecialchars(ycdo_date_input_value($select_visit_date), ENT_QUOTES, 'UTF-8'); ?>" />
 			                    </form>
 			                    Next Visit
 		                    </th>

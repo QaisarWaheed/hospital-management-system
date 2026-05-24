@@ -1,5 +1,5 @@
-// Service worker v2 — login shell cache only; never intercept BK or report URLs.
-var CACHE_NAME = 'sw-cache-v2';
+// Service worker v3 — cache login page only; never intercept app module PHP pages.
+var CACHE_NAME = 'sw-cache-v3';
 
 self.addEventListener('install', function (event) {
   self.skipWaiting();
@@ -26,10 +26,13 @@ self.addEventListener('activate', function (event) {
 
 function shouldBypassServiceWorker(url) {
   var path = url.pathname;
-  if (path.indexOf('/bk/') !== -1) {
+  if (/\.php$/i.test(path)) {
     return true;
   }
-  if (/print_|report_query_timing|comparison_report|progress_report/i.test(path)) {
+  if (/\/(bk|dr|hr|fr|sm|mm|lab|pharmecy)\//i.test(path)) {
+    return true;
+  }
+  if (/print_|report_query_timing|comparison_report|progress_report|gynae_registeration/i.test(path)) {
     return true;
   }
   return false;
@@ -41,6 +44,10 @@ self.addEventListener('fetch', function (event) {
   }
   var url = new URL(event.request.url);
   if (shouldBypassServiceWorker(url)) {
+    return;
+  }
+  var path = url.pathname.replace(/\/+$/, '') || '/';
+  if (path !== '/index.php' && path !== '/') {
     return;
   }
   event.respondWith(
