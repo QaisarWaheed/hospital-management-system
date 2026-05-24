@@ -4,7 +4,7 @@ include 'includes/head.php';
 
 $roles = "SELECT * FROM roles WHERE id IN (SELECT role_id FROM users WHERE id = '$user_id') ";
 $run_roles = mysqli_query($con, $roles);
-if(mysqli_num_rows($run_roles) == 1)
+if ($run_roles && mysqli_num_rows($run_roles) == 1)
 {
     while($row_role = mysqli_fetch_array($run_roles))
     {
@@ -19,7 +19,8 @@ else
 if( isset($_POST['date']) && $_POST['date'] != '')
 {
     $date = $_POST['date'];
-    echo '<script>window.open("print_progess_report.php?date='.$date.'", "PROGRESS REPORT", "width=3000,height=3000");</script>';
+    $print_url = 'print_progess_report.php?' . http_build_query(array('date' => $date));
+    echo '<script>window.open(' . json_encode($print_url) . ', "PROGRESS REPORT", "width=1200,height=800");</script>';
 }
 ?>
 	<title>DAILY PROGRESS - <?php echo $company_trademark; ?></title>
@@ -34,7 +35,7 @@ if( isset($_POST['date']) && $_POST['date'] != '')
 <div class="row" style="margin: 0px;">
 	<div class="col-md-12" style="text-align: center;background: lightgreen;"><label><h1><?php echo $company_name; ?> </h1></label></div>
 	<div class="col-md-3 background_whitesmoke">	<?php include 'left_navigation.php'; ?>	
-    	<h3 style="margin-top: 350px;text-align: center;"><?php echo $_SESSION['dr_name'];if($_SESSION['is_incharge'] == 2){ echo " Incharge ";} ?>(<?php echo $role_title; ?>)</h3>
+    	<h3 style="margin-top: 350px;text-align: center;"><?php echo htmlspecialchars($bk_name); if ($bk_is_incharge == 2) { echo ' Incharge '; } ?>(<?php echo htmlspecialchars($role_title); ?>)</h3>
     </div>
     <div class = "col-md-9">
         <form METHOD = "POST" class = "container">

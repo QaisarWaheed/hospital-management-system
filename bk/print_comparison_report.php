@@ -1,31 +1,42 @@
 <?php
-include 'includes/connect.php';
+require_once __DIR__ . '/includes/connect.php';
 require_once __DIR__ . '/includes/comparison_report_helpers.php';
 
-set_time_limit(120);
+@set_time_limit(180);
+if (function_exists('ini_set')) {
+    @ini_set('max_execution_time', '180');
+}
 
 if (!isset($_GET['s'], $_GET['e'])) {
-    header('Location: logout.php');
-    exit;
+    http_response_code(400);
+    exit('Month range required.');
 }
-$first_month = (string) $_GET['s'];
-$second_month = (string) $_GET['e'];
 
-$first_stats = comparison_branch_month_stats($con, $first_month);
-$second_stats = comparison_branch_month_stats($con, $second_month);
+$first_month = substr((string) $_GET['s'], 0, 7);
+$second_month = substr((string) $_GET['e'], 0, 7);
+
+header('Content-Type: text/html; charset=utf-8');
+echo '<html><head><meta charset="utf-8"><title>Comparison Report</title></head><body><p>Loading comparison…</p>';
+if (function_exists('ob_flush')) {
+    @ob_flush();
+}
+@flush();
+
+$pair = comparison_two_month_stats($con, $first_month, $second_month);
+$first_stats = $pair['first'];
+$second_stats = $pair['second'];
+
+$month1_label = ycdo_safe_date_format($first_month . '-01', 'M-y', $first_month);
+$month2_label = ycdo_safe_date_format($second_month . '-01', 'M-y', $second_month);
 ?>
-<html>
-<head>
-	<title>Comparison Report - <?php echo htmlspecialchars($company_trademark); ?></title>
-	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-</head>
-<body style="text-transform: uppercase;">
+<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+<div style="text-transform: uppercase;">
     <div class="row">
         <div class="col-md-12" style="text-align: center;">
-            <h1>Comparison All Branches — <?php echo ycdo_safe_date_format($first_month . '-01', 'F Y', $first_month); ?> &amp; <?php echo ycdo_safe_date_format($second_month . '-01', 'F Y', $second_month); ?></h1>
+            <h1>Comparison All Branches — <?php echo htmlspecialchars($month1_label); ?> &amp; <?php echo htmlspecialchars($month2_label); ?></h1>
         </div>
 <?php
-$select_branch = "SELECT * FROM `branchs` WHERE `status` = 1 ORDER BY id";
+$select_branch = "SELECT id, address FROM branchs WHERE status = 1 ORDER BY id";
 $run_branch = mysqli_query($con, $select_branch);
 if ($run_branch && mysqli_num_rows($run_branch) > 0) {
     while ($row_branch = mysqli_fetch_array($run_branch)) {
@@ -59,14 +70,14 @@ if ($run_branch && mysqli_num_rows($run_branch) > 0) {
                             <th>COLLECTION</th>
                         </tr>
                         <tr>
-                            <th><?php echo ycdo_safe_date_format($first_month . '-01', 'M-y', $first_month); ?></th>
+                            <th><?php echo htmlspecialchars($month1_label); ?></th>
                             <th><?php echo $patient_first_month; ?> + <?php echo $cons_first_month; ?> => <?php echo (int) ($patient_first_month + $cons_first_month); ?></th>
                             <th><?php echo $lab_first_month; ?></th>
                             <th><?php echo $select_procedure; ?></th>
                             <th><?php echo $collection_first_month; ?></th>
                         </tr>
                         <tr>
-                            <th><?php echo ycdo_safe_date_format($second_month . '-01', 'M-y', $second_month); ?></th>
+                            <th><?php echo htmlspecialchars($month2_label); ?></th>
                             <th><?php echo $patient_second_month; ?> + <?php echo $cons_second_month; ?> => <?php echo (int) ($patient_second_month + $cons_second_month); ?></th>
                             <th><?php echo $lab_second_month; ?></th>
                             <th><?php echo $select_procedure_2; ?></th>
@@ -92,6 +103,10 @@ if ($run_branch && mysqli_num_rows($run_branch) > 0) {
         </div>
 <?php } ?>
     </div>
+</div>
 </body>
 </html>
-<?php mysqli_close($con); ?>
+<?php
+if ($con instanceof mysqli) {
+    mysqli_close($con);
+}

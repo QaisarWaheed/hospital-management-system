@@ -10,6 +10,18 @@ if (function_exists('ini_set')) {
 $req = progress_report_resolve_request($con);
 $date = $req['date'];
 
+// Send page shell immediately so proxies see activity while queries run.
+if (function_exists('apache_setenv')) {
+    @apache_setenv('no-gzip', '1');
+}
+@ini_set('zlib.output_compression', '0');
+header('Content-Type: text/html; charset=utf-8');
+echo '<html><head><meta charset="utf-8"><title>Progress Report</title></head><body><p>Loading report…</p>';
+if (function_exists('ob_flush')) {
+    @ob_flush();
+}
+@flush();
+
 $summary = progress_organization_daily_branch_summary($con, $date);
 $branch_ids = $summary['branch_ids'];
 $branch_tags = $summary['branch_tags'];
@@ -26,13 +38,6 @@ $total_admission = 0;
 $total_gynae = 0;
 $total_gynae_system = 0;
 ?>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>PRINT PROGRESS REPORT</title>
-</head>
-<body>
-
 <table border="solid">
 <caption>
     <h2><?php echo htmlspecialchars($company_name); ?></h2>

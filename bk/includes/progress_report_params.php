@@ -640,27 +640,24 @@ function progress_opd_count_by_branch_day($con, $date_esc)
 }
 
 /**
- * Single scan for all item_by_doctor metrics (org daily progress report).
+ * Single scan on item_by_doctor by category (no heavy item_register join).
  *
  * @return array<int, array<string, int>>
  */
 function progress_item_metrics_by_branch_day($con, $date_esc)
 {
-    $sql = "SELECT ibd.branch_id,
-        COUNT(CASE WHEN ir.item_id IN (489, 849, 850, 1415, 1327, 1139, 1141, 1477, 1154) THEN 1 END) AS cons,
-        COUNT(CASE WHEN ir.item_id IN (444, 448, 452, 456, 457, 460, 461, 945, 1124, 1125, 1128, 1131, 1132, 1145, 1186, 1285, 1289, 1293, 1297, 1301) THEN 1 END) AS admissions,
-        COUNT(CASE WHEN i.category_id = 3 THEN 1 END) AS procedures,
-        COUNT(CASE WHEN ir.item_id IN (472, 1118, 1313) THEN 1 END) AS svds,
-        COUNT(CASE WHEN ir.item_id IN (473, 1119, 1314) THEN 1 END) AS dncs,
-        COUNT(CASE WHEN ir.item_id IN (476, 477, 478, 479, 1138, 1185, 1161, 1162, 1163, 1164, 1184, 1317, 1318, 1319, 1411, 1435) THEN 1 END) AS usgs,
-        COUNT(CASE WHEN ir.item_id IN (483, 1159, 1321, 1414, 1576) THEN 1 END) AS gynae
-    FROM item_by_doctor ibd
-    INNER JOIN tokans t ON t.id = ibd.tokan_no AND t.branch_id = ibd.branch_id
-        AND t.status = 1 AND DATE(t.created) = '$date_esc'
-    INNER JOIN item_register_to_branches ir ON ibd.item_id = ir.id AND ir.branch_id = ibd.branch_id
-    LEFT JOIN items i ON ir.item_id = i.id
-    WHERE ibd.status = '2'
-    GROUP BY ibd.branch_id";
+    $sql = "SELECT branch_id,
+        COUNT(CASE WHEN category_id = 29 THEN 1 END) AS cons,
+        COUNT(CASE WHEN category_id = 40 THEN 1 END) AS admissions,
+        COUNT(CASE WHEN category_id = 3 THEN 1 END) AS procedures,
+        COUNT(CASE WHEN category_id = 37 THEN 1 END) AS svds,
+        COUNT(CASE WHEN category_id = 38 THEN 1 END) AS dncs,
+        COUNT(CASE WHEN category_id = 39 THEN 1 END) AS usgs,
+        COUNT(CASE WHEN category_id = 41 THEN 1 END) AS gynae
+    FROM item_by_doctor
+    WHERE status = 2 AND DATE(created) = '$date_esc'
+        AND category_id IN (3, 29, 37, 38, 39, 40, 41)
+    GROUP BY branch_id";
 
     $stats = array();
     $run = mysqli_query($con, $sql);
