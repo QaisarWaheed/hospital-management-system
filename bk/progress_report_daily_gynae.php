@@ -53,25 +53,27 @@ $gynae_date_value = date('Y-m-d');
                 <h2>GYNAE SECTION</h2>
             </div>
             <div class = "col-md-12">
-                <p class="text-muted">Select branch, then open a gestational-age report (months from LMP date).</p>
-                <div class="row p-3 align-items-end">
-                    <div class="col-md-5">
-                        <label for="gynae_filter_br_id">Branch</label>
-                        <select id="gynae_filter_br_id" class="form-control" required><?php echo $gynae_branch_options; ?></select>
-                    </div>
-                </div>
                 <div class = "row p-3">
-                    <?php
-                    $gynae_forms = array(
-                        array('action' => 'gyane_report_greater_then_eight_month.php', 'label' => '> 8 MONTH', 'class' => 'btn-dark'),
-                        array('action' => 'gyane_report_discontinued.php', 'label' => 'DISCONTINUED', 'class' => 'btn-danger'),
-                    );
-                    foreach ($gynae_forms as $gynae_form) {
-                    ?>
-                    <div class="col mb-2">
-                        <button type="button" class="btn <?php echo htmlspecialchars($gynae_form['class'], ENT_QUOTES, 'UTF-8'); ?> btn-block w-100" onclick="openGynaeReport('<?php echo htmlspecialchars($gynae_form['action'], ENT_QUOTES, 'UTF-8'); ?>')"><?php echo htmlspecialchars($gynae_form['label'], ENT_QUOTES, 'UTF-8'); ?></button>
+                    <div class = "col">
+                        <form method = "GET" action = "gyane_report_less_then_four_month.php" target = "_blank">
+                            <input type = "submit" value = "< 4 MONTH" class = "btn btn-success btn-block" />
+                        </form>
                     </div>
-                    <?php } ?>
+                    <div class = "col">
+                        <form method = "GET" action = "gyane_report_less_then_four_month_and_greater_then_eight_month.php" target = "_blank">
+                            <input type = "submit" value = "> 4 MONTH & < 8 MONTH" class = "btn btn-info btn-block" />
+                        </form>
+                    </div>
+                    <div class = "col">
+                        <form method = "GET" action = "gyane_report_greater_then_eight_month.php" target = "_blank">
+                            <input type = "submit" value = "> 8 MONTH" class = "btn btn-dark btn-block" />
+                        </form>
+                    </div>
+                    <div class = "col">
+                        <form method = "GET" action = "gyane_report_discontinued.php" target = "_blank">
+                            <input type = "submit" value = "DISCONTINUED" class = "btn btn-danger btn-block" />
+                        </form>
+                    </div>
                 </div>
             </div>
             <div class = "col-md-12">
@@ -86,7 +88,7 @@ $gynae_date_value = date('Y-m-d');
                             </tr>
                         </thead>
                         <tbody>
-                            <form action = "gyane_total_record.php" method = "POST" target = "_blank">
+                            <form action = "gyane_total_record.php" method = "POST" target = "_blank" onsubmit="showProgress(); return true;">
                             <tr>
                                 <td>ALL CONTINUE RECORD FROM ONLINE</td>
                                 <td><select name = "br_id" class = "form-control" required><?php echo $gynae_branch_options; ?></select></td>
@@ -94,7 +96,7 @@ $gynae_date_value = date('Y-m-d');
                                 <td><input type = "submit" class = "btn btn-primary" name = "generate" value = "generate" /></td>
                             </tr>
                             </form>
-                            <form action = "print_progress_report_daily_gynae.php" method = "POST" target = "_blank">
+                            <form action = "print_progress_report_daily_gynae.php" method = "POST" target = "_blank" onsubmit="showProgress(); return true;">
                             <tr>
                                 <td>GYNAE PROGRESS REPORT</td>
                                 <td><select name = "br_id" class = "form-control" required><?php echo $gynae_branch_options; ?></select></td>
@@ -116,14 +118,6 @@ $gynae_date_value = date('Y-m-d');
 function showProgress() {
   document.getElementById('submitBody').style.display = 'none';
   document.getElementById('loadingSpinner').style.display = 'block';
-}
-function openGynaeReport(action) {
-  var sel = document.getElementById('gynae_filter_br_id');
-  if (!sel || sel.value === '') {
-    alert('Please select branch.');
-    return;
-  }
-  window.open(action + '?br_id=' + encodeURIComponent(sel.value), '_blank');
 }
 </script>
 <?php mysqli_close($con); ?>
