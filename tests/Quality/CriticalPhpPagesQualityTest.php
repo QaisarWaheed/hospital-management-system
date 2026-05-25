@@ -139,13 +139,14 @@ final class CriticalPhpPagesQualityTest extends TestCase
         $this->assertStringNotContainsString('target="_blank"', $contents);
     }
 
-    public function testPrintSummaryLoginSetsBrIdFromBId(): void
+    public function testPrintSummaryLoginResolvesBranchFromParams(): void
     {
         $path = dirname(__DIR__, 2) . '/fr/print_summary_login.php';
         $contents = file_get_contents($path);
         $this->assertIsString($contents);
-        $this->assertStringContainsString('$br_id = $b_id', $contents);
-        $this->assertStringContainsString("?? \$_GET['u']", $contents);
+        $this->assertStringContainsString('summary_login_report_params', $contents);
+        $this->assertStringContainsString("\$b_id = \$loginParams['branch_id']", $contents);
+        $this->assertStringContainsString('$b_id = (int) $b_id', $contents);
     }
 
     public function testAccountMonthReportsDoNotUseCalendarExtension(): void
