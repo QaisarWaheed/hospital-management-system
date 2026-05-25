@@ -1,3 +1,6 @@
+<?php
+$lab_manager_login_is_admin = (int) ($lab_manager_login_is_admin ?? ($_SESSION['lab_manager_login_is_admin'] ?? 0));
+?>
 <nav>
 	<ul id="nav_1">
 		<li>

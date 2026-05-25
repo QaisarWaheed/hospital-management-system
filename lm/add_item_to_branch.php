@@ -1,4 +1,6 @@
-<?php include 'includes/connect.php'; 
+<?php
+include '../lab/includes/config.php';
+include 'connect.php'; 
 if (isset($_POST['save'])) {
 	$item_id = $_POST['item_id'];
 	$branch_idd = $_POST['branch_idd'];
@@ -45,7 +47,7 @@ if (isset($_POST['save'])) {
 	}
 }
 ?>
-<?php include 'includes/head.php'; ?>
+<?php include '../lab/includes/head.php'; ?>
 	<title>Add Item - <?php echo $company_trademark; ?></title>
 </head>
 
