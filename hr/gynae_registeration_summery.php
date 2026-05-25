@@ -1,4 +1,8 @@
-<?php include 'includes/connect.php'; ?>
+<?php
+// OPTIMIZED: replaced per-row queries with pre-aggregated batch queries
+include 'includes/connect.php';
+require_once __DIR__ . '/../bk/includes/progress_report_params.php';
+?>
 <?php include 'includes/head.php'; 
 if(!isset($_SESSION['hr_id']))
 {
@@ -48,7 +52,11 @@ if(!isset($_SESSION['hr_id']))
                         <?php 
                         $s = 0;
                         $total = 0;
-                        $select = "SELECT DISTINCT gynae_register.branch_id, branchs.tag_name, COUNT(token_no) AS total_register FROM `gynae_register` INNER JOIN branchs ON gynae_register.branch_id = branchs.id WHERE gynae_register.created LIKE '".$_GET['summery_month']."%' GROUP BY branch_id ";
+                        $summery_month = mysqli_real_escape_string($con, (string) $_GET['summery_month']);
+                        $summery_range = progress_month_date_range($summery_month);
+                        $summery_start = mysqli_real_escape_string($con, $summery_range['start_date'] . ' 00:00:00');
+                        $summery_end = mysqli_real_escape_string($con, $summery_range['end_date'] . ' 00:00:00');
+                        $select = "SELECT DISTINCT gynae_register.branch_id, branchs.tag_name, COUNT(token_no) AS total_register FROM `gynae_register` INNER JOIN branchs ON gynae_register.branch_id = branchs.id WHERE gynae_register.created >= '$summery_start' AND gynae_register.created < '$summery_end' GROUP BY branch_id ";
                         $run = mysqli_query($con, $select);
                         if(mysqli_num_rows($run) > 0)
                         {

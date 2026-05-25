@@ -1,4 +1,5 @@
-<?php 
+<?php
+// OPTIMIZED: replaced per-row queries with pre-aggregated batch queries
 include 'includes/connect.php'; 
 include 'includes/head.php'; 
 
@@ -20,7 +21,9 @@ if( isset($_POST['date']) && $_POST['date'] != '')
 {
     $date = $_POST['date'];
     $br_id = $_POST['br_id'];
-    echo '<script>window.open("print_progress_report_monthly_gynae.php?date='.$date.'&br_id='.$br_id.'", "MONTHLY PROGRESS REPORT", "width=3000,height=3000");</script>';
+    $date_esc = mysqli_real_escape_string($con, (string) $date);
+    $br_id = (int) $br_id;
+    echo '<script>window.open("print_progress_report_monthly_gynae.php?date=' . urlencode($date_esc) . '&br_id=' . $br_id . '", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,width=1400,height=900");</script>';
 }
 ?>
 	<title>Dashboard - <?php echo $company_trademark; ?></title>

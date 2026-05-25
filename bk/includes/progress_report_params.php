@@ -235,6 +235,290 @@ function progress_gynae_report_doctor_ids($con, $br_id, $month_like)
     return $ids;
 }
 
+/**
+ * @return array<int, array<int, int>> branch_id => doctor_id => count
+ */
+function progress_map_branch_doctor_int($con, $sql)
+{
+    $map = array();
+    $run = mysqli_query($con, $sql);
+    if ($run) {
+        while ($row = mysqli_fetch_assoc($run)) {
+            $bid = (int) $row['branch_id'];
+            $did = (int) $row['doctor_id'];
+            if (!isset($map[$bid])) {
+                $map[$bid] = array();
+            }
+            $map[$bid][$did] = (int) $row['cnt'];
+        }
+    }
+    return $map;
+}
+
+/**
+ * All branches: item_by_doctor tokan row counts by doctor.
+ *
+ * @return array<int, array<int, int>>
+ */
+function progress_gynae_org_ibd_tokan_counts($con, $like, $item_ids_sql)
+{
+    $date_clause = progress_sql_date_clause($con, $like, 't.created');
+    $sql = "SELECT ibd.branch_id, ibd.doctor_id, COUNT(ibd.tokan_no) AS cnt
+        FROM item_by_doctor ibd
+        INNER JOIN tokans t ON t.id = ibd.tokan_no AND t.branch_id = ibd.branch_id
+        INNER JOIN item_register_to_branches ir ON ibd.item_id = ir.id AND ir.branch_id = ibd.branch_id
+        WHERE ibd.status = '2' AND t.status = 1 AND $date_clause
+        AND ir.item_id IN ($item_ids_sql)
+        GROUP BY ibd.branch_id, ibd.doctor_id";
+    return progress_map_branch_doctor_int($con, $sql);
+}
+
+/**
+ * @return array<int, array<int, int>>
+ */
+function progress_gynae_org_register_counts($con, $like)
+{
+    $date_clause = progress_sql_date_clause($con, $like);
+    $sql = "SELECT branch_id, doctor_id, COUNT(*) AS cnt FROM gynae_register
+        WHERE $date_clause
+        GROUP BY branch_id, doctor_id";
+    return progress_map_branch_doctor_int($con, $sql);
+}
+
+/**
+ * @return array<int, array<int, int>>
+ */
+function progress_gynae_org_procedure_counts($con, $like)
+{
+    $date_clause = progress_sql_date_clause($con, $like, 't.created');
+    $exclude_proc = '473, 1119, 1314, 472, 1118, 1313';
+    $sql = "SELECT ibd.branch_id, ibd.doctor_id, COUNT(ibd.tokan_no) AS cnt
+        FROM item_by_doctor ibd
+        INNER JOIN tokans t ON t.id = ibd.tokan_no AND t.branch_id = ibd.branch_id
+        INNER JOIN item_register_to_branches ir ON ibd.item_id = ir.id AND ir.branch_id = ibd.branch_id
+        INNER JOIN items i ON ir.item_id = i.id
+        WHERE ibd.status = '2' AND t.status = 1 AND $date_clause
+        AND i.category_id = 3 AND i.id NOT IN ($exclude_proc)
+        GROUP BY ibd.branch_id, ibd.doctor_id";
+    return progress_map_branch_doctor_int($con, $sql);
+}
+
+/**
+ * @return array<int, int[]> branch_id => sorted doctor ids
+ */
+function progress_gynae_org_doctors_by_branch($con, $month_like)
+{
+    $date_clause = progress_sql_date_clause($con, $month_like, 'ibd.created');
+    $gynae_items = '483, 1159, 1321, 1414, 473, 1119, 1314, 472, 1118, 1313';
+    $sql = "SELECT DISTINCT ibd.branch_id, t.doctor_id
+        FROM item_by_doctor ibd
+        INNER JOIN item_register_to_branches ir ON ibd.item_id = ir.id AND ir.branch_id = ibd.branch_id
+        INNER JOIN tokans t ON t.id = ibd.tokan_no AND t.branch_id = ibd.branch_id
+        INNER JOIN users u ON u.id = t.doctor_id AND u.branch_id = ibd.branch_id
+        WHERE $date_clause AND ir.item_id IN ($gynae_items)
+        ORDER BY ibd.branch_id, t.doctor_id";
+    $by_branch = array();
+    $run = mysqli_query($con, $sql);
+    if ($run) {
+        while ($row = mysqli_fetch_assoc($run)) {
+            $bid = (int) $row['branch_id'];
+            $did = (int) $row['doctor_id'];
+            if (!isset($by_branch[$bid])) {
+                $by_branch[$bid] = array();
+            }
+            $by_branch[$bid][$did] = $did;
+        }
+    }
+    foreach ($by_branch as $bid => $docs) {
+        $by_branch[$bid] = array_values($docs);
+    }
+    return $by_branch;
+}
+
+/**
+ * @param int[] $doctor_ids
+ * @return array<int, string>
+ */
+function progress_user_names_by_ids($con, $doctor_ids)
+{
+    $doctor_ids = array_values(array_unique(array_map('intval', $doctor_ids)));
+    if (count($doctor_ids) === 0) {
+        return array();
+    }
+    $id_list = implode(',', $doctor_ids);
+    $names = array();
+    $run = mysqli_query($con, "SELECT id, u_name FROM users WHERE id IN ($id_list)");
+    if ($run) {
+        while ($row = mysqli_fetch_assoc($run)) {
+            $names[(int) $row['id']] = (string) $row['u_name'];
+        }
+    }
+    return $names;
+}
+
+/**
+ * Full dataset for organization gynae print (HR + BK) — fixed query count regardless of branch count.
+ *
+ * @return array{
+ *   branches: array<int, array{id: int, address: string, tag_name: string}>,
+ *   doctors_by_branch: array<int, int[]>,
+ *   doctor_names: array<int, string>,
+ *   day_svd: array<int, array<int, int>>,
+ *   month_svd: array<int, array<int, int>>,
+ *   day_dnc: array<int, array<int, int>>,
+ *   month_dnc: array<int, array<int, int>>,
+ *   day_gynae: array<int, array<int, int>>,
+ *   month_gynae: array<int, array<int, int>>,
+ *   day_gynae_system: array<int, array<int, int>>,
+ *   month_gynae_system: array<int, array<int, int>>,
+ *   day_procedure: array<int, array<int, int>>,
+ *   month_procedure: array<int, array<int, int>>
+ * }
+ */
+function progress_gynae_organization_report_dataset($con, $day_like, $month_like)
+{
+    $svd_items = '472, 1118, 1313';
+    $dnc_items = '473, 1119, 1314';
+    $gynae_items = '483, 1159, 1321, 1414';
+
+    $branches = progress_gynae_report_branches($con, $month_like);
+    $doctors_by_branch = progress_gynae_org_doctors_by_branch($con, $month_like);
+
+    $all_doctor_ids = array();
+    foreach ($doctors_by_branch as $ids) {
+        foreach ($ids as $id) {
+            $all_doctor_ids[] = (int) $id;
+        }
+    }
+
+    return array(
+        'branches' => $branches,
+        'doctors_by_branch' => $doctors_by_branch,
+        'doctor_names' => progress_user_names_by_ids($con, $all_doctor_ids),
+        'day_svd' => progress_gynae_org_ibd_tokan_counts($con, $day_like, $svd_items),
+        'month_svd' => progress_gynae_org_ibd_tokan_counts($con, $month_like, $svd_items),
+        'day_dnc' => progress_gynae_org_ibd_tokan_counts($con, $day_like, $dnc_items),
+        'month_dnc' => progress_gynae_org_ibd_tokan_counts($con, $month_like, $dnc_items),
+        'day_gynae' => progress_gynae_org_ibd_tokan_counts($con, $day_like, $gynae_items),
+        'month_gynae' => progress_gynae_org_ibd_tokan_counts($con, $month_like, $gynae_items),
+        'day_gynae_system' => progress_gynae_org_register_counts($con, $day_like),
+        'month_gynae_system' => progress_gynae_org_register_counts($con, $month_like),
+        'day_procedure' => progress_gynae_org_procedure_counts($con, $day_like),
+        'month_procedure' => progress_gynae_org_procedure_counts($con, $month_like),
+    );
+}
+
+/**
+ * Render organization gynae report table body (shared by bk/print_gynae_report.php and hr/print_gynae_report.php).
+ */
+function progress_render_gynae_organization_report($dataset, $company_name, $date_label)
+{
+    $branches = $dataset['branches'];
+    $doctors_by_branch = $dataset['doctors_by_branch'];
+    $doctor_names = $dataset['doctor_names'];
+
+    echo '
+<table border = "solid">
+<caption>
+    <h2>' . $company_name . '</h2>
+    <h3>GYNAE REPORT DATE ' . $date_label . '</h3>
+</caption>
+';
+
+    foreach ($branches as $br_row) {
+        $br_id = $br_row['id'];
+        $address = $br_row['address'];
+        $doctor_ids = $doctors_by_branch[$br_id] ?? array();
+        ?>
+        <tr>
+            <th colspan = "12"><h2><?php echo $address; ?></h2></th>
+        </tr>
+        <tr>
+            <th>S#</th>
+            <th>NAME</th>
+            <th>SVD</th>
+            <th>TOTAL SVD</th>
+            <th>DNC</th>
+            <th>TOTAL DNC</th>
+            <th>PROCEDURE</th>
+            <th>TOTAL PROCEDURE</th>
+            <th>GYNAE TOKEN</th>
+            <th>TOTAL TOKEN</th>
+            <th>GYNAE SYSTEM</th>
+            <th>TOTAL SYSTEM</th>
+        </tr>
+<?php
+        $s = 0;
+        $total_svd = 0;
+        $total_dnc = 0;
+        $total_procedure = 0;
+        $total_gynaes = 0;
+        $total_gynae_systems = 0;
+        $total_total_svd = 0;
+        $total_total_dnc = 0;
+        $total_total_procedure = 0;
+        $total_total_gynae = 0;
+        $total_total_gynae_system = 0;
+
+        if (count($doctor_ids) > 0) {
+            foreach ($doctor_ids as $doctor) {
+                $doctor = (int) $doctor;
+                $s = $s + 1;
+                $svds = $dataset['day_svd'][$br_id][$doctor] ?? 0;
+                $total_svd = $total_svd + $svds;
+                $total_svds = $dataset['month_svd'][$br_id][$doctor] ?? 0;
+                $total_total_svd = $total_total_svd + $total_svds;
+                $total_dncs = $dataset['month_dnc'][$br_id][$doctor] ?? 0;
+                $total_total_dnc = $total_total_dnc + $total_dncs;
+                $dncs = $dataset['day_dnc'][$br_id][$doctor] ?? 0;
+                $total_dnc = $total_dnc + $dncs;
+                $gynaes = $dataset['day_gynae'][$br_id][$doctor] ?? 0;
+                $total_gynaes = $total_gynaes + $gynaes;
+                $total_gynae = $dataset['month_gynae'][$br_id][$doctor] ?? 0;
+                $total_total_gynae = $total_total_gynae + $total_gynae;
+                $gynae_systems = $dataset['day_gynae_system'][$br_id][$doctor] ?? 0;
+                $total_gynae_systems = $total_gynae_systems + $gynae_systems;
+                $total_gynae_system = $dataset['month_gynae_system'][$br_id][$doctor] ?? 0;
+                $total_total_gynae_system = $total_total_gynae_system + $total_gynae_system;
+                $procedures = $dataset['day_procedure'][$br_id][$doctor] ?? 0;
+                $total_procedure = $total_procedure + $procedures;
+                $total_procedures = $dataset['month_procedure'][$br_id][$doctor] ?? 0;
+                $total_total_procedure = $total_total_procedure + $total_procedures;
+
+                $doctor_name = $doctor_names[$doctor] ?? get_uname_by_id($doctor);
+                echo ' <tr style = "text-align: right;">
+                <td>' . $s . '</td>
+                <td style = "text-align: left;">' . $doctor_name . '</td>
+                <td>' . $svds . '</td>
+                <td>' . $total_svds . '</td>
+                <td>' . $dncs . '</td>
+                <td>' . $total_dncs . '</td>
+                <td>' . $procedures . '</td>
+                <td>' . $total_procedures . '</td>
+                <td>' . $gynaes . '</td>
+                <td>' . $total_gynae . '</td>
+                <td>' . $gynae_systems . '</td>
+                <td>' . $total_gynae_system . '</td>
+            </tr>';
+            }
+            echo '<tr style = "text-align: right;">
+                <th></th>
+                <th></th>
+                <th>' . $total_svd . '</th>
+                <th>' . $total_total_svd . '</th>
+                <th>' . $total_dnc . '</th>
+                <th>' . $total_total_dnc . '</th>
+                <th>' . $total_procedure . '</th>
+                <th>' . $total_total_procedure . '</th>
+                <th>' . $total_gynaes . '</th>
+                <th>' . $total_total_gynae . '</th>
+                <th>' . $total_gynae_systems . '</th>
+                <th>' . $total_total_gynae_system . '</th>
+            </tr>';
+        }
+    }
+}
+
 function progress_opd_count_by_doctor($con, $br_id, $like)
 {
     $br_id = (int) $br_id;

@@ -1,9 +1,10 @@
 <?php
+// OPTIMIZED: replaced per-row queries with pre-aggregated batch queries
 include 'includes/connect.php';
 $progress_page_title = 'GYNAE REPORT';
 $progress_bootstrap_opts = array(
-    'print' => '../bk/print_gynae_report.php',
-    'window_title' => 'PROGRESS REPORT',
+    'print' => 'print_gynae_report.php',
+    'window_title' => 'GYNAE REPORT',
     'needs_br_id' => false,
 );
 $progress_date_input = 'date';

@@ -1,7 +1,7 @@
 <?php
 // OPTIMIZED: replaced per-row queries with pre-aggregated batch queries
 require_once __DIR__ . '/includes/connect_report.php';
-require_once __DIR__ . '/includes/progress_report_params.php';
+require_once __DIR__ . '/../bk/includes/progress_report_params.php';
 
 @set_time_limit(300);
 if (function_exists('ini_set')) {

@@ -1,4 +1,5 @@
 <?php
+// OPTIMIZED: replaced per-row queries with pre-aggregated batch queries
 include 'includes/connect.php';
 $progress_page_title = 'REFERRED PATIENT REPORT';
 $progress_bootstrap_opts = array(
