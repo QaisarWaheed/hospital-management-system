@@ -50,6 +50,9 @@ if(mysqli_num_rows($run_audit) == 1)
 		</li>
 <?php } ?>
 		<li>
+			<a style="cursor: pointer;" href='show_return_purchase_item.php' class="">Return Store Stock</a>
+		</li>
+		<li>
 			<a style="cursor: pointer;" href='show_stock.php' class="">Show Stock</a>
 		</li>
 		<li>
