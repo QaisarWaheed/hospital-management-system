@@ -711,30 +711,51 @@ function progress_cash_received_sum_by_doctor($con, $br_id, $like)
 }
 
 /**
+ * Lab diagnostic stats per doctor — one query for all doctors (replaces per-doctor category_id IN (2) loops).
+ *
+ * Matches legacy: COUNT(DISTINCT item_by_doctor.tokan_no) with tokans.status = 1 and items.category_id = 2.
+ *
+ * @return array<int, array{lab_count: int, lab_amount: float}>
+ */
+function progress_ibd_lab_stats_by_doctor($con, $br_id, $like)
+{
+    $br_id = (int) $br_id;
+    $date_clause = progress_sql_date_clause($con, $like, 'ibd.created');
+    $sql = "SELECT ibd.doctor_id,
+        COUNT(DISTINCT ibd.tokan_no) AS lab_count,
+        COALESCE(SUM(ibd.sale_price), 0) AS lab_amount
+        FROM item_by_doctor ibd
+        INNER JOIN item_register_to_branches ir ON ibd.item_id = ir.id AND ir.branch_id = ibd.branch_id
+        INNER JOIN items i ON ir.item_id = i.id AND i.category_id = 2
+        INNER JOIN tokans t ON ibd.tokan_no = t.id AND ibd.branch_id = t.branch_id AND t.status = 1
+        WHERE ibd.branch_id = '$br_id' AND ibd.status = '2' AND $date_clause
+        GROUP BY ibd.doctor_id";
+    $stats = array();
+    $run = mysqli_query($con, $sql);
+    if ($run) {
+        while ($row = mysqli_fetch_assoc($run)) {
+            $stats[(int) $row['doctor_id']] = array(
+                'lab_count' => (int) $row['lab_count'],
+                'lab_amount' => (float) $row['lab_amount'],
+            );
+        }
+    }
+    return $stats;
+}
+
+/**
  * Lab token cash/count per doctor (monthly lab progress report).
  *
  * @return array<int, array{lab_cash: float, lab_count: int}>
  */
 function progress_lab_token_cash_by_doctor($con, $br_id, $like)
 {
-    $br_id = (int) $br_id;
-    $date_clause = progress_sql_date_clause($con, $like, 't.created');
-    $sql = "SELECT t.doctor_id, COALESCE(SUM(t.cash), 0) AS lab_cash, COUNT(t.cash) AS lab_count
-        FROM tokans t
-        INNER JOIN item_by_doctor ibd ON ibd.tokan_no = t.id AND ibd.branch_id = t.branch_id AND ibd.status = '2'
-        INNER JOIN item_register_to_branches ir ON ibd.item_id = ir.id AND ir.branch_id = ibd.branch_id
-        INNER JOIN items i ON ir.item_id = i.id AND i.category_id = 2
-        WHERE t.status = 1 AND t.branch_id = '$br_id' AND $date_clause
-        GROUP BY t.doctor_id";
     $stats = array();
-    $run = mysqli_query($con, $sql);
-    if ($run) {
-        while ($row = mysqli_fetch_assoc($run)) {
-            $stats[(int) $row['doctor_id']] = array(
-                'lab_cash' => (float) $row['lab_cash'],
-                'lab_count' => (int) $row['lab_count'],
-            );
-        }
+    foreach (progress_ibd_lab_stats_by_doctor($con, $br_id, $like) as $doctor_id => $row) {
+        $stats[$doctor_id] = array(
+            'lab_cash' => $row['lab_amount'],
+            'lab_count' => $row['lab_count'],
+        );
     }
     return $stats;
 }
@@ -745,7 +766,7 @@ function progress_lab_token_cash_by_doctor($con, $br_id, $like)
 function progress_lab_monthly_doctors($con, $br_id, $like)
 {
     $br_id = (int) $br_id;
-    $date_clause = progress_sql_date_clause($con, $like);
+    $date_clause = progress_sql_date_clause($con, $like, 't.created');
     $sql = "SELECT DISTINCT u.id, u.u_name FROM users u
         INNER JOIN tokans t ON t.doctor_id = u.id
         WHERE u.role_id = '3' AND t.branch_id = '$br_id' AND $date_clause
@@ -762,6 +783,28 @@ function progress_lab_monthly_doctors($con, $br_id, $like)
         }
     }
     return $doctors;
+}
+
+/**
+ * Pre-aggregated maps for print_progress_report_monthly_lab.php (fixed query count).
+ *
+ * @return array{
+ *   doctors: array<int, array{id: int, u_name: string}>,
+ *   collection_map: array<int, float>,
+ *   opd_map: array<int, int>,
+ *   cons_map: array<int, int>,
+ *   lab_map: array<int, array{lab_cash: float, lab_count: int}>
+ * }
+ */
+function progress_lab_monthly_report_maps($con, $br_id, $like)
+{
+    return array(
+        'doctors' => progress_lab_monthly_doctors($con, $br_id, $like),
+        'collection_map' => progress_cash_received_sum_by_doctor($con, $br_id, $like),
+        'opd_map' => progress_opd_count_by_doctor_lte10($con, $br_id, $like),
+        'cons_map' => progress_tokan_count_by_item_category_doctor($con, $br_id, $like, 29),
+        'lab_map' => progress_lab_token_cash_by_doctor($con, $br_id, $like),
+    );
 }
 
 function progress_lab_stats_by_doctor($con, $br_id, $like)
@@ -793,21 +836,12 @@ function progress_lab_stats_by_doctor($con, $br_id, $like)
  */
 function progress_dia_patient_stats_by_doctor($con, $br_id, $like)
 {
-    $br_id = (int) $br_id;
-    $date_clause = progress_sql_date_clause($con, $like);
-    $sql = "SELECT doctor_id, COUNT(DISTINCT tokan_no) AS cnt, COALESCE(SUM(sale_price), 0) AS cash_sum
-        FROM item_by_doctor
-        WHERE category_id = 2 AND branch_id = '$br_id' AND $date_clause
-        GROUP BY doctor_id";
     $stats = array();
-    $run = mysqli_query($con, $sql);
-    if ($run) {
-        while ($row = mysqli_fetch_assoc($run)) {
-            $stats[(int) $row['doctor_id']] = array(
-                'count' => (int) $row['cnt'],
-                'cash' => (float) $row['cash_sum'],
-            );
-        }
+    foreach (progress_ibd_lab_stats_by_doctor($con, $br_id, $like) as $doctor_id => $row) {
+        $stats[$doctor_id] = array(
+            'count' => $row['lab_count'],
+            'cash' => $row['lab_amount'],
+        );
     }
     return $stats;
 }
@@ -820,7 +854,7 @@ function progress_dia_patient_stats_by_doctor($con, $br_id, $like)
 function progress_item_row_counts_by_doctor($con, $br_id, $like)
 {
     $br_id = (int) $br_id;
-    $date_clause = progress_sql_date_clause($con, $like);
+    $date_clause = progress_sql_date_clause($con, $like, 'item_by_doctor.created');
     $sql = "SELECT doctor_id,
         COUNT(CASE WHEN category_id = 2 THEN 1 END) AS tests,
         COUNT(CASE WHEN category_id = 3 THEN 1 END) AS procedures,
@@ -838,7 +872,7 @@ function progress_item_row_counts_by_doctor($con, $br_id, $like)
         COUNT(CASE WHEN category_id = 42 THEN 1 END) AS emergency,
         COUNT(CASE WHEN category_id = 44 THEN 1 END) AS ecgs
         FROM item_by_doctor
-        WHERE $date_clause AND branch_id = '$br_id'
+        WHERE branch_id = '$br_id' AND $date_clause
         AND category_id IN (2, 3, 29, 31, 32, 33, 34, 36, 37, 38, 39, 40, 41, 42, 44)
         GROUP BY doctor_id";
     $stats = array();
@@ -913,25 +947,44 @@ function progress_report_resolve_time_request($con)
 }
 
 /**
- * @return array<int, array{count: int, cash: float}>
+ * @return array<int, array{lab_count: int, lab_amount: float}>
  */
-function progress_dia_patient_stats_by_doctor_range($con, $br_id, $start_at, $end_at)
+function progress_ibd_lab_stats_by_doctor_range($con, $br_id, $start_at, $end_at)
 {
     $br_id = (int) $br_id;
-    $sql = "SELECT doctor_id, COUNT(DISTINCT tokan_no) AS cnt, COALESCE(SUM(sale_price), 0) AS cash_sum
-        FROM item_by_doctor
-        WHERE category_id = 2 AND branch_id = '$br_id'
-        AND created >= '$start_at' AND created < '$end_at'
-        GROUP BY doctor_id";
+    $start_at = mysqli_real_escape_string($con, (string) $start_at);
+    $end_at = mysqli_real_escape_string($con, (string) $end_at);
+    $sql = "SELECT ibd.doctor_id,
+        COUNT(DISTINCT ibd.tokan_no) AS lab_count,
+        COALESCE(SUM(ibd.sale_price), 0) AS lab_amount
+        FROM item_by_doctor ibd
+        INNER JOIN item_register_to_branches ir ON ibd.item_id = ir.id AND ir.branch_id = ibd.branch_id
+        INNER JOIN items i ON ir.item_id = i.id AND i.category_id = 2
+        INNER JOIN tokans t ON ibd.tokan_no = t.id AND ibd.branch_id = t.branch_id AND t.status = 1
+        WHERE ibd.branch_id = '$br_id' AND ibd.status = '2'
+        AND ibd.created >= '$start_at' AND ibd.created < '$end_at'
+        GROUP BY ibd.doctor_id";
     $stats = array();
     $run = mysqli_query($con, $sql);
     if ($run) {
         while ($row = mysqli_fetch_assoc($run)) {
             $stats[(int) $row['doctor_id']] = array(
-                'count' => (int) $row['cnt'],
-                'cash' => (float) $row['cash_sum'],
+                'lab_count' => (int) $row['lab_count'],
+                'lab_amount' => (float) $row['lab_amount'],
             );
         }
+    }
+    return $stats;
+}
+
+function progress_dia_patient_stats_by_doctor_range($con, $br_id, $start_at, $end_at)
+{
+    $stats = array();
+    foreach (progress_ibd_lab_stats_by_doctor_range($con, $br_id, $start_at, $end_at) as $doctor_id => $row) {
+        $stats[$doctor_id] = array(
+            'count' => $row['lab_count'],
+            'cash' => $row['lab_amount'],
+        );
     }
     return $stats;
 }
