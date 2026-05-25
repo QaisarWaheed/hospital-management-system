@@ -1,32 +1,69 @@
-<?php 
-include 'includes/config.php'; 
-include 'includes/connect.php'; 
-if(isset($_GET['date']))
-{
-    $date = $_GET['date'];
-    $br_id = $_GET['br_id'];
-}
-elseif(isset($_POST['date']))
-{
-    $date = $_POST['date'];
-    $br_id = $_POST['br_id'];
-}
-else
-{
+<?php
+// OPTIMIZED: replaced per-row queries with pre-aggregated batch queries
+include 'includes/config.php';
+include 'includes/connect.php';
+
+if (isset($_GET['date'])) {
+    $date = (string) $_GET['date'];
+    $br_id = (int) $_GET['br_id'];
+} elseif (isset($_POST['date'])) {
+    $date = (string) $_POST['date'];
+    $br_id = (int) $_POST['br_id'];
+} else {
     exit(0);
 }
+
+$br_id = (int) $br_id;
+$month_start = date('Y-m-01 00:00:00', strtotime($date));
+$month_end = date('Y-m-01 00:00:00', strtotime($date . ' +1 month'));
+$month_start_esc = mysqli_real_escape_string($con, $month_start);
+$month_end_esc = mysqli_real_escape_string($con, $month_end);
+
+$lab_map = array();
+$lab_sql = "SELECT ibd.doctor_id, COUNT(DISTINCT ibd.tokan_no) AS lab_count
+    FROM item_by_doctor ibd
+    INNER JOIN item_register_to_branches ir ON ibd.item_id = ir.id
+    INNER JOIN items i ON ir.item_id = i.id
+    INNER JOIN tokans t ON ibd.tokan_no = t.id
+    WHERE ibd.branch_id = '$br_id'
+    AND ibd.created >= '$month_start_esc' AND ibd.created < '$month_end_esc'
+    AND i.category_id = '2'
+    AND t.status = '1'
+    GROUP BY ibd.doctor_id";
+$run_lab = mysqli_query($con, $lab_sql);
+if ($run_lab) {
+    while ($row = mysqli_fetch_assoc($run_lab)) {
+        $lab_map[(int) $row['doctor_id']] = (int) $row['lab_count'];
+    }
+}
+
+$s = 0;
+$total_lab = 0;
+$total_opd = 0;
+$has_data = false;
+$select = "SELECT t.doctor_id, u.u_name, b.tag_name,
+    COUNT(CASE WHEN t.tokan_type_id <= 100 THEN t.tokan_type_id END) AS opd
+    FROM tokans t
+    INNER JOIN users u ON t.doctor_id = u.id
+    INNER JOIN branchs b ON u.branch_id = b.id
+    WHERE t.created >= '$month_start_esc' AND t.created < '$month_end_esc'
+    AND t.branch_id = '$br_id'
+    AND t.status = '1'
+    GROUP BY t.doctor_id, u.u_name, b.tag_name
+    ORDER BY t.doctor_id";
+$run = mysqli_query($con, $select);
 ?>
 <html>
 <head>
-    <title><?php echo get_branch_tag_by($br_id)." ";echo date_format(date_create($date), "m-Y"); ?> MONTHLY PROGRESS REPORT </title>
+    <title><?php echo htmlspecialchars(get_branch_tag_by($br_id), ENT_QUOTES, 'UTF-8'); ?> <?php echo date_format(date_create($date), 'm-Y'); ?> MONTHLY PROGRESS REPORT</title>
 </head>
 <body>
-    
-<table border = "solid">
+
+<table border="solid">
 <caption>
-    <h2><?php echo $company_name; ?></h2>
-    <h2><?php echo get_branch_name_by($br_id); ?></h2>
-    <h3>PROGRESS MONTH <?php echo date_format(date_create($date), " F Y"); ?></h3>
+    <h2><?php echo htmlspecialchars($company_name, ENT_QUOTES, 'UTF-8'); ?></h2>
+    <h2><?php echo htmlspecialchars(get_branch_name_by($br_id), ENT_QUOTES, 'UTF-8'); ?></h2>
+    <h3>PROGRESS MONTH <?php echo date_format(date_create($date), ' F Y'); ?></h3>
 </caption>
     <thead>
         <tr>
@@ -40,73 +77,36 @@ else
         </tr>
     </thead>
     <tbody>
-    <?php
-    $s = 0;
-    $labs = 0;
-    $total_lab = 0;
-    $total_opd = 0;
-    $labs_percentage = 0;
-    $select = "SELECT DISTINCT tokans.doctor_id, users.u_name , branchs.tag_name, COUNT(CASE WHEN tokans.tokan_type_id <= 100 THEN tokans.tokan_type_id END) AS opd FROM `tokans` INNER JOIN users ON tokans.doctor_id = users.id INNER JOIN branchs ON users.branch_id = branchs.id WHERE tokans.created like '$date%' AND tokans.branch_id = '$br_id' AND tokans.status = '1' GROUP BY tokans.doctor_id ORDER BY tokans.doctor_id ";
-    $run = mysqli_query($con, $select);
-    if(mysqli_num_rows($run) > 0)
-    {
-        while($row = mysqli_fetch_array($run))
-        {
-            $opd = $row['opd'];
-            $total_opd = $total_opd + $opd;
-            $doctor_id = $row['doctor_id'];
-        $select_data = "SELECT items.category_id, COUNT(DISTINCT item_by_doctor.tokan_no) AS count_token FROM `item_by_doctor` INNER JOIN item_register_to_branches ON item_by_doctor.item_id = item_register_to_branches.id INNER JOIN items ON item_register_to_branches.item_id = items.id INNER JOIN tokans ON item_by_doctor.tokan_no = tokans.id  WHERE item_by_doctor.created LIKE '$date%' AND item_by_doctor.doctor_id = '$doctor_id' AND item_by_doctor.branch_id = '$br_id' AND items.category_id IN (2) AND tokans.status = '1' GROUP BY items.category_id ";
-        $run_data = mysqli_query($con, $select_data);
-        if(mysqli_num_rows($run_data) > 0)
-        {
-            while($row_data = mysqli_fetch_array($run_data))
-            {
-                $category_id = $row_data['category_id'];
-                $count_token = $row_data['count_token'];
-                $labs = $count_token;
-                $total_lab = $total_lab + $labs;
-                if($opd > 0 && $labs < $opd)
-                {
-                    $labs_percentage = ($labs/$opd)*100;
-                }
-                elseif($labs > $opd)
-                {
-                    $labs_percentage = 100;
-                }
-                else
-                {
-                    $labs_percentage = 0;
-                }
-            }
+<?php
+if ($run && mysqli_num_rows($run) > 0) {
+    while ($row = mysqli_fetch_array($run)) {
+        $has_data = true;
+        $doctor_id = (int) $row['doctor_id'];
+        $opd = (int) $row['opd'];
+        $labs = $lab_map[$doctor_id] ?? 0;
+        $total_opd += $opd;
+        $total_lab += $labs;
+        $labs_percentage = 0;
+        if ($opd > 0 && $labs > 0 && $labs < $opd) {
+            $labs_percentage = (int) (($labs / $opd) * 100);
+        } elseif ($opd > 0 && $labs >= $opd) {
+            $labs_percentage = 100;
         }
-        $select_opd = "SELECT tokans.id FROM `tokans` WHERE tokans.doctor_id = '$doctor_id' AND tokans.branch_id = '$br_id' AND tokans.status = '1' AND tokans.created LIKE '$date%' ";
-        $run_opd = mysqli_query($con, $select_opd);
-        if(mysqli_num_rows($run_opd))
-        {
-            while($row_opd = mysqli_fetch_array($run_opd))
-            {
-                $opds = $row_opd['0'];
-            }
-        }
-        else
-        {
-            $opds = 0;
-        }
-            $s++; ?>
+        $s++;
+        ?>
         <tr>
             <td><?php echo $s; ?></td>
-            <td><?php echo $row['doctor_id']; ?></td>
-            <td><?php echo $row['tag_name']; ?></td>
-            <td><?php echo $row['u_name']; ?></td>
+            <td><?php echo $doctor_id; ?></td>
+            <td><?php echo htmlspecialchars($row['tag_name'], ENT_QUOTES, 'UTF-8'); ?></td>
+            <td><?php echo htmlspecialchars($row['u_name'], ENT_QUOTES, 'UTF-8'); ?></td>
             <td><?php echo $opd; ?></td>
             <td><?php echo $labs; ?></td>
-            <td><?php echo intval($labs_percentage); ?>%</td>
+            <td><?php echo $labs_percentage; ?>%</td>
         </tr>
-        <?php 
-        $labs = 0;
-        $labs_percentage = 0;
-        }
+        <?php
     }
+}
+if ($has_data) {
     ?>
         <tr>
             <td></td>
@@ -117,8 +117,14 @@ else
             <th><?php echo $total_lab; ?></th>
             <td></td>
         </tr>
+    <?php
+} else {
+    echo '<tr><td colspan="7">NO DATA FOUND</td></tr>';
+}
+?>
     </tbody>
 </table>
 </body>
 </html>
-<?php mysqli_close($con); ?>
+<?php
+mysqli_close($con);
