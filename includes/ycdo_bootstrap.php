@@ -259,6 +259,23 @@ function ycdo_absolute_url($relativeScript, $queryString = '')
 }
 
 /**
+ * Absolute URL for HTML form actions. Uses explicit https:// when the request is
+ * HTTPS (including behind X-Forwarded-Proto) so POST is not sent to http first.
+ */
+function ycdo_form_action_url($relativeScript, $queryString = '')
+{
+    $path = ycdo_resolve_app_path($relativeScript);
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $scheme = ycdo_request_is_https() ? 'https' : 'http';
+    $url = $scheme . '://' . $host . $path;
+    if ($queryString !== '') {
+        $url .= '?' . ltrim((string) $queryString, '?');
+    }
+
+    return $url;
+}
+
+/**
  * If $url is relative, resolve it with ycdo_absolute_url(); otherwise return unchanged.
  */
 function ycdo_absolute_url_if_relative($url)

@@ -81,7 +81,7 @@ $ip_address = get_client_ip();
             <h1 align="center" style="color: skyblue;">WELCOME TO YCDO</h1>
             <h3 align="center">BRANCH VERIFICATION</h3>
             <?php if(isset($msg)){echo '<p style="color: red;text-align: center">'.$msg.'</p>';}  ?>
-            <form method="POST" autocomplete="off" action="action_login.php">
+            <form method="POST" autocomplete="off" action="<?php echo htmlspecialchars(ycdo_form_action_url('action_login.php'), ENT_QUOTES, 'UTF-8'); ?>">
                 <label>SELECT BRANCH</label>
                 <select class="form-control" style="min-width: 200px;text-transform: uppercase;" name="branch_id">
 <?php 
