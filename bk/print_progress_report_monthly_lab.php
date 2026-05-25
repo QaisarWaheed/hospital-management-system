@@ -32,7 +32,6 @@ $count_consultant_opd = 0;
 $count_lab = 0;
 $count_total = 0;
 $count_total_lab = 0;
-$has_data = false;
 $s = 0;
 
 $dateObj = date_create($date);
@@ -64,7 +63,6 @@ $monthLabel = $dateObj ? $dateObj->format('F Y') : $date;
 <?php
 if (count($doctors) > 0) {
     foreach ($doctors as $dr_id => $row_dr) {
-        $has_data = true;
         $dr_id = (int) $dr_id;
         $dr_name = htmlspecialchars((string) $row_dr['u_name'], ENT_QUOTES, 'UTF-8');
         $total = $collection_map[$dr_id] ?? 0;
@@ -117,9 +115,6 @@ if (count($doctors) > 0) {
             <th style="text-align: right;"><?php echo number_format($count_total); ?></th>
         </tr>
     </tfoot>
-<?php if (!$has_data) {
-    ycdo_echo_report_no_data_found();
-} ?>
 </table>
 </body>
 </html>

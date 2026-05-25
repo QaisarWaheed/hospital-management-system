@@ -89,8 +89,6 @@ else
     
 $select = "SELECT DISTINCT `doctor_id` FROM `tokans` WHERE doctor_id IN (SELECT `id` FROM `users` WHERE `branch_id` = '$br_id') AND created like '$date%' AND `branch_id` = '$br_id' ORDER BY `doctor_id` ";
 $run = mysqli_query($con, $select);
-$has_data = false;
-
 if(mysqli_num_rows($run) > 0)
 {
     echo '<tbody>';
@@ -254,8 +252,6 @@ if(mysqli_num_rows($run) > 0)
         </tfoor>';
 }
 ?>
-<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
-
 </table>
 </body>
 </html>

@@ -14,8 +14,6 @@ else
 
 $users = "SELECT `login_id`, `computer_total`,`received_amount`,`donation_collection`,`submitted_amount`,`submitted_to`,`short_amount`,`extra_amount`, users.u_name, logins_detail.login_at, logins_detail.logout_at, roles.title FROM `summary_details` INNER JOIN logins_detail ON summary_details.login_id = logins_detail.id INNER JOIN users ON summary_details.user_id = users.id INNER JOIN roles ON users.role_id = roles.id WHERE login_id = '$login_id' ORDER BY login_at ";
 $run_users = mysqli_query($con, $users);
-$has_data = false;
-
 if(mysqli_num_rows($run_users) > 0)
 {
     while($row_users = mysqli_fetch_array($run_users))
@@ -113,8 +111,6 @@ body
 	</tr>
 <?php
 ?>
-<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
-
 </table>
 </body>
 </html>

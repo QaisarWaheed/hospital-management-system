@@ -69,10 +69,7 @@ $toLabel = ycdo_safe_date_format($to_date, 'd-m-Y', $to_date);
 	<th colspan="5"><?php echo number_format($totals['cash_received']); ?></th>
 </tr>
 <?php
-$has_data = false;
-
 foreach (fr_summary_tokan_type_breakdown($con, $from_date, $to_date, $u_id, $br_id, false) as $typeRow) {
-        $has_data = true;
     echo '<tr>
         <th style="text-align: right;" colspan="4">' . htmlspecialchars($typeRow['title']) . '</th>
         <th style="text-align: center;" colspan="3">' . (int) $typeRow['count'] . '</th>
@@ -105,8 +102,6 @@ if ($pendingReceive > 0) {
 }
 ?>
 	</tbody>
-<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
-
 </table>
 </body>
 </html>

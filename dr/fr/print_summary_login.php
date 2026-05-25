@@ -76,7 +76,6 @@ $run_users = mysqli_query($con, $sql);
 			<th>Total</th>
 		</tr>
 	</thead>
-	<?php $has_data = false; ?>
 <tbody>
 <?php
 $s = 0;
@@ -87,7 +86,6 @@ $total_r_a = 0.0;
 $total_cash_received = 0.0;
 if ($run_users) {
     while ($row_users = mysqli_fetch_assoc($run_users)) {
-        $has_data = true;
         $s++;
         $computer_total = (float) $row_users['computer_total'];
         $received_amount = (float) $row_users['received_amount'];
@@ -123,12 +121,9 @@ if ($run_users) {
 			<th><?php echo number_format($total_r_a); ?></th>
 		</tr>
 	</tbody>
-<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
-
 </table>
 <?php
 foreach (fr_summary_tokan_type_breakdown($con, $from_date, $to_date, 0, $b_id, false) as $typeRow) {
-        $has_data = true;
     echo '<p style="text-align: center;"><strong>'
         . htmlspecialchars($typeRow['title']) . ' -> ' . (int) $typeRow['count']
         . ' Amount(' . number_format($typeRow['amount']) . ')</strong></p>';

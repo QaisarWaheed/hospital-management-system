@@ -53,9 +53,7 @@ elseif (isset($_GET['s']) && $_GET['s'] != '') {
 			</tr>
 			<tr>
 			</tr>
-		<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
-
-		</table>
+</table>
 		
 	</caption>
 	<thead>
@@ -84,8 +82,6 @@ $select = "SELECT * FROM tokans WHERE
 	`status` = '1' 
 	ORDER BY `created` ";
 $run = mysqli_query($con, $select);
-$has_data = false;
-
 if (mysqli_num_rows($run) > 0) 
 {
 	while ($row = mysqli_fetch_array($run)) 

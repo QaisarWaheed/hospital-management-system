@@ -54,13 +54,8 @@ $count_gynae_system = 0;
 $count_svd_dnc = 0;
 $count_procedure = 0;
 $total_reffered = 0;
-
-$has_data = false;
-
-
 if (count($doctors) > 0) {
     foreach ($doctors as $dr_id => $row_dr) {
-        $has_data = true;
         $dr_id = (int) $dr_id;
         $dr_name = $row_dr['u_name'];
         $opd = $opd_map[$dr_id] ?? 0;
@@ -109,8 +104,6 @@ if (count($doctors) > 0) {
             <th><?php echo $total_reffered; ?></th>
         </tr>
     </tfoot>
-<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
-
 </table>
 </body>
 </html>

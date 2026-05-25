@@ -81,8 +81,6 @@ $total_cash_received = 0;
 
 $users = "SELECT * FROM `summary_details` WHERE login_id IN (SELECT id FROM logins_detail WHERE branch_id = '$b_id' AND login_at <= '$last_date' AND `login_at` >= '$from_date' AND `status` = '2') ORDER BY `created` ";
 $run_users = mysqli_query($con, $users);
-$has_data = false;
-
 if(mysqli_num_rows($run_users) > 0)
 {
     while($row_users = mysqli_fetch_array($run_users))
@@ -139,8 +137,6 @@ if(mysqli_num_rows($run_users) > 0)
 			<th><?php echo $total_r_a;?></th>
 		</tr>
 	</tbody>
-<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
-
 </table>
 <?php
 $select = "SELECT distinct tokan_type_id ,cash_received FROM tokans WHERE 

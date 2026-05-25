@@ -36,7 +36,6 @@ if ($run_lab) {
 }
 
 $s = 0;
-$has_data = false;
 $select = "SELECT DISTINCT t.doctor_id, u.u_name, COUNT(t.cash) AS opd
     FROM tokans t
     INNER JOIN users u ON t.doctor_id = u.id
@@ -74,7 +73,6 @@ $run = mysqli_query($con, $select);
 <?php
 if ($run && mysqli_num_rows($run) > 0) {
     while ($row = mysqli_fetch_array($run)) {
-        $has_data = true;
         $doctor_id = (int) $row['doctor_id'];
         $labs = $lab_map[$doctor_id] ?? 0;
         $opd = (int) $row['opd'];
@@ -94,9 +92,6 @@ if ($run && mysqli_num_rows($run) > 0) {
         </tr>
         <?php
     }
-}
-if (!$has_data) {
-    echo '<tr><td colspan="6">NO DATA FOUND</td></tr>';
 }
 ?>
     </tbody>

@@ -40,7 +40,6 @@ if ($run_lab) {
 $s = 0;
 $total_lab = 0;
 $total_opd = 0;
-$has_data = false;
 $select = "SELECT t.doctor_id, u.u_name, b.tag_name,
     COUNT(CASE WHEN t.tokan_type_id <= 100 THEN t.tokan_type_id END) AS opd
     FROM tokans t
@@ -80,7 +79,6 @@ $run = mysqli_query($con, $select);
 <?php
 if ($run && mysqli_num_rows($run) > 0) {
     while ($row = mysqli_fetch_array($run)) {
-        $has_data = true;
         $doctor_id = (int) $row['doctor_id'];
         $opd = (int) $row['opd'];
         $labs = $lab_map[$doctor_id] ?? 0;
@@ -105,8 +103,6 @@ if ($run && mysqli_num_rows($run) > 0) {
         </tr>
         <?php
     }
-}
-if ($has_data) {
     ?>
         <tr>
             <td></td>
@@ -118,8 +114,6 @@ if ($has_data) {
             <td></td>
         </tr>
     <?php
-} else {
-    echo '<tr><td colspan="7">NO DATA FOUND</td></tr>';
 }
 ?>
     </tbody>

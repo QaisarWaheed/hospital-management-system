@@ -65,12 +65,10 @@ $count_run = count($doctorRows);
         <th>ADMISSION</th><th>EMERGENCY</th><th>ECG</th><th>GYNAE TOKEN</th><th>GYNAE</th><th>REF. BY</th><th>REF. TO</th><th>COLLECTION</th>
     </tr>
 </thead>
-<?php $has_data = false; ?>
 <tbody>
 <?php
 $s = 0;
 foreach ($doctorRows as $row) {
-        $has_data = true;
     $s++;
     $opd = (int) $row['opd'];
     $tests = (int) $row['tests'];
@@ -148,8 +146,6 @@ foreach ($doctorRows as $row) {
         <th><?php echo number_format((float) $totals['cash']); ?></th>
     </tr>
 </tbody>
-<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
-
 </table>
 </body>
 </html>

@@ -90,8 +90,6 @@ $select = "SELECT * FROM tokans WHERE
 	ORDER BY `created` ";
 }
 $run = mysqli_query($con, $select);
-$has_data = false;
-
 if (mysqli_num_rows($run) > 0) 
 {
 	while ($row = mysqli_fetch_array($run)) 
@@ -293,9 +291,7 @@ if (mysqli_num_rows($run) > 0)
         echo 
     '
     <caption style="text-align: left;caption-side: top;color: black;text-align: center;" colspan="11"><strong>PENDING RECEIVED: AMOUNT -> <u>'.$pending_receive_amount.'</strong></caption></caption>
-	<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
-
-	</table>
+</table>
 	</td></tr>';
 	}
       

@@ -53,11 +53,9 @@ $total_lab = 0.0;
             <th>LAB</th>
         </tr>
     </thead>
-    <?php $has_data = false; ?>
 <tbody>
 <?php
 foreach ($doctors as $doc) {
-        $has_data = true;
     $s++;
     $opds = (int) $doc['opd'];
     $cons_opds = (int) $doc['cons'];
@@ -86,8 +84,6 @@ foreach ($doctors as $doc) {
             <th><?php echo $total_lab > 0 ? number_format($total_lab) : 'N/A'; ?></th>
         </tr>
     </tfoot>
-<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
-
 </table>
 </body>
 </html>

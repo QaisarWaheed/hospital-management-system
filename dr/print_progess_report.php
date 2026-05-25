@@ -26,8 +26,6 @@ if ($run) {
 }
 
 $user_names = array();
-$has_data = false;
-
 if (count($doctor_ids) > 0) {
     $ids = implode(',', $doctor_ids);
     $run_names = mysqli_query($con, "SELECT id, u_name FROM users WHERE id IN ($ids)");
@@ -64,7 +62,6 @@ $totals = array('opds' => 0, 'cons' => 0, 'lab' => 0, 'usg' => 0, 'svd' => 0, 'd
 if (count($doctor_ids) > 0) {
     echo '<tbody>';
     foreach ($doctor_ids as $doctor) {
-        $has_data = true;
         $s++;
         $opd = $opds[$doctor] ?? 0;
         $cons = $cons_opds[$doctor] ?? 0;
@@ -99,8 +96,6 @@ if (count($doctor_ids) > 0) {
     echo '<th>' . $totals['proc'] . '</th><th>' . $totals['adm'] . '</th></tr></tfoot>';
 }
 ?>
-<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
-
 </table>
 </body>
 </html>

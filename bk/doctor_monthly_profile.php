@@ -214,8 +214,6 @@ if (isset($_POST['date']) && isset($_POST['doctor_id']) && $doctor > 0)
     echo '</tbody>';
 }
 ?>
-<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
-
 </table>
 <?php 
 if (isset($_POST['date']) && $_POST['date'] !== '' && isset($_POST['doctor_id']) && (int) $_POST['doctor_id'] > 0)
@@ -234,8 +232,6 @@ if (isset($_POST['date']) && $_POST['date'] !== '' && isset($_POST['doctor_id'])
                 WHERE tokans.created LIKE '$date%' AND doctor_id = '$doctor_id' AND tokan_type_id < 100 AND branch_id = '$br_id' 
                 GROUP BY tokan_type_id ";
     $run_opd = mysqli_query($con, $select_opd);
-    $has_data = false;
-
     if(mysqli_num_rows($run_opd) > 0)
     {
         $opd_count = 0;

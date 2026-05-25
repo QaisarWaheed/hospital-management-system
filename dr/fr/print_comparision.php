@@ -25,8 +25,6 @@ if(!isset($_SESSION['fr_id']))
 <?php
 $select_branch = "SELECT * FROM `branchs` WHERE `status` = 1 ";
 $run_branch = mysqli_query($con, $select_branch);
-$has_data = false;
-
 if(mysqli_num_rows($run_branch) > 0)
 {
     while($row_branch = mysqli_fetch_array($run_branch))
@@ -146,9 +144,7 @@ if(mysqli_num_rows($run_branch) > 0)
                             <th><?php echo $select_procedure_2-$select_procedure; ?></th>
                             <th><?php echo $collection_second_month-$collection_first_month; ?></th>
                         </tr>
-                    <?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
-
-                    </table>
+</table>
                 </div>
             </div>
         </div>

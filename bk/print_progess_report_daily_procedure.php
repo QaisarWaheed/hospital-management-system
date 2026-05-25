@@ -16,8 +16,6 @@ $doctor_ids = array_unique(array_merge(array_keys($opds), array_keys($cons_opds)
 sort($doctor_ids, SORT_NUMERIC);
 
 $user_names = array();
-$has_data = false;
-
 if (count($doctor_ids) > 0) {
     $ids = implode(',', $doctor_ids);
     $run_names = mysqli_query($con, "SELECT id, u_name FROM users WHERE id IN ($ids)");
@@ -60,7 +58,6 @@ $total_procedure = 0;
 if (count($doctor_ids) > 0) {
     echo '<tbody>';
     foreach ($doctor_ids as $doctor) {
-        $has_data = true;
         $s++;
         $opd = $opds[$doctor] ?? 0;
         $cons = $cons_opds[$doctor] ?? 0;
@@ -82,8 +79,6 @@ if (count($doctor_ids) > 0) {
     echo '</tr></tfoot>';
 }
 ?>
-<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
-
 </table>
 </body>
 </html>

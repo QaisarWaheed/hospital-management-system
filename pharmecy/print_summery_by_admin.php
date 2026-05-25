@@ -102,8 +102,6 @@ $total_cash_received = 0;
 
 $users = "SELECT `login_id`, `computer_total`,`received_amount`,`donation_collection`,`submitted_amount`,`submitted_to`,`short_amount`,`extra_amount`, users.u_name, logins_detail.login_at, logins_detail.logout_at FROM `summary_details` INNER JOIN logins_detail ON summary_details.login_id = logins_detail.id INNER JOIN users ON summary_details.user_id = users.id WHERE logins_detail.login_at >= '$start_date' AND logins_detail.login_at <= '$last_date' AND logins_detail.status = '2' AND logins_detail.branch_id = '$b_id' ORDER BY login_at ";
 $run_users = mysqli_query($con, $users);
-$has_data = false;
-
 if(mysqli_num_rows($run_users) > 0)
 {
     while($row_users = mysqli_fetch_array($run_users))
@@ -154,8 +152,6 @@ if(mysqli_num_rows($run_users) > 0)
 			<th><?php echo $total_r_a;?></th>
 		</tr>
 	</tbody>
-<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
-
 </table>	
 	</div>
 </div>

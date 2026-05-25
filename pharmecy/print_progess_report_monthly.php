@@ -102,8 +102,6 @@ else
     $select = "SELECT DISTINCT tokans.doctor_id, users.u_name , branchs.tag_name, COUNT(CASE WHEN tokans.tokan_type_id <= 100 THEN tokans.tokan_type_id END) AS opd FROM `tokans` INNER JOIN users ON tokans.doctor_id = users.id INNER JOIN branchs ON users.branch_id = branchs.id WHERE tokans.created like '$date%' AND tokans.branch_id = '$br_id' AND tokans.status = '1' GROUP BY tokans.doctor_id ORDER BY tokans.doctor_id ";
     $run = mysqli_query($con, $select);
     $count_run = mysqli_num_rows($run);
-    $has_data = false;
-
     if(mysqli_num_rows($run) > 0)
     {
         while($row = mysqli_fetch_array($run))
@@ -305,8 +303,6 @@ else
             <th><?php echo number_format($total_cash); ?></th>
         </tr>
     </tbody>
-<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
-
 </table>
 </body>
 </html>

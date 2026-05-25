@@ -38,7 +38,6 @@ try {
     progress_render_gynae_organization_report($dataset, $company_name, $date_label);
 } catch (Throwable $e) {
     error_log('print_gynae_report.php: ' . $e->getMessage());
-    ycdo_echo_report_no_data_found();
 }
 
 echo '</body></html>';

@@ -58,7 +58,6 @@ if ($run_lab) {
 
 $date_obj = date_create($date);
 $day_label = $date_obj ? $date_obj->format('d-M-Y') : $date;
-$has_data = false;
 $s = 0;
 ?>
 <html>
@@ -82,7 +81,6 @@ $s = 0;
 <?php
 if (count($opds) > 0) {
     foreach ($opds as $doctor_id => $info) {
-        $has_data = true;
         $s++;
         $lab = $lab_counts[$doctor_id] ?? 0;
         $opd = (int) $info['opd'];
@@ -96,9 +94,6 @@ if (count($opds) > 0) {
         echo '<td>' . $pct . '%</td>';
         echo '</tr>';
     }
-}
-if (!$has_data) {
-    echo '<tr><td colspan="6">NO DATA FOUND</td></tr>';
 }
 ?>
     </tbody>

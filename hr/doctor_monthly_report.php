@@ -33,8 +33,6 @@ if(!isset($_SESSION['hr_id']))
 	                        <?php
 	                        $select = "SELECT * FROM users WHERE status = '1' AND role_id = '3' AND branch_id = '$hr_branch_id' ";
 	                        $run = mysqli_query($con, $select);
-	                        $has_data = false;
-
 	                        if(mysqli_num_rows($run) > 0)
 	                        {
 	                            while($row = mysqli_fetch_array($run))
@@ -68,9 +66,7 @@ if(!isset($_SESSION['hr_id']))
 	        $s = 0;
 	        ?>
 	        </tbody>
-	    <?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
-
-	    </table>
+</table>
 	</div>
 </div>
 <script src="js/bootstrap.bundle.min.js"></script>

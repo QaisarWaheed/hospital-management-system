@@ -84,16 +84,11 @@ $token_map = array();
 $patient_map = array();
 $user_names = array();
 $branch_tags = array();
-
-$has_data = false;
-
-
 if (count($referrals) > 0) {
     $token_ids = array();
     $user_ids = array();
     $branch_ids = array();
     foreach ($referrals as $row_referral_token) {
-        $has_data = true;
         $token_ids[] = (int) $row_referral_token['opd_token_id'];
         $user_ids[] = (int) $row_referral_token['from_user_id'];
         $user_ids[] = (int) $row_referral_token['to_user_id'];
@@ -187,9 +182,7 @@ if (count($referrals) > 0) {
 }
 	?>
         			    </tbody>
-        			<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
-
-        			</table>
+</table>
 </div>
             </div>
     		</div>

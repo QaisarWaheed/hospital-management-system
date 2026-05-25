@@ -422,8 +422,6 @@ function progress_render_gynae_organization_report($dataset, $company_name, $dat
     $branches = $dataset['branches'];
     $doctors_by_branch = $dataset['doctors_by_branch'];
     $doctor_names = $dataset['doctor_names'];
-    $has_data = false;
-
     $company_safe = htmlspecialchars((string) $company_name, ENT_QUOTES, 'UTF-8');
     $date_label_safe = htmlspecialchars((string) $date_label, ENT_QUOTES, 'UTF-8');
 
@@ -473,7 +471,6 @@ function progress_render_gynae_organization_report($dataset, $company_name, $dat
         if (count($doctor_ids) > 0) {
             foreach ($doctor_ids as $doctor) {
                 $doctor = (int) $doctor;
-                $has_data = true;
                 $s = $s + 1;
                 $svds = $dataset['day_svd'][$br_id][$doctor] ?? 0;
                 $total_svd = $total_svd + $svds;
@@ -530,9 +527,6 @@ function progress_render_gynae_organization_report($dataset, $company_name, $dat
     }
 
     echo '</table>';
-    if (!$has_data) {
-        ycdo_echo_report_no_data_found();
-    }
 }
 
 

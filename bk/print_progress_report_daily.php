@@ -27,8 +27,6 @@ $all_since = '2025-03-31';
 
 $doctor_ids = progress_gynae_daily_doctor_ids($con, $br_id, $month_like);
 $doctor_names = array();
-$has_data = false;
-
 if (count($doctor_ids) > 0) {
     $id_list = implode(',', array_map('intval', $doctor_ids));
     $run_names = mysqli_query($con, "SELECT id, u_name FROM users WHERE id IN ($id_list) ORDER BY u_name");
@@ -124,7 +122,6 @@ $count_gynae_system_all = 0;
 
 if (count($doctor_ids) > 0) {
     foreach ($doctor_ids as $dr_id) {
-        $has_data = true;
         $dr_name = $doctor_names[$dr_id] ?? get_uname_by_id($dr_id);
         $opd = $opd_day[$dr_id] ?? 0;
         $gynae_count_system_token = $token_day[$dr_id] ?? 0;
@@ -182,8 +179,6 @@ if (count($doctor_ids) > 0) {
             <th><?php echo $count_gynae_system_all-$count_gynae_system_token_all; ?></th>
         </tr>
     </tfoot>
-<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
-
 </table>
 </body>
 </html>

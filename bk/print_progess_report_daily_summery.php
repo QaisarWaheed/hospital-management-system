@@ -40,7 +40,6 @@ $br_name = get_branch_tag_by($br_id);
     </thead>
 <?php
 $s = 0;
-$has_data = false;
 $cash_received = 0;
 $labs = 0;
 $medicines = 0;
@@ -60,7 +59,6 @@ $total_gynae = 0;
 {
     echo '<tbody>';
     {
-        $has_data = true;
         $s = $s + 1;
         $opds = 0;
         $cons_opds = 0;
@@ -141,7 +139,6 @@ $total_gynae = 0;
     //     </tfoor>';
 }
 ?>
-<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
 </table>
 
 </body>
