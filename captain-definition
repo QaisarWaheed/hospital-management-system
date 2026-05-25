@@ -9,7 +9,6 @@
     "RUN echo 'max_execution_time = 300' > /usr/local/etc/php/conf.d/99-report-timeout.ini",
     "COPY . /var/www/html/",
     "RUN find /var/www/html -name 'php.ini' -delete || true",
-    "RUN find /var/www/html -not -user www-data -exec chown www-data:www-data {} +",
     "EXPOSE 80"
   ]
 }
