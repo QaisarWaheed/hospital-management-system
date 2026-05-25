@@ -3,7 +3,7 @@ if (isset($_GET['save'])) {
 	$tokan_no = $_GET['tokan_no'];
 ?>
 <script>
-  window.open("print_tokan.php?tokan_no=<?php echo $tokan_no; ?>", "_blank", "toolbar=no,scrollbars=no,resizable=no,top=500,left=500,width=400,height=400,status=no");
+  window.open(<?php echo json_encode(ycdo_absolute_url('print_tokan.php', 'tokan_no=' . rawurlencode((string) $tokan_no))); ?>, "_blank", "toolbar=no,scrollbars=no,resizable=no,top=500,left=500,width=400,height=400,status=no");
 </script>
 <?php
 }

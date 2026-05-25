@@ -6,8 +6,8 @@ if (isset($_GET['print_summary'])) {
 	$user_name_s = $_GET['user_name'];
 ?>
 <script>
-window.open("print_summary.php?s=<?php echo $from_date; ?>&e=<?php echo $to_date; ?>&u=<?php echo $user_id; ?>&un=<?php echo $user_name; ?>", "_blank", "toolbar=no,scrollbars=no,resizable=no,top=50,left=50,status=no");
-	  location.replace("user_summary.php");
+window.open(<?php echo json_encode(ycdo_absolute_url('print_summary.php', 's=' . rawurlencode((string) $from_date) . '&e=' . rawurlencode((string) $to_date) . '&u=' . rawurlencode((string) $user_id_s) . '&un=' . rawurlencode((string) $user_name_s))); ?>, "_blank", "toolbar=no,scrollbars=no,resizable=no,top=50,left=50,status=no");
+	  location.replace(<?php echo json_encode(ycdo_absolute_url('user_summary.php')); ?>);
 </script>
 <?php
 }

@@ -34,7 +34,7 @@ if (isset($_POST['save'])) {
 <head><meta charset="utf-8"><title>Saving…</title></head>
 <body>
 <script>
-window.open(<?php echo json_encode($print_url); ?>, '_blank', 'toolbar=no,scrollbars=no,resizable=no,width=400,height=400');
+window.open(<?php echo json_encode(ycdo_absolute_url_if_relative($print_url)); ?>, '_blank', 'toolbar=no,scrollbars=no,resizable=no,width=400,height=400');
 window.location.replace('gynae_registeration.php');
 </script>
 </body>

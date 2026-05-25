@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/ycdo_bootstrap.php';
+
 /**
  * Standard visible action row for summary / report filter forms (FR, DR/FR, MM, BK).
  *
@@ -22,8 +24,8 @@ function fr_summary_content_open()
 
 function fr_summary_print_redirect($printUrl, $returnPage)
 {
-    $printUrl = json_encode($printUrl);
-    $returnPage = json_encode($returnPage);
+    $printUrl = json_encode(ycdo_absolute_url_if_relative($printUrl));
+    $returnPage = json_encode(ycdo_absolute_url_if_relative($returnPage));
     echo '<!DOCTYPE html><html><head><title>Opening report...</title></head><body>';
     echo '<script>window.open(' . $printUrl . ', "_blank");window.location.replace(' . $returnPage . ');</script>';
     echo '</body></html>';

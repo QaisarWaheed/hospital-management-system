@@ -123,8 +123,8 @@ if(isset($_GET['search_tokan_no']) && $_GET['search_tokan_no'] != '')
 if ( isset($_GET['duplicate']) && isset($_GET['search_tokan_no']) && $_GET['search_tokan_no'] != '') {
 		$tokan_id = $_GET['search_tokan_no'];
 echo '<script>
-  window.open("print_medicine_slip_duplicate.php?tokan_no='.$tokan_id.'", "_blank", "toolbar=no,scrollbars=no,resizable=no,top=500,left=500,width=400,height=400,status=no");
-  location.replace("second_turn_by_doctor.php");
+  window.open(' . json_encode(ycdo_absolute_url('print_medicine_slip_duplicate.php', 'tokan_no=' . rawurlencode((string) $tokan_id))) . ', "_blank", "toolbar=no,scrollbars=no,resizable=no,top=500,left=500,width=400,height=400,status=no");
+  location.replace(' . json_encode(ycdo_absolute_url('testing_second_turn_by_doctor.php')) . ');
 </script>';
 
 }

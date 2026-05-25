@@ -159,3 +159,103 @@ function ycdo_gynae_row_style($weeksValue)
     }
     return '';
 }
+
+/**
+ * True when the incoming request is served over HTTPS (direct or reverse proxy).
+ */
+function ycdo_request_is_https()
+{
+    return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+}
+
+/**
+ * Scheme + host for absolute links (e.g. https://app.example.com).
+ */
+function ycdo_base_url()
+{
+    $scheme = ycdo_request_is_https() ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+
+    return $scheme . '://' . $host;
+}
+
+/**
+ * Absolute URL for a script relative to the current request, or a root path (/hr/foo.php).
+ *
+ * @param string $relativeScript e.g. print_summary.php or ../bk/print_x.php
+ * @param string $queryString optional query without leading ? (key=value&...)
+ */
+function ycdo_absolute_url($relativeScript, $queryString = '')
+{
+    $relativeScript = str_replace('\\', '/', (string) $relativeScript);
+    if ($relativeScript !== '' && $relativeScript[0] === '/') {
+        $path = $relativeScript;
+    } else {
+        $dir = dirname($_SERVER['SCRIPT_NAME'] ?? '/');
+        if ($dir === '\\' || $dir === '.') {
+            $dir = '';
+        }
+        $path = ($dir === '' || $dir === '/') ? '/' . ltrim($relativeScript, '/') : $dir . '/' . $relativeScript;
+    }
+
+    $segments = array();
+    foreach (explode('/', $path) as $seg) {
+        if ($seg === '' || $seg === '.') {
+            continue;
+        }
+        if ($seg === '..') {
+            array_pop($segments);
+            continue;
+        }
+        $segments[] = $seg;
+    }
+    $path = '/' . implode('/', $segments);
+    $url = ycdo_base_url() . $path;
+    if ($queryString !== '') {
+        $url .= '?' . ltrim((string) $queryString, '?');
+    }
+
+    return $url;
+}
+
+/**
+ * If $url is relative, resolve it with ycdo_absolute_url(); otherwise return unchanged.
+ */
+function ycdo_absolute_url_if_relative($url)
+{
+    $url = (string) $url;
+    if ($url === '' || preg_match('#^[a-z][a-z0-9+.-]*:#i', $url)) {
+        return $url;
+    }
+    if (strpos($url, '?') !== false) {
+        list($script, $query) = explode('?', $url, 2);
+
+        return ycdo_absolute_url($script, $query);
+    }
+
+    return ycdo_absolute_url($url);
+}
+
+/**
+ * Echo a window.open() script tag with a fully qualified URL.
+ *
+ * @param string $target _blank or a named window
+ * @param string $features optional window features string
+ */
+function ycdo_echo_window_open($relativeScript, $queryString = '', $target = '_blank', $features = '')
+{
+    $url = ycdo_absolute_url($relativeScript, $queryString);
+    if ($features !== '') {
+        echo '<script>window.open('
+            . json_encode($url) . ','
+            . json_encode($target) . ','
+            . json_encode($features) . ');</script>';
+        return;
+    }
+    if ($target === '_blank') {
+        echo '<script>window.open(' . json_encode($url) . ', "_blank");</script>';
+        return;
+    }
+    echo '<script>window.open(' . json_encode($url) . ',' . json_encode($target) . ');</script>';
+}

@@ -35,7 +35,7 @@ if (isset($_GET['print_summary'])) {
 <head><title>Opening summary...</title></head>
 <body>
 <script>
-window.open(<?php echo json_encode($print_url); ?>, '_blank');
+window.open(<?php echo json_encode(ycdo_absolute_url_if_relative($print_url)); ?>, '_blank');
 window.location.replace('user_summary_time.php');
 </script>
 </body>

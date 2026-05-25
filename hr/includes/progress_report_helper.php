@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../../includes/ycdo_bootstrap.php';
 
 /**
  * Shared HR progress report form handling (auth via connect.php).
@@ -33,7 +34,7 @@ function hr_progress_bootstrap($con, $hr_id, array $opts)
         if ($opts['needs_br_id']) {
             $params['br_id'] = (int) ($_POST['br_id'] ?? 0);
         }
-        $print_url = $opts['print'] . '?' . http_build_query($params);
+        $print_url = ycdo_absolute_url($opts['print'], http_build_query($params));
         $popup_script = '<script>
 window.open(' . json_encode($print_url) . ', "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,width=1400,height=900");
 </script>';

@@ -38,7 +38,7 @@ if (isset($_GET['save']) && $_GET['save'] != '')
 </style>
 
 <script>
-  window.open("referral_turn_token_print.php?referral_tokan_no=<?php echo $token_id; ?>", "_blank", "toolbar=no,scrollbars=no,resizable=no,top=10,left=10,width=1200,height=1600,status=no");
+  window.open(<?php echo json_encode(ycdo_absolute_url('referral_turn_token_print.php', 'referral_tokan_no=' . rawurlencode((string) $token_id))); ?>, "_blank", "toolbar=no,scrollbars=no,resizable=no,top=10,left=10,width=1200,height=1600,status=no");
   location.replace("referral_turn.php");
 </script>
 <?php

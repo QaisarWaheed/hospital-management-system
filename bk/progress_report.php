@@ -21,7 +21,7 @@ if ('serviceWorker' in navigator) {
 <body>
 <p>Opening progress report…</p>
 <script>
-window.open(<?php echo json_encode($print_url); ?>, '_blank', 'toolbar=no,scrollbars=yes,resizable=yes,width=1200,height=800');
+window.open(<?php echo json_encode(ycdo_absolute_url_if_relative($print_url)); ?>, '_blank', 'toolbar=no,scrollbars=yes,resizable=yes,width=1200,height=800');
 window.location.replace('progress_report.php');
 </script>
 </body>

@@ -81,8 +81,8 @@ if($count_item >= 1)
 .redText{ background-color:red; }
 </style>
 <script>
-  window.open("print_medicine_slip.php?tokan_no=<?php echo $tokan_no; ?>", "_blank", "toolbar=no,scrollbars=no,resizable=no,top=500,left=500,width=400,height=400,status=no");
-  location.replace("second_turn.php");
+  window.open(<?php echo json_encode(ycdo_absolute_url('print_medicine_slip.php', 'tokan_no=' . rawurlencode((string) $tokan_no))); ?>, "_blank", "toolbar=no,scrollbars=no,resizable=no,top=500,left=500,width=400,height=400,status=no");
+  location.replace(<?php echo json_encode(ycdo_absolute_url('second_turn.php')); ?>);
 </script>
 <?php
 }
@@ -290,8 +290,8 @@ if ( isset($_GET['duplicate']) && isset($_GET['search_tokan_no']) && $_GET['sear
 //	echo print_medicine_slip($tokan_id); 
 
 echo '<script>
-  window.open("print_medicine_slip_duplicate.php?tokan_no='.$tokan_id.'", "_blank", "toolbar=no,scrollbars=no,resizable=no,top=500,left=500,width=400,height=400,status=no");
-  location.replace("second_turn.php");
+  window.open(' . json_encode(ycdo_absolute_url('print_medicine_slip_duplicate.php', 'tokan_no=' . rawurlencode((string) $tokan_id))) . ', "_blank", "toolbar=no,scrollbars=no,resizable=no,top=500,left=500,width=400,height=400,status=no");
+  location.replace(' . json_encode(ycdo_absolute_url('second_turn.php')) . ');
 </script>';
 
 }

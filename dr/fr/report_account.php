@@ -18,9 +18,14 @@ else
 
 if( isset($_POST['date']) && $_POST['date'] != '')
 {
-    $date = $_POST['date'];
-    $br_id = $_POST['br_id'];
-    echo '<script>window.open("print_report_account.php?date='.$date.'&br_id='.$br_id.'", "PROGRESS REPORT", "width=3000,height=3000");</script>';
+    $date = mysqli_real_escape_string($con, (string) $_POST['date']);
+    $br_id = (int) $_POST['br_id'];
+    ycdo_echo_window_open(
+        'print_report_account.php',
+        'date=' . rawurlencode($date) . '&br_id=' . $br_id,
+        'PROGRESS REPORT',
+        'width=3000,height=3000'
+    );
 }
 ?>
 	<title>Dashboard - <?php echo $company_trademark; ?></title>

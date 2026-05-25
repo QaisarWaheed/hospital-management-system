@@ -102,7 +102,7 @@ if($count_item >= 1)
 			}
 ?>
 <script>
-  window.open("print_medicine_slip.php?tokan_no=<?php echo $tokan_no; ?>", "_blank", "toolbar=no,scrollbars=no,resizable=no,top=500,left=500,width=400,height=400,status=no");
+  window.open(<?php echo json_encode(ycdo_absolute_url('print_medicine_slip.php', 'tokan_no=' . rawurlencode((string) $tokan_no))); ?>, "_blank", "toolbar=no,scrollbars=no,resizable=no,top=500,left=500,width=400,height=400,status=no");
   location.replace("dashboard.php");
 </script>
 <?php

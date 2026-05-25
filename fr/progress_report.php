@@ -14,8 +14,8 @@ if (isset($_POST['date']) && $_POST['date'] !== '') {
 <head><meta charset="utf-8"><title>Opening progress report…</title></head>
 <body>
 <script>
-window.open(<?php echo json_encode($print_url); ?>, '_blank', 'toolbar=yes,scrollbars=yes,resizable=yes,width=1200,height=800');
-window.location.replace('progress_report.php');
+window.open(<?php echo json_encode(ycdo_absolute_url_if_relative($print_url)); ?>, '_blank', 'toolbar=yes,scrollbars=yes,resizable=yes,width=1200,height=800');
+window.location.replace(<?php echo json_encode(ycdo_absolute_url('progress_report.php')); ?>);
 </script>
 </body>
 </html>

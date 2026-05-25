@@ -33,8 +33,8 @@ if (isset($_POST['save']))
     	$last_id = mysqli_insert_id($con);
     ?>
      <script>
-         window.open("gynae_registeration_file_print.php?reg_id=<?php echo $last_id; ?>", "_blank", "toolbar=no,scrollbars=no,resizable=no,top=500,left=500,width=400,height=400,status=no");
-         window.location.replace("gynae_registeration.php");
+         window.open(<?php echo json_encode(ycdo_absolute_url('gynae_registeration_file_print.php', 'reg_id=' . (int) $last_id)); ?>, "_blank", "toolbar=no,scrollbars=no,resizable=no,top=500,left=500,width=400,height=400,status=no");
+         window.location.replace(<?php echo json_encode(ycdo_absolute_url('gynae_registeration.php')); ?>);
      </script>   
 <?php 
     exit(0);

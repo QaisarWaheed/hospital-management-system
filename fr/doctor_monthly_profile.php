@@ -22,7 +22,7 @@ if (isset($_POST['progress'], $_POST['date'], $_POST['doctor_id']) && $_POST['da
 <head><meta charset="utf-8"><title>Opening doctor profile…</title></head>
 <body>
 <script>
-window.open(<?php echo json_encode($print_url); ?>, '_blank', 'toolbar=yes,scrollbars=yes,resizable=yes,width=1200,height=900');
+window.open(<?php echo json_encode(ycdo_absolute_url_if_relative($print_url)); ?>, '_blank', 'toolbar=yes,scrollbars=yes,resizable=yes,width=1200,height=900');
 window.location.replace('doctor_monthly_profile.php');
 </script>
 </body>
