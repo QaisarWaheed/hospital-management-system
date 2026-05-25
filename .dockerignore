@@ -1,0 +1,15 @@
+.git
+.github
+node_modules
+*.log
+tests/
+*.md
+*.zip
+*.sql
+index-files-08102025.zip
+deploy/
+.gitignore
+phpunit.xml
+README-TESTS.md
+PROJECT_FILE_MAP.md
+pfa.txt
