@@ -96,6 +96,9 @@ function progress_tokans_subquery($con, $br_id, $like)
 function progress_map_int($con, $sql, $key_col, $val_col)
 {
     $map = array();
+    if (!$con instanceof mysqli) {
+        return $map;
+    }
     $run = mysqli_query($con, $sql);
     if (!$run) {
         return $map;
@@ -112,6 +115,9 @@ function progress_map_int($con, $sql, $key_col, $val_col)
 function progress_map_float($con, $sql, $key_col, $val_col)
 {
     $map = array();
+    if (!$con instanceof mysqli) {
+        return $map;
+    }
     $run = mysqli_query($con, $sql);
     if (!$run) {
         return $map;

@@ -54,7 +54,7 @@ assert_true($login !== null, 'login params from legacy u');
 assert_same(15, $login['branch_id'] ?? -1, 'login branch from u');
 
 echo "Progress report tests\n";
-$sql = progress_tokans_subquery(9, '2026-04-23%');
+$sql = progress_tokans_subquery(null, 9, '2026-04-23%');
 assert_true(strpos($sql, "branch_id = '9'") !== false, 'tokans subquery branch');
 assert_same(array(), progress_map_int(null, 'SELECT 1', 'id', 'cnt'), 'map int empty on bad connection');
 
@@ -65,6 +65,11 @@ $critical = array(
     'fr/user_summary.php',
     'bk/print_progress_report_daily_branch.php',
     'includes/report_helpers.php',
+    'includes/ycdo_bootstrap.php',
+    'bk/includes/progress_report_params.php',
+    'hr/includes/progress_report_helper.php',
+    'lab/print_progress_report_monthly.php',
+    'lab/print_progess_report_daily.php',
 );
 
 foreach ($critical as $rel) {
@@ -103,6 +108,11 @@ foreach ($summaryPages as $page) {
 $userSummary = file_get_contents($root . '/fr/user_summary.php');
 assert_true(strpos($userSummary, 'http_build_query') !== false, 'user summary build query');
 assert_true(strpos($userSummary, 'target="_blank"') === false, 'user summary no blank target');
+
+$labMonthly = file_get_contents($root . '/lab/print_progress_report_monthly.php');
+assert_true(strpos($labMonthly, 'lab_map') !== false, 'lab monthly uses lab_map batch');
+assert_true(strpos($labMonthly, "created LIKE '\$date%'") === false, 'lab monthly no LIKE date');
+assert_true(strpos($labMonthly, 'GROUP BY ibd.doctor_id') !== false, 'lab monthly batch GROUP BY doctor');
 
 echo "\n";
 echo "Passed: $passed\n";
