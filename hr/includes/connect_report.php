@@ -10,8 +10,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 if (empty($_SESSION['hr_id'])) {
-    header('Location: logout.php');
-    exit;
+    ycdo_print_auth_failed_page();
 }
 
 $hr_id = (int) $_SESSION['hr_id'];
@@ -25,8 +24,7 @@ $hr_branch_address = $_SESSION['branch_address'] ?? '';
 $hr_branch_phone = $_SESSION['branch_phone'] ?? '';
 
 if ($hr_id < 1) {
-    header('Location: logout.php');
-    exit;
+    ycdo_print_auth_failed_page();
 }
 
 require_once __DIR__ . '/company_info.php';

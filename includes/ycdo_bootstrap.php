@@ -16,9 +16,40 @@ if (getenv('YCDO_DEBUG') === '1' || getenv('APP_DEBUG') === '1') {
 
 mysqli_report(MYSQLI_REPORT_OFF);
 
+/**
+ * True when the incoming request is served over HTTPS (direct or reverse proxy).
+ */
+function ycdo_request_is_https()
+{
+    if (getenv('YCDO_FORCE_HTTPS') === '1') {
+        return true;
+    }
+    if (!empty($_SERVER['HTTPS']) && strtolower((string) $_SERVER['HTTPS']) !== 'off') {
+        return true;
+    }
+    if (!empty($_SERVER['SERVER_PORT']) && (int) $_SERVER['SERVER_PORT'] === 443) {
+        return true;
+    }
+    if (isset($_SERVER['REQUEST_SCHEME']) && strtolower((string) $_SERVER['REQUEST_SCHEME']) === 'https') {
+        return true;
+    }
+    $forwarded = $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? $_SERVER['HTTP_X_FORWARDED_PROTOCOL'] ?? '';
+    if ($forwarded !== '' && stripos($forwarded, 'https') !== false) {
+        return true;
+    }
+    if (!empty($_SERVER['HTTP_X_FORWARDED_SSL']) && strtolower((string) $_SERVER['HTTP_X_FORWARDED_SSL']) !== 'off') {
+        return true;
+    }
+    $cfVisitor = $_SERVER['HTTP_CF_VISITOR'] ?? '';
+    if ($cfVisitor !== '' && stripos($cfVisitor, 'https') !== false) {
+        return true;
+    }
+
+    return false;
+}
+
 if (session_status() === PHP_SESSION_NONE) {
-    $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-        || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+    $isHttps = ycdo_request_is_https();
     session_set_cookie_params([
         'lifetime' => 0,
         'path' => '/',
@@ -161,15 +192,6 @@ function ycdo_gynae_row_style($weeksValue)
 }
 
 /**
- * True when the incoming request is served over HTTPS (direct or reverse proxy).
- */
-function ycdo_request_is_https()
-{
-    return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-        || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
-}
-
-/**
  * Scheme + host for absolute links (e.g. https://app.example.com).
  */
 function ycdo_base_url()
@@ -181,12 +203,11 @@ function ycdo_base_url()
 }
 
 /**
- * Absolute URL for a script relative to the current request, or a root path (/hr/foo.php).
+ * Root-relative path for a script (e.g. /hr/print_gynae_report.php).
  *
  * @param string $relativeScript e.g. print_summary.php or ../bk/print_x.php
- * @param string $queryString optional query without leading ? (key=value&...)
  */
-function ycdo_absolute_url($relativeScript, $queryString = '')
+function ycdo_resolve_app_path($relativeScript)
 {
     $relativeScript = str_replace('\\', '/', (string) $relativeScript);
     if ($relativeScript !== '' && $relativeScript[0] === '/') {
@@ -210,8 +231,22 @@ function ycdo_absolute_url($relativeScript, $queryString = '')
         }
         $segments[] = $seg;
     }
-    $path = '/' . implode('/', $segments);
-    $url = ycdo_base_url() . $path;
+
+    return '/' . implode('/', $segments);
+}
+
+/**
+ * Same-origin URL for popups and redirects. Uses //host/path so the browser keeps
+ * the current page scheme (fixes http popups from https HR pages behind a proxy).
+ *
+ * @param string $relativeScript e.g. print_summary.php or ../bk/print_x.php
+ * @param string $queryString optional query without leading ? (key=value&...)
+ */
+function ycdo_absolute_url($relativeScript, $queryString = '')
+{
+    $path = ycdo_resolve_app_path($relativeScript);
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $url = '//' . $host . $path;
     if ($queryString !== '') {
         $url .= '?' . ltrim((string) $queryString, '?');
     }
@@ -225,7 +260,7 @@ function ycdo_absolute_url($relativeScript, $queryString = '')
 function ycdo_absolute_url_if_relative($url)
 {
     $url = (string) $url;
-    if ($url === '' || preg_match('#^[a-z][a-z0-9+.-]*:#i', $url)) {
+    if ($url === '' || preg_match('#^(?:[a-z][a-z0-9+.-]*:|//)#i', $url)) {
         return $url;
     }
     if (strpos($url, '?') !== false) {
@@ -263,6 +298,27 @@ function ycdo_echo_window_open($relativeScript, $queryString = '', $target = '_b
 /**
  * Styled empty state for report/print popups when no rows were output.
  */
+/**
+ * HTML shown in print popups when the user is not logged in (avoids blank redirect).
+ */
+function ycdo_print_auth_failed_page($message = '')
+{
+    if ($message === '') {
+        $message = 'Your session has expired. Close this window, log in again from the main application, then open the report again.';
+    }
+    if (!headers_sent()) {
+        header('Content-Type: text/html; charset=utf-8');
+        http_response_code(401);
+    }
+    echo '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Unable to open report</title></head><body>';
+    echo '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;font-family:Arial,sans-serif;color:#555;text-align:center;padding:24px;">';
+    echo '<h2 style="color:#333;">Unable to open report</h2>';
+    echo '<p style="max-width:480px;color:#888;">' . htmlspecialchars($message, ENT_QUOTES, 'UTF-8') . '</p>';
+    echo '<button type="button" onclick="window.close()" style="margin-top:20px;padding:10px 24px;background:#007bff;color:#fff;border:none;border-radius:6px;font-size:16px;cursor:pointer;">Close</button>';
+    echo '</div></body></html>';
+    exit;
+}
+
 function ycdo_echo_report_no_data_found()
 {
     echo '

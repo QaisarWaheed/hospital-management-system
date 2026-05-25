@@ -22,8 +22,7 @@ if (!empty($_SESSION['bk_id'])) {
     $bk_id = (int) $_SESSION['fr_id'];
     $bk_name = $_SESSION['admin_name'] ?? ($_SESSION['fr_name'] ?? '');
 } else {
-    header('Location: logout.php');
-    exit;
+    ycdo_print_auth_failed_page();
 }
 
 $bk_branch_id = (int) ($_SESSION['branch_id'] ?? 0);
@@ -31,8 +30,7 @@ $bk_is_admin = (int) ($_SESSION['is_admin'] ?? 0);
 $bk_is_incharge = (int) ($_SESSION['is_incharge'] ?? 0);
 
 if ($bk_id < 1) {
-    header('Location: logout.php');
-    exit;
+    ycdo_print_auth_failed_page();
 }
 
 require_once __DIR__ . '/company_info.php';

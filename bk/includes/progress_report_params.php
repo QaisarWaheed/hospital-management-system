@@ -418,11 +418,14 @@ function progress_render_gynae_organization_report($dataset, $company_name, $dat
     $doctor_names = $dataset['doctor_names'];
     $has_data = false;
 
+    $company_safe = htmlspecialchars((string) $company_name, ENT_QUOTES, 'UTF-8');
+    $date_label_safe = htmlspecialchars((string) $date_label, ENT_QUOTES, 'UTF-8');
+
     echo '
 <table border = "solid">
 <caption>
-    <h2>' . $company_name . '</h2>
-    <h3>GYNAE REPORT DATE ' . $date_label . '</h3>
+    <h2>' . $company_safe . '</h2>
+    <h3>GYNAE REPORT DATE ' . $date_label_safe . '</h3>
 </caption>
 ';
 
@@ -487,7 +490,7 @@ function progress_render_gynae_organization_report($dataset, $company_name, $dat
                 $total_procedures = $dataset['month_procedure'][$br_id][$doctor] ?? 0;
                 $total_total_procedure = $total_total_procedure + $total_procedures;
 
-                $doctor_name = $doctor_names[$doctor] ?? get_uname_by_id($doctor);
+                $doctor_name = $doctor_names[$doctor] ?? ('Doctor #' . $doctor);
                 echo ' <tr style = "text-align: right;">
                 <td>' . $s . '</td>
                 <td style = "text-align: left;">' . $doctor_name . '</td>
@@ -525,6 +528,7 @@ function progress_render_gynae_organization_report($dataset, $company_name, $dat
         ycdo_echo_report_no_data_found();
     }
 }
+
 
 function progress_opd_count_by_doctor($con, $br_id, $like)
 {
