@@ -47,6 +47,8 @@ if ($run_aggregate) {
 }
 
 $user_names = array();
+$has_data = false;
+
 if (count($stats) > 0) {
     $user_ids = implode(',', array_keys($stats));
     $name_sql = "SELECT id, u_name FROM users WHERE id IN ($user_ids)";
@@ -97,6 +99,7 @@ $total_incentive = 0;
 if (count($stats) > 0) {
     echo '<tbody>';
     foreach ($stats as $doctor => $types) {
+        $has_data = true;
         $s++;
         $doctor_name = $user_names[$doctor] ?? get_uname_by_id($doctor);
         $count_poor = $types['1']['count'];
@@ -141,10 +144,10 @@ if (count($stats) > 0) {
     echo '<th>' . $total_incentive . '</th>';
     echo '</tr>
         </tfoot>';
-} else {
-    echo '<tbody><tr><td colspan="9">NO DATA FOUND FOR THIS MONTH AND BRANCH</td></tr></tbody>';
 }
 ?>
+<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
+
 </table>
 <small>
     <span style="color: red;">INCENTIVE:</span> 1 rupee per Poor token, 3 Rupees per General Token &amp; 5 Rupees per Private Token

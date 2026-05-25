@@ -20,6 +20,8 @@ $con = mysqli_connect($ycdo_db_host, $ycdo_db_user, $ycdo_db_pass, $ycdo_db_name
 
 $query = "SELECT branch_pending_details.id, branch_pending_details.token_no,branchs.tag_name, patients.name,branch_pending_details.gardian_name, branch_pending_details.recommended_by, tokans.cash, tokans.cash_received, branch_pending_details.created FROM `branch_pending_details` INNER JOIN branchs ON branch_pending_details.branch_id = branchs.id INNER JOIN tokans ON branch_pending_details.token_no = tokans.id INNER JOIN patients ON tokans.patient_id = patients.id WHERE branch_pending_details.status = 1 AND branch_pending_details.token_no NOT IN (SELECT token_no FROM branch_daily_pending_details) AND branch_pending_details.created >= '2023-01-01' AND branch_pending_details.created <= '2024-05-31' AND tokans.cash != tokans.cash_received ORDER BY id ASC LIMIT 1501, 500 ";
 $run = mysqli_query($con, $query);
+$has_data = false;
+
 if(mysqli_num_rows($run) > 0)
 {
 ?>
@@ -77,6 +79,8 @@ if(mysqli_num_rows($run) > 0)
         ';
         }
     } ?>
+<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
+
 </table>
 <?php
 }    

@@ -69,6 +69,7 @@ $total_cash = 0.0;
 $total_cash_received = 0.0;
 $total_pending = 0.0;
 $total_pending_receive = 0.0;
+$has_data = false;
 
 for ($day = 1; $day <= $total_days_of_month; $day++) {
     $row = isset($byDay[$day]) ? $byDay[$day] : account_summary_empty_day();
@@ -89,6 +90,7 @@ for ($day = 1; $day <= $total_days_of_month; $day++) {
     $dayPad = $day < 10 ? '0' . $day : (string) $day;
     $select_date = $year . '-' . $monthNum . '-' . $dayPad;
     $display_date = ycdo_safe_date_format($select_date, 'd-m-Y', $select_date);
+    $has_data = true;
 ?>
         <tr>
             <td><?php echo htmlspecialchars($display_date); ?></td>
@@ -106,6 +108,7 @@ for ($day = 1; $day <= $total_days_of_month; $day++) {
             <th><?php echo number_format($total_cash_received); ?></th>
         </tr>
     </tbody>
+<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
 </table>
 
 </body>

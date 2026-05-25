@@ -75,8 +75,11 @@ $detailRun = fr_summary_tokans_detail_result($con, $from_date, $to_date, $u_id, 
 	<tbody>
 <?php
 $s = 0;
+$has_data = false;
+
 if ($detailRun) {
     while ($row = mysqli_fetch_assoc($detailRun)) {
+        $has_data = true;
         $s++;
         $pre = ($row['previous_tokan_no'] ?? '') !== '' && ($row['previous_tokan_no'] ?? null) !== 'NULL'
             ? $row['previous_tokan_no'] : 'NULL';
@@ -112,6 +115,8 @@ if ($u_id === 0) {
 }
 ?>
 	</tbody>
+<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
+
 </table>
 </body>
 </html>

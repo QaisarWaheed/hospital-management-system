@@ -123,8 +123,11 @@ $doctor_rows = progress_monthly_doctors_opd_cash_rows($con, $br_id, $like, 60, 2
     $total_ecgs = 0;
     
     $count_run = count($doctor_rows);
+    $has_data = false;
+
     if ($count_run > 0) {
         foreach ($doctor_rows as $row) {
+        $has_data = true;
             $opd = $row['opd'];
             $total_opd = $total_opd + $opd;
             $cash_collection = $row['cash_collection'];
@@ -274,6 +277,8 @@ $doctor_rows = progress_monthly_doctors_opd_cash_rows($con, $br_id, $like, 60, 2
             <th><?php echo number_format($total_cash); ?></th>
         </tr>
     </tbody>
+<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
+
 </table>
 </body>
 </html>

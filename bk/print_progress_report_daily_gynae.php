@@ -21,6 +21,8 @@ $system_all = progress_gynae_register_count_by_doctor_since($con, $br_id, $all_s
 
 $doctor_ids = progress_gynae_daily_doctor_ids($con, $br_id, $current_month);
 $user_names = array();
+$has_data = false;
+
 if (count($doctor_ids) > 0) {
     $ids = implode(',', $doctor_ids);
     $run_names = mysqli_query($con, "SELECT id, u_name FROM users WHERE id IN ($ids)");
@@ -83,6 +85,7 @@ $count_gynae_system_all = 0;
 <?php
 $s = 0;
 foreach ($doctor_ids as $dr_id) {
+        $has_data = true;
     $s++;
     $opd = $opd_day[$dr_id] ?? 0;
     $gynae_count_system_token = $token_day[$dr_id] ?? 0;
@@ -134,6 +137,8 @@ foreach ($doctor_ids as $dr_id) {
             <th><?php echo $count_gynae_system_all - $count_gynae_system_token_all; ?></th>
         </tr>
     </tfoot>
+<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
+
 </table>
 </body>
 </html>

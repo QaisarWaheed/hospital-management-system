@@ -30,6 +30,8 @@ $branch_ids = array_unique(array_merge(array_keys($first_stats), array_keys($sec
 sort($branch_ids, SORT_NUMERIC);
 
 $branches = array();
+$has_data = false;
+
 if (count($branch_ids) > 0) {
     $id_list = implode(',', array_map('intval', $branch_ids));
     $run_branch = mysqli_query($con, "SELECT id, address FROM branchs WHERE id IN ($id_list) ORDER BY id");
@@ -52,6 +54,7 @@ $month2_label = ycdo_safe_date_format($second_month . '-01', 'M-y', $second_mont
 <?php
 if (count($branches) > 0) {
     foreach ($branches as $row_branch) {
+        $has_data = true;
         $comparision_branch_id = (int) $row_branch['id'];
         $comparision_branch_address = $row_branch['address'];
 
@@ -102,6 +105,8 @@ if (count($branches) > 0) {
                             <th><?php echo $select_procedure_2 - $select_procedure; ?></th>
                             <th><?php echo $collection_second_month - $collection_first_month; ?></th>
                         </tr>
+                    <?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
+
                     </table>
                 </div>
             </div>

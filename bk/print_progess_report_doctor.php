@@ -45,10 +45,13 @@ sort($doctor_ids, SORT_NUMERIC);
         </tr>
     </thead>
 <?php
+$has_data = false;
+
 if (count($doctor_ids) > 0) {
     echo '<tbody>';
     $s = 0;
     foreach ($doctor_ids as $doctor) {
+        $has_data = true;
         $s++;
         $opds = $opd_map[$doctor] ?? 0;
         $cons_opds = $cons_map[$doctor] ?? 0;
@@ -67,6 +70,8 @@ if (count($doctor_ids) > 0) {
     echo '</tbody>';
 }
 ?>
+<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
+
 </table>
 
 </body>

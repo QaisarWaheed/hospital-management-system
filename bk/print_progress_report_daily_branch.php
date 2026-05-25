@@ -100,6 +100,9 @@ $count_run = $run ? mysqli_num_rows($run) : 0;
     $total_refered = 0;
     $total_refered_to = 0;
 
+    $has_data = false;
+
+
     if ($run && $count_run > 0) {
         while ($row = mysqli_fetch_array($run)) {
             $doctor_id = (int) $row['doctor_id'];
@@ -217,6 +220,8 @@ $count_run = $run ? mysqli_num_rows($run) : 0;
             <th><?php echo number_format($total_cash); ?></th>
         </tr>
     </tbody>
+<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
+
 </table>
 </body>
 </html>

@@ -120,6 +120,8 @@ elseif(isset($_GET['attendance_record_remarks']) && $_GET['attendance_record_rem
 	        <?php
 	        $s = 0;
 	        $run_attendance = mysqli_query($con, $attendance);
+	        $has_data = false;
+
 	        if(mysqli_num_rows($run_attendance) > 0)
 	        {
 	            while($row_attendance = mysqli_fetch_array($run_attendance))
@@ -272,6 +274,8 @@ elseif(isset($_GET['attendance_record_remarks']) && $_GET['attendance_record_rem
 	            <h2><?php echo $br_address; ?></h2>
 	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
 	        </caption>
+	    <?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
+
 	    </table>
 	</div>
 </div>

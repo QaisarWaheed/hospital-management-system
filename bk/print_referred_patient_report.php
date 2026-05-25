@@ -70,6 +70,8 @@ $date_esc = mysqli_real_escape_string($con, (string) $date);
 $ref_date_clause = progress_sql_date_clause($con, $date_esc . '%', 'referral_patient_created');
 $select_referral_token = "SELECT * FROM `referral_patients` WHERE opd_token_id > 0 AND referral_patient_status > 0 AND $ref_date_clause ORDER BY branch_id, referral_patient_status ";
 $run_referral_token = mysqli_query($con, $select_referral_token);
+$has_data = false;
+
 if(mysqli_num_rows($run_referral_token) > 0)
 {
     while($row_referral_token = mysqli_fetch_array($run_referral_token))
@@ -113,7 +115,7 @@ if(mysqli_num_rows($run_referral_token) > 0)
         				}
         			}
         			?>
-
+        			        <?php $has_data = true; ?>
         			        <tr>
         			            <td><?php echo $s; ?></td>
         			            <td><?php echo $token_no; ?></td>
@@ -131,6 +133,8 @@ if(mysqli_num_rows($run_referral_token) > 0)
 }
 	?>
         			    </tbody>
+        			<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
+
         			</table>
 </div>
             </div>

@@ -9,6 +9,8 @@ $like = $req['like'];
 
 $lab_stats = progress_lab_stats_by_doctor($con, $br_id, $like);
 $user_names = array();
+$has_data = false;
+
 if (count($lab_stats) > 0) {
     $ids = implode(',', array_keys($lab_stats));
     $run_names = mysqli_query($con, "SELECT id, u_name FROM users WHERE id IN ($ids)");
@@ -49,6 +51,7 @@ $total_count_lab = 0;
 if (count($lab_stats) > 0) {
     echo '<tbody>';
     foreach ($lab_stats as $doctor => $stat) {
+        $has_data = true;
         $s++;
         $doctor_name = $user_names[$doctor] ?? get_uname_by_id($doctor);
         $count_lab = $stat['count'];
@@ -64,10 +67,10 @@ if (count($lab_stats) > 0) {
     }
     echo '</tbody>';
     echo '<tfoot><tr style="text-align: right;"><th></th><th></th><th>' . $total_count_lab . '</th><th>' . $total_lab . '</th></tr></tfoot>';
-} else {
-    echo '<tbody><tr><td colspan="4">NO DATA FOUND</td></tr></tbody>';
 }
 ?>
+<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
+
 </table>
 </body>
 </html>

@@ -45,6 +45,8 @@ $count_consultant_opd = 0;
 $select_dr = "SELECT id, u_name FROM users WHERE status = '1' AND role_id = '3' AND id IN (SELECT `doctor_id` FROM `tokans` WHERE `branch_id` = '$br_id' AND created LIKE '$date%') ORDER BY `u_name` ";
 // $select_dr = "SELECT * FROM users WHERE `branch_id` = '$br_id' AND status = '1' AND role_id = '3' AND id IN (SELECT `doctor_id` FROM `tokans` WHERE `branch_id` = '$br_id' AND created LIKE '$date%') ORDER BY `u_name` ";
 $run_dr = mysqli_query($con, $select_dr);
+$has_data = false;
+
 if(mysqli_num_rows($run_dr) > 0)
 {
     while($row_dr = mysqli_fetch_array($run_dr))
@@ -120,6 +122,8 @@ if(mysqli_num_rows($run_dr) > 0)
         </tr>
         
     </tfoot>
+<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
+
 </table>
 </body>
 </html>

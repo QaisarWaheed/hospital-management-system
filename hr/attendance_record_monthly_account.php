@@ -59,6 +59,8 @@ else
 	                            <?php
 	                            $select_branch_data = "SELECT * FROM `branchs` WHERE `status` = '1' ";
 	                            $run_branch_data = mysqli_query($con, $select_branch_data);
+	                            $has_data = false;
+
 	                            if(mysqli_num_rows($run_branch_data) > 0)
 	                            {
 	                                while($row_branch_data = mysqli_fetch_array($run_branch_data))
@@ -149,6 +151,8 @@ else
 	        }
 	        ?>
 	        </tbody>
+	    <?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
+
 	    </table>
 	</div>
 </div>

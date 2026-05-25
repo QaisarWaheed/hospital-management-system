@@ -28,6 +28,8 @@ if ($run_doctors) {
 }
 
 $user_names = array();
+$has_data = false;
+
 if (count($doctor_ids) > 0) {
     $ids = implode(',', $doctor_ids);
     $run_names = mysqli_query($con, "SELECT id, u_name FROM users WHERE id IN ($ids)");
@@ -83,6 +85,7 @@ $totals = array(
 if (count($doctor_ids) > 0) {
     echo '<tbody>';
     foreach ($doctor_ids as $doctor) {
+        $has_data = true;
         $s++;
         $opd = $opds[$doctor] ?? 0;
         $collection = $collections[$doctor] ?? 0;
@@ -143,10 +146,10 @@ if (count($doctor_ids) > 0) {
     echo '<th>' . $totals['emergency'] . '</th><th>' . $totals['ecg'] . '</th><th>' . $totals['gynaes'] . '</th>';
     echo '<th>' . $totals['gynae_system'] . '</th><th>' . $totals['refered'] . '</th><th>' . $totals['refered_to'] . '</th>';
     echo '<th>' . number_format($totals['collections']) . '</th></tr></tfoot>';
-} else {
-    echo '<tbody><tr><td colspan="22">NO DATA FOUND</td></tr></tbody>';
 }
 ?>
+<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
+
 </table>
 </body>
 </html>

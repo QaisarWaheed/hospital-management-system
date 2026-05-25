@@ -60,10 +60,13 @@ $total_gynae_system = 0;
         </tr>
     </thead>
 <?php
+$has_data = false;
+
 if (count($branch_ids) > 0) {
     echo '<tbody>';
     $s = 0;
     foreach ($branch_ids as $branch_id) {
+        $has_data = true;
         $s++;
         $item = $summary['item'][$branch_id] ?? array();
         $opds = $summary['opd'][$branch_id] ?? 0;
@@ -123,6 +126,8 @@ if (count($branch_ids) > 0) {
     echo '<tbody><tr><td colspan="12">No branch activity for this date.</td></tr></tbody>';
 }
 ?>
+<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
+
 </table>
 
 </body>

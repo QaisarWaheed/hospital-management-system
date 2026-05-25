@@ -64,6 +64,8 @@ $data .= '
 	        $s = 0;
 	        $attendance = "SELECT distinct staff.staff_id, staff.staff_name, designations.designation_title FROM `attendance_records` INNER JOIN staff ON attendance_records.employee_id = staff.staff_id INNER JOIN designations ON staff.designation_id = designations.designation_id WHERE attendance_records.branch_id = '$br_id' AND `attendance_record_month` = '$month' ORDER BY `staff`.`staff_name` ASC ";
 	        $run_attendance = mysqli_query($con, $attendance);
+	        $has_data = false;
+
 	        if(mysqli_num_rows($run_attendance) > 0)
 	        {
 	            while($row_attendance = mysqli_fetch_array($run_attendance))
@@ -122,6 +124,8 @@ $data .= '
 	            $data .= '<tr><th colspan = "8">NO DATA FOUND</th></tr>';
 	        }
 	        $data .= '</tbody>
+	    <?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
+
 	    </table>
 </body>
 </html>';

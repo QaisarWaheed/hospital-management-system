@@ -73,6 +73,8 @@ if ($u_id > 0) {
 }
 
 $run = mysqli_query($con, $select);
+$has_data = false;
+
 if ($run && mysqli_num_rows($run) > 0) {
     while ($row = mysqli_fetch_array($run)) {
         $s++;
@@ -188,7 +190,8 @@ if ($u_id === 0 && $br_id > 0) {
             $pending_receive_amount += $amount;
             echo '<tr><td>' . htmlspecialchars((string) $token_no) . '</td><td>' . $amount . '</td></tr>';
         }
-        echo '<caption style="background: black;color: white;text-align: center;">PENDING RECEIVED: AMOUNT -> <u>' . $pending_receive_amount . '</u></caption></table></td></tr>';
+        echo '<caption style="background: black;color: white;text-align: center;">PENDING RECEIVED: AMOUNT -> <u>' . $pending_receive_amount . '</u></caption><?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
+</table></td></tr>';
     }
 
     $pending_token_amount = 0;

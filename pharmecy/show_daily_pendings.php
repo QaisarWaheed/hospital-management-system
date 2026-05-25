@@ -35,6 +35,8 @@ $select_value = $branch_id;
 <?php
 $s = 0;
 $select_branch_item = mysqli_query($con, "SELECT * FROM `branch_daily_pending_details` WHERE status = '1' ORDER BY `token_no` ");
+$has_data = false;
+
 if (mysqli_num_rows($select_branch_item) > 0) 
 {
 	while ($row_branch = mysqli_fetch_array($select_branch_item)) 
@@ -71,6 +73,8 @@ if (mysqli_num_rows($select_branch_item) > 0)
 }
 ?>
 			</tbody>
+		<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
+
 		</table>
 
 	</div>

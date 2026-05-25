@@ -259,3 +259,44 @@ function ycdo_echo_window_open($relativeScript, $queryString = '', $target = '_b
     }
     echo '<script>window.open(' . json_encode($url) . ',' . json_encode($target) . ');</script>';
 }
+
+/**
+ * Styled empty state for report/print popups when no rows were output.
+ */
+function ycdo_echo_report_no_data_found()
+{
+    echo '
+    <div style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 60vh;
+        font-family: Arial, sans-serif;
+        color: #555;
+    ">
+        <div style="
+            font-size: 64px;
+            margin-bottom: 20px;
+        ">📋</div>
+        <h2 style="
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 10px;
+        ">No Data Found</h2>
+        <p style="
+            font-size: 16px;
+            color: #888;
+            margin-bottom: 30px;
+        ">There are no records available for the selected date or branch.</p>
+        <button onclick="window.close()" style="
+            padding: 10px 24px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        ">Close</button>
+    </div>';
+}

@@ -39,6 +39,8 @@ $total_purchase = 0;
 $ibd_date_clause = progress_sql_date_clause($con, $like, 'item_by_doctor.created');
 $select = "SELECT DISTINCT item_by_doctor.user_id, users.u_name, SUM(item_by_doctor.sale_quantity*item_by_doctor.sale_price_poor)AS sale_poor, SUM(item_by_doctor.sale_quantity*item_by_doctor.purchase_price)AS purchase_price FROM `item_by_doctor` INNER JOIN users ON item_by_doctor.user_id = users.id INNER JOIN categories ON item_by_doctor.category_id = categories.id AND categories.is_medicine = '1' WHERE item_by_doctor.branch_id = '$br_id' AND item_by_doctor.status = '2' AND $ibd_date_clause GROUP BY item_by_doctor.user_id ";
 $run = mysqli_query($con, $select);
+$has_data = false;
+
 if(mysqli_num_rows($run) > 0)
 {
     echo '<tbody>';
@@ -96,6 +98,8 @@ if(mysqli_num_rows($run) > 0)
         </tfoor>';
 }
 ?>
+<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
+
 </table>
 <small>
     <span style = "color: red;">NOTE:</span>1% Till One Lac, 2% More then One Lac and Less then Two Lac & 3% More Then Two Lac

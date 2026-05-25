@@ -80,9 +80,13 @@ $total_gynae_system = 0;
 $current_total_tokens = 0;
 $current_total_gynae_system = 0;
 
+$has_data = false;
+
+
 if (count($doctor_ids) > 0) {
     echo '<tbody>';
     foreach ($doctor_ids as $doctor_id) {
+        $has_data = true;
         $s++;
         $doctor_name = $historical_tokens[$doctor_id]['name'] ?? get_uname_by_id($doctor_id);
         $tokens = ($historical_tokens[$doctor_id]['tokens'] ?? 0);
@@ -108,10 +112,10 @@ if (count($doctor_ids) > 0) {
     echo '<th>' . ($current_total_tokens + $total_tokens) . '</th><th>' . ($current_total_gynae_system + $total_gynae_system) . '</th>';
     echo '<th>' . intval(($current_total_tokens + $total_tokens) - ($current_total_gynae_system + $total_gynae_system)) . '</th>';
     echo '</tr></tfoot>';
-} else {
-    echo '<tbody><tr><td colspan="12">NO DATA FOUND</td></tr></tbody>';
 }
 ?>
+<?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
+
 </table>
 </body>
 </html>

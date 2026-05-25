@@ -18,6 +18,8 @@ include 'includes/head.php';
 // $select_branch = "SELECT * FROM `branchs` WHERE `status` = 1 AND id IN (SELECT DISTINCT branch_id FROM tokans WHERE created LIKE '$first_month%' OR created LIKE '$second_month%') ";
 $select_branch = "SELECT * FROM `branchs` WHERE `status` = 1 AND id = '9' ";
 $run_branch = mysqli_query($con, $select_branch);
+$has_data = false;
+
 if(mysqli_num_rows($run_branch) > 0)
 {
     while($row_branch = mysqli_fetch_array($run_branch))
@@ -178,6 +180,8 @@ if(mysqli_num_rows($run_branch) > 0)
         $operation_amount_2 = 0;
         $collection_2 = 0;
         } ?>
+                    <?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
+
                     </table>
                 </div>
             </div>

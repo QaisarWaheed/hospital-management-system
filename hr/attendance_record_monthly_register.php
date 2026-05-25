@@ -151,9 +151,12 @@ $extra_duty_map = get_extra_staff_duty_map($month, $br_id);
 	        </thead>
 	        <tbody>
 	        <?php
+	        $has_data = false;
+
 	        if (count($staff_rows) > 0) {
 	            $s = 0;
 	            foreach ($staff_rows as $row_attendance) {
+        $has_data = true;
 	                $s++;
                     $p = 0;
                     $l = 0;
@@ -207,6 +210,8 @@ $extra_duty_map = get_extra_staff_duty_map($month, $br_id);
 	        }
 	        ?>
 	        </tbody>
+	    <?php if (!$has_data) { ycdo_echo_report_no_data_found(); } ?>
+
 	    </table>
 	</div>
 </div>
