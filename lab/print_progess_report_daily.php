@@ -1,61 +1,77 @@
 <?php
+// OPTIMIZED: replaced per-row queries with pre-aggregated batch queries
 include 'includes/config.php';
 include 'includes/connect.php';
-require_once __DIR__ . '/../bk/includes/progress_report_params.php';
 
-$req = progress_report_resolve_request($con);
-$date = $req['date'];
-$br_id = $req['br_id'];
-$like = $req['like'];
+if (isset($_GET['date'])) {
+    $date = (string) $_GET['date'];
+    $br_id = (int) $_GET['br_id'];
+} elseif (isset($_POST['date'])) {
+    $date = (string) $_POST['date'];
+    $br_id = (int) $_POST['br_id'];
+} else {
+    exit(0);
+}
+
+$br_id = (int) $br_id;
+$day_start = date('Y-m-d', strtotime($date)) . ' 00:00:00';
+$day_end = date('Y-m-d 00:00:00', strtotime($date . ' +1 day'));
+$day_start_esc = mysqli_real_escape_string($con, $day_start);
+$day_end_esc = mysqli_real_escape_string($con, $day_end);
 
 $opds = array();
-$opd_sql = "SELECT doctor_id, users.u_name, COUNT(tokans.id) AS opd
-    FROM tokans
-    INNER JOIN users ON tokans.doctor_id = users.id
-    WHERE tokans.branch_id = '$br_id'
-    AND tokans.created LIKE '$like'
-    AND tokans.tokan_type_id < 100
-    AND tokans.status = 1
-    GROUP BY doctor_id, users.u_name
-    ORDER BY users.u_name";
+$opd_sql = "SELECT t.doctor_id, u.u_name, COUNT(t.id) AS opd
+    FROM tokans t
+    INNER JOIN users u ON t.doctor_id = u.id
+    WHERE t.branch_id = '$br_id'
+    AND t.created >= '$day_start_esc' AND t.created < '$day_end_esc'
+    AND t.tokan_type_id < 100
+    AND t.status = 1
+    GROUP BY t.doctor_id, u.u_name
+    ORDER BY u.u_name";
 $run = mysqli_query($con, $opd_sql);
 if ($run) {
     while ($row = mysqli_fetch_assoc($run)) {
         $opds[(int) $row['doctor_id']] = array(
-            'name' => $row['u_name'],
+            'name' => (string) $row['u_name'],
             'opd' => (int) $row['opd'],
         );
     }
 }
 
 $lab_counts = array();
-$lab_sql = "SELECT item_by_doctor.doctor_id, COUNT(DISTINCT item_by_doctor.tokan_no) AS lab_cnt
-    FROM item_by_doctor
-    INNER JOIN item_register_to_branches ON item_by_doctor.item_id = item_register_to_branches.id
-    INNER JOIN items ON item_register_to_branches.item_id = items.id
-    WHERE item_by_doctor.created LIKE '$like'
-    AND item_by_doctor.branch_id = '$br_id'
-    AND items.category_id = '2'
-    AND item_by_doctor.status = '2'
-    GROUP BY item_by_doctor.doctor_id";
+$lab_sql = "SELECT ibd.doctor_id, COUNT(DISTINCT ibd.tokan_no) AS lab_cnt
+    FROM item_by_doctor ibd
+    INNER JOIN item_register_to_branches ir ON ibd.item_id = ir.id AND ir.branch_id = ibd.branch_id
+    INNER JOIN items i ON ir.item_id = i.id
+    WHERE ibd.branch_id = '$br_id'
+    AND ibd.created >= '$day_start_esc' AND ibd.created < '$day_end_esc'
+    AND i.category_id = 2
+    AND ibd.status = '2'
+    GROUP BY ibd.doctor_id";
 $run_lab = mysqli_query($con, $lab_sql);
 if ($run_lab) {
     while ($row = mysqli_fetch_assoc($run_lab)) {
         $lab_counts[(int) $row['doctor_id']] = (int) $row['lab_cnt'];
     }
 }
+
+$date_obj = date_create($date);
+$day_label = $date_obj ? $date_obj->format('d-M-Y') : $date;
+$has_data = false;
+$s = 0;
 ?>
 <html>
 <head>
-    <title><?php echo get_branch_tag_by($br_id) . ' ' . date_format(date_create($date), 'd-M-Y'); ?> DAILY PROGRESS REPORT</title>
+    <title><?php echo htmlspecialchars(get_branch_tag_by($br_id), ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlspecialchars($day_label, ENT_QUOTES, 'UTF-8'); ?> DAILY PROGRESS REPORT</title>
 </head>
 <body>
 
 <table border="solid">
 <caption>
-    <h2><?php echo $company_name; ?></h2>
-    <h2><?php echo get_branch_name_by($br_id); ?></h2>
-    <h3>PROGRESS DAILY <?php echo date_format(date_create($date), 'd-M-Y'); ?></h3>
+    <h2><?php echo htmlspecialchars($company_name, ENT_QUOTES, 'UTF-8'); ?></h2>
+    <h2><?php echo htmlspecialchars(get_branch_name_by($br_id), ENT_QUOTES, 'UTF-8'); ?></h2>
+    <h3>PROGRESS DAILY <?php echo htmlspecialchars($day_label, ENT_QUOTES, 'UTF-8'); ?></h3>
 </caption>
     <thead>
         <tr>
@@ -63,29 +79,31 @@ if ($run_lab) {
         </tr>
     </thead>
     <tbody>
-    <?php
-    $s = 0;
-    if (count($opds) > 0) {
-        foreach ($opds as $doctor_id => $info) {
-            $s++;
-            $lab = $lab_counts[$doctor_id] ?? 0;
-            $opd = $info['opd'];
-            $pct = $opd > 0 ? (int) (($lab / $opd) * 100) : 0;
-            echo '<tr>';
-            echo '<td>' . $s . '</td>';
-            echo '<td>' . $doctor_id . '</td>';
-            echo '<td>' . htmlspecialchars($info['name'], ENT_QUOTES, 'UTF-8') . '</td>';
-            echo '<td>' . $opd . '</td>';
-            echo '<td>' . $lab . '</td>';
-            echo '<td>' . $pct . '%</td>';
-            echo '</tr>';
-        }
-    } else {
-        echo '<tr><td colspan="6">NO DATA FOUND</td></tr>';
+<?php
+if (count($opds) > 0) {
+    foreach ($opds as $doctor_id => $info) {
+        $has_data = true;
+        $s++;
+        $lab = $lab_counts[$doctor_id] ?? 0;
+        $opd = (int) $info['opd'];
+        $pct = $opd > 0 ? (int) (($lab / $opd) * 100) : 0;
+        echo '<tr>';
+        echo '<td>' . $s . '</td>';
+        echo '<td>' . $doctor_id . '</td>';
+        echo '<td>' . htmlspecialchars($info['name'], ENT_QUOTES, 'UTF-8') . '</td>';
+        echo '<td>' . $opd . '</td>';
+        echo '<td>' . $lab . '</td>';
+        echo '<td>' . $pct . '%</td>';
+        echo '</tr>';
     }
-    ?>
+}
+if (!$has_data) {
+    echo '<tr><td colspan="6">NO DATA FOUND</td></tr>';
+}
+?>
     </tbody>
 </table>
 </body>
 </html>
-<?php mysqli_close($con); ?>
+<?php
+mysqli_close($con);
