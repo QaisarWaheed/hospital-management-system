@@ -46,11 +46,16 @@ if($count_item >= 1)
 			if (mysqli_query($con, $insert)) 
 			{
             	    $tokan_no = mysqli_insert_id($con);
-					mysqli_query($con, "INSERT INTO `branch_pending_details`(`token_no`, `created`, `branch_id`) VALUES ('$tokan_no', '$current_date', '$branch_id')");
-				    $ref_name = $_GET['ref_name'];
-				    $ref_phone = $_GET['ref_phone'];
-				    $recommended_by = $_GET['recommended_by'];
-				    $return_date = $_GET['return_date'];
+				    $ref_name = $_GET['ref_name'] ?? '';
+				    $ref_phone = $_GET['ref_phone'] ?? '';
+				    $recommended_by = $_GET['recommended_by'] ?? '';
+				    $return_date = $_GET['return_date'] ?? '0000-00-00';
+				    pharmecy_insert_branch_pending_details($con, $tokan_no, $current_date, $branch_id, '1', array(
+				        'gardian_name' => $ref_name,
+				        'gardian_phone' => $ref_phone,
+				        'recommended_by' => $recommended_by,
+				        'return_date' => $return_date,
+				    ));
 				    $pending_amount = $cash - $cash_received;
 					mysqli_query($con, "INSERT INTO `branch_daily_pending_details`
 					(`token_no`,  `ref_name`, `ref_phone`, `recommended_by`, `amount`, `return_date`, `created`) 

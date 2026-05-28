@@ -80,7 +80,7 @@ if($count_item >= 1)
 				}
 				if ($cash > $cash_received-1) 
 				{
-					mysqli_query($con, "INSERT INTO `branch_pending_details`(`token_no`, `created`, `status`) VALUES ('$tokan_no', '$current_date', '2')");
+					pharmecy_insert_branch_pending_details($con, $tokan_no, $current_date, $branch_id, '2');
 				}
 
 				while ($row_select_item = mysqli_fetch_array($run_select_item)) 

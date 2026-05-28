@@ -47,7 +47,7 @@ if($count_item >= 1)
 			    $tokan_no = mysqli_insert_id($con);
 				if ($cash > $cash_received) 
 				{
-					mysqli_query($con, "INSERT INTO `branch_pending_details`(`token_no`, `created`, `status`) VALUES ('$tokan_no', '$current_date', '2')");
+					pharmecy_insert_branch_pending_details($con, $tokan_no, $current_date, $branch_id, '2');
 				}
 				mysqli_query($con, "
 					UPDATE `item_by_doctor` SET 

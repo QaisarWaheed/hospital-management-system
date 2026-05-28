@@ -2442,4 +2442,6 @@ if (mysqli_num_rows($get_selected_medicines) > 0) {
 $output .= '</table></div>';
     return $output;
 }
+
+require_once __DIR__ . '/branch_pending_helpers.php';
 ?>
