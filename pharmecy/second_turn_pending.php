@@ -50,11 +50,18 @@ if($count_item >= 1)
 				    $ref_phone = $_GET['ref_phone'] ?? '';
 				    $recommended_by = $_GET['recommended_by'] ?? '';
 				    $return_date = $_GET['return_date'] ?? '0000-00-00';
+				    $pending_bill = pharmecy_cart_amount_by_tokan_type($con, $user_id, $branch_id, (int) $tokan_type);
+				    if ($pending_bill <= 0) {
+				        $pending_bill = (float) $cash;
+				    }
 				    pharmecy_insert_branch_pending_details($con, $tokan_no, $current_date, $branch_id, '1', array(
 				        'gardian_name' => $ref_name,
 				        'gardian_phone' => $ref_phone,
 				        'recommended_by' => $recommended_by,
 				        'return_date' => $return_date,
+				        'amount' => $pending_bill,
+				        'user_id' => $user_id,
+				        'tokan_type_id' => (int) $tokan_type,
 				    ));
 				    $pending_amount = $cash - $cash_received;
 					mysqli_query($con, "INSERT INTO `branch_daily_pending_details`

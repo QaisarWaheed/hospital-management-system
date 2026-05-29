@@ -116,7 +116,7 @@ $pending_received = 0;
 if (isset($_GET['enter_search_token']) && $_GET['enter_search_token'] != '') 
 {
     $enter_search_token = $_GET['enter_search_token'];
-    $select_branch_pending_query = "SELECT branch_pending_details.id, branch_pending_details.token_no, branch_pending_details.gardian_name, branch_pending_details.gardian_phone, branch_pending_details.recommended_by, tokans.cash, tokans.cash_received, item_by_doctor.item_id, items.category_id, items.name AS item_name, patients.name, tokans.created, SUM(branch_pending_receive.amount) AS pending_received, tokan_types.title FROM `branch_pending_details` INNER JOIN tokans ON branch_pending_details.token_no = tokans.id INNER JOIN item_by_doctor ON branch_pending_details.token_no = item_by_doctor.tokan_no INNER JOIN item_register_to_branches ON item_by_doctor.item_id = item_register_to_branches.id INNER JOIN items ON item_register_to_branches.item_id = items.id LEFT JOIN branch_pending_receive ON tokans.id = branch_pending_receive.token_no INNER JOIN patients ON tokans.patient_id = patients.id INNER JOIN tokan_types ON tokans.tokan_type_id = tokan_types.id WHERE branch_pending_details.token_no = $enter_search_token AND branch_pending_details.status = 1 ";
+    $select_branch_pending_query = "SELECT branch_pending_details.id, branch_pending_details.token_no, branch_pending_details.amount, branch_pending_details.gardian_name, branch_pending_details.gardian_phone, branch_pending_details.recommended_by, tokans.cash, tokans.cash_received, item_by_doctor.item_id, items.category_id, items.name AS item_name, patients.name, tokans.created, SUM(branch_pending_receive.amount) AS pending_received, tokan_types.title FROM `branch_pending_details` INNER JOIN tokans ON branch_pending_details.token_no = tokans.id INNER JOIN item_by_doctor ON branch_pending_details.token_no = item_by_doctor.tokan_no INNER JOIN item_register_to_branches ON item_by_doctor.item_id = item_register_to_branches.id INNER JOIN items ON item_register_to_branches.item_id = items.id LEFT JOIN branch_pending_receive ON tokans.id = branch_pending_receive.token_no INNER JOIN patients ON tokans.patient_id = patients.id INNER JOIN tokan_types ON tokans.tokan_type_id = tokan_types.id WHERE branch_pending_details.token_no = $enter_search_token AND branch_pending_details.status = 1 ";
 }
 $select_branch_pending = mysqli_query($con, $select_branch_pending_query);
 if (mysqli_num_rows($select_branch_pending) > 0) 
@@ -134,7 +134,11 @@ if (mysqli_num_rows($select_branch_pending) > 0)
 		$gardian_name = $row_branch_data['gardian_name'];
 		$gardian_phone = $row_branch_data['gardian_phone'];
 		$recommended_by = $row_branch_data['recommended_by'];
-		$total_amount = $row_branch_data['cash'];
+		$total_amount = pharmecy_resolve_branch_pending_display_amount(
+		    $con,
+		    $row_branch_data['token_no'],
+		    $row_branch_data['amount'] ?? 0
+		);
 		$recieved_amount = $row_branch_data['cash_received'];
 		$created = $row_branch_data['created'];
 		$total_received = $recieved_amount+$pending_received;

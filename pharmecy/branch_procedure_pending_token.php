@@ -142,7 +142,11 @@ include 'includes/head.php';
                                 }
             				$token_type_title = token_type_title($row_token['tokan_type_id']);
             				$patient_name = get_patient_name_by_id($row_token['patient_id']);
-            				$total_amount = $row_token['cash'];
+            				$total_amount = pharmecy_resolve_branch_pending_display_amount(
+            				    $con,
+            				    $token_no,
+            				    $row_branch_data['amount'] ?? 0
+            				);
             				$recieved_amount = $row_token['cash_received'];
             				$created = $row_token['created'];
             			}

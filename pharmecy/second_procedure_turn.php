@@ -6,15 +6,17 @@ $select_item = "SELECT * FROM `item_by_doctor` WHERE user_id = ".$user_id." AND 
 $count_item = mysqli_num_rows(mysqli_query($con, $select_item));
 if($count_item >= 1)
 {    
-	$tokan_no = next_tokan_no();
 	if (isset($_GET['previous_tokan_no'])) 
 	{
 		$token_pre = $_GET['previous_tokan_no'];
 		$patient_id = $_GET['patient_id'];
 		$doctor_id = $_GET['doctor_id'];
-		$tokan_type = $_GET['tokan_payment'];
-		$cash = $_GET['cash'];
-		$cash_received = $_GET['cash_received'];
+		$tokan_type = (int) $_GET['tokan_payment'];
+		$cash_received = (float) ($_GET['cash_received'] ?? 0);
+		$cash = pharmecy_cart_amount_by_tokan_type($con, $user_id, $branch_id, $tokan_type);
+		if ($cash <= 0) {
+			$cash = (float) ($_GET['cash'] ?? 0);
+		}
 		$insert = "INSERT INTO `tokans`
 		(`id`, `patient_id`, `doctor_id`, `tokan_type_id`, `cash`,`cash_received`, `user_id`, `previous_tokan_no`, `status`, `created`, `branch_id`) 
 		VALUES 
@@ -23,14 +25,12 @@ if($count_item >= 1)
 		if (mysqli_query($con, $insert)) 
 		{
 		    $tokan_no = mysqli_insert_id($con);
-			pharmecy_insert_branch_pending_details($con, $tokan_no, $current_date, $branch_id, '1');
-			mysqli_query($con, "UPDATE `item_by_doctor` SET 
-				tokan_no = '$tokan_no', 
-				status = '2', 
-				tokan_type_id = '$tokan_type',
-				sale_price = '$cash',
-				doctor_id = '$doctor_id'
-				WHERE branch_id = '$branch_id' AND user_id = '$user_id' AND tokan_no IS NULL ");
+			pharmecy_finalize_procedure_cart_items($con, $tokan_no, $user_id, $branch_id, $doctor_id, $tokan_type);
+			pharmecy_insert_branch_pending_details($con, $tokan_no, $current_date, $branch_id, '1', array(
+				'amount' => $cash,
+				'user_id' => $user_id,
+				'tokan_type_id' => $tokan_type,
+			));
 		}
 ?>
 <script>
@@ -418,26 +418,34 @@ function del_medicine()
 </script>
 
 <script>
+function setCashAmount(value) {
+  var cashEl = document.getElementById("cash");
+  if (cashEl) {
+    cashEl.value = value;
+  }
+}
 function myFunction101() {
 	//DESERVING
-  document.getElementById("cash").innerHTML = <?php echo get_amount(101); ?>;
-  // document.getElementById("tokan_get1").innerHTML = 8;
+  setCashAmount(<?php echo (int) get_amount(101); ?>);
 }
 function myFunction102() {
 	//POOR
-  document.getElementById("cash").innerHTML = <?php echo get_amount(104); ?>;
-  // document.getElementById("tokan_get1").innerHTML = 9;
+  setCashAmount(<?php echo (int) get_amount(102); ?>);
 }
 function myFunction103() {
 	//MEMBER
-  document.getElementById("cash").innerHTML = <?php echo get_amount(104); ?>;
-  // document.getElementById("tokan_get1").innerHTML = 1;
+  setCashAmount(<?php echo (int) get_amount(103); ?>);
 }
 function myFunction104() {
 	//GENERAL
-  document.getElementById("cash").innerHTML = <?php echo get_amount(104); ?>;
-  // document.getElementById("tokan_get1").innerHTML = 2;
+  setCashAmount(<?php echo (int) get_amount(104); ?>);
 }
+document.addEventListener('DOMContentLoaded', function () {
+  if (document.getElementById('general')) {
+    document.getElementById('general').checked = true;
+    myFunction104();
+  }
+});
 </script>
 
 <script type = "text/javascript" >  
