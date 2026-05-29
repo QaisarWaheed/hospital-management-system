@@ -107,7 +107,7 @@ else
             <caption style = "caption-side: top;color: black;text-align: center;"> 
                 <h2>AUDIT LAB DIFFERENCE REPORT - YCDO</h2>
                 <h3><?php echo $audit_branch_name; ?></h3>
-                <h3><?php echo ($audit_created && $audit_created != '0000-00-00' && $audit_created != '0000-00-00 00:00:00' ? date_format(date_create($audit_created), "d-F-Y") : ''; ?></h3>
+                <h3><?php echo date_format(date_create($audit_created), "d-F-Y"); ?></h3>
             </caption>
         </table>
         <div style = "font-size: 24px;text-align: center;color: black;">

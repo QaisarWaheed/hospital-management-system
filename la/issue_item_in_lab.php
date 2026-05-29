@@ -263,7 +263,7 @@ $(document).ready(function() {
 	                    $s++;   ?>
 	            <tr>
 	                <td><?php echo $s; ?></td>
-	                <td><?php echo ($row['issue_lab_item_record_date'] && $row['issue_lab_item_record_date'] != '0000-00-00' && $row['issue_lab_item_record_date'] != '0000-00-00 00:00:00' ? date_format(date_create($row['issue_lab_item_record_date']), "d-M-Y") : ''; ?></td>
+	                <td><?php echo date_format(date_create($row['issue_lab_item_record_date']), "d-M-Y"); ?></td>
 	                <td><?php echo $row['issue_lab_item_id']; ?></td>
 	                <td><?php echo $row['item_name']; ?></td>
 	                <td><?php echo $row['cat_name']; ?></td>

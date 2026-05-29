@@ -149,7 +149,7 @@ if(mysqli_num_rows($run) > 0)
                                 <td><?php echo $category; ?></td>
                                 <td><?php echo $batch_no; ?></td>
                                 <td style = "text-align: center;"><?php echo $quantity; ?></td>
-                                <td><?php echo ($expiry_date && $expiry_date != '0000-00-00' && $expiry_date != '0000-00-00 00:00:00' ? date_format(date_create($expiry_date), "d-m-Y") : ''; ?></td>
+                                <td><?php echo date_format(date_create($expiry_date), "d-m-Y"); ?></td>
                             </tr>
         
 <?php    

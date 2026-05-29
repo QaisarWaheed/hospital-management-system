@@ -109,7 +109,7 @@ if(mysqli_num_rows($run) > 0)
                 <tr>
                     <td class ="h6">'.$s.'</td>
                     <td class ="noprint h6">'.$pending_id.'</td>
-                    <td class ="h6">'.($created && $created != '0000-00-00' && $created != '0000-00-00 00:00:00' ? date_format(date_create($created), "d-m-Y") : ''.'</td>
+                    <td class ="h6">'.date_format(date_create($created), "d-m-Y").'</td>
                     <td class ="h6">'.$patient_name.'</td>
                     <td class ="noprint h6">'.$procedure_name.'</td>
                     <td class ="noprint h6">'.$rf_name.'</td>

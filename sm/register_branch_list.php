@@ -101,7 +101,7 @@ html, body
 			               {
     			               $status = '<td class = "badge badge-danger">PENDING</td>';
 			               }
-			               echo '<tr><td>'.$s.'</td><td>'.($row['3'] && $row['3'] != '0000-00-00' && $row['3'] != '0000-00-00 00:00:00' ? date_format(date_create($row['3']), "d-M-Y") : ''.'</td><td>'.$row['0'].'</td><td>'.$row['1'].'</td><td>'.$row['2'].'</td><td>'.$receive.'</td>'.$status.'<td><a class = "btn btn-primary" href = "item_register_branch.php?bill_no='.$row['0'].'">SHOW</a></td></tr>';
+			               echo '<tr><td>'.$s.'</td><td>'.date_format(date_create($row['3']), "d-M-Y").'</td><td>'.$row['0'].'</td><td>'.$row['1'].'</td><td>'.$row['2'].'</td><td>'.$receive.'</td>'.$status.'<td><a class = "btn btn-primary" href = "item_register_branch.php?bill_no='.$row['0'].'">SHOW</a></td></tr>';
 			           }
 			       }
 			       ?>

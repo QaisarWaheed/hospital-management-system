@@ -96,7 +96,7 @@ html, body
                 echo '
                 <tr>
                     <td>'.$s.'</td>
-                    <td style = "text-align: center;">'.($today && $today != '0000-00-00' && $today != '0000-00-00 00:00:00' ? date_format(date_create($today), "d-F-Y") : ''.'</td>
+                    <td style = "text-align: center;">'.date_format(date_create($today), "d-F-Y").'</td>
                     <td style = "text-align: center;">'.$patient_name.'</td>
                     <td style = "text-align: center;">'.$token_id.'</td>
                     <td>'.$token_by.'</td>

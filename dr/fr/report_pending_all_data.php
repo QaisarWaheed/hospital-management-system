@@ -64,7 +64,7 @@ if(mysqli_num_rows($run) > 0)
         echo '
         <tr>
             <td>'.$s.'</td>
-            <td>'.($row['8'] && $row['8'] != '0000-00-00' && $row['8'] != '0000-00-00 00:00:00' ? date_format(date_create($row['8']), "d-m-Y") : ''.'</td>
+            <td>'.date_format(date_create($row['8']), "d-m-Y").'</td>
             <td>'.$row['1'].'</td>
             <td>'.$row['2'].'</td>
             <td>'.$row['3'].'</td>

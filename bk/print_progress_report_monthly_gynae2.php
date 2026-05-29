@@ -19,7 +19,7 @@ $refer_map = progress_referral_from_count_by_branch($con, $br_id, $like);
 ?>
 <html>
 <head>
-    <title>GYNAE PROGRESS MONTH <?php echo ($date && $date != '0000-00-00' && $date != '0000-00-00 00:00:00' ? date_format(date_create($date), " F Y ") : ''; ?><?php echo get_branch_tag_name_by_id($br_id); ?></title>
+    <title>GYNAE PROGRESS MONTH <?php echo date_format(date_create($date), " F Y "); ?><?php echo get_branch_tag_name_by_id($br_id); ?></title>
 </head>
 <body>
     
@@ -28,113 +28,6 @@ $refer_map = progress_referral_from_count_by_branch($con, $br_id, $like);
     <h2><?php echo $company_name; ?></h2>
     <h2><?php echo get_branch_name_by($br_id); ?></h2>
     <h3>PROGRESS MONTH <?php echo date_format(date_create($date), " F Y"); ?></h3>
-</caption>
-    <thead>
-        <tr>
-            <th>S#</th>
-            <th>NAME</th>
-            <th>OPD</th>
-            <th>SVD & DNC</th>
-            <th>PROCEDURES</th>
-            <th>GYNAE FILES</th>
-            <th>REFERED PATIENTS</th>
-        </tr>
-    </thead>
-    <tbody>
-<?php
-$s = 0;
-$count_opd = 0;
-$count_gynae_system = 0;
-$count_svd_dnc = 0;
-$count_procedure = 0;
-$total_reffered = 0;
-if (count($doctors) > 0) {
-    foreach ($doctors as $dr_id => $row_dr) {
-        $dr_id = (int) $dr_id;
-        $dr_name = $row_dr['u_name'];
-        $opd = $opd_map[$dr_id] ?? 0;
-        $gynae_count_system = $gynae_system_map[$dr_id] ?? 0;
-        $svd_dnc_count = $svd_dnc_map[$dr_id] ?? 0;
-        $procedure = $procedure_map[$dr_id] ?? 0;
-        $reffered = $refer_map[$dr_id] ?? 0;
-
-        $count_opd += $opd;
-        $count_gyna($date && $date != '0000-00-00' && $date != '0000-00($date && $date != '0000-00-00' && $date != '0000-00-00 00:00:00' ? date_format(date_create($date), " F Y") : ''; ?></h3>
-</caption>
-    <thead>
-        <tr>
-            <th>S#</th>
-            <th>NAME</th>
-            <th>OPD</th>
-            <th>SVD & DNC</th>
-            <th>PROCEDURES</th>
-            <th>GYNAE FILES</th>
-            <th>REFERED PATIENTS</th>
-        </tr>
-    </thead>
-    <tbody>
-<?php
-$s = 0;
-$count_opd = 0;
-$count_gynae_system = 0;
-$count_svd_dnc = 0;
-$count_procedure = 0;
-$total_reffered = 0;
-if (count($doctors) > 0) {
-    foreach ($doctors as $dr_id => $row_dr) {
-        $dr_id = (int) $dr_id;
-        $dr_name = $row_dr['u_name'];
-        $opd = $opd_map[$dr_id] ?? 0;
-        $gynae_count_system = $gynae_system_map[$dr_id] ?? 0;
-        $svd_dnc_count = $svd_dnc_map[$dr_id] ?? 0;
-        $procedure = $procedure_map[$dr_id] ?? 0;
-        $reffered = $refer_map[$dr_id] ?? 0;
-
-        $count_opd += $opd;
-        $count_gyna($date && $date != '0000-00-00' && $date != '0000-00-00 00:00:00' ? date_format(date_create($date), " F Y") : ''; ?></h3>
-</caption>
-    <thead>
-        <tr>
-            <th>S#</th>
-            <th>NAME</th>
-            <th>OPD</th>
-            <th>SVD & DNC</th>
-            <th>PROCEDURES</th>
-            <th>GYNAE FILES</th>
-            <th>REFERED PATIENTS</th>
-        </tr>
-    </thead>
-    <tbody>
-<?php
-$s = 0;
-$count_opd = 0;
-$count_gynae_system = 0;
-$count_svd_dnc = 0;
-$count_procedure = 0;
-$total_reffered = 0;
-if (count($doctors) > 0) {
-    foreach ($doctors as $dr_id => $row_dr) {
-        $dr_id = (int) $dr_id;
-        $dr_name = $row_dr['u_name'];
-        $opd = $opd_map[$dr_id] ?? 0;
-        $gynae_count_system = $gynae_system_map[$dr_id] ?? 0;
-        $svd_dnc_count = $svd_dnc_map[$dr_id] ?? 0;
-        $procedure = $procedure_map[$dr_id] ?? 0;
-        $reffered = $refer_map[$dr_id] ?? 0;
-
-        $count_opd += $opd;
-        $count_gynae_system += $gynae_count_system;
-        $count_svd_dnc += $svd_dnc_count;
-        $count_procedure += $procedure;
-        $total_reffered += $reffered;
-
-        $s++;
-        echo '
-        <tr style = "text-align: center;">
-            <td>'.$s.'</td>
-            <td style = "text-align: left;">'.$dr_name.'</td>
-            <td>'.$opd.'</td>
-            <td>'.$svd_dnc_co$date), " F Y") : ''; ?></h3>
 </caption>
     <thead>
         <tr>

@@ -13,7 +13,7 @@ else
 ?>
 <html>
 <head>
-    <title><?php echo get_branch_tag_by($br_id)." ";echo ($date && $date != '0000-00-00' && $date != '0000-00-00 00:00:00' ? date_format(date_create($date), "m-Y") : ''; ?> MONTHLY PROGRESS REPORT </title>
+    <title><?php echo get_branch_tag_by($br_id)." ";echo date_format(date_create($date), "m-Y"); ?> MONTHLY PROGRESS REPORT </title>
 </head>
 <body>
     
@@ -22,49 +22,6 @@ else
     <h2><?php echo $company_name; ?></h2>
     <h2><?php echo get_branch_name_by($br_id); ?></h2>
     <h3>PROGRESS MONTH <?php echo date_format(date_create($date), " F Y"); ?></h3>
-</caption>
-    <thead>
-        <tr>
-            <th>S#</th>
-            <th>NAME</th>
-            <th>OPD</th>
-            <th>CONS</th>
-            <th>LAB</th>
-            <th>USG</th>
-            <th>SVD & DNC</th>
-            <th>PROCEDU($date && $date != '0000-00-00' && $date != '0000-00-0($date && $date != '0000-00-00' && $date != '0000-00-00 00:00:00' ? date_format(date_create($date), " F Y") : ''; ?></h3>
-</caption>
-    <thead>
-        <tr>
-            <th>S#</th>
-            <th>NAME</th>
-            <th>OPD</th>
-            <th>CONS</th>
-            <th>LAB</th>
-            <th>USG</th>
-            <th>SVD & DNC</th>
-            <th>PROCEDU($date && $date != '0000-00-00' && $date != '0000-00-00 00:00:00' ? date_format(date_create($date), " F Y") : ''; ?></h3>
-</caption>
-    <thead>
-        <tr>
-            <th>S#</th>
-            <th>NAME</th>
-            <th>OPD</th>
-            <th>CONS</th>
-            <th>LAB</th>
-            <th>USG</th>
-            <th>SVD & DNC</th>
-            <th>PROCEDURE</th>
-            <th>ADMISSION</th>
-            <th>COLLECTION</th>
-        </tr>
-    </thead>
-    <tbody>
-<?php
-$s = 0;
-$count_opd = 0;
-$count_consultant_opd = 0;
-$select_dr = "SELECT id, u_name FROM users WHERE status = '1' AND role_id = '3' AND id IN (SELECT `doctor_id` FROM `tokans` WHERE `branch_id` = '$br_id' AND created LIKE '$date%') ORDER $date), " F Y") : ''; ?></h3>
 </caption>
     <thead>
         <tr>

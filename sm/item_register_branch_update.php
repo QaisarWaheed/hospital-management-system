@@ -167,7 +167,7 @@ if(mysqli_num_rows($run) > 0)
     <caption style = "caption-side: top;">
         <div style = "font-size:15px;">BRANCH NAME: <?php echo $tag_name; ?></div>
         <div style = "font-size:15px;">Issue No: <?php echo $bill_no; ?></div>
-        <div style = "font-size:15px;">Issue Date: <?php echo ($created && $created != '0000-00-00' && $created != '0000-00-00 00:00:00' ? date_format(date_create($created), "d F Y") : ''; ?></div>
+        <div style = "font-size:15px;">Issue Date: <?php echo date_format(date_create($created), "d F Y"); ?></div>
         <div style = "font-size:15px;">RECEIVED BY: <?php if($receiver_name != ''){echo $receiver_name;}else{echo 'NOT RECEIVED YEET';}  ?></div>
     </caption>    
 				    </table>

@@ -25,7 +25,7 @@ else
 <caption>
     <h2><?php echo $company_name; ?></h2>
     <h2><?php echo get_branch_name_by($br_id); ?></h2>
-    <h3>PROGRESS DATE <?php echo ($date && $date != '0000-00-00' && $date != '0000-00-00 00:00:00' ? date_format(date_create($date), " d F Y") : ''; ?></h3>
+    <h3>PROGRESS DATE <?php echo date_format(date_create($date), " d F Y"); ?></h3>
 </caption>
     <thead>
         <tr>

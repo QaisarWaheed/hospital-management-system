@@ -19,7 +19,7 @@ function drawMultSeries() {
         ['', '', { role: 'style' }, { role: 'annotation' }],
         <?php 
         $result = $lab_test_report_result;
-        $report_time_for_graph = ($row['reporting_date_time'] && $row['reporting_date_time'] != '0000-00-00' && $row['reporting_date_time'] != '0000-00-00 00:00:00' ? date_format(date_create($row['reporting_date_time']), "d-M-Y") : '';
+        $report_time_for_graph = date_format(date_create($row['reporting_date_time']), "d-M-Y");
         if($result > $lab_reporting_test_normal_value_high)
         {
             echo "['".$report_time_for_graph."', ".$result.", 'red', ".$result."],";

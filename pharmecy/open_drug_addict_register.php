@@ -48,92 +48,12 @@ include 'includes/head.php';
 			                { $s++; ?>
 	                        <tr>
 	                            <td><?php echo $s; ?></td>
-	                            <td><?php echo ($row['drug_addict_patient_admisssion_date'] && $row['drug_addict_patient_admisssion_date'] != '0000-00-00' && $row['drug_addict_patient_admisssion_date'] != '0000-00-00 00:00:00' ? date_format(date_create($row['drug_addict_patient_admisssion_date']), "d-M-Y") : ''; ?></td>
+	                            <td><?php echo date_format(date_create($row['drug_addict_patient_admisssion_date']), "d-M-Y"); ?></td>
 	                            <td><?php echo $row['token_no']; ?></td>
 	                            <td><?php echo $row['name']; ?></td>
 	                            <td><?php echo $row['phone']; ?></td>
 	                            <td><?php echo $row['age'].'/ '.$row['gender_title']; ?></td>
 	                            <td><?php echo date_format(date_create($row['next_checkup_date']), "d-M-Y"); ?></td>
-	                            <td><?php echo $row['main_type_of_drug'].'('.$row['sub_type_of_drug'].')'; ?></td>
-	                            <td><?php echo $row['drug_period']; ?></td>
-	                            <td><?php echo $row['per_day_fee']; ?></td>
-	                        </tr>
-			                <?php }
-			            }
-			            else
-			            {
-			                echo '<tr><td colspan = "6">NO DATA FOUND</td></tr>';
-			            }
-			            ?>
-			        </tbody>
-			    </table>
-			</div>
-	    </div>
-    </div>
-</div>
-
-</body>
-</html>($row['next_checkup_date'] && $row['next_checkup_date'] != '0000-00-00' && $row['next_checkup_date'] != '0000-00-00 00:00:00' ? date_format(date_create($row['next_checkup_date']), "d-M-Y") : ''; ?></td>
-	                            <td><?php echo $row['main_type_of_drug'].'('.$row['sub_type_of_drug'].')'; ?></td>
-	                            <td><?php echo $row['drug_period']; ?></td>
-	                            <td><?php echo $row['per_day_fee']; ?></td>
-	                        </tr>
-			                <?php }
-			            }
-			            else
-			            {
-			                echo '<tr><td colspan = "6">NO DATA FOUND</td></tr>';
-			            }
-			            ?>
-			        </tbody>
-			    </table>
-			</div>
-	    </div>
-    </div>
-</div>
-
-</body>
-</html>($row['next_checkup_date'] && $row['next_checkup_date'] != '0000-00-00' && $row['next_checkup_date'] != '0000-00-00 00:00:00' ? date_format(date_create($row['next_checkup_date']), "d-M-Y") : ''; ?></td>
-	                            <td><?php echo $row['main_type_of_drug'].'('.$row['sub_type_of_drug'].')'; ?></td>
-	                            <td><?php echo $row['drug_period']; ?></td>
-	                            <td><?php echo $row['per_day_fee']; ?></td>
-	                        </tr>
-			                <?php }
-			            }
-			            else
-			            {
-			                echo '<tr><td colspan = "6">NO DATA FOUND</td></tr>';
-			            }
-			            ?>
-			        </tbody>
-			    </table>
-			</div>
-	    </div>
-    </div>
-</div>
-
-</body>
-</html>($row['next_checkup_date'] && $row['next_checkup_date'] != '0000-00-00' && $row['next_checkup_date'] != '0000-00-00 00:00:00' ? date_format(date_create($row['next_checkup_date']), "d-M-Y") : ''; ?></td>
-	                            <td><?php echo $row['main_type_of_drug'].'('.$row['sub_type_of_drug'].')'; ?></td>
-	                            <td><?php echo $row['drug_period']; ?></td>
-	                            <td><?php echo $row['per_day_fee']; ?></td>
-	                        </tr>
-			                <?php }
-			            }
-			            else
-			            {
-			                echo '<tr><td colspan = "6">NO DATA FOUND</td></tr>';
-			            }
-			            ?>
-			        </tbody>
-			    </table>
-			</div>
-	    </div>
-    </div>
-</div>
-
-</body>
-</html>$row['next_checkup_date']), "d-M-Y") : ''; ?></td>
 	                            <td><?php echo $row['main_type_of_drug'].'('.$row['sub_type_of_drug'].')'; ?></td>
 	                            <td><?php echo $row['drug_period']; ?></td>
 	                            <td><?php echo $row['per_day_fee']; ?></td>

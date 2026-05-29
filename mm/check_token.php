@@ -70,7 +70,7 @@ if(!isset($_SESSION['mm_id']))
             	    echo '<label>TOTAL CASH:</label><strong>'.$row_token['total_cash'].'</strong>';
             	    echo '</div>';
             	    echo '<div class = "col-md-8">';
-            	    echo '<label>DATE AND TIME:</label><strong>'.($row_token['token_created'] && $row_token['token_created'] != '0000-00-00' && $row_token['token_created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['token_created']), "h:i:s A d-F-Y") : ''.'</strong>';
+            	    echo '<label>DATE AND TIME:</label><strong>'.date_format(date_create($row_token['token_created']), "h:i:s A d-F-Y").'</strong>';
             	    echo '</div>';
             	    echo '<div class = "col-md-4">';
             	    echo '<label>RECEIVED CASH:</label><strong>'.$row_token['received_cash'].'</strong>';

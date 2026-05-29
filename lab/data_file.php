@@ -411,11 +411,11 @@ td {
                                     {
                                         if($patient_gender_id == 2) // MALE
                                         {
-                                            if(intval($lab_test_report_result) < $lab_reporting_test_normal_value_low_male)
+                                            if(intval($lab_test_report_result ?? 0) < $lab_reporting_test_normal_value_low_male)
                                             {
                                                 $class_detail = "text-success";    $msg_if_low = '';   $msg_if_hight = '';  
                                             }
-                                            elseif(intval($lab_test_report_result) >= $lab_reporting_test_normal_value_high_male)
+                                            elseif(intval($lab_test_report_result ?? 0) >= $lab_reporting_test_normal_value_high_male)
                                             {
                                                 $class_detail = "text-danger";    $msg_if_low = '';   $msg_if_hight = '';  
                                             }
@@ -593,11 +593,11 @@ td {
                                     {
                                         if($patient_gender_id == 2) // MALE
                                         {
-                                            if(intval($lab_test_report_result) < $lab_reporting_test_normal_value_low_male)
+                                            if(intval($lab_test_report_result ?? 0) < $lab_reporting_test_normal_value_low_male)
                                             {
                                                 $class_detail = "text-success";    $msg_if_low = '';   $msg_if_hight = '';  
                                             }
-                                            elseif(intval($lab_test_report_result) >= $lab_reporting_test_normal_value_high_male)
+                                            elseif(intval($lab_test_report_result ?? 0) >= $lab_reporting_test_normal_value_high_male)
                                             {
                                                 $class_detail = "text-danger";    $msg_if_low = '';   $msg_if_hight = '';  
                                             }

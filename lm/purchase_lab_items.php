@@ -148,7 +148,7 @@ $(document).ready(function() {
     	                <caption style = "caption-side: top; color: black;">
     	                    <h2 align = "center">PURCHASE LAB ITEMS</h2>
     	                    <div class = "row">
-    	                        <div class = "col">DATE : <strong><?php echo ($invoice_purchase_lab_item_date && $invoice_purchase_lab_item_date != '0000-00-00' && $invoice_purchase_lab_item_date != '0000-00-00 00:00:00' ? date_format(date_create($invoice_purchase_lab_item_date),"d-M-Y") : ''; ?></strong></div>
+    	                        <div class = "col">DATE : <strong><?php echo date_format(date_create($invoice_purchase_lab_item_date),"d-M-Y"); ?></strong></div>
     	                        <div class = "col">BILL # <strong><?php echo $invoice_purchase_lab_item_bill_no; ?></strong></div>
     	                        <div class = "col">PARTY BILL # <strong><?php echo $invoice_party_bill_no; ?></strong></div>
     	                        <div class = "col">PARTY NAME : <strong><?php echo $invoice_party_name; ?></strong></div>

@@ -39,7 +39,7 @@ if($token_no)
             $token_created_by = $row_token['user_id'];
             
             $token_created = $row_token['created'];
-            $token_date = ($token_created && $token_created != '0000-00-00' && $token_created != '0000-00-00 00:00:00' ? date_format(date_create($token_created), 'd-M-Y') : '';
+            $token_date = date_format(date_create($token_created), 'd-M-Y');
         }
     }
 ?>
@@ -85,126 +85,6 @@ if($token_no)
 <?php
 $sr = 0;
 $start = date_format(date_create($token_created), 'Y-m-d');
-$today = date('Y-m-d');
-$begin = new DateTime('2024-08-01');
-$end = new DateTime($today);
-
-$interval = DateInterval::createFromDateString('1 day');
-$period = new DatePeriod($begin, $interval, $end);
-
-foreach ($period as $dt) 
-{
-    $sr++;
-?>
-                <tr>
-                    <td><?php echo $sr; ?></td>
-                    <td><?php echo $dt->format("Y-m-d"); ?></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-<?php
-}
-?>
-            </tbody>
-        </table>
-    </div>
-<?php
-}
-?>
-</div>
-</body>
-</html>
-<script type="text/javascript" src="js/bootstrap.min.js"></script>($token_created && $token_created != '0000-00-00' && $token_created != '0000-00-00 00:00:00' ? date_format(date_create($token_created), 'Y-m-d') : '';
-$today = date('Y-m-d');
-$begin = new DateTime('2024-08-01');
-$end = new DateTime($today);
-
-$interval = DateInterval::createFromDateString('1 day');
-$period = new DatePeriod($begin, $interval, $end);
-
-foreach ($period as $dt) 
-{
-    $sr++;
-?>
-                <tr>
-                    <td><?php echo $sr; ?></td>
-                    <td><?php echo $dt->format("Y-m-d"); ?></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-<?php
-}
-?>
-            </tbody>
-        </table>
-    </div>
-<?php
-}
-?>
-</div>
-</body>
-</html>
-<script type="text/javascript" src="js/bootstrap.min.js"></script>($token_created && $token_created != '0000-00-00' && $token_created != '0000-00-00 00:00:00' ? date_format(date_create($token_created), 'Y-m-d') : '';
-$today = date('Y-m-d');
-$begin = new DateTime('2024-08-01');
-$end = new DateTime($today);
-
-$interval = DateInterval::createFromDateString('1 day');
-$period = new DatePeriod($begin, $interval, $end);
-
-foreach ($period as $dt) 
-{
-    $sr++;
-?>
-                <tr>
-                    <td><?php echo $sr; ?></td>
-                    <td><?php echo $dt->format("Y-m-d"); ?></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-<?php
-}
-?>
-            </tbody>
-        </table>
-    </div>
-<?php
-}
-?>
-</div>
-</body>
-</html>
-<script type="text/javascript" src="js/bootstrap.min.js"></script>($token_created && $token_created != '0000-00-00' && $token_created != '0000-00-00 00:00:00' ? date_format(date_create($token_created), 'Y-m-d') : '';
-$today = date('Y-m-d');
-$begin = new DateTime('2024-08-01');
-$end = new DateTime($today);
-
-$interval = DateInterval::createFromDateString('1 day');
-$period = new DatePeriod($begin, $interval, $end);
-
-foreach ($period as $dt) 
-{
-    $sr++;
-?>
-                <tr>
-                    <td><?php echo $sr; ?></td>
-                    <td><?php echo $dt->format("Y-m-d"); ?></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-<?php
-}
-?>
-            </tbody>
-        </table>
-    </div>
-<?php
-}
-?>
-</div>
-</body>
-</html>
-<script type="text/javascript" src="js/bootstrap.min.js"></script>$token_created), 'Y-m-d') : '';
 $today = date('Y-m-d');
 $begin = new DateTime('2024-08-01');
 $end = new DateTime($today);

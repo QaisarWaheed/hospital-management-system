@@ -76,7 +76,7 @@ if(isset($_POST['token_id']) && $_POST['token_id'] != '')
             	        {
             	            while($row_token = mysqli_fetch_array($run_token))
             	            {
-            	                $token_date = ($row_token['created'] && $row_token['created'] != '0000-00-00' && $row_token['created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['created']), 'd-m-Y') : '';
+            	                $token_date = date_format(date_create($row_token['created']), 'd-m-Y');
             	                $docotr_id = $row_token['doctor_id'];
             	                $docotr_name = get_uname_by_id($docotr_id);
             	                $patient_id = $row_token['patient_id'];

@@ -49,7 +49,7 @@ include 'includes/head.php';
 	                        echo '<td>'.$s.'</td>';
 	                        echo '<td>'.$row['address'].'</td>';
 	                        echo '<td>'.$audit_id.'</td>';
-	                        echo '<td>'.($audit_created && $audit_created != '0000-00-00' && $audit_created != '0000-00-00 00:00:00' ? date_format(date_create($audit_created), "d-M-Y") : ''.'</td>';
+	                        echo '<td>'.date_format(date_create($audit_created), "d-M-Y").'</td>';
 	                        echo '<td><a href = "audit_short_report.php?audit_id='.$audit_id.'&br_id='.$branch_id.'">OPEN</a></td>';
                         echo '</tr>';
 	                    }

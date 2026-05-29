@@ -148,7 +148,7 @@ if(isset($_GET['token_no']) && $_GET['token_no'] != '')
                 <tr class = "text-right">
                     <th colspan = "2"></th>
                     <th style="padding: 3px; border: 1px solid #000;">TOTAL BILL</th>
-                    <th style="padding: 3px; border: 1px solid #000;"><?php echo number_format($total_bill); ?></th>
+                    <th style="padding: 3px; border: 1px solid #000;"><?php echo number_format((float)($total_bill ?? 0)); ?></th>
                 </tr>
             </table>
         </div>

@@ -129,7 +129,7 @@ if(mysqli_num_rows($run_referral_token) > 0)
 
         			        <tr>
         			            <td><?php echo $s; ?></td>
-        			            <td><?php echo ($token_created && $token_created != '0000-00-00' && $token_created != '0000-00-00 00:00:00' ? date_format(date_create($token_created), "h:i:s A d-m-y") : ''; ?></td>
+        			            <td><?php echo date_format(date_create($token_created), "h:i:s A d-m-y"); ?></td>
         			            <td><?php echo $token_no; ?></td>
         			            <td><?php echo $name; ?></td>
         			            <td><?php echo $referral_patient_phone; ?></td>

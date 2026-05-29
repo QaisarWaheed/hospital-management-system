@@ -831,7 +831,7 @@ function pharmecy_procedure_medicine_limit_for_token($con, $token_no)
 
     $procedure_cash = pharmecy_tokan_cash_amount($con, $token_no);
     if ($procedure_cash > 0) {
-        return (int) round($procedure_cash * 0.25);
+        return (int) round($procedure_cash * 0.25 ?? 0);
     }
 
     return 0;
@@ -993,7 +993,7 @@ function pharmecy_items_by_doctor_cart_amount($con, $user_id, $branch_id, $tokan
         }
     }
 
-    return (int) round($amount);
+    return (int) round($amount ?? 0);
 }
 
 /**
