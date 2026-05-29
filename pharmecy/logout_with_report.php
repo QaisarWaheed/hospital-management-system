@@ -83,36 +83,36 @@ mysqli_query($con, "INSERT INTO `summary_by_admin`( `login_id`, `admin_id`, `sub
 	</tr>
 	<tr>
 		<th colspan="2" style="text-align: right;">Computer Total Cash</th>
-		<td colspan="2"><?php echo number_format($cash ?? 0, 2); ?></td>
+		<td colspan="2"><?php echo number_format($cash); ?></td>
 	</tr>
 	<tr>
 		<th colspan="2" style="text-align: right;">Cash Received</th>
-		<td colspan="2"><?php echo  number_format($cash_received ?? 0, 2); ?></td>
+		<td colspan="2"><?php echo  number_format($cash_received); ?></td>
 	</tr>
 	<tr>
 		<th colspan="2" style="text-align: right;">Donation Collection</th>
-		<td colspan="2"><?php echo number_format($donation_amount ?? 0, 2); ?></td>
+		<td colspan="2"><?php echo number_format($donation_amount); ?></td>
 	</tr>
 	<tr>
 		<th colspan="2" style="text-align: right;">Total Cash</th>
-		<td colspan="2"><?php echo number_format(($cash_received ?? 0) + ($donation_amount ?? 0), 2); ?></td>
+		<td colspan="2"><?php echo number_format($cash_received + $donation_amount); ?></td>
 	</tr>
 	<tr>
 		<th colspan="2" style="text-align: right;">Submitted / Physical Cash</th>
-		<td colspan="2"><?php echo number_format($submitted_cash ?? 0, 2); ?></td>
+		<td colspan="2"><?php echo number_format($submitted_cash); ?></td>
 	</tr>
 
 	<tr>
 		<th colspan="2" style="text-align: right;">Extra Cash</th>
-		<td colspan="2"><?php echo number_format($extra_amount ?? 0, 2); ?></td>
+		<td colspan="2"><?php echo number_format($extra_amount); ?></td>
 	</tr>
 	<tr>
 		<th colspan="2" style="text-align: right;">Short Cash</th>
-		<td colspan="2"><?php echo number_format($short_amount ?? 0, 2); ?></td>
+		<td colspan="2"><?php echo number_format($short_amount); ?></td>
 	</tr>
 	<tr>
 		<th colspan="2" style="text-align: right;">Submitted Amount with Report</th>
-		<td colspan="2"><?php echo number_format(($submitted_cash ?? 0) + ($short_amount ?? 0), 2); ?></td>
+		<td colspan="2"><?php echo number_format($submitted_cash+$short_amount); ?></td>
 	</tr>
 	<tr>
 		<th colspan="2" style="text-align: right;">Submitted By Admin</th>
@@ -278,36 +278,36 @@ mysqli_query($con, "INSERT INTO `summary_details`
 	</tr>
 	<tr>
 		<th colspan="2" style="text-align: right;">Computer Total Cash</th>
-		<td colspan="2"><?php echo number_format($cash ?? 0, 2); ?></td>
+		<td colspan="2"><?php echo number_format($cash); ?></td>
 	</tr>
 	<tr>
 		<th colspan="2" style="text-align: right;">Cash Received</th>
-		<td colspan="2"><?php echo  number_format($cash_received ?? 0, 2); ?></td>
+		<td colspan="2"><?php echo  number_format($cash_received); ?></td>
 	</tr>
 	<tr>
 		<th colspan="2" style="text-align: right;">Donation Collection</th>
-		<td colspan="2"><?php echo number_format($donation_amount ?? 0, 2); ?></td>
+		<td colspan="2"><?php echo number_format($donation_amount); ?></td>
 	</tr>
 	<tr>
 		<th colspan="2" style="text-align: right;">Total Cash</th>
-		<td colspan="2"><?php echo number_format(($cash_received ?? 0) + ($donation_amount ?? 0), 2); ?></td>
+		<td colspan="2"><?php echo number_format($cash_received + $donation_amount); ?></td>
 	</tr>
 	<tr>
 		<th colspan="2" style="text-align: right;">Submitted / Physical Cash</th>
-		<td colspan="2"><?php echo number_format($submitted_cash ?? 0, 2); ?></td>
+		<td colspan="2"><?php echo number_format($submitted_cash); ?></td>
 	</tr>
 
 	<tr>
 		<th colspan="2" style="text-align: right;">Extra Cash</th>
-		<td colspan="2"><?php echo number_format($extra_amount ?? 0, 2); ?></td>
+		<td colspan="2"><?php echo number_format($extra_amount); ?></td>
 	</tr>
 	<tr>
 		<th colspan="2" style="text-align: right;">Short Cash</th>
-		<td colspan="2"><?php echo number_format($short_amount ?? 0, 2); ?></td>
+		<td colspan="2"><?php echo number_format($short_amount); ?></td>
 	</tr>
 	<tr>
 		<th colspan="2" style="text-align: right;">Submitted Amount with Report</th>
-		<td colspan="2"><?php echo number_format(($submitted_cash ?? 0) + ($short_amount ?? 0), 2); ?></td>
+		<td colspan="2"><?php echo number_format($submitted_cash+$short_amount); ?></td>
 	</tr>
 <?php
 $total_tokens = 0;
