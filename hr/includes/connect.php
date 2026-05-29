@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../../includes/ycdo_bootstrap.php';
 date_default_timezone_set("Asia/Karachi");
 $ip_address = $_SERVER['SERVER_ADDR'] ?? '';
-$current_date = date('Y-m-d G:i:s A');
+$current_date = date('Y-m-d H:i:s');
 error_reporting(1);
 
 if (session_status() === PHP_SESSION_NONE) {
@@ -73,6 +73,29 @@ function get_staff_time_in($staff_id)
         }    
     }    
     return $quanity;
+}
+
+/**
+ * Branch for attendance: posted HR selection, else staff.branch_id.
+ */
+function hr_resolve_attendance_branch_id($employee_id, $posted_branch_id = 0)
+{
+    $branch_id = (int) $posted_branch_id;
+    if ($branch_id > 0) {
+        return $branch_id;
+    }
+    $employee_id = (int) $employee_id;
+    if ($employee_id < 1) {
+        return 0;
+    }
+    $run = mysqli_query(
+        $GLOBALS['con'],
+        "SELECT branch_id FROM staff WHERE staff_id = '$employee_id' LIMIT 1"
+    );
+    if ($run && ($row = mysqli_fetch_assoc($run))) {
+        return (int) $row['branch_id'];
+    }
+    return 0;
 }
 
 function get_staff_time_out($staff_id)

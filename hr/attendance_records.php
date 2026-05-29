@@ -5,21 +5,22 @@ $day = date('d');
 $br_id = $hr_branch_id;
 
 if (isset($_POST['save_records'])) {
-    $br_id = $_POST['br_id'] ?? $br_id;
-    $employee_id = $_POST['employee_id'] ?? '';
-    $attendance_record_title = $_POST['attendance_record_title'] ?? '1';
-    $attendance_record_remarks = $_POST['attendance_record_remarks'] ?? '';
-    if ($employee_id === '' || $br_id === '' || $br_id === '0') {
-        header('Location: attendance_records.php?br_id=' . urlencode((string) $br_id) . '&msg=error');
+    $posted_br_id = $_POST['br_id'] ?? $br_id;
+    $employee_id = (int) ($_POST['employee_id'] ?? 0);
+    $attendance_record_title = mysqli_real_escape_string($con, (string) ($_POST['attendance_record_title'] ?? '1'));
+    $attendance_record_remarks = mysqli_real_escape_string($con, (string) ($_POST['attendance_record_remarks'] ?? ''));
+    $br_id = hr_resolve_attendance_branch_id($employee_id, $posted_br_id);
+    if ($employee_id < 1 || $br_id < 1) {
+        header('Location: attendance_records.php?br_id=' . urlencode((string) $posted_br_id) . '&msg=error');
         exit;
     }
-    $staff_time_in = get_staff_time_in($employee_id);
-    $staff_time_out = get_staff_time_out($employee_id);
-    $now = date('Y-m-d H:i:s');
+    $staff_time_in = mysqli_real_escape_string($con, (string) get_staff_time_in($employee_id));
+    $staff_time_out = mysqli_real_escape_string($con, (string) get_staff_time_out($employee_id));
+    $start_time = date('H:i:s');
     $insert = "INSERT INTO `attendance_records`
     (`attendance_record_id`, `attendance_record_month`, `attendance_record_date`, `employee_id`, `attendance_record_title`, `attendance_record_remarks`, `attendance_record_start_time`, `attendance_record_status`, `attendance_record_created`, `user_id`, `branch_id`, `staff_duty_in`, `staff_duty_out`)
     VALUES
-    (NULL, '".substr($now, 0, 7)."', '".substr($now, 8, 2)."', '$employee_id', '$attendance_record_title', '$attendance_record_remarks', '".substr($now, 11)."', '1', '$current_date', '$hr_id', '$br_id', '$staff_time_in', '$staff_time_out')";
+    (NULL, '$month', '$day', '$employee_id', '$attendance_record_title', '$attendance_record_remarks', '$start_time', '1', '$current_date', '$hr_id', '$br_id', '$staff_time_in', '$staff_time_out')";
     if (mysqli_query($con, $insert)) {
         $attendance_record_id = mysqli_insert_id($con);
         if ($attendance_record_title == 2 || $attendance_record_title == 3) {
@@ -73,7 +74,15 @@ include 'includes/head.php';
 	<div class="col-md-12 ">
 	    <table class = "table table-bordered table-hover">
 	        <caption>
-	            
+	            <?php
+	            if (isset($_GET['msg']) && $_GET['msg'] === 'in') {
+	                echo '<div class="alert alert-success">Attendance saved successfully.</div>';
+	            } elseif (isset($_GET['msg']) && $_GET['msg'] === 'out') {
+	                echo '<div class="alert alert-success">Duty end time recorded.</div>';
+	            } elseif (isset($_GET['msg']) && $_GET['msg'] === 'error') {
+	                echo '<div class="alert alert-danger">Could not save attendance. Select staff and branch, or employee may already be marked today.</div>';
+	            }
+	            ?>
 	        </caption>
 	        <thead>
 	            <form method = "POST" action = "attendance_records.php">
@@ -116,13 +125,17 @@ include 'includes/head.php';
                 		<select class = "bg-primary text-white" required name = "employee_id" id="select_item" placeholder="Pick Staff...">
                 			<option value="">Select Staff...</option>
                             <?php
-                            $user = "SELECT * FROM `staff` WHERE `branch_id` = '$br_id' AND `staff_status` = '1' AND staff.staff_id NOT IN (SELECT `employee_id` FROM `attendance_records` WHERE `attendance_record_month` = '$month' AND `attendance_record_date` = '$day' AND branch_id = '$br_id') ";
+                            $staff_branch_sql = ((int) $br_id > 0) ? " AND staff.branch_id = '$br_id' " : " AND staff.branch_id > 0 ";
+                            $user = "SELECT staff.* FROM `staff` WHERE staff.staff_status = '1' $staff_branch_sql AND staff.staff_id NOT IN (
+                                SELECT employee_id FROM attendance_records
+                                WHERE attendance_record_month = '$month' AND attendance_record_date = '$day'
+                            ) ORDER BY staff.staff_name ASC";
                             $run_user = mysqli_query($con, $user);
                             if(mysqli_num_rows($run_user) > 0)
                             {
                                 while($row_user = mysqli_fetch_array($run_user))
                                 {
-                                    $employee_id = $row_user['0'];
+                                    $employee_id = $row_user['staff_id'];
                                     $employee_name = $row_user['staff_name'];
                                     echo '<option value = "'.$employee_id.'">'.$employee_name.'</option>';
                                 }
@@ -186,7 +199,17 @@ include 'includes/head.php';
 	        <tbody>
 	        <?php
 	        $s = 0;
-	        $attendance = "SELECT * FROM attendance_records LEFT JOIN branchs ON attendance_records.branch_id = branchs.id INNER JOIN staff ON attendance_records.employee_id = staff.staff_id WHERE attendance_records.`attendance_record_month` = '$month' AND attendance_records.branch_id = '$br_id' ";
+	        $branch_list_sql = ((int) $br_id > 0) ? " AND attendance_records.branch_id = '" . (int) $br_id . "' " : '';
+	        $attendance = "SELECT attendance_records.*, staff.staff_name,
+	            COALESCE(branch_rec.tag_name, branch_staff.tag_name, '') AS tag_name
+	            FROM attendance_records
+	            INNER JOIN staff ON attendance_records.employee_id = staff.staff_id
+	            LEFT JOIN branchs AS branch_rec ON attendance_records.branch_id = branch_rec.id AND attendance_records.branch_id > 0
+	            LEFT JOIN branchs AS branch_staff ON staff.branch_id = branch_staff.id
+	            WHERE attendance_records.attendance_record_month = '$month'
+	            AND attendance_records.attendance_record_date = '$day'
+	            $branch_list_sql
+	            ORDER BY attendance_records.attendance_record_created DESC";
 	        $run_attendance = mysqli_query($con, $attendance);
 	        if(mysqli_num_rows($run_attendance) > 0)
 	        {
@@ -196,7 +219,7 @@ include 'includes/head.php';
 	            ?>
 	           <tr>
 	               <td><?php echo $s; ?></td>
-	               <td><?php echo $row_attendance['tag_name']; ?></td>
+	               <td><?php echo htmlspecialchars($row_attendance['tag_name'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
 	               <td><?php echo $row_attendance['staff_name']; ?></td>
 	               <td><?php echo $row_attendance['attendance_record_created']; ?></td>
 	               <td><?php if($row_attendance['attendance_record_end_time'] == '00:00:00'){ ?> 
