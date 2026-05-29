@@ -2,9 +2,13 @@
 
 /**
  * True when branch quantity should gate UI (OUT OF STOCK) and stock deductions.
- * Services/tests/procedures/imaging are not physical stock.
+ * Services, lab tests, imaging, and lab consumables (vials, rolls) skip stock checks.
+ *
+ * @param int|string $category_id
+ * @param string $category_name categories.name (optional)
+ * @param string $item_name items.name (optional)
  */
-function pharmecy_item_requires_stock_check($category_id)
+function pharmecy_item_requires_stock_check($category_id, $category_name = '', $item_name = '')
 {
     static $service_category_ids = array(
         2,   // TEST / lab
@@ -15,7 +19,35 @@ function pharmecy_item_requires_stock_check($category_id)
         29, 31, 32, 33, 34, 36, 37, 38, 39, 40, 41, 42, 44,
     );
 
-    return !in_array((int) $category_id, $service_category_ids, true);
+    if (in_array((int) $category_id, $service_category_ids, true)) {
+        return false;
+    }
+
+    $cat = strtoupper(trim((string) $category_name));
+    $non_stock_category_patterns = array(
+        'TEST', 'PROCEDURE', 'USG', 'ULTRASOUND', 'SCAN', 'IMAGING', 'RADIOLOGY',
+        'SEROLOGY', 'HEMATOLOGY', 'PATHOLOGY', 'DIAGNOSTIC', 'CONSUMABLE', 'LAB',
+        'VIAL', 'REAGENT',
+    );
+    foreach ($non_stock_category_patterns as $pattern) {
+        if ($cat !== '' && strpos($cat, $pattern) !== false) {
+            return false;
+        }
+    }
+
+    $item = strtoupper(trim((string) $item_name));
+    if ($item !== '' && preg_match('/\b(CBC|ESR|LFT|RFT|HBA1C|PCR|USG)\b/', $item)) {
+        if (strpos($cat, 'TEST') !== false
+            || strpos($cat, 'LAB') !== false
+            || strpos($cat, 'CONSUMABLE') !== false
+            || strpos($cat, 'VIAL') !== false
+            || strpos($cat, 'SEROLOGY') !== false
+            || strpos($cat, 'HEMATOLOGY') !== false) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 /**

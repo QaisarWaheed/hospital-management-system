@@ -45,9 +45,9 @@ if (isset($_POST['save_test']))
 	('$reg_item_id', '$dose', '$feed', '$days', '$user_id','$branch_id', '$fix_dose', '$current_date', '$purchase', '$general', '$member', '$poor', '$category_id')";
 	if($check_item == 0)
 	{	
-// 		$get_available_quantity = get_register_item_quantity_from_item_id($reg_item_id);
-// 		$new_quantity = $get_available_quantity - $quantity;
-		mysqli_query($con, "UPDATE `item_register_to_branches` SET `quantity`= `quantity`-$quantity WHERE id = '$reg_item_id' ");
+		if (pharmecy_item_requires_stock_check($category_id)) {
+			mysqli_query($con, "UPDATE `item_register_to_branches` SET `quantity`= `quantity`-$quantity WHERE id = '$reg_item_id' ");
+		}
 		if (mysqli_query($con, $insert))		
 		{ 
 			    if($token_data == 1)
