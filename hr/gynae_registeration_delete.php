@@ -65,7 +65,7 @@ if (isset($_POST['save_delete']))
                 $phone = $row['phone'];
                 $remarks = $row['remarks'];
                 $gravide = $row['gravide'];
-                $start_date = date_format(date_create($row['weeks']), 'd/m/Y H:i:s');
+                $start_date = ($row['weeks'] && $row['weeks'] != '0000-00-00' && $row['weeks'] != '0000-00-00 00:00:00' ? date_format(date_create($row['weeks']), 'd/m/Y H:i:s') : '';
                 $next_visit_date = $row['next_visit_date'];
                 $to_date = date('d/m/Y H:i:s');
                 $weeks = weeks_between($start_date, $to_date);

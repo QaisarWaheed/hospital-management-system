@@ -103,22 +103,22 @@ if ($run_users) {
             <td>' . htmlspecialchars($userName) . '</td>
             <td>' . htmlspecialchars((string) $row_users['login_at']) . '</td>
             <td>' . htmlspecialchars((string) $row_users['logout_at']) . '</td>
-            <td>' . number_format($computer_total) . '</td>
-            <td>' . number_format($received_amount) . '</td>
-            <td>' . number_format($extra_amount) . '</td>
-            <td>' . number_format($short_amount) . '</td>
-            <td>' . number_format($total_receiveable) . '</td>
+            <td>' . number_format((float)($computer_total ?? 0)) . '</td>
+            <td>' . number_format((float)($received_amount ?? 0)) . '</td>
+            <td>' . number_format((float)($extra_amount ?? 0)) . '</td>
+            <td>' . number_format((float)($short_amount ?? 0)) . '</td>
+            <td>' . number_format((float)($total_receiveable ?? 0)) . '</td>
         </tr>';
     }
 }
 ?>
 		<tr>
 			<th colspan="4"></th>
-			<th><?php echo number_format($total_cash); ?></th>
-			<th><?php echo number_format($total_cash_received); ?></th>
-			<th><?php echo number_format($total_extra); ?></th>
-			<th><?php echo number_format($total_short); ?></th>
-			<th><?php echo number_format($total_r_a); ?></th>
+			<th><?php echo number_format((float)($total_cash ?? 0)); ?></th>
+			<th><?php echo number_format((float)($total_cash_received ?? 0)); ?></th>
+			<th><?php echo number_format((float)($total_extra ?? 0)); ?></th>
+			<th><?php echo number_format((float)($total_short ?? 0)); ?></th>
+			<th><?php echo number_format((float)($total_r_a ?? 0)); ?></th>
 		</tr>
 	</tbody>
 </table>
@@ -126,7 +126,7 @@ if ($run_users) {
 foreach (fr_summary_tokan_type_breakdown($con, $from_date, $to_date, 0, $b_id, false) as $typeRow) {
     echo '<p style="text-align: center;"><strong>'
         . htmlspecialchars($typeRow['title']) . ' -> ' . (int) $typeRow['count']
-        . ' Amount(' . number_format($typeRow['amount']) . ')</strong></p>';
+        . ' Amount(' . number_format((float)($typeRow['amount'] ?? 0)) . ')</strong></p>';
 }
 ?>
 </body>

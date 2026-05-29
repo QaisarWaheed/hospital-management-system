@@ -142,9 +142,501 @@ $list_truncated = $list_result['truncated'];
     	                <td><?php echo $row_sample['name']; ?></td>
     	                <td><?php echo $row_sample['phone']; ?></td>
     	                <td><?php echo $row_sample['age']; ?></td>
-    	                <td><?php echo date_format(date_create($row_sample['register_at']), 'h:i:s A d-m-Y'); ?></td>
+    	                <td><?php echo ($row_sample['register_at'] && $row_sample['register_at'] != '0000-00-00' && $row_sample['register_at'] != '0000-00-00 00:00:00' ? date_format(date_create($row_sample['register_at']), 'h:i:s A d-m-Y') : ''; ?></td>
     	                <td><?php echo $row_sample['register_by']; ?></td>
     	                <td><?php echo date_format(date_create($row_sample['collected_at']), 'h:i:s A d-m-Y'); ?></td>
+    	                <td><?php echo $row_sample['collected_by']; ?></td>
+    	                <td>selected_branch
+    	                    <input type = "hidden" name = "lab_test_id" value = "<?php echo $row_sample['lab_test_id']; ?>" />
+    	                    <input type = "hidden" name = "selected_branch" value = "<?php echo $selected_branch; ?>" />
+    	                    <input title = "type comments of 30 latters only." type = "test" maxlength = "30" name = "lab_test_processed_comments" class = "form-control" />
+    	                </td>
+    	                <td>
+    	                    <input type = "submit" value = "UPDATE" name = "update_lab_test_processed" class = "btn-success" />
+    	                </td>
+    	            </tr>
+    	            </form>
+    	                <?php }
+    	            }
+    	            else
+    	            {
+    	                echo '<tr><th colspan = "9">NO PENDING SAMPLES IN LAB</th></tr>';
+    	            }
+    	            ?>
+    	        </tbody>
+    	    </table>
+    	</div>
+    </div>
+</body>
+</html><script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script>
+function myFunction() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[1];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionTestName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputTestName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[2];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[3];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionPhone() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputPhone");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[4];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+</script>
+<?php mysqli_close($con); ?>($row_sample['collected_at'] && $row_sample['collected_at'] != '0000-00-00' && $row_sample['collected_at'] != '0000-00-00 00:00:00' ? date_format(date_create($row_sample['collected_at']), 'h:i:s A d-m-Y') : ''; ?></td>
+    	                <td><?php echo $row_sample['collected_by']; ?></td>
+    	                <td>selected_branch
+    	                    <input type = "hidden" name = "lab_test_id" value = "<?php echo $row_sample['lab_test_id']; ?>" />
+    	                    <input type = "hidden" name = "selected_branch" value = "<?php echo $selected_branch; ?>" />
+    	                    <input title = "type comments of 30 latters only." type = "test" maxlength = "30" name = "lab_test_processed_comments" class = "form-control" />
+    	                </td>
+    	                <td>
+    	                    <input type = "submit" value = "UPDATE" name = "update_lab_test_processed" class = "btn-success" />
+    	                </td>
+    	            </tr>
+    	            </form>
+    	                <?php }
+    	            }
+    	            else
+    	            {
+    	                echo '<tr><th colspan = "9">NO PENDING SAMPLES IN LAB</th></tr>';
+    	            }
+    	            ?>
+    	        </tbody>
+    	    </table>
+    	</div>
+    </div>
+</body>
+</html><script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script>
+function myFunction() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[1];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionTestName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputTestName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[2];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[3];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionPhone() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputPhone");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[4];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+</script>
+<?php mysqli_close($con); ?>($row_sample['collected_at'] && $row_sample['collected_at'] != '0000-00-00' && $row_sample['collected_at'] != '0000-00-00 00:00:00' ? date_format(date_create($row_sample['collected_at']), 'h:i:s A d-m-Y') : ''; ?></td>
+    	                <td><?php echo $row_sample['collected_by']; ?></td>
+    	                <td>selected_branch
+    	                    <input type = "hidden" name = "lab_test_id" value = "<?php echo $row_sample['lab_test_id']; ?>" />
+    	                    <input type = "hidden" name = "selected_branch" value = "<?php echo $selected_branch; ?>" />
+    	                    <input title = "type comments of 30 latters only." type = "test" maxlength = "30" name = "lab_test_processed_comments" class = "form-control" />
+    	                </td>
+    	                <td>
+    	                    <input type = "submit" value = "UPDATE" name = "update_lab_test_processed" class = "btn-success" />
+    	                </td>
+    	            </tr>
+    	            </form>
+    	                <?php }
+    	            }
+    	            else
+    	            {
+    	                echo '<tr><th colspan = "9">NO PENDING SAMPLES IN LAB</th></tr>';
+    	            }
+    	            ?>
+    	        </tbody>
+    	    </table>
+    	</div>
+    </div>
+</body>
+</html><script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script>
+function myFunction() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[1];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionTestName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputTestName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[2];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[3];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionPhone() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputPhone");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[4];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+</script>
+<?php mysqli_close($con); ?>($row_sample['collected_at'] && $row_sample['collected_at'] != '0000-00-00' && $row_sample['collected_at'] != '0000-00-00 00:00:00' ? date_format(date_create($row_sample['collected_at']), 'h:i:s A d-m-Y') : ''; ?></td>
+    	                <td><?php echo $row_sample['collected_by']; ?></td>
+    	                <td>selected_branch
+    	                    <input type = "hidden" name = "lab_test_id" value = "<?php echo $row_sample['lab_test_id']; ?>" />
+    	                    <input type = "hidden" name = "selected_branch" value = "<?php echo $selected_branch; ?>" />
+    	                    <input title = "type comments of 30 latters only." type = "test" maxlength = "30" name = "lab_test_processed_comments" class = "form-control" />
+    	                </td>
+    	                <td>
+    	                    <input type = "submit" value = "UPDATE" name = "update_lab_test_processed" class = "btn-success" />
+    	                </td>
+    	            </tr>
+    	            </form>
+    	                <?php }
+    	            }
+    	            else
+    	            {
+    	                echo '<tr><th colspan = "9">NO PENDING SAMPLES IN LAB</th></tr>';
+    	            }
+    	            ?>
+    	        </tbody>
+    	    </table>
+    	</div>
+    </div>
+</body>
+</html><script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script>
+function myFunction() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[1];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionTestName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputTestName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[2];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[3];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionPhone() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputPhone");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[4];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+</script>
+<?php mysqli_close($con); ?>$row_sample['collected_at']), 'h:i:s A d-m-Y') : ''; ?></td>
     	                <td><?php echo $row_sample['collected_by']; ?></td>
     	                <td>selected_branch
     	                    <input type = "hidden" name = "lab_test_id" value = "<?php echo $row_sample['lab_test_id']; ?>" />

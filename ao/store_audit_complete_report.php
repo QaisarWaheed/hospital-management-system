@@ -70,7 +70,7 @@ else
                             <td>'.$computer_stock.'</td>
                             <td>'.$manual_stock.'</td>
                             <td>'.$difference.'</td>
-                            <td>'.number_format(($poor*$difference)).'</td>
+                            <td>'.number_format((float)(($poor*$difference) ?? 0)).'</td>
                         </tr>
                         ';    
                     }
@@ -78,7 +78,7 @@ else
                 echo '
                     <tr>
                         <th colspan = "6"></th>
-                        <th style = "font-size:23px;">'.number_format($total_short).'</th>
+                        <th style = "font-size:23px;">'.number_format((float)($total_short ?? 0)).'</th>
                     </tr>
                 ';
                 ?>
@@ -86,18 +86,18 @@ else
             <caption style = "caption-side: top;color: black;text-align: center;"> 
                 <h2>AUDIT SHORT MEDICINE REPORT - YCDO</h2>
                 <h3><?php echo $audit_branch_name; ?></h3>
-                <h3><?php echo date_format(date_create($audit_created), "d-F-Y"); ?></h3>
+                <h3><?php echo ($audit_created && $audit_created != '0000-00-00' && $audit_created != '0000-00-00 00:00:00' ? date_format(date_create($audit_created), "d-F-Y") : ''; ?></h3>
             </caption>
         </table>
         <div style = "font-size: 24px;text-align: center;color: black;">
             <?php
             if($total_short > 0)
             {
-                echo '<p>SHORT MEDICINE AMOUNT: <strong>'.number_format($total_short).'</strong></p>';
+                echo '<p>SHORT MEDICINE AMOUNT: <strong>'.number_format((float)($total_short ?? 0)).'</strong></p>';
             }
             else
             {
-                echo '<p>EXTRA MEDICINE AMOUNT: <strong>'.number_format($total_short).'</strong></p>';
+                echo '<p>EXTRA MEDICINE AMOUNT: <strong>'.number_format((float)($total_short ?? 0)).'</strong></p>';
             }
             ?>
             

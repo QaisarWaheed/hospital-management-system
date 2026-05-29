@@ -94,7 +94,7 @@ if (mysqli_num_rows($select) > 0)
 		$s = $s + 1;
 		$id = $row['id'];
 		$purchase = get_purchase_by_item_id($id);
-		$stars = strlen($purchase);
+		$stars = strlen($purchase ?? '');
 		$print_stars = '';
 		for($i = 0; $i < $stars; $i++)
 		{

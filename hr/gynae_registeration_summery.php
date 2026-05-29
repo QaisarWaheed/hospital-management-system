@@ -39,7 +39,7 @@ if(!isset($_SESSION['hr_id']))
 	            <div>
 	                <table class = "table table-hover table-bordered border-dark">
 	                    <caption style = "caption-side: top; color: black;">
-	                        <div class = "h4 text-center">GYNAE REGISTERATION SUMMERY FOR THE MONTH OF <?php echo date_format(date_create($_GET['summery_month']), "M-Y") ?></div>
+	                        <div class = "h4 text-center">GYNAE REGISTERATION SUMMERY FOR THE MONTH OF <?php echo ($_GET['summery_month'] && $_GET['summery_month'] != '0000-00-00' && $_GET['summery_month'] != '0000-00-00 00:00:00' ? date_format(date_create($_GET['summery_month']), "M-Y") : '' ?></div>
 	                    </caption>
 	                    <thead>
 	                        <tr>

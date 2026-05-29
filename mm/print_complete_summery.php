@@ -36,7 +36,136 @@ elseif (isset($_GET['s']) && $_GET['s'] != '') {
     	<h6><?php echo $branch_address; ?></h6>
     	<h5>Token Summary</h5>
 
-         <div style="float:left"><strong>Date:</strong><span style="text-align: left;"><?php echo date_format(date_create($from_date), 'd-m-Y'); ?> To <?php echo date_format(date_create($to_date), 'd-m-Y'); ?></span></div>
+         <div style="float:left"><strong>Date:</strong><span style="text-align: left;"><?php echo ($from_date && $from_date != '0000-00-00' && $from_date != '0000-00-00 00:00:00' ? date_format(date_create($from_date), 'd-m-Y') : ''; ?> To <?php echo date_format(date_create($to_date), 'd-m-Y'); ?></span></div>
+
+         <div style="float:right">Print Time: <?php echo date('h:i:s A'); ?></div>
+         </br>
+
+         <div style="float:left"><strong>User Name:</strong> <span style="text-align: left;"><?php echo $u_name; ?></span></div>
+
+         <div style="float:right">Print Date:<?php echo date('d-m-Y'); ?></div>
+         </td>
+
+	</tr>
+		<tr>
+			<th style="text-align: right;" colspan="5">Total Amount</th>
+			<th></th>
+			<th colspan="5">Received Amount</th>
+		</tr>
+	</thead>
+	<tbody>
+<?php 
+$last_date = date('Y-m-d', strtotime('+1 day', strtotime($to_date)));
+$s = 0;
+$total_cash = 0;
+$total_cash_received = 0;
+if($u_id != 0)
+{
+$select = "SELECT * FROM tokans WHERE 
+	user_id = '$u_id' AND 
+	`created` <= '$last_date' AND 
+	`created` >= '$from_date' AND
+	`status` = '1' 
+	ORDER BY `created` ";
+}
+else
+{
+$select = "SELECT * FROM tokans WHERE 
+	`created` <= '$last_date' AND 
+	`created` >= '$from_date' AND
+	`status` = '1' 
+	ORDER BY `created` ";
+}
+$run = mysqli_query($con, $select);
+if (($to_date && $to_date != '0000-00-00' && $to_date != '0000-00-($to_date && $to_date != '0000-00-00' && $to_date != '0000-00-00 00:00:00' ? date_format(date_create($to_date), 'd-m-Y') : ''; ?></span></div>
+
+         <div style="float:right">Print Time: <?php echo date('h:i:s A'); ?></div>
+         </br>
+
+         <div style="float:left"><strong>User Name:</strong> <span style="text-align: left;"><?php echo $u_name; ?></span></div>
+
+         <div style="float:right">Print Date:<?php echo date('d-m-Y'); ?></div>
+         </td>
+
+	</tr>
+		<tr>
+			<th style="text-align: right;" colspan="5">Total Amount</th>
+			<th></th>
+			<th colspan="5">Received Amount</th>
+		</tr>
+	</thead>
+	<tbody>
+<?php 
+$last_date = date('Y-m-d', strtotime('+1 day', strtotime($to_date)));
+$s = 0;
+$total_cash = 0;
+$total_cash_received = 0;
+if($u_id != 0)
+{
+$select = "SELECT * FROM tokans WHERE 
+	user_id = '$u_id' AND 
+	`created` <= '$last_date' AND 
+	`created` >= '$from_date' AND
+	`status` = '1' 
+	ORDER BY `created` ";
+}
+else
+{
+$select = "SELECT * FROM tokans WHERE 
+	`created` <= '$last_date' AND 
+	`created` >= '$from_date' AND
+	`status` = '1' 
+	ORDER BY `created` ";
+}
+$run = mysqli_query($con, $select);
+if (($to_date && $to_date != '0000-00-00' && $to_date != '0000-00-00 00:00:00' ? date_format(date_create($to_date), 'd-m-Y') : ''; ?></span></div>
+
+         <div style="float:right">Print Time: <?php echo date('h:i:s A'); ?></div>
+         </br>
+
+         <div style="float:left"><strong>User Name:</strong> <span style="text-align: left;"><?php echo $u_name; ?></span></div>
+
+         <div style="float:right">Print Date:<?php echo date('d-m-Y'); ?></div>
+         </td>
+
+	</tr>
+		<tr>
+			<th style="text-align: right;" colspan="5">Total Amount</th>
+			<th></th>
+			<th colspan="5">Received Amount</th>
+		</tr>
+	</thead>
+	<tbody>
+<?php 
+$last_date = date('Y-m-d', strtotime('+1 day', strtotime($to_date)));
+$s = 0;
+$total_cash = 0;
+$total_cash_received = 0;
+if($u_id != 0)
+{
+$select = "SELECT * FROM tokans WHERE 
+	user_id = '$u_id' AND 
+	`created` <= '$last_date' AND 
+	`created` >= '$from_date' AND
+	`status` = '1' 
+	ORDER BY `created` ";
+}
+else
+{
+$select = "SELECT * FROM tokans WHERE 
+	`created` <= '$last_date' AND 
+	`created` >= '$from_date' AND
+	`status` = '1' 
+	ORDER BY `created` ";
+}
+$run = mysqli_query($con, $select);
+if (mysqli_num_rows($run) > 0) 
+{
+	while ($row = mysqli_fetch_array($run)) 
+	{
+		$s = $s + 1;
+		$token_date = $row['created'];
+		$previous_tokan_no = $row['previous_to$to_date), 'd-m-Y') : ''; ?></span></div>
 
          <div style="float:right">Print Time: <?php echo date('h:i:s A'); ?></div>
          </br>
@@ -155,9 +284,849 @@ if (mysqli_num_rows($run) > 0)
 }
 ?>
 <tr>
-	<th style="text-align: right;" colspan="5"><?php echo number_format($total_cash); ?></th>
+	<th style="text-align: right;" colspan="5"><?php echo number_format((float)($total_cash ?? 0)); ?></th>
 	<th></th>
-	<th colspan="5"><?php echo number_format($total_cash_received); ?></th>
+	<th colspan="5"><?php echo number_format((float)($total_cash_received ?? 0)); ?></th>
+</tr>
+<?php
+if($u_id != 0)
+{
+$select = "SELECT distinct tokan_type_id ,cash_received FROM tokans WHERE 
+	user_id = '$u_id' AND 
+	`created` <= '$last_date' AND 
+	`created` >= '$from_date' AND tokan_type_id < 100
+	ORDER BY `tokan_type_id` ";
+$run = mysqli_query($con, $select);
+if (mysqli_num_rows($run) > 0) 
+{
+	while ($row = mysqli_fetch_array($run)) 
+	{
+		$tokan_type_id = $row['tokan_type_id'];
+			$select_cou($token_date && $token_date != '0000-00-00' && $token_date != '0000-00-00 00:00:00' ? date_format(date_create($token_date), "h:i A") : ''.'</td>
+// 			<td>'.date_format(date_create($token_date), "d M").'</td>
+// 			<td style="text-align: right;">'.$row['id'].'</td>
+// 			<td>'.$name.'('.$genders.')</td>
+// 			<td style="text-align: right;">'.$age.'</td>
+// 			<td>'.$pre.'</td>
+// 			<td>'.$doctor_id.'</td>
+// 			<td style="text-align: right;">'.$row['cash'].'</td>
+// 			<td>'.$title.'</td>
+// 			<td style="text-align: right;">'.$row['cash_received'].'</td>
+// 		</tr>
+// 		';
+	}
+}
+?>
+<tr>
+	<th style="text-align: right;" colspan="5"><?php echo number_format((float)($total_cash ?? 0)); ?></th>
+	<th></th>
+	<th colspan="5"><?php echo number_format((float)($total_cash_received ?? 0)); ?></th>
+</tr>
+<?php
+if($u_id != 0)
+{
+$select = "SELECT distinct tokan_type_id ,cash_received FROM tokans WHERE 
+	user_id = '$u_id' AND 
+	`created` <= '$last_date' AND 
+	`created` >= '$from_date' AND tokan_type_id < 100
+	ORDER BY `tokan_type_id` ";
+$run = mysqli_query($con, $select);
+if (mysqli_num_rows($run) > 0) 
+{
+	while ($row = mysqli_fetch_array($run)) 
+	{
+		$tokan_type_id = $row['tokan_type_id'];
+			$sel($token_date && $token_date != '0000-00-00' && $token_date != '0000-00-00 00:00:00' ? date_format(date_create($token_date), "h:i A") : ''.'</td>
+// 			<td>'.date_format(date_create($token_date), "d M").'</td>
+// 			<td style="text-align: right;">'.$row['id'].'</td>
+// 			<td>'.$name.'('.$genders.')</td>
+// 			<td style="text-align: right;">'.$age.'</td>
+// 			<td>'.$pre.'</td>
+// 			<td>'.$doctor_id.'</td>
+// 			<td style="text-align: right;">'.$row['cash'].'</td>
+// 			<td>'.$title.'</td>
+// 			<td style="text-align: right;">'.$row['cash_received'].'</td>
+// 		</tr>
+// 		';
+	}
+}
+?>
+<tr>
+	<th style="text-align: right;" colspan="5"><?php echo number_format((float)($total_cash ?? 0)); ?></th>
+	<th></th>
+	<th colspan="5"><?php echo number_format((float)($total_cash_received ?? 0)); ?></th>
+</tr>
+<?php
+if($u_id != 0)
+{
+$select = "SELECT distinct tokan_type_id ,cash_received FROM tokans WHERE 
+	user_id = '$u_id' AND 
+	`created` <= '$last_date' AND 
+	`created` >= '$from_date' AND tokan_type_id < 100
+	ORDER BY `tokan_type_id` ";
+$run = mysqli_query($con, $select);
+if (mysqli_num_rows($run) > 0) 
+{
+	while ($row = mysqli_fetch_array($run)) 
+	{
+		$tokan_type_id = $row['tokan_type_id'];
+			$select_cou($token_date && $token_date != '0000-00-00' && $token_date != '0000-00-00 00:00:00' ? date_format(date_create($token_date), "h:i A") : ''.'</td>
+// 			<td>'.date_format(date_create($token_date), "d M").'</td>
+// 			<td style="text-align: right;">'.$row['id'].'</td>
+// 			<td>'.$name.'('.$genders.')</td>
+// 			<td style="text-align: right;">'.$age.'</td>
+// 			<td>'.$pre.'</td>
+// 			<td>'.$doctor_id.'</td>
+// 			<td style="text-align: right;">'.$row['cash'].'</td>
+// 			<td>'.$title.'</td>
+// 			<td style="text-align: right;">'.$row['cash_received'].'</td>
+// 		</tr>
+// 		';
+	}
+}
+?>
+<tr>
+	<th style="text-align: right;" colspan="5"><?php echo number_format((float)($total_cash ?? 0)); ?></th>
+	<th></th>
+	<th colspan="5"><?php echo number_format((float)($total_cash_received ?? 0)); ?></th>
+</tr>
+<?php
+if($u_id != 0)
+{
+$select = "SELECT distinct tokan_type_id ,cash_received FROM tokans WHERE 
+	user_id = '$u_id' AND 
+	`created` <= '$last_date' AND 
+	`created` >= '$from_date' AND tokan_type_id < 100
+	ORDER BY `tokan_type_id` ";
+$run = mysqli_query($con, $select);
+if (mysqli_num_rows($run) > 0) 
+{
+	while ($row = mysqli_fetch_array($run)) 
+	{
+		$tokan_type_id = $row['tokan_type_id'];
+			$select_count = "SELECT * FROM tokans WHERE 
+				user_id = '$u_id' AND 
+				`created` <= '$last_date' AND 
+				`created` >= '$from_date' AND tokan_type_id = '$tokan_type_id' AND `status` = '1' ";
+			$count_tokens = mysqli_num_rows(mysqli_query($con, $select_count));
+		$select_tokan_type = "SELECT * FROM tokan_types WHERE id = '$tokan_type_id' AND `status` = '1' ";
+		$run_tokan_type = mysqli_query($con, $select_tokan_type);
+		if (mysqli_num_rows($run_tokan_type) > 0) 
+		{
+			while ($row_tokan_type = mysqli_fetch_array($run_tokan_type)) 
+			{
+				$title = $row_tokan_type['title'];
+			}
+		}
+		else
+		{
+				$title = "No Title";
+		}		echo '<tr>
+			<th style="text-align: right;" colspan="4">'.$title.'</th>
+			<th style="text-align: center;" colspan="3">'.$count_tokens.'</th>
+			<th style="text-align: left;" colspan="4">'.($count_tokens * $row['cash_received']).'</th>
+		</tr>';
+	}
+}
+}
+else
+{
+$select = "SELECT distinct tokan_type_id ,cash_received FROM tokans WHERE 
+	`created` <= '$last_date' AND 
+	`created` >= '$from_date' AND tokan_type_id < 100
+	ORDER BY `tokan_type_id` ";
+$run = mysqli_query($con, $select);
+if (mysqli_num_rows($run) > 0) 
+{
+	while ($row = mysqli_fetch_array($run)) 
+	{
+		$tokan_type_id = $row['tokan_type_id'];
+			$select_count = "SELECT * FROM tokans WHERE 
+				`created` <= '$last_date' AND 
+				`created` >= '$from_date' AND tokan_type_id = '$tokan_type_id' AND `status` = '1' ";
+			$count_tokens = mysqli_num_rows(mysqli_query($con, $select_count));
+		$select_tokan_type = "SELECT * FROM tokan_types WHERE id = '$tokan_type_id' AND `status` = '1' ";
+		$run_tokan_type = mysqli_query($con, $select_tokan_type);
+		if (mysqli_num_rows($run_tokan_type) > 0) 
+		{
+			while ($row_tokan_type = mysqli_fetch_array($run_tokan_type)) 
+			{
+				$title = $row_tokan_type['title'];
+			}
+		}
+		else
+		{
+				$title = "No Title";
+		}		echo '<tr>
+			<th style="text-align: right;" colspan="4">'.$title.'</th>
+			<th style="text-align: center;" colspan="3">'.$count_tokens.'</th>
+			<th style="text-align: left;" colspan="4">'.($count_tokens * $row['cash_received']).'</th>
+		</tr>';
+	}
+}
+
+
+    $lab_amount = 0;
+    $lab_count = 0;
+    $lab = "SELECT * FROM `item_by_doctor` WHERE `item_id` IN (SELECT id FROM item_register_to_branches WHERE item_id IN (SELECT id FROM items WHERE category_id = 2)) AND `created` <= '$last_date' AND  `created` >= '$from_date'";
+    $run_lab = mysqli_query($con, $lab);
+    if(mysqli_num_rows($run_lab) > 0)
+    {
+        while($row_lab = mysqli_fetch_array($run_lab))
+        {
+            $branch_item_id = $row_lab['item_id'];
+            $tn = $row_lab['tokan_no'];
+            $select_tn = "SELECT `tokan_type_id` FROM `tokans` WHERE `id` = '$tn' ";
+            $run_tn = mysqli_query($con, $select_tn);
+            if(mysqli_num_rows($run_tn) > 0)
+            {
+                while($row_tn = mysqli_fetch_array($run_tn))
+         ($token_date && $($token_date && $token_date != '0000-00-00' && $token_date != '0000-00-00 00:00:00' ? date_format(date_create($token_date), "d M") : ''.'</td>
+// 			<td style="text-align: right;">'.$row['id'].'</td>
+// 			<td>'.$name.'('.$genders.')</td>
+// 			<td style="text-align: right;">'.$age.'</td>
+// 			<td>'.$pre.'</td>
+// 			<td>'.$doctor_id.'</td>
+// 			<td style="text-align: right;">'.$row['cash'].'</td>
+// 			<td>'.$title.'</td>
+// 			<td style="text-align: right;">'.$row['cash_received'].'</td>
+// 		</tr>
+// 		';
+	}
+}
+?>
+<tr>
+	<th style="text-align: right;" colspan="5"><?php echo number_format((float)($total_cash ?? 0)); ?></th>
+	<th></th>
+	<th colspan="5"><?php echo number_format((float)($total_cash_received ?? 0)); ?></th>
+</tr>
+<?php
+if($u_id != 0)
+{
+$select = "SELECT distinct tokan_type_id ,cash_received FROM tokans WHERE 
+	user_id = '$u_id' AND 
+	`created` <= '$last_date' AND 
+	`created` >= '$from_date' AND tokan_type_id < 100
+	ORDER BY `tokan_type_id` ";
+$run = mysqli_query($con, $select);
+if (mysqli_num_rows($run) > 0) 
+{
+	while ($row = mysqli_fetch_array($run)) 
+	{
+		$tokan_type_id = $row['tokan_type_id'];
+			$select_cou($token_date && $token_date != '0000-00-00' && $token_date != '0000-00-00 00:00:00' ? date_format(date_create($token_date), "h:i A") : ''.'</td>
+// 			<td>'.date_format(date_create($token_date), "d M").'</td>
+// 			<td style="text-align: right;">'.$row['id'].'</td>
+// 			<td>'.$name.'('.$genders.')</td>
+// 			<td style="text-align: right;">'.$age.'</td>
+// 			<td>'.$pre.'</td>
+// 			<td>'.$doctor_id.'</td>
+// 			<td style="text-align: right;">'.$row['cash'].'</td>
+// 			<td>'.$title.'</td>
+// 			<td style="text-align: right;">'.$row['cash_received'].'</td>
+// 		</tr>
+// 		';
+	}
+}
+?>
+<tr>
+	<th style="text-align: right;" colspan="5"><?php echo number_format((float)($total_cash ?? 0)); ?></th>
+	<th></th>
+	<th colspan="5"><?php echo number_format((float)($total_cash_received ?? 0)); ?></th>
+</tr>
+<?php
+if($u_id != 0)
+{
+$select = "SELECT distinct tokan_type_id ,cash_received FROM tokans WHERE 
+	user_id = '$u_id' AND 
+	`created` <= '$last_date' AND 
+	`created` >= '$from_date' AND tokan_type_id < 100
+	ORDER BY `tokan_type_id` ";
+$run = mysqli_query($con, $select);
+if (mysqli_num_rows($run) > 0) 
+{
+	while ($row = mysqli_fetch_array($run)) 
+	{
+		$tokan_type_id = $row['tokan_type_id'];
+			$select_count = "SELECT * FROM tokans WHERE 
+				user_id = '$u_id' AND 
+				`created` <= '$last_date' AND 
+				`created` >= '$from_date' AND tokan_type_id = '$tokan_type_id' AND `status` = '1' ";
+			$count_tokens = mysqli_num_rows(mysqli_query($con, $select_count));
+		$select_tokan_type = "SELECT * FROM tokan_types WHERE id = '$tokan_type_id' AND `status` = '1' ";
+		$run_tokan_type = mysqli_query($con, $select_tokan_type);
+		if (mysqli_num_rows($run_tokan_type) > 0) 
+		{
+			while ($row_tokan_type = mysqli_fetch_array($run_tokan_type)) 
+			{
+				$title = $row_tokan_type['title'];
+			}
+		}
+		else
+		{
+				$title = "No Title";
+		}		echo '<tr>
+			<th style="text-align: right;" colspan="4">'.$title.'</th>
+			<th style="text-align: center;" colspan="3">'.$count_tokens.'</th>
+			<th style="text-align: left;" colspan="4">'.($count_tokens * $row['cash_received']).'</th>
+		</tr>';
+	}
+}
+}
+else
+{
+$select = "SELECT distinct tokan_type_id ,cash_received FROM tokans WHERE 
+	`created` <= '$last_date' AND 
+	`created` >= '$from_date' AND tokan_type_id < 100
+	ORDER BY `tokan_type_id` ";
+$run = mysqli_query($con, $select);
+if (mysqli_num_rows($run) > 0) 
+{
+	while ($row = mysqli_fetch_array($run)) 
+	{
+		$tokan_type_id = $row['tokan_type_id'];
+			$select_count = "SELECT * FROM tokans WHERE 
+				`created` <= '$last_date' AND 
+				`created` >= '$from_date' AND tokan_type_id = '$tokan_type_id' AND `status` = '1' ";
+			$count_tokens = mysqli_num_rows(mysqli_query($con, $select_count));
+		$select_tokan_type = "SELECT * FROM tokan_types WHERE id = '$tokan_type_id' AND `status` = '1' ";
+		$run_tokan_type = mysqli_query($con, $select_tokan_type);
+		if (mysqli_num_rows($run_tokan_type) > 0) 
+		{
+			while ($row_tokan_type = mysqli_fetch_array($run_tokan_type)) 
+			{
+				$title = $row_tokan_type['title'];
+			}
+		}
+		else
+		{
+				$title = "No Title";
+		}		echo '<tr>
+			<th style="text-align: right;" colspan="4">'.$title.'</th>
+			<th style="text-align: center;" colspan="3">'.$count_tokens.'</th>
+			<th style="text-align: left;" colspan="4">'.($count_tokens * $row['cash_received']).'</th>
+		</tr>';
+	}
+}
+
+
+    $lab_amount = 0;
+    $lab_count = 0;
+    $lab = "SELECT * FROM `item_by_doctor` WHERE `item_id` IN (SELECT id FROM item_register_to_branches WHERE item_id IN (SELECT id FROM items WHERE category_id = 2)) AND `created` <= '$last_date' AND  `created` >= '$from_date'";
+    $run_lab = mysqli_query($con, $lab);
+    if(mysqli_num_rows($run_lab) > 0)
+    {
+        while($row_lab = mysqli_fetch_array($run_lab))
+        {
+            $branch_item_id = $row_lab['item_id'];
+            $tn = $row_lab['tokan_no'];
+            $select_tn = "SELECT `tokan_type_id` FROM `tokans` WHERE `id` = '$tn' ";
+            $run_tn = mysqli_query($con, $select_tn);
+            if(mysqli_num_rows($run_tn) > 0)
+            {
+                while($row_tn = mysqli_fetch_array($run_tn))
+         ($token_date && $token_date != '0000-00-00' && $token_date != '0000-00-00 00:00:00' ? date_format(date_create($token_date), "d M") : ''.'</td>
+// 			<td style="text-align: right;">'.$row['id'].'</td>
+// 			<td>'.$name.'('.$genders.')</td>
+// 			<td style="text-align: right;">'.$age.'</td>
+// 			<td>'.$pre.'</td>
+// 			<td>'.$doctor_id.'</td>
+// 			<td style="text-align: right;">'.$row['cash'].'</td>
+// 			<td>'.$title.'</td>
+// 			<td style="text-align: right;">'.$row['cash_received'].'</td>
+// 		</tr>
+// 		';
+	}
+}
+?>
+<tr>
+	<th style="text-align: right;" colspan="5"><?php echo number_format((float)($total_cash ?? 0)); ?></th>
+	<th></th>
+	<th colspan="5"><?php echo number_format((float)($total_cash_received ?? 0)); ?></th>
+</tr>
+<?php
+if($u_id != 0)
+{
+$select = "SELECT distinct tokan_type_id ,cash_received FROM tokans WHERE 
+	user_id = '$u_id' AND 
+	`created` <= '$last_date' AND 
+	`created` >= '$from_date' AND tokan_type_id < 100
+	ORDER BY `tokan_type_id` ";
+$run = mysqli_query($con, $select);
+if (mysqli_num_rows($run) > 0) 
+{
+	while ($row = mysqli_fetch_array($run)) 
+	{
+		$tokan_type_id = $row['tokan_type_id'];
+			$select_count = "SELECT * FROM tokans WHERE 
+				user_id = '$u_id' AND 
+				`created` <= '$last_date' AND 
+		$token_date), "h:i A") : ''.'</td>
+// 			<td>'.date_format(date_create($token_date), "d M").'</td>
+// 			<td style="text-align: right;">'.$row['id'].'</td>
+// 			<td>'.$name.'('.$genders.')</td>
+// 			<td style="text-align: right;">'.$age.'</td>
+// 			<td>'.$pre.'</td>
+// 			<td>'.$doctor_id.'</td>
+// 			<td style="text-align: right;">'.$row['cash'].'</td>
+// 			<td>'.$title.'</td>
+// 			<td style="text-align: right;">'.$row['cash_received'].'</td>
+// 		</tr>
+// 		';
+	}
+}
+?>
+<tr>
+	<th style="text-align: right;" colspan="5"><?php echo number_format((float)($total_cash ?? 0)); ?></th>
+	<th></th>
+	<th colspan="5"><?php echo number_format((float)($total_cash_received ?? 0)); ?></th>
+</tr>
+<?php
+if($u_id != 0)
+{
+$select = "SELECT distinct tokan_type_id ,cash_received FROM tokans WHERE 
+	user_id = '$u_id' AND 
+	`created` <= '$last_date' AND 
+	`created` >= '$from_date' AND tokan_type_id < 100
+	ORDER BY `tokan_type_id` ";
+$run = mysqli_query($con, $select);
+if (mysqli_num_rows($run) > 0) 
+{
+	while ($row = mysqli_fetch_array($run)) 
+	{
+		$tokan_type_id = $row['tokan_type_id'];
+			$select_count = "SELECT * FROM tokans WHERE 
+				user_id = '$u_id' AND 
+				`created` <= '$last_date' AND 
+				`created` >= '$from_date' AND tokan_type_id = '$tokan_type_id' AND `status` = '1' ";
+			$count_tokens = mysqli_num_rows(mysqli_query($con, $select_count));
+		$select_tokan_type = "SELECT * FROM tokan_types WHERE id = '$tokan_type_id' AND `status` = '1' ";
+		$run_tokan_type = mysqli_query($con, $select_tokan_type);
+		if (mysqli_num_rows($run_tokan_type) > 0) 
+		{
+			while ($row_tokan_type = mysqli_fetch_array($run_tokan_type)) 
+			{
+				$title = $row_tokan_type['title'];
+			}
+		}
+		else
+		{
+				$title = "No Title";
+		}		echo '<tr>
+			<th style="text-align: right;" colspan="4">'.$title.'</th>
+			<th style="text-align: center;" colspan="3">'.$count_tokens.'</th>
+			<th style="text-align: left;" colspan="4">'.($count_tokens * $row['cash_received']).'</th>
+		</tr>';
+	}
+}
+}
+else
+{
+$select = "SELECT distinct tokan_type_id ,cash_received FROM tokans WHERE 
+	`created` <= '$last_date' AND 
+	`created` >= '$from_date' AND tokan_type_id < 100
+	ORDER BY `tokan_type_id` ";
+$run = mysqli_query($con, $select);
+if (mysqli_num_rows($run) > 0) 
+{
+	while ($row = mysqli_fetch_array($run)) 
+	{
+		$tokan_type_id = $row['tokan_type_id'];
+			$select_count = "SELECT * FROM tokans WHERE 
+				`created` <= '$last_date' AND 
+				`created` >= '$from_date' AND tokan_type_id = '$tokan_type_id' AND `status` = '1' ";
+			$count_tokens = mysqli_num_rows(mysqli_query($con, $select_count));
+		$select_tokan_type = "SELECT * FROM tokan_types WHERE id = '$tokan_type_id' AND `status` = '1' ";
+		$run_tokan_type = mysqli_query($con, $select_tokan_type);
+		if (mysqli_num_rows($run_tokan_type) > 0) 
+		{
+			while ($row_tokan_type = mysqli_fetch_array($run_tokan_type)) 
+			{
+				$title = $row_tokan_type['title'];
+			}
+		}
+		else
+		{
+				$title = "No Title";
+		}		echo '<tr>
+			<th style="text-align: right;" colspan="4">'.$title.'</th>
+			<th style="text-align: center;" colspan="3">'.$count_tokens.'</th>
+			<th style="text-align: left;" colspan="4">'.($count_tokens * $row['cash_received']).'</th>
+		</tr>';
+	}
+}
+
+
+    $lab_amount = 0;
+    $lab_count = 0;
+    $lab = "SELECT * FROM `item_by_doctor` WHERE `item_id` IN (SELECT id FROM item_register_to_branches WHERE item_id IN (SELECT id FROM items WHERE category_id = 2)) AND `created` <= '$last_date' AND  `created` >= '$from_date'";
+    $run_lab = mysqli_query($con, $lab);
+    if(mysqli_num_rows($run_lab) > 0)
+    {
+        while($row_lab = mysqli_fetch_array($run_lab))
+        {
+            $branch_item_id = $row_lab['item_id'];
+            $tn = $row_lab['tokan_no'];
+            $select_tn = "SELECT `tokan_type_id` FROM `tokans` WHERE `id` = '$tn' ";
+            $run_tn = mysqli_query($con, $select_tn);
+            if(mysqli_num_rows($run_tn) > 0)
+            {
+                while($row_tn = mysqli_fetch_array($run_tn))
+         ($token_date && $token_date != '0000-00-00' && $token_date != '0000-00-00 00:00:00' ? date_format(date_create($token_date), "d M") : ''.'</td>
+// 			<td style="text-align: right;">'.$row['id'].'</td>
+// 			<td>'.$name.'('.$genders.')</td>
+// 			<td style="text-align: right;">'.$age.'</td>
+// 			<td>'.$pre.'</td>
+// 			<td>'.$doctor_id.'</td>
+// 			<td style="text-align: right;">'.$row['cash'].'</td>
+// 			<td>'.$title.'</td>
+// 			<td style="text-align: right;">'.$row['cash_received'].'</td>
+// 		</tr>
+// 		';
+	}
+}
+?>
+<tr>
+	<th style="text-align: right;" colspan="5"><?php echo number_format((float)($total_cash ?? 0)); ?></th>
+	<th></th>
+	<th colspan="5"><?php echo number_format((float)($total_cash_received ?? 0)); ?></th>
+</tr>
+<?php
+if($u_id != 0)
+{
+$select = "SELECT distinct tokan_type_id ,cash_received FROM tokans WHERE 
+	user_id = '$u_id' AND 
+	`created` <= '$last_date' AND 
+	`created` >= '$from_date' AND tokan_type_id < 100
+	ORDER BY `tokan_type_id` ";
+$run = mysqli_query($con, $select);
+if (mysqli_num_rows($run) > 0) 
+{
+	while ($row = mysqli_fetch_array($run)) 
+	{
+		$tokan_type_id = $row['tokan_type_id'];
+			$select_count = "SELECT * FROM tokans WHERE 
+				user_id = '$u_id' AND 
+				`created` <= '$last_date' AND 
+				`created` >= '$from_date' AND tokan_type_id = '$tokan_type_id' AND `status` = '1' ";
+			$count_tokens = mysqli_num_rows(mysqli_query($con, $select_count));
+		$select_tokan_type = "SELECT * FROM tokan_types WHERE id = '$tokan_type_id' AND `status` = '1' ";
+		$run_tokan_type = mysqli_query($con, $select_tokan_type);
+		if (mysqli_num_rows($run_tokan_type) > 0) 
+		{
+			while ($row_tokan_type = mysqli_fetch_array($run_tokan_type)) 
+			{
+				$title = $row_tokan_type['title'];
+			}
+		}
+		else
+		{
+				$title = "No Title";
+		}		echo '<tr>
+			<th style="text-align: right;" colspan="4">'.$title.'</th>
+			<th style="text-align: center;" colspan="3">'.$count_tokens.'</th>
+			<th style="text-align: left;" colspan="4">'.($count_tokens * $row['cash_received']).'</th>
+		</tr>';
+	}
+}
+}
+else
+{
+$select = "SELECT distinct tokan_type_id ,cash_received FROM tokans WHERE 
+	`created` <= '$last_date' AND 
+	`created` >= '$from_date' AND tokan_type_id < 100
+	ORDER BY `tokan_type_id` ";
+$run = mysqli_query($con, $select);
+if (mysqli_num_rows($run) > 0) 
+{
+	while ($row = mysqli_fetch_array($run)) 
+	{
+		$tokan_type_id = $row['tokan_type_id'];
+			$select_count = "SELECT * FROM($token_date && $token_date != '0000-00-00' && $token_date != '0000-00-00 00:00:00' ? date_format(date_create($token_date), "d M") : ''.'</td>
+// 			<td style="text-align: right;">'.$row['id'].'</td>
+// 			<td>'.$name.'('.$genders.')</td>
+// 			<td style="text-align: right;">'.$age.'</td>
+// 			<td>'.$pre.'</td>
+// 			<td>'.$doctor_id.'</td>
+// 			<td style="text-align: right;">'.$row['cash'].'</td>
+// 			<td>'.$title.'</td>
+// 			<td style="text-align: right;">'.$row['cash_received'].'</td>
+// 		</tr>
+// 		';
+	}
+}
+?>
+<tr>
+	<th style="text-align: right;" colspan="5"><?php echo number_format((float)($total_cash ?? 0)); ?></th>
+	<th></th>
+	<th colspan="5"><?php echo number_format((float)($total_cash_received ?? 0)); ?></th>
+</tr>
+<?php
+if($u_id != 0)
+{
+$select = "SELECT distinct tokan_type_id ,cash_received FROM tokans WHERE 
+	user_id = '$u_id' AND 
+	`created` <= '$last_date' AND 
+	`created` >= '$from_date' AND tokan_type_id < 100
+	ORDER BY `tokan_type_id` ";
+$run = mysqli_query($con, $select);
+if (mysqli_num_rows($run) > 0) 
+{
+	while ($row = mysqli_fetch_array($run)) 
+	{
+		$tokan_type_id = $row['tokan_type_id'];
+			$select_count = "SELECT * FROM tokans WHERE 
+				user_id = '$u_id' AND 
+				`created` <= '$last_date' AND 
+				`created` >= '$from_date' AND tokan_type_id = '$tokan_type_id' AND `status` = '1' ";
+			$count_tokens = mysqli_num_rows(mysqli_query($con, $select_count));
+		$select_tokan_type = "SELECT * FROM tokan_types WHERE id = '$tokan_type_id' AND `status` = '1' ";
+		$run_tokan_type = mysqli_query($con, $select_tokan_type);
+		if (mysqli_num_rows($run_tokan_type) > 0) 
+		{
+			while ($row_tokan_type = mysqli_fetch_array($run_tokan_type)) 
+			{
+				$title = $row_tokan_type['title'];
+			}
+		}
+		else
+		{
+				$title = "No Title";
+		}		echo '<tr>
+			<th style="text-align: right;" colspan="4">'.$title.'</th>
+			<th style="text-align: center;" colspan="3">'.$count_tokens.'</th>
+			<th style="text-align: left;" colspan="4">'.($count_tokens * $row['cash_received']).'</th>
+		</tr>';
+	}
+}
+}
+else
+{
+$select = "SELECT distinct tokan_type_id ,cash_received FROM tokans WHERE 
+	`created` <= '$last_date' AND 
+	`created` >= '$from_date' AND tokan_type_id < 100
+	ORDER BY `tokan_type_id` ";
+$run = mysqli_query($con, $select);
+if (mysqli_num_rows($run) > 0) 
+{
+	while ($row = mysqli_fetch_array($run)) 
+	{
+		$tokan_type_id = $row['tokan_type_id'];
+			$select_count = "SELECT * FROM tokans WHERE 
+				`created` <= '$last_date' AND 
+				`created` >= '$from_date' AND tokan_type_id = '$tokan_type_id' AND `status` = '1' ";
+			$count_tokens = mysqli_num_rows(mysqli_query($con, $select_count));
+		$select_tokan_type = "SELECT * FROM tokan_types WHERE id = '$tokan_type_id' AND `status` = '1' ";
+		$run_tokan_type = mysqli_query($con, $select_tokan_type);
+		if (mysqli_num_rows($run_tokan_type) > 0) 
+		{
+			while ($row_tokan_type = mysqli_fetch_array($run_tokan_type)) 
+			{
+				$title = $row_tokan_type['title'];
+			}
+		}
+		else
+		{
+				$title = "No Title";
+		}		echo '<tr>
+			<th style="text-align: right;" colspan="4">'.$title.'</th>
+			<th style="text-align: center;" colspan="3">'.$count_tokens.'</th>
+			<th style="text-align: left;" colspan="4">'.($count_tokens * $row['cash_received']).'</th>
+		</tr>';
+	}
+}
+
+
+    $lab_amount = 0;
+    $lab_count = 0;
+    $lab = "SELECT * FROM `item_by_doctor` WHERE `item_id` IN (SELECT id FROM item_register_to_branches WHERE item_id IN (SELECT id FROM items WHERE category_id = 2)) AND `created` <= '$last_date' AND  `created` >= '$from_date'";
+    $run_lab = mysqli_query($con, $lab);
+    if(mysqli_num_rows($run_lab) > 0)
+    {
+        while($row_lab = mysqli_fetch_array($run_lab))
+        {
+            $branch_item_id = $row_lab['item_id'];
+            $tn = $row_lab['tokan_no'];
+            $select_tn = "SELECT `tokan_type_id` FROM `tokans` WHERE `id` = '$tn' ";
+            $run_tn = mysqli_query($con, $select_tn);
+            if(mysqli_num_rows($run_tn) > 0)
+            {
+                while($row_tn = mysqli_fetch_array($run_tn))
+         ($token_date && $token_date != '0000-00-00' && $token_date != '0000-00-00 00:00:00' ? date_format(date_create($token_date), "d M") : ''.'</td>
+// 			<td style="text-align: right;">'.$row['id'].'</td>
+// 			<td>'.$name.'('.$genders.')</td>
+// 			<td style="text-align: right;">'.$age.'</td>
+// 			<td>'.$pre.'</td>
+// 			<td>'.$doctor_id.'</td>
+// 			<td style="text-align: right;">'.$row['cash'].'</td>
+// 			<td>'.$title.'</td>
+// 			<td style="text-align: right;">'.$row['cash_received'].'</td>
+// 		</tr>
+// 		';
+	}
+}
+?>
+<tr>
+	<th style="text-align: right;" colspan="5"><?php echo number_format((float)($total_cash ?? 0)); ?></th>
+	<th></th>
+	<th colspan="5"><?php echo number_format((float)($total_cash_received ?? 0)); ?></th>
+</tr>
+<?php
+if($u_id != 0)
+{
+$select = "SELECT distinct tokan_type_id ,cash_received FROM tokans WHERE 
+	user_id = '$u_id' AND 
+	`created` <= '$last_date' AND 
+	`created` >= '$from_date' AND tokan_type_id < 100
+	ORDER BY `tokan_type_id` ";
+$run = mysqli_query($con, $select);
+if (mysqli_num_rows($run) > 0) 
+{
+	while ($row = mysqli_fetch_array($run)) 
+	{
+		$tokan_type_id = $row['tokan_type_id'];
+			$select_count = "SELECT * FROM tokans WHERE 
+				user_id = '$u_id' AND 
+				`created` <= '$last_date' AND 
+				`created` >= '$from_date' AND tokan_type_id = '$tokan_type_id' AND `status` = '1' ";
+			$count_tokens = mysqli_num_rows(mysqli_query($con, $select_count));
+		$select_tokan_type = "SELECT * FROM tokan_types WHERE id = '$tokan_type_id' AND `status` = '1' ";
+		$run_tokan_type = mysqli_query($con, $select_tokan_type);
+		if (mysqli_num_rows($run_tokan_type) > 0) 
+		{
+			while ($row_tokan_type = mysqli_fetch_array($run_tokan_type)) 
+			{
+				$title = $row_tokan_type['title'];
+			}
+		}
+		else
+		{
+				$title = "No Title";
+		}		echo '<tr>
+			<th style="text-align: right;" colspan="4">'.$title.'</th>
+			<th style="text-align: center;" colspan="3">'.$count_tokens.'</th>
+			<th style="text-align: left;" colspan="4">'.($count_tokens * $row['cash_received']).'</th>
+		</tr>';
+	}
+}
+}
+else
+{
+$select = "SELECT distinct tokan_type_id ,cash_received FROM tokans WHERE 
+	`created` <= '$last_date' AND 
+	`created` >= '$from_date' AND tokan_type_id < 100
+	ORDER BY `tokan_type_id` ";
+$run = mysqli_query($con, $select);
+if (mysqli_num_rows($run) > 0) 
+{
+	while ($row = mysqli_fetch_array($run)) 
+	{
+		$tokan_type_id = $row['tokan_type_id'];
+			$select_count = "SELECT * FROM tokans WHERE 
+				`created` <= '$last_date' AND 
+				`created` >= '$from_date' AND tokan_type_id = '$tokan_type_id' AND `status` = '1' ";
+			$count_tokens = mysqli_num_rows(mysqli_query($con, $select_count));
+		$select_tokan_type = "SELECT * FROM tokan_types WHERE id = '$tokan_type_id' AND `status` = '1' ";
+		$run_tokan_type = mysqli_query($con, $select_tokan_type);
+		if (mysqli_num_rows($run_tokan_type) > 0) 
+		{
+			while ($row_tokan_type = mysqli_fetch_array($run_tokan_type)) 
+			{
+				$title = $row_tokan_type['title'];
+			}
+		}
+		else
+		{
+				$title = "No Title";
+		}		echo '<tr>
+			<th style="text-align: right;" colspan="4">'.$title.'</th>
+			<th style="text-align: center;" colspan="3">'.$count_tokens.'</th>
+			<th style="text-align: left;" colspan="4">'.($count_tokens * $row['cash_received']).'</th>
+		</tr>';
+	}
+}
+
+
+    $lab_amount = 0;
+    $lab_count = 0;
+    $lab = "SELECT * FROM `item_by_doctor` WHERE `item_id` IN (SELECT id FROM item_register_to_branches WHERE item_id IN (SELECT id FROM items WHERE category_id = 2)) AND `created` <= '$last_date' AND  `created` >= '$from_date'";
+    $run_lab = mysqli_query($con, $lab);
+    if(mysqli_num_rows($run_lab) > 0)
+    {
+        while($row_lab = mysqli_fetch_array($run_lab))
+        {
+            $branch_item_id = $row_lab['item_id'];
+            $tn = $row_lab['tokan_no'];
+            $select_tn = "SELECT `tokan_type_id` FROM `tokans` WHERE `id` = '$tn' ";
+            $run_tn = mysqli_query($con, $select_tn);
+            if(mysqli_num_rows($run_tn) > 0)
+            {
+                while($row_tn = mysqli_fetch_array($run_tn))
+                {
+                    $lab_count = $lab_count + 1;
+                    $title_id = $row_tn['0'];
+                    if($title_id == 101)
+                    {
+                        $select_i = "SELECT `deserving` FROM `items` WHERE `id` IN (SELECT item_id FROM item_register_to_branches WHERE id = '$branch_item_id') ";
+                        $run_i = mysqli_query($con, $select_i);
+                        if(mysqli_num_rows($run_i) > 0)
+                        {
+                            while($row_i = mysqli_fetch_array($run_i))
+                            {
+                                $test_amount = $row_i['0'];
+                            }
+                        }                    
+                    }                    
+                    elseif($title_id == 102)
+                    {
+                        $select_i = "SELECT `poor` FROM `items` WHERE `id` IN (SELECT item_id FROM item_register_to_branches WHERE id = '$branch_item_id') ";
+                        $run_i = mysqli_query($con, $select_i);
+                        if(mysqli_num_rows($run_i) > 0)
+                        {
+                            while($row_i = mysqli_fetch_array($run_i))
+                            {
+                                $test_amount = $row_i['0'];
+                            }
+                        }                    
+                    }                  
+                    elseif($title_id == 103)
+                    {
+                        $select_i = "SELECT `member` FROM `items` WHERE `id` IN (SELECT item_id FROM item_register_to_branches WHERE id = '$branch_item_id') ";
+                        $run_i = mysqli_query($con, $select_i);
+                        if(mysqli_num_rows($run_i) > 0)
+                        {
+                            while($row_i = mysqli_fetch_array($run_i))
+                            {
+                                $test_amount = $row_i['0'];
+                            }
+                        }                    
+                    }                  
+                    else
+                    {
+                        $select_i = "SELECT `general` FROM `items` WHERE `id` IN (SELECT item_id FROM item_register_to_branches WHERE id = '$branch_item_id') ";
+                        $run_i = mysqli_query($con, $select_i);
+                        if(mysqli_num_rows($run_i) > 0)
+                        {
+                            while($row_i = mysqli_fetch_array($run_i))
+                            {
+                                $token_date), "d M") : ''.'</td>
+// 			<td style="text-align: right;">'.$row['id'].'</td>
+// 			<td>'.$name.'('.$genders.')</td>
+// 			<td style="text-align: right;">'.$age.'</td>
+// 			<td>'.$pre.'</td>
+// 			<td>'.$doctor_id.'</td>
+// 			<td style="text-align: right;">'.$row['cash'].'</td>
+// 			<td>'.$title.'</td>
+// 			<td style="text-align: right;">'.$row['cash_received'].'</td>
+// 		</tr>
+// 		';
+	}
+}
+?>
+<tr>
+	<th style="text-align: right;" colspan="5"><?php echo number_format((float)($total_cash ?? 0)); ?></th>
+	<th></th>
+	<th colspan="5"><?php echo number_format((float)($total_cash_received ?? 0)); ?></th>
 </tr>
 <?php
 if($u_id != 0)
@@ -463,7 +1432,7 @@ if (mysqli_num_rows($run) > 0)
                         }
         }
         echo 
-    '<h3 style="text-align: left;text-align: center;" colspan="11">PENDING TOKEN Amount -> '.number_format($pending_token_amount).' </h3>';
+    '<h3 style="text-align: left;text-align: center;" colspan="11">PENDING TOKEN Amount -> '.number_format((float)($pending_token_amount ?? 0)).' </h3>';
 // 	echo '</table>';
 	echo '</td></tr>';
 	}
@@ -490,7 +1459,7 @@ if (mysqli_num_rows($run) > 0)
         }
         echo 
     '
-    <h3 style="text-align: left;text-align: center;" colspan="11">PENDING RECEIVED AMOUNT -> '.number_format($pending_receive_amount).' </h3>
+    <h3 style="text-align: left;text-align: center;" colspan="11">PENDING RECEIVED AMOUNT -> '.number_format((float)($pending_receive_amount ?? 0)).' </h3>
 	</table>
 	</td></tr>';
 	}

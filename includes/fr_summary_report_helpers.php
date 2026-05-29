@@ -453,7 +453,7 @@ function fr_render_summary_type_breakdown_rows($con, $from_date, $to_date, $user
         echo '<tr>
             <th style="text-align: right;" colspan="4">' . htmlspecialchars($typeRow['title']) . '</th>
             <th style="text-align: center;" colspan="3">' . (int) $typeRow['count'] . '</th>
-            <th style="text-align: left;" colspan="4">' . number_format($typeRow['amount']) . '</th>
+            <th style="text-align: left;" colspan="4">' . number_format((float)($typeRow['amount'] ?? 0)) . '</th>
         </tr>';
     }
 }
@@ -499,12 +499,12 @@ function fr_render_summary_branch_extras($con, $from_date, $to_date, $branch_id,
         foreach ($receiveRows as $row) {
             $pending_receive_amount += $row['amount'];
             echo '<tr><td>' . (int) $row['token_no'] . '</td><td style="text-transform: uppercase;">'
-                . htmlspecialchars($row['patient_name']) . '</td><td>' . number_format($row['amount'])
+                . htmlspecialchars($row['patient_name']) . '</td><td>' . number_format((float)($row['amount'] ?? 0))
                 . '</td><td>' . htmlspecialchars($row['ref_name']) . '</td><td>'
                 . htmlspecialchars($row['token_by']) . '</td></tr>';
         }
         echo '<caption style="text-align: center;color: black;" colspan="11"><strong>PENDING RECEIVED: AMOUNT -> <u>'
-            . number_format($pending_receive_amount) . '</u></strong></caption></table></td></tr>';
+            . number_format((float)($pending_receive_amount ?? 0)) . '</u></strong></caption></table></td></tr>';
     }
 
     $pendingRows = fr_summary_pending_token_rows($con, $from_date, $to_date, $branch_id, $datetime_end);
@@ -515,11 +515,11 @@ function fr_render_summary_branch_extras($con, $from_date, $to_date, $branch_id,
         foreach ($pendingRows as $row) {
             $pending_token_amount += $row['amount'];
             echo '<tr><td>' . (int) $row['token_no'] . '</td><td style="text-transform: uppercase;">'
-                . htmlspecialchars($row['patient_name']) . '</td><td>' . number_format($row['amount'])
+                . htmlspecialchars($row['patient_name']) . '</td><td>' . number_format((float)($row['amount'] ?? 0))
                 . '</td><td>' . htmlspecialchars($row['ref_name']) . '</td><td>'
                 . htmlspecialchars($row['token_by']) . '</td></tr>';
         }
         echo '<caption style="text-align: center;color: black;" colspan="11"><strong>PENDING TOKEN: Amount -> <u>'
-            . number_format($pending_token_amount) . '</u></strong></caption></table></td></tr>';
+            . number_format((float)($pending_token_amount ?? 0)) . '</u></strong></caption></table></td></tr>';
     }
 }

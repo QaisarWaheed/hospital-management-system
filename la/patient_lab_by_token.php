@@ -98,8 +98,207 @@ if(isset($_POST['token_id']) && $_POST['token_id'] != '')
             	        {
             	            while($row_token = mysqli_fetch_array($run_token))
             	            {
-            	                $token_date = date_format(date_create($row_token['created']), 'd-F-Y');
+            	                $token_date = ($row_token['created'] && $row_token['created'] != '0000-00-00' && $row_token['created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['created']), 'd-F-Y') : '';
             	                $token_time = date_format(date_create($row_token['created']), 'h:i:s A');
+            	                $token_branch_tag_name = get_branch_tag_by($row_token['branch_id']);
+            	                $docotr_id = $row_token['doctor_id'];
+            	                $cash = $row_token['cash'];
+            	                $cash_received = $row_token['cash_received'];
+            	                $token_type_id = $row_token['tokan_type_id'];
+                	                $token_type = "SELECT title FROM `tokan_types` WHERE id = '$token_type_id' ";
+                	                $run_token_type = mysqli_query($con, $token_type);
+                                    if (mysqli_num_rows($run_token_type) == 1) 
+                                    {
+                                        while ($row_token_type = mysqli_fetch_array($run_token_type)) 
+                                        {
+                                            $token_type_title = $row_token_type['title'];
+                                        }
+                                    }
+            	                $token_by = get_uname_by_id($row_token['user_id']);
+            	                $docotr_name = get_uname_by_id($docotr_id);
+            	                $patient_id = $row_token['patient_id'];
+            	                    $get_patient = mysqli_query($con, "SELECT * FROM patients WHERE id = '$patient_id' ");
+                                    if (mysqli_num_rows($get_patient) == 1) 
+                                    {
+                                        while ($row_patient = mysqli_fetch_array($get_patient)) 
+                                        {
+                                            $name = $row_patient['name'];
+                                            $age = $row_patient['age'];
+                                            $cnic = $row_patient['cnic'];
+                                            if($cnic == ''){$cnic = 'N/A';}
+                                            $phone = $row_patient['phone'];
+                                            if($phone == ''){$phone = 'N/A';}
+                                            $gender = $row_patient['gender'];
+                                            if($gender == '1'){$gender = 'Female';}elseif($gender == '2'){$gender = 'Male';}else{$gender = 'Transgender';}
+                                        }
+                                    }
+            	   ?>  
+                    </div>
+                </div>
+            	   <?php
+            	            }
+            	        }
+            	    }
+?>
+        <form method = "POST">
+            <input type="hidden" name="token_id" value="<?php echo $_POST['token_id']; ?>" />
+            <div class="col-md-12">
+            <fieldset class="border p-2">
+            <legend style="font-size: 14px;" class="w-auto">SELECTED TEST FOR TOKEN <strong><?php echo $token_id; ?></strong></legend>
+            <div class="row">
+                <div class="col-md-12">
+                    <table class = "table table-hover">
+                        <caption style = "caption-side: top;color: black;">
+                            <table class = "table">
+                                <tr>
+                                    <td>Name</td>
+                                    <th><u><?php echo $name; ?></u> / <u><?php echo $age; ?></u></th>
+                                    <td>Gender</td>
+                                    <th><u><?php echo $gender; ?></u></th>
+                                    <td>Phone</td>
+                                    <th><u><?php echo $phone; ?></u></th>
+                                    <td>Token Date & Time</td>
+                                    <th colspan = "2"><u><?php echo $token_time; ?></u> <u><?php echo $token_date; ?></u></th>
+                                </tr>
+                                <tr>
+                                    <td>Cash</td>
+                                    <th><u><?php echo $cash; ?></u></th>
+                                    <td>Received</td>
+                                    <th><u><?php echo $cash_rece($row_token['created'] && $row_token['created'] != '0000-00-00' && $row_token['creat($row_token['created'] && $row_token['created'] != '0000-00-00' && $row_token['created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['created']), 'h:i:s A') : '';
+            	                $token_branch_tag_name = get_branch_tag_by($row_token['branch_id']);
+            	                $docotr_id = $row_token['doctor_id'];
+            	                $cash = $row_token['cash'];
+            	                $cash_received = $row_token['cash_received'];
+            	                $token_type_id = $row_token['tokan_type_id'];
+                	                $token_type = "SELECT title FROM `tokan_types` WHERE id = '$token_type_id' ";
+                	                $run_token_type = mysqli_query($con, $token_type);
+                                    if (mysqli_num_rows($run_token_type) == 1) 
+                                    {
+                                        while ($row_token_type = mysqli_fetch_array($run_token_type)) 
+                                        {
+                                            $token_type_title = $row_token_type['title'];
+                                        }
+                                    }
+            	                $token_by = get_uname_by_id($row_token['user_id']);
+            	                $docotr_name = get_uname_by_id($docotr_id);
+            	                $patient_id = $row_token['patient_id'];
+            	                    $get_patient = mysqli_query($con, "SELECT * FROM patients WHERE id = '$patient_id' ");
+                                    if (mysqli_num_rows($get_patient) == 1) 
+                                    {
+                                        while ($row_patient = mysqli_fetch_array($get_patient)) 
+                                        {
+                                            $name = $row_patient['name'];
+                                            $age = $row_patient['age'];
+                                            $cnic = $row_patient['cnic'];
+                                            if($cnic == ''){$cnic = 'N/A';}
+                                            $phone = $row_patient['phone'];
+                                            if($phone == ''){$phone = 'N/A';}
+                                            $gender = $row_patient['gender'];
+                                            if($gender == '1'){$gender = 'Female';}elseif($gender == '2'){$gender = 'Male';}else{$gender = 'Transgender';}
+                                        }
+                                    }
+            	   ?>  
+                    </div>
+                </div>
+            	   <?php
+            	            }
+            	        }
+            	    }
+?>
+        <form method = "POST">
+            <input type="hidden" name="token_id" value="<?php echo $_POST['token_id']; ?>" />
+            <div class="col-md-12">
+            <fieldset class="border p-2">
+            <legend style="font-size: 14px;" class="w-auto">SELECTED TEST FOR TOKEN <strong><?php echo $token_id; ?></strong></legend>
+            <div class="row">
+                <div class="col-md-12">
+                    <table class = "table table-hover">
+                        <caption style = "caption-side: top;color: black;">
+                            <table class = "table">
+                                <tr>
+                                    <td>Name</td>
+                                    <th><u><?php echo $name; ?></u> / <u><?php echo $age; ?></u></th>
+                                    <td>Gender</td>
+                                    <th><u><?php echo $gender; ?></u></th>
+                                    <td>Phone</td>
+                                    <th><u><?php echo $phone; ?></u></th>
+                                    <td>Token Date & Time</td>
+                                    <th colspan = "2"><u><?php echo $token_time; ?></u> <u><?php echo $token_date; ?></u></th>
+                                </tr>
+                                <tr>
+                                    <td>Cash</td>
+                                    <th><u><?php echo $cash; ?></u></th>
+                                    <td>Received</td>
+                                    <th><u><?php echo $cash_rece($row_token['created'] && $row_token['created'] != '0000-00-00' && $row_token['created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['created']), 'h:i:s A') : '';
+            	                $token_branch_tag_name = get_branch_tag_by($row_token['branch_id']);
+            	                $docotr_id = $row_token['doctor_id'];
+            	                $cash = $row_token['cash'];
+            	                $cash_received = $row_token['cash_received'];
+            	                $token_type_id = $row_token['tokan_type_id'];
+                	                $token_type = "SELECT title FROM `tokan_types` WHERE id = '$token_type_id' ";
+                	                $run_token_type = mysqli_query($con, $token_type);
+                                    if (mysqli_num_rows($run_token_type) == 1) 
+                                    {
+                                        while ($row_token_type = mysqli_fetch_array($run_token_type)) 
+                                        {
+                                            $token_type_title = $row_token_type['title'];
+                                        }
+                                    }
+            	                $token_by = get_uname_by_id($row_token['user_id']);
+            	                $docotr_name = get_uname_by_id($docotr_id);
+            	                $patient_id = $row_token['patient_id'];
+            	                    $get_patient = mysqli_query($con, "SELECT * FROM patients WHERE id = '$patient_id' ");
+                                    if (mysqli_num_rows($get_patient) == 1) 
+                                    {
+                                        while ($row_patient = mysqli_fetch_array($get_patient)) 
+                                        {
+                                            $name = $row_patient['name'];
+                                            $age = $row_patient['age'];
+                                            $cnic = $row_patient['cnic'];
+                                            if($cnic == ''){$cnic = 'N/A';}
+                                            $phone = $row_patient['phone'];
+                                            if($phone == ''){$phone = 'N/A';}
+                                            $gender = $row_patient['gender'];
+                                            if($gender == '1'){$gender = 'Female';}elseif($gender == '2'){$gender = 'Male';}else{$gender = 'Transgender';}
+                                        }
+                                    }
+            	   ?>  
+                    </div>
+                </div>
+            	   <?php
+            	            }
+            	        }
+            	    }
+?>
+        <form method = "POST">
+            <input type="hidden" name="token_id" value="<?php echo $_POST['token_id']; ?>" />
+            <div class="col-md-12">
+            <fieldset class="border p-2">
+            <legend style="font-size: 14px;" class="w-auto">SELECTED TEST FOR TOKEN <strong><?php echo $token_id; ?></strong></legend>
+            <div class="row">
+                <div class="col-md-12">
+                    <table class = "table table-hover">
+                        <caption style = "caption-side: top;color: black;">
+                            <table class = "table">
+                                <tr>
+                                    <td>Name</td>
+                                    <th><u><?php echo $name; ?></u> / <u><?php echo $age; ?></u></th>
+                                    <td>Gender</td>
+                                    <th><u><?php echo $gender; ?></u></th>
+                                    <td>Phone</td>
+                                    <th><u><?php echo $phone; ?></u></th>
+                                    <td>Token Date & Time</td>
+                                    <th colspan = "2"><u><?php echo $token_time; ?></u> <u><?php echo $token_date; ?></u></th>
+                                </tr>
+                                <tr>
+                                    <td>Cash</td>
+                                    <th><u><?php echo $cash; ?></u></th>
+                                    <td>Received</td>
+                                    <th><u><?php echo $cash_received; ?></u></th>
+                                    <td>Token By</td>
+                                    <th><u><?php echo $token_by; ?></u></th>
+                                    <td>Token Type</td>
+                                   $row_token['created']), 'h:i:s A') : '';
             	                $token_branch_tag_name = get_branch_tag_by($row_token['branch_id']);
             	                $docotr_id = $row_token['doctor_id'];
             	                $cash = $row_token['cash'];

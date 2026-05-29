@@ -148,7 +148,7 @@ elseif(isset($_GET['attendance_record_remarks']) && $_GET['attendance_record_rem
 	               <td><?php echo $row_attendance['tag_name']; ?></td>
 	               <td><?php echo $row_attendance['staff_name']; if($releaver_staff_name != 0){echo '('.$releaver_staff_name.')';}?></td>
 	               <td><?php echo $row_attendance['designation_title']; ?></td>
-	               <td><?php echo date_format(date_create($staff_duty_in), "h:i:s A").' TO '.date_format(date_create($staff_duty_out), "h:i:s A"); ?>(<?php echo $row_attendance['staff_duty_hours']; ?>)</td>
+	               <td><?php echo ($staff_duty_in && $staff_duty_in != '0000-00-00' && $staff_duty_in != '0000-00-00 00:00:00' ? date_format(date_create($staff_duty_in), "h:i:s A") : ''.' TO '.date_format(date_create($staff_duty_out), "h:i:s A"); ?>(<?php echo $row_attendance['staff_duty_hours']; ?>)</td>
                <?php 
                if($row_attendance['attendance_record_title'] == '1' || $row_attendance['attendance_record_title'] == '4')
                { ?>
@@ -261,6 +261,8663 @@ elseif(isset($_GET['attendance_record_remarks']) && $_GET['attendance_record_rem
 	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
 	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
 	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($staff_duty_out && $staff_duty_out != '0000-00-00' && $staff_duty_out != '0000-00-00 00:00:00' ? date_format(date_create($staff_duty_out), "h:i:s A") : ''; ?>(<?php echo $row_attendance['staff_duty_hours']; ?>)</td>
+               <?php 
+               if($row_attendance['attendance_record_title'] == '1' || $row_attendance['attendance_record_title'] == '4')
+               { ?>
+	               <td><?php echo date_format(date_create($row_attendance['attendance_record_created']), "h:i:s A"); ?></td>
+	               <td>
+	                   <?php 
+    	               if($row_attendance['attendance_record_end_time'] == '00:00:00')
+    	               {
+    	              ($staff_duty_out && $staff_duty_out != '0000-00-00' && $staff_duty_out != '0000-00-00 00:00:00' ? date_format(date_create($staff_duty_out), "h:i:s A") : ''; ?>(<?php echo $row_attendance['staff_duty_hours']; ?>)</td>
+               <?php 
+               if($row_attendance['attendance_record_title'] == '1' || $row_attendance['attendance_record_title'] == '4')
+               { ?>
+	               <td><?php echo date_format(date_create($row_attendance['attendance_record_created']), "h:i:s A"); ?></td>
+	               <td>
+	                   <?php 
+    	               if($row_attendance['attendance_record_end_time'] == '00:00:00')
+    	               {
+    	                   echo 'NOT END DUTY';
+    	               }
+    	               else
+    	               {
+    	               echo date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A");
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_end_time" value = "<?php echo $row_attendance['attendance_record_bio_end_time']; ?>" />
+	                        <input type = "submit" value = "+" class = "btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_end_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>
+	                   <?php
+	                   if(date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($staff_duty_out && $staff_duty_out != '0000-00-00' && $staff_duty_out != '0000-00-00 00:00:00' ? date_format(date_create($staff_duty_out), "h:i:s A") : ''; ?>(<?php echo $row_attendance['staff_duty_hours']; ?>)</td>
+               <?php 
+               if($row_attendance['attendance_record_title'] == '1' || $row_attendance['attendance_record_title'] == '4')
+               { ?>
+	               <td><?php echo date_format(date_create($row_attendance['attendance_record_created']), "h:i:s A"); ?></td>
+	               <td>
+	                   <?php 
+    	               if($row_attendance['attendance_record_end_time'] == '00:00:00')
+    	               {
+    	                   echo 'NOT END DUTY';
+    	               }
+    	               else
+    	               {
+    	               echo date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A");
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	   ($row_attendance['attendance_record_created'] && $row_attendance['attendance_record_created'] != '0000-00-00' && $row_attendance['attendance_record_created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_created']), "h:i:s A") : ''; ?></td>
+	               <td>
+	                   <?php 
+    	               if($row_attendance['attendance_record_end_time'] == '00:00:00')
+    	               {
+    	                   echo 'NOT END DUTY';
+    	               }
+    	               else
+    	               {
+    	               echo date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A");
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_end_time" value = "<?php echo $row_attendance['attendance_record_bio_end_time']; ?>" />
+	                        <input type = "submit" value = "+" class = "btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_end_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>
+	                   <?php
+	                   if(date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($staff_duty_out && $staff_duty_out != '0000-00-00' && $staff_duty_out != '0000-00-00 00:00:00' ? date_format(date_create($staff_duty_out), "h:i:s A") : ''; ?>(<?php echo $row_attendance['staff_duty_hours']; ?>)</td>
+               <?php 
+               if($row_attendance['attendance_record_title'] == '1' || $row_attendance['attendance_record_title'] == '4')
+               { ?>
+	               <td><?php echo date_format(date_create($row_attendance['attendance_record_created']), "h:i:s A"); ?></td>
+	               <td>
+	                   <?php 
+    	               if($row_attendance['attendance_record_end_time'] == '00:00:00')
+    	               {
+    	                   echo 'NOT END DUTY';
+    	               }
+    	               else
+    	               {
+    	               echo date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A");
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?p($row_attendance['attendance_record_end_time'] && $row_attendance['attendance_record_end_time'] != '0000-00-00' && $row_attendance['attendance_record_end_time'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A") : '';
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_end_time" value = "<?php echo $row_attendance['attendance_record_bio_end_time']; ?>" />
+	                        <input type = "submit" value = "+" class = "btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_end_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>
+	                   <?php
+	                   if(date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($staff_duty_out && $staff_duty_out != '0000-00-00' && $staff_duty_out != '0000-00-00 00:00:00' ? date_format(date_create($staff_duty_out), "h:i:s A") : ''; ?>(<?php echo $row_attendance['staff_duty_hours']; ?>)</td>
+               <?php 
+               if($row_attendance['attendance_record_title'] == '1' || $row_attendance['attendance_record_title'] == '4')
+               { ?>
+	               <td><?php echo date_format(date_create($row_attendance['attendance_record_created']), "h:i:s A"); ?></td>
+	               <td>
+	                   <?php 
+    	               if($row_attendance['attendance_record_end_time'] == '00:00:00')
+    	               {
+    	                   echo 'NOT END DUTY';
+    	               }
+    	               else
+    	               {
+    	               echo date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A");
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_end_time" value = "<?php echo $row_attendance['attendance_record_bio_end_time']; ?>" />
+	                        <input type = "submit" value = "+" class = "btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_end_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>
+	                   <?php
+	                   if(date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>($row_attendance['attendance_record_created'] && $row_attendance['attendance_record_created'] != '0000-00-00' && $row_attendance['attendance_record_created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") : '' > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($staff_duty_out && $staff_duty_out != '0000-00-00' && $staff_duty_out != '0000-00-00 00:00:00' ? date_format(date_create($staff_duty_out), "h:i:s A") : ''; ?>(<?php echo $row_attendance['staff_duty_hours']; ?>)</td>
+               <?php 
+               if($row_attendance['attendance_record_title'] == '1' || $row_attendance['attendance_record_title'] == '4')
+               { ?>
+	               <td><?php echo date_format(date_create($row_attendance['attendance_record_created']), "h:i:s A"); ?></td>
+	               <td>
+	                   <?php 
+    	               if($row_attendance['attendance_record_end_time'] == '00:00:00')
+    	               {
+    	                   echo 'NOT END DUTY';
+    	               }
+    	               else
+    	               {
+    	               echo date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A");
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_end_time" value = "<?php echo $row_attendance['attendance_record_bio_end_time']; ?>" />
+	                        <input type = "submit" value = "+" class = "btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_end_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>
+	                   <?php
+	                   if(date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_created'] && $row_attendance['attendance_record_created'] != '0000-00-00' && $row_attendance['attendance_record_created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_created']), "h:i:s A") : ''; ?></td>
+	               <td>
+	                   <?php 
+    	               if($row_attendance['attendance_record_end_time'] == '00:00:00')
+    	               {
+    	                   echo 'NOT END DUTY';
+    	               }
+    	               else
+    	               {
+    	               echo date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A");
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_end_time" value = "<?php echo $row_attendance['attendance_($row_attendance_absent['staff_time_in'] && $row_attendance_absent['staff_time_in'] != '0000-00-00' && $row_attendance_absent['staff_time_in'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A") : ''.' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($staff_duty_out && $staff_duty_out != '0000-00-00' && $staff_duty_out != '0000-00-00 00:00:00' ? date_format(date_create($staff_duty_out), "h:i:s A") : ''; ?>(<?php echo $row_attendance['staff_duty_hours']; ?>)</td>
+               <?php 
+               if($row_attendance['attendance_record_title'] == '1' || $row_attendance['attendance_record_title'] == '4')
+               { ?>
+	               <td><?php echo date_format(date_create($row_attendance['attendance_record_created']), "h:i:s A"); ?></td>
+	               <td>
+	                   <?php 
+    	               if($row_attendance['attendance_record_end_time'] == '00:00:00')
+    	               {
+    	                   echo 'NOT END DUTY';
+    	               }
+    	               else
+    	               {
+    	               echo date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A");
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_end_time" value = "<?php echo $row_attendance['attendance_record_bio_end_time']; ?>" />
+	                        <input type = "submit" value = "+" class = "btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_end_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>
+	                   <?php
+	                   if(date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_created'] && $row_attendance['attendance_record_created'] != '0000-00-00' && $row_attendance['attendance_record_created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_created']), "h:i:s A") : ''; ?></td>
+	               <td>
+	                   <?php 
+    	               if($row_attendance['attendance_record_end_time'] == '00:00:00')
+    	               {
+    	                   echo 'NOT END DUTY';
+    	               }
+    	               else
+    	               {
+    	               echo date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A");
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_end_time" value = "<?php echo $row_attendance['attendance_record_bio_end_time']; ?>" />
+	                        <input type = "submit" value = "+" class = "btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_end_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>
+	                   <?php
+	                   if(date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <($row_attendance_absent['staff_time_out'] && $row_attendance_absent['staff_time_out'] != '0000-00-00' && $row_attendance_absent['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A") : ''.'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($staff_duty_out && $staff_duty_out != '0000-00-00' && $staff_duty_out != '0000-00-00 00:00:00' ? date_format(date_create($staff_duty_out), "h:i:s A") : ''; ?>(<?php echo $row_attendance['staff_duty_hours']; ?>)</td>
+               <?php 
+               if($row_attendance['attendance_record_title'] == '1' || $row_attendance['attendance_record_title'] == '4')
+               { ?>
+	               <td><?php echo date_format(date_create($row_attendance['attendance_record_created']), "h:i:s A"); ?></td>
+	               <td>
+	                   <?php 
+    	               if($row_attendance['attendance_record_end_time'] == '00:00:00')
+    	               {
+    	                   echo 'NOT END DUTY';
+    	               }
+    	               else
+    	               {
+    	               echo date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A");
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_end_time" value = "<?php echo $row_attendance['attendance_record_bio_end_time']; ?>" />
+	                        <input type = "submit" value = "+" class = "btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_end_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>
+	                   <?php
+	                   if(date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_created'] && $row_attendance['attendance_record_created'] != '0000-00-00' && $row_attendance['attendance_record_created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_created']), "h:i:s A") : ''; ?></td>
+	               <td>
+	                   <?php 
+    	               if($row_attendance['attendance_record_end_time'] == '00:00:00')
+    	               {
+    	                   echo 'NOT END DUTY';
+    	               }
+    	               else
+    	               {
+    	               echo date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A");
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_end_time" value = "<?php echo $row_attendance['attendance_record_bio_end_time']; ?>" />
+	                        <input type = "submit" value = "+" class = "btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_end_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>
+	                   <?php
+	                   if(date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf$staff_duty_out), "h:i:s A") : ''; ?>(<?php echo $row_attendance['staff_duty_hours']; ?>)</td>
+               <?php 
+               if($row_attendance['attendance_record_title'] == '1' || $row_attendance['attendance_record_title'] == '4')
+               { ?>
+	               <td><?php echo date_format(date_create($row_attendance['attendance_record_created']), "h:i:s A"); ?></td>
+	               <td>
+	                   <?php 
+    	               if($row_attendance['attendance_record_end_time'] == '00:00:00')
+    	               {
+    	                   echo 'NOT END DUTY';
+    	               }
+    	               else
+    	               {
+    	               echo date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A");
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_end_time" value = "<?php echo $row_attendance['attendance_record_bio_end_time']; ?>" />
+	                        <input type = "submit" value = "+" class = "btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_end_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>
+	                   <?php
+	                   if(date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_created'] && $row_attendance['attendance_record_created'] != '0000-00-00' && $row_attendance['attendance_record_created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_created']), "h:i:s A") : ''; ?></td>
+	               <td>
+	                   <?php 
+    	               if($row_attendance['attendance_record_end_time'] == '00:00:00')
+    	               {
+    	                   echo 'NOT END DUTY';
+    	               }
+    	               else
+    	               {
+    	               echo date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A");
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_end_time" value = "<?php echo $row_attendance['attendance_record_bio_end_time']; ?>" />
+	                        <input type = "submit" value = "+" class = "btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_end_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>
+	                   <?php
+	                   if(date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_end_time'] && $row_attendance['attendance_record_end_time'] != '0000-00-00' && $row_attendance['attendance_record_end_time'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A") : '';
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	              ($row_attendance['attendance_record_created'] && $row_attendance['attendance_record_created'] != '0000-00-00' && $row_attendance['attendance_record_created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_created']), "h:i:s A") : ''; ?></td>
+	               <td>
+	                   <?php 
+    	               if($row_attendance['attendance_record_end_time'] == '00:00:00')
+    	               {
+    	                   echo 'NOT END DUTY';
+    	               }
+    	               else
+    	               {
+    	               echo date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A");
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_end_time" value = "<?php echo $row_attendance['attendance_record_bio_end_time']; ?>" />
+	                        <input type = "submit" value = "+" class = "btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_end_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>
+	                   <?php
+	                   if(date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_created'] && $row_attendance['attendance_record_created'] != '0000-00-00' && $row_attendance['attendance_record_created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_created']), "h:i:s A") : ''; ?></td>
+	               <td>
+	                   <?php 
+    	               if($row_attendance['attendance_record_end_time'] == '00:00:00')
+    	               {
+    	                   echo 'NOT END DUTY';
+    	               }
+    	               else
+    	               {
+    	               echo date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A");
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_end_time" value = "<?php echo $row_attendance['attendance_record_bio_end_time']; ?>" />
+	                        <input type = "submit" value = "+" class = "btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_end_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>
+	                   <?php
+	                   if(date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_end_time'] && $row_attendance['attendance_record_end_time'] != '0000-00-00' && $row_attendance['attendance_record_end_time'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A") : '';
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attend($row_attendance['attendance_record_end_time'] && $row_attendance['attendance_record_end_time'] != '0000-00-00' && $row_attendance['attendance_record_end_time'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A") : '';
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_end_time" value = "<?php echo $row_attendance['attendance_record_bio_end_time']; ?>" />
+	                        <input type = "submit" value = "+" class = "btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_end_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>
+	                   <?php
+	                   if(date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_created'] && $row_attendance['attendance_record_created'] != '0000-00-00' && $row_attendance['attendance_record_created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_created']), "h:i:s A") : ''; ?></td>
+	               <td>
+	                   <?php 
+    	               if($row_attendance['attendance_record_end_time'] == '00:00:00')
+    	               {
+    	                   echo 'NOT END DUTY';
+    	               }
+    	               else
+    	               {
+    	               echo date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A");
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_end_time" value = "<?php echo $row_attendance['attendance_record_bio_end_time']; ?>" />
+	                        <input type = "submit" value = "+" class = "btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_end_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>
+	                   <?php
+	                   if(date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_end_time'] && $row_attendance['attendance_record_end_time'] != '0000-00-00' && $row_attendance['attendance_record_end_time'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A") : '';
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_end_time" value = "<?php echo $row_attendance['attendance_record_bio_end_time']; ?>" />
+	                        <input type = "submit" value = "+" class = "btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_end_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>
+	                   <?php
+	                   if(date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = ($row_attendance['attendance_record_created'] && $row_attendance['attendance_record_created'] != '0000-00-00' && $row_attendance['attendance_record_created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") : '' > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_created'] && $row_attendance['attendance_record_created'] != '0000-00-00' && $row_attendance['attendance_record_created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_created']), "h:i:s A") : ''; ?></td>
+	               <td>
+	                   <?php 
+    	               if($row_attendance['attendance_record_end_time'] == '00:00:00')
+    	               {
+    	                   echo 'NOT END DUTY';
+    	               }
+    	               else
+    	               {
+    	               echo date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A");
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_end_time" value = "<?php echo $row_attendance['attendance_record_bio_end_time']; ?>" />
+	                        <input type = "submit" value = "+" class = "btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_end_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>
+	                   <?php
+	                   if(date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_end_time'] && $row_attendance['attendance_record_end_time'] != '0000-00-00' && $row_attendance['attendance_record_end_time'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A") : '';
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_end_time" value = "<?php echo $row_attendance['attendance_record_bio_end_time']; ?>" />
+	                        <input type = "submit" value = "+" class = "btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_end_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>
+	                   <?php
+	                   if(date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_created'] && $row_attendance['attendance_record_created'] != '0000-00-00' && $row_attendance['attendance_record_created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") : '' > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        <($row_attendance_absent['staff_time_in'] && $row_attendance_absent['staff_time_in'] != '0000-00-00' && $row_attendance_absent['staff_time_in'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A") : ''.' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_created'] && $row_attendance['attendance_record_created'] != '0000-00-00' && $row_attendance['attendance_record_created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_created']), "h:i:s A") : ''; ?></td>
+	               <td>
+	                   <?php 
+    	               if($row_attendance['attendance_record_end_time'] == '00:00:00')
+    	               {
+    	                   echo 'NOT END DUTY';
+    	               }
+    	               else
+    	               {
+    	               echo date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A");
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_end_time" value = "<?php echo $row_attendance['attendance_record_bio_end_time']; ?>" />
+	                        <input type = "submit" value = "+" class = "btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_end_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>
+	                   <?php
+	                   if(date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_end_time'] && $row_attendance['attendance_record_end_time'] != '0000-00-00' && $row_attendance['attendance_record_end_time'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A") : '';
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_end_time" value = "<?php echo $row_attendance['attendance_record_bio_end_time']; ?>" />
+	                        <input type = "submit" value = "+" class = "btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_end_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>
+	                   <?php
+	                   if(date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_created'] && $row_attendance['attendance_record_created'] != '0000-00-00' && $row_attendance['attendance_record_created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") : '' > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_in'] && $row_attendance_absent['staff_time_in'] != '0000-00-00' && $row_attendance_absent['staff_time_in'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A") : ''.' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});($row_attendance_absent['staff_time_out'] && $row_attendance_absent['staff_time_out'] != '0000-00-00' && $row_attendance_absent['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A") : ''.'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_created'] && $row_attendance['attendance_record_created'] != '0000-00-00' && $row_attendance['attendance_record_created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_created']), "h:i:s A") : ''; ?></td>
+	               <td>
+	                   <?php 
+    	               if($row_attendance['attendance_record_end_time'] == '00:00:00')
+    	               {
+    	                   echo 'NOT END DUTY';
+    	               }
+    	               else
+    	               {
+    	               echo date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A");
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_end_time" value = "<?php echo $row_attendance['attendance_record_bio_end_time']; ?>" />
+	                        <input type = "submit" value = "+" class = "btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_end_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>
+	                   <?php
+	                   if(date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_end_time'] && $row_attendance['attendance_record_end_time'] != '0000-00-00' && $row_attendance['attendance_record_end_time'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A") : '';
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_end_time" value = "<?php echo $row_attendance['attendance_record_bio_end_time']; ?>" />
+	                        <input type = "submit" value = "+" class = "btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_end_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>
+	                   <?php
+	                   if(date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_created'] && $row_attendance['attendance_record_created'] != '0000-00-00' && $row_attendance['attendance_record_created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") : '' > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_in'] && $row_attendance_absent['staff_time_in'] != '0000-00-00' && $row_attendance_absent['staff_time_in'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A") : ''.' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_out'] && $row_attendance_absent['staff_time_out'] != '0000-00-00' && $row_attendance_absent['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A") : ''.'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTabl$row_attendance['attendance_record_created']), "h:i:s A") : ''; ?></td>
+	               <td>
+	                   <?php 
+    	               if($row_attendance['attendance_record_end_time'] == '00:00:00')
+    	               {
+    	                   echo 'NOT END DUTY';
+    	               }
+    	               else
+    	               {
+    	               echo date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A");
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_end_time" value = "<?php echo $row_attendance['attendance_record_bio_end_time']; ?>" />
+	                        <input type = "submit" value = "+" class = "btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_end_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>
+	                   <?php
+	                   if(date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_end_time'] && $row_attendance['attendance_record_end_time'] != '0000-00-00' && $row_attendance['attendance_record_end_time'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A") : '';
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_end_time" value = "<?php echo $row_attendance['attendance_record_bio_end_time']; ?>" />
+	                        <input type = "submit" value = "+" class = "btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_end_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>
+	                   <?php
+	                   if(date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_created'] && $row_attendance['attendance_record_created'] != '0000-00-00' && $row_attendance['attendance_record_created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") : '' > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_in'] && $row_attendance_absent['staff_time_in'] != '0000-00-00' && $row_attendance_absent['staff_time_in'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A") : ''.' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_out'] && $row_attendance_absent['staff_time_out'] != '0000-00-00' && $row_attendance_absent['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A") : ''.'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_end_time'] && $row_attendance['attendance_record_end_time'] != '0000-00-00' && $row_attendance['attendance_record_end_time'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A") : '';
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_end_time" value = "<?php echo $row_attendance['attendance_record_bio_end_time']; ?>" />
+	                        <input type = "submit" value = "+" class = "btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_end_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>
+	                   <?php
+	                   if(date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_end_time'] && $row_attendance['attendance_record_end_time'] != '0000-00-00' && $row_attendance['attendance_record_end_time'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A") : '';
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_end_time" value = "<?php echo $row_attendance['attendance_record_bio_end_time']; ?>" />
+	                        <input type = "submit" value = "+" class = "btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_end_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>
+	                   <?php
+	                   if(date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_created'] && $row_attendance['attendance_record_created'] != '0000-00-00' && $row_attendance['attendance_record_created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") : '' > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_in'] && $row_attendance_absent['staff_time_in'] != '0000-00-00' && $row_attendance_absent['staff_time_in'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A") : ''.' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_out'] && $row_attendance_absent['staff_time_out'] != '0000-00-00' && $row_attendance_absent['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A") : ''.'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_created'] && $row_attendance['attendance_record_created'] != '0000-00-00' && $row_attendance['attendance_record_created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") : '' > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_end_time'] && $row_attendance['attendance_record_end_time'] != '0000-00-00' && $row_attendance['attendance_record_end_time'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A") : '';
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_end_time" value = "<?php echo $row_attendance['attendance_record_bio_end_time']; ?>" />
+	                        <input type = "submit" value = "+" class = "btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_end_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>
+	                   <?php
+	                   if(date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_created'] && $row_attendance['attendance_record_created'] != '0000-00-00' && $row_attendance['attendance_record_created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") : '' > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_in'] && $row_attendance_absent['staff_time_in'] != '0000-00-00' && $row_attendance_absent['staff_time_in'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A") : ''.' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_out'] && $row_attendance_absent['staff_time_out'] != '0000-00-00' && $row_attendance_absent['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A") : ''.'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_in'] && $row_attendance_absent['staff_time_in'] != '0000-00-00' && $row_attendance_absent['staff_time_in'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A") : ''.' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_end_time'] && $row_attendance['attendance_record_end_time'] != '0000-00-00' && $row_attendance['attendance_record_end_time'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A") : '';
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_end_time" value = "<?php echo $row_attendance['attendance_record_bio_end_time']; ?>" />
+	                        <input type = "submit" value = "+" class = "btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_end_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>
+	                   <?php
+	                   if(date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_created'] && $row_attendance['attendance_record_created'] != '0000-00-00' && $row_attendance['attendance_record_created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") : '' > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_in'] && $row_attendance_absent['staff_time_in'] != '0000-00-00' && $row_attendance_absent['staff_time_in'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A") : ''.' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_out'] && $row_attendance_absent['staff_time_out'] != '0000-00-00' && $row_attendance_absent['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A") : ''.'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_out'] && $row_attendance_absent['staff_time_out'] != '0000-00-00' && $row_attendance_absent['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A") : ''.'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_end_time'] && $row_attendance['attendance_record_end_time'] != '0000-00-00' && $row_attendance['attendance_record_end_time'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_end_time']), "h:i:s A") : '';
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_end_time" value = "<?php echo $row_attendance['attendance_record_bio_end_time']; ?>" />
+	                        <input type = "submit" value = "+" class = "btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_end_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>
+	                   <?php
+	                   if(date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_created'] && $row_attendance['attendance_record_created'] != '0000-00-00' && $row_attendance['attendance_record_created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") : '' > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_in'] && $row_attendance_absent['staff_time_in'] != '0000-00-00' && $row_attendance_absent['staff_time_in'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A") : ''.' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_out'] && $row_attendance_absent['staff_time_out'] != '0000-00-00' && $row_attendance_absent['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A") : ''.'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>$row_attendance['attendance_record_end_time']), "h:i:s A") : '';
+    	               } ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_start_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_start_time" value = "<?php echo $row_attendance['attendance_record_bio_start_time']; ?>" />
+	                        <input type = "submit" value = "+" class = " btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_start_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <?php 
+	                   //if($row_attendance['attendance_record_bio_end_time'] == '00:00:00')
+	                   { ?>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "time" name = "attendance_record_bio_end_time" value = "<?php echo $row_attendance['attendance_record_bio_end_time']; ?>" />
+	                        <input type = "submit" value = "+" class = "btn-sm btn-success" />
+	                   </form>
+	                   <?php }
+	                   //else
+	                   //{
+	                   //    echo $row_attendance['attendance_record_bio_end_time'];
+	                   //} 
+	                   ?>
+	               </td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>
+	                   <?php
+	                   if(date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_created'] && $row_attendance['attendance_record_created'] != '0000-00-00' && $row_attendance['attendance_record_created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") : '' > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_in'] && $row_attendance_absent['staff_time_in'] != '0000-00-00' && $row_attendance_absent['staff_time_in'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A") : ''.' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_out'] && $row_attendance_absent['staff_time_out'] != '0000-00-00' && $row_attendance_absent['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A") : ''.'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_created'] && $row_attendance['attendance_record_created'] != '0000-00-00' && $row_attendance['attendance_record_created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") : '' > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_created'] && $row_attendance['attendance_record_created'] != '0000-00-00' && $row_attendance['attendance_record_created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") : '' > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_in'] && $row_attendance_absent['staff_time_in'] != '0000-00-00' && $row_attendance_absent['staff_time_in'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A") : ''.' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_out'] && $row_attendance_absent['staff_time_out'] != '0000-00-00' && $row_attendance_absent['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A") : ''.'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_in'] && $row_attendance_absent['staff_time_in'] != '0000-00-00' && $row_attendance_absent['staff_time_in'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A") : ''.' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_created'] && $row_attendance['attendance_record_created'] != '0000-00-00' && $row_attendance['attendance_record_created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") : '' > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_in'] && $row_attendance_absent['staff_time_in'] != '0000-00-00' && $row_attendance_absent['staff_time_in'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A") : ''.' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_out'] && $row_attendance_absent['staff_time_out'] != '0000-00-00' && $row_attendance_absent['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A") : ''.'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_out'] && $row_attendance_absent['staff_time_out'] != '0000-00-00' && $row_attendance_absent['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A") : ''.'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_created'] && $row_attendance['attendance_record_created'] != '0000-00-00' && $row_attendance['attendance_record_created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_created']), "H:i:s") : '' > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_in'] && $row_attendance_absent['staff_time_in'] != '0000-00-00' && $row_attendance_absent['staff_time_in'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A") : ''.' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_out'] && $row_attendance_absent['staff_time_out'] != '0000-00-00' && $row_attendance_absent['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A") : ''.'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>$row_attendance['attendance_record_created']), "H:i:s") : '' > date('H:i:s',strtotime($row_attendance['staff_duty_in'] . ' +16 minutes')) )
+	                   {
+	                       echo 'STAFF LATE';
+	                   }
+	                   ?>
+	               </td>	               
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '3')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>ABSENT</td>
+               <?php }
+               elseif($row_attendance['attendance_record_title'] == '2')
+               { ?>
+	               <td colspan = "4"></td>
+	               <td>
+	                   <form method = "GET">
+	                        <input type = "hidden" name = "br_id" value = "<?php echo $_GET['br_id']; ?>" />
+	                        <input type = "hidden" name = "report_date" value = "<?php echo $_GET['report_date']; ?>" />
+	                        <input type = "hidden" name = "attendance_record_id" value = "<?php echo $attendance_record_id; ?>" />
+	                        <input type = "text" name = "attendance_record_remarks" value = "<?php echo $row_attendance['attendance_record_remarks']; ?>" />
+	                        <input type = "submit" value = "SAVE" class = "btn-sm btn-success" />
+	                   </form>
+	               </td>
+	               <td>LEAVE</td>
+               <?php } ?>
+	           </tr>
+	   <?php    }
+	        }
+	        $run_attendance_absent = mysqli_query($con, $attendance_absent);
+	        if(mysqli_num_rows($run_attendance_absent) > 0)
+	        {
+	            while($row_attendance_absent = mysqli_fetch_array($run_attendance_absent))
+	            {
+	                $sr++; ?>
+	           <tr>
+	               <td></td>
+	               <td><?php echo $row_attendance_absent['tag_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['staff_name']; ?></td>
+	               <td><?php echo $row_attendance_absent['designation_title']; ?></td>
+	               <td><?php echo date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A").' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_in'] && $row_attendance_absent['staff_time_in'] != '0000-00-00' && $row_attendance_absent['staff_time_in'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A") : ''.' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_out'] && $row_attendance_absent['staff_time_out'] != '0000-00-00' && $row_attendance_absent['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A") : ''.'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_in'] && $row_attendance_absent['staff_time_in'] != '0000-00-00' && $row_attendance_absent['staff_time_in'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A") : ''.' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_in'] && $row_attendance_absent['staff_time_in'] != '0000-00-00' && $row_attendance_absent['staff_time_in'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A") : ''.' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_out'] && $row_attendance_absent['staff_time_out'] != '0000-00-00' && $row_attendance_absent['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A") : ''.'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_out'] && $row_attendance_absent['staff_time_out'] != '0000-00-00' && $row_attendance_absent['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A") : ''.'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_in'] && $row_attendance_absent['staff_time_in'] != '0000-00-00' && $row_attendance_absent['staff_time_in'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_in']), "h:i:s A") : ''.' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_out'] && $row_attendance_absent['staff_time_out'] != '0000-00-00' && $row_attendance_absent['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A") : ''.'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>$row_attendance_absent['staff_time_in']), "h:i:s A") : ''.' TO '.date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A").'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_out'] && $row_attendance_absent['staff_time_out'] != '0000-00-00' && $row_attendance_absent['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A") : ''.'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_out'] && $row_attendance_absent['staff_time_out'] != '0000-00-00' && $row_attendance_absent['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A") : ''.'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>($row_attendance_absent['staff_time_out'] && $row_attendance_absent['staff_time_out'] != '0000-00-00' && $row_attendance_absent['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance_absent['staff_time_out']), "h:i:s A") : ''.'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
+	               <td colspan = "5"></td>
+               </tr>
+            <?php
+	            }
+	        }
+	        ?>
+	        </tbody>
+	        <caption style = "caption-side: top; color: black;text-align: center;">
+	            <h2><?php echo $br_address; ?></h2>
+	            <h3>ATTENDANCE REPORT DATED: <?php echo $report_date; ?></h3>
+	        </caption>
+</table>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tbody tr").filter(function() {
+      // Toggle the display of rows based on whether they contain the input value
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+  });
+});    
+</script>
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+function filterTable() {
+  // Declare variables
+  var input, filter, table, tbody, tr, td, i, j, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tbody = table.getElementsByTagName("tbody")[0]; // Target the tbody
+  tr = tbody.getElementsByTagName("tr");
+
+  // Loop through all table rows, starting from index 0 of tbody
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0]; // Get the first cell (Name column)
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = ""; // Show row
+      } else {
+        tr[i].style.display = "none"; // Hide row
+      }
+    }
+  }
+}
+    
+</script>
+<?php mysqli_close($con); ?>$row_attendance_absent['staff_time_out']), "h:i:s A") : ''.'('.$row_attendance_absent['staff_duty_hours'].')'; ?></td>
 	               <td colspan = "5"></td>
                </tr>
             <?php

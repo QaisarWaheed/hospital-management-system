@@ -91,18 +91,18 @@ for ($day = 1; $day <= $total_days_of_month; $day++) {
 ?>
         <tr>
             <td><?php echo htmlspecialchars($display_date); ?></td>
-            <td><?php echo number_format($cash); ?></td>
-            <td><?php echo number_format($pending); ?></td>
-            <td><?php echo number_format($pending_receive); ?></td>
-            <td><?php echo number_format($cash_received); ?></td>
+            <td><?php echo number_format((float)($cash ?? 0)); ?></td>
+            <td><?php echo number_format((float)($pending ?? 0)); ?></td>
+            <td><?php echo number_format((float)($pending_receive ?? 0)); ?></td>
+            <td><?php echo number_format((float)($cash_received ?? 0)); ?></td>
         </tr>
 <?php } ?>
         <tr>
             <th></th>
-            <th><?php echo number_format($total_cash); ?></th>
-            <th><?php echo number_format($total_pending); ?></th>
-            <th><?php echo number_format($total_pending_receive); ?></th>
-            <th><?php echo number_format($total_cash_received); ?></th>
+            <th><?php echo number_format((float)($total_cash ?? 0)); ?></th>
+            <th><?php echo number_format((float)($total_pending ?? 0)); ?></th>
+            <th><?php echo number_format((float)($total_pending_receive ?? 0)); ?></th>
+            <th><?php echo number_format((float)($total_cash_received ?? 0)); ?></th>
         </tr>
     </tbody>
 </table>

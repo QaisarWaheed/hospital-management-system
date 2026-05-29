@@ -132,8 +132,112 @@ else
 			                <td>'.$row['staff_phone'].'</td>
 			                <td>'.$row['designation_title'].'</td>
 			                <td>'.$row['tag_name'].'</td>
-			                <td>'.date_format(date_create($row['staff_time_in']), "h:i:s A").'</td>
+			                <td>'.($row['staff_time_in'] && $row['staff_time_in'] != '0000-00-00' && $row['staff_time_in'] != '0000-00-00 00:00:00' ? date_format(date_create($row['staff_time_in']), "h:i:s A") : ''.'</td>
 			                <td>'.date_format(date_create($row['staff_time_out']), "h:i:s A").'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td class = "d-print-none">
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                </td>
+			             </tr>';
+			            }
+			        }
+			        else
+			        {
+			            echo '<tr><td colspan = "9">NO RECORDS FOUND</td></tr>';
+			        }
+			        ?>
+			        </tbody>
+			                    <!--<a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>-->
+			    </table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<?php mysqli_close($con); ?>($row['staff_time_out'] && $row['staff_time_out'] != '0000-00-00' && $row['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row['staff_time_out']), "h:i:s A") : ''.'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td class = "d-print-none">
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                </td>
+			             </tr>';
+			            }
+			        }
+			        else
+			        {
+			            echo '<tr><td colspan = "9">NO RECORDS FOUND</td></tr>';
+			        }
+			        ?>
+			        </tbody>
+			                    <!--<a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>-->
+			    </table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<?php mysqli_close($con); ?>($row['staff_time_out'] && $row['staff_time_out'] != '0000-00-00' && $row['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row['staff_time_out']), "h:i:s A") : ''.'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td class = "d-print-none">
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                </td>
+			             </tr>';
+			            }
+			        }
+			        else
+			        {
+			            echo '<tr><td colspan = "9">NO RECORDS FOUND</td></tr>';
+			        }
+			        ?>
+			        </tbody>
+			                    <!--<a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>-->
+			    </table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<?php mysqli_close($con); ?>($row['staff_time_out'] && $row['staff_time_out'] != '0000-00-00' && $row['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row['staff_time_out']), "h:i:s A") : ''.'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td class = "d-print-none">
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                </td>
+			             </tr>';
+			            }
+			        }
+			        else
+			        {
+			            echo '<tr><td colspan = "9">NO RECORDS FOUND</td></tr>';
+			        }
+			        ?>
+			        </tbody>
+			                    <!--<a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>-->
+			    </table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<?php mysqli_close($con); ?>$row['staff_time_out']), "h:i:s A") : ''.'</td>
 			                <td>'.$row['staff_duty_hours'].'</td>
 			                <td class = "d-print-none">
 			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>

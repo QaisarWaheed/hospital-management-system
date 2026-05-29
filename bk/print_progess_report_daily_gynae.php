@@ -36,7 +36,7 @@ if (count($doctor_ids) > 0) {
 ?>
 <html>
 <head>
-    <title>PRINT PROGRESS GYNAE DATE <?php echo date_format(date_create($date), ' d F Y'); ?></title>
+    <title>PRINT PROGRESS GYNAE DATE <?php echo ($date && $date != '0000-00-00' && $date != '0000-00-00 00:00:00' ? date_format(date_create($date), ' d F Y') : ''; ?></title>
 </head>
 <body>
 
@@ -45,6 +45,152 @@ if (count($doctor_ids) > 0) {
     <h2><?php echo $company_name; ?></h2>
     <h2><?php echo get_branch_name_by($br_id); ?></h2>
     <h3>PROGRESS DATE <?php echo date_format(date_create($date), 'd F Y'); ?></h3>
+</caption>
+    <thead>
+        <tr>
+            <th rowspan="2">S#</th>
+            <th rowspan="2">NAME</th>
+            <th rowspan="2">OPD</th>
+            <th rowspan="2">USG</th>
+            <th colspan="2">GYNAE REGISTRATION</th>
+            <th colspan="3">REFERRAL SYSTEM</th>
+        </tr>
+        <tr>
+            <th>TOKEN</th><th>SYSTEM</th>
+            <th>PATIENT</th><th>COMPLETE</th><th>REJECT</th>
+        </tr>
+    </thead>
+<?php
+$s = 0;
+$total_opds = 0;
+$total_usg = 0;
+$total_gynae = 0;
+$total_gynae_system = 0;
+$total_reffered = 0;
+$total_reffered_successfull = 0;
+$rejected_total = 0;
+
+if (count($doctor_ids) > 0) {
+    echo '<tbody>';
+    foreach ($doctor_ids as $doctor) {
+        $s++;
+        $opd = $opds[$doctor] ?? 0;
+        $usg = $usgs[$doctor] ?? 0;
+        $gyn_cnt = $gynae_tokens[$doctor] ?? 0;
+        $gyn_sys = $gynae_system[$doctor] ?? 0;
+        $ref = $refer_all[$doctor] ?? 0;
+        $ref_ok = $refer_ok[$doctor] ?? 0;
+        $rejected = $ref - $ref_ok;
+
+        $total_opds += $opd;
+        $total_usg += $usg;
+        $total_gynae += $gyn_cnt;
+        $total_gynae_system += $gyn_sys;
+        $total_reffered += $ref;
+        $total_reffered_successfull += $ref_ok;
+        $rejected_total += $rejected;
+
+        $doctor_name = $user_names[$doctor] ?? get_uname_by_id($doctor);
+        echo '<tr styl($date && $date != '0000-00-00' && $date != '0000-0($date && $date != '0000-00-00' && $date != '0000-00-00 00:00:00' ? date_format(date_create($date), 'd F Y') : ''; ?></h3>
+</caption>
+    <thead>
+        <tr>
+            <th rowspan="2">S#</th>
+            <th rowspan="2">NAME</th>
+            <th rowspan="2">OPD</th>
+            <th rowspan="2">USG</th>
+            <th colspan="2">GYNAE REGISTRATION</th>
+            <th colspan="3">REFERRAL SYSTEM</th>
+        </tr>
+        <tr>
+            <th>TOKEN</th><th>SYSTEM</th>
+            <th>PATIENT</th><th>COMPLETE</th><th>REJECT</th>
+        </tr>
+    </thead>
+<?php
+$s = 0;
+$total_opds = 0;
+$total_usg = 0;
+$total_gynae = 0;
+$total_gynae_system = 0;
+$total_reffered = 0;
+$total_reffered_successfull = 0;
+$rejected_total = 0;
+
+if (count($doctor_ids) > 0) {
+    echo '<tbody>';
+    foreach ($doctor_ids as $doctor) {
+        $s++;
+        $opd = $opds[$doctor] ?? 0;
+        $usg = $usgs[$doctor] ?? 0;
+        $gyn_cnt = $gynae_tokens[$doctor] ?? 0;
+        $gyn_sys = $gynae_system[$doctor] ?? 0;
+        $ref = $refer_all[$doctor] ?? 0;
+        $ref_ok = $refer_ok[$doctor] ?? 0;
+        $rejected = $ref - $ref_ok;
+
+        $total_opds += $opd;
+        $total_usg += $usg;
+        $total_gynae += $gyn_cnt;
+        $total_gynae_system += $gyn_sys;
+        $total_reffered += $ref;
+        $total_reffered_successfull += $ref_ok;
+        $rejected_total += $rejected;
+
+        $doctor_name = $user_names[$doctor] ?? get_uname_by_id($doctor);
+        echo '<tr styl($date && $date != '0000-00-00' && $date != '0000-00-00 00:00:00' ? date_format(date_create($date), 'd F Y') : ''; ?></h3>
+</caption>
+    <thead>
+        <tr>
+            <th rowspan="2">S#</th>
+            <th rowspan="2">NAME</th>
+            <th rowspan="2">OPD</th>
+            <th rowspan="2">USG</th>
+            <th colspan="2">GYNAE REGISTRATION</th>
+            <th colspan="3">REFERRAL SYSTEM</th>
+        </tr>
+        <tr>
+            <th>TOKEN</th><th>SYSTEM</th>
+            <th>PATIENT</th><th>COMPLETE</th><th>REJECT</th>
+        </tr>
+    </thead>
+<?php
+$s = 0;
+$total_opds = 0;
+$total_usg = 0;
+$total_gynae = 0;
+$total_gynae_system = 0;
+$total_reffered = 0;
+$total_reffered_successfull = 0;
+$rejected_total = 0;
+
+if (count($doctor_ids) > 0) {
+    echo '<tbody>';
+    foreach ($doctor_ids as $doctor) {
+        $s++;
+        $opd = $opds[$doctor] ?? 0;
+        $usg = $usgs[$doctor] ?? 0;
+        $gyn_cnt = $gynae_tokens[$doctor] ?? 0;
+        $gyn_sys = $gynae_system[$doctor] ?? 0;
+        $ref = $refer_all[$doctor] ?? 0;
+        $ref_ok = $refer_ok[$doctor] ?? 0;
+        $rejected = $ref - $ref_ok;
+
+        $total_opds += $opd;
+        $total_usg += $usg;
+        $total_gynae += $gyn_cnt;
+        $total_gynae_system += $gyn_sys;
+        $total_reffered += $ref;
+        $total_reffered_successfull += $ref_ok;
+        $rejected_total += $rejected;
+
+        $doctor_name = $user_names[$doctor] ?? get_uname_by_id($doctor);
+        echo '<tr style="text-align: right;">';
+        echo '<td>' . $s . '</td>';
+        echo '<td style="text-align: left;">' . htmlspecialchars($doctor_name, ENT_QUOTES, 'UTF-8') . '</td>';
+        echo '<td>' . $opd . '</td><td>' . $usg . '</td>';
+        echo '<td>' . $gyn_cnt . '</td><td>' . $gyn_sys . '</td>';
+        echo '<td>' . $ref .$date), 'd F Y') : ''; ?></h3>
 </caption>
     <thead>
         <tr>

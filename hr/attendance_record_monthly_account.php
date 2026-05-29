@@ -127,11 +127,143 @@ else
 	            ?>
 	           <tr>
 	               <td><?php echo $s; ?></td>
-	               <td><?php echo date_format(date_create($row_attendance['attendance_record_month']), "M-Y"); ?></td>
+	               <td><?php echo ($row_attendance['attendance_record_month'] && $row_attendance['attendance_record_month'] != '0000-00-00' && $row_attendance['attendance_record_month'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_month']), "M-Y") : ''; ?></td>
 	               <td><?php echo $row_attendance['staff_id']; ?></td>
 	               <td><?php echo $row_attendance['staff_name']; ?></td>
 	               <td><?php echo $row_attendance['designation_title']; ?></td>
 	               <td><?php echo date_format(date_create($row_attendance['attendance_record_month']), "t"); ?></td>
+	               <td><?php echo $TOTAL_DUTY; ?></td>
+	               <td><?php echo $TOTAL_LEAVE; ?></td>
+	               <td><?php echo $TOTAL_DOUBLE; ?></td>
+	               <td><?php echo $TOTAL_ABSENT; ?></td>
+	               <td><?php echo $working_days; ?></td>
+	               <td></td>
+	               <td></td>
+	           </tr>
+	           
+	   <?php $working_days = 0;   }
+	        }
+	        else
+	        {
+	            echo '<tr><th colspan = "8">NO DATA FOUND</th></tr>';
+	        }
+	        ?>
+	        </tbody>
+</table>
+	</div>
+</div>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="js/bootstrap.js"></script>
+<script type="text/javascript">
+      $(document).ready(function () {
+  $('#select_item').selectize({
+      sortField: 'text'
+  });
+  $(".alert").alert();
+});
+</script>
+</body>
+</html>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_month'] && $row_attendance['attendance_record_month'] != '0000-00-00' && $row_attendance['attendance_record_month'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_month']), "t") : ''; ?></td>
+	               <td><?php echo $TOTAL_DUTY; ?></td>
+	               <td><?php echo $TOTAL_LEAVE; ?></td>
+	               <td><?php echo $TOTAL_DOUBLE; ?></td>
+	               <td><?php echo $TOTAL_ABSENT; ?></td>
+	               <td><?php echo $working_days; ?></td>
+	               <td></td>
+	               <td></td>
+	           </tr>
+	           
+	   <?php $working_days = 0;   }
+	        }
+	        else
+	        {
+	            echo '<tr><th colspan = "8">NO DATA FOUND</th></tr>';
+	        }
+	        ?>
+	        </tbody>
+</table>
+	</div>
+</div>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="js/bootstrap.js"></script>
+<script type="text/javascript">
+      $(document).ready(function () {
+  $('#select_item').selectize({
+      sortField: 'text'
+  });
+  $(".alert").alert();
+});
+</script>
+</body>
+</html>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_month'] && $row_attendance['attendance_record_month'] != '0000-00-00' && $row_attendance['attendance_record_month'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_month']), "t") : ''; ?></td>
+	               <td><?php echo $TOTAL_DUTY; ?></td>
+	               <td><?php echo $TOTAL_LEAVE; ?></td>
+	               <td><?php echo $TOTAL_DOUBLE; ?></td>
+	               <td><?php echo $TOTAL_ABSENT; ?></td>
+	               <td><?php echo $working_days; ?></td>
+	               <td></td>
+	               <td></td>
+	           </tr>
+	           
+	   <?php $working_days = 0;   }
+	        }
+	        else
+	        {
+	            echo '<tr><th colspan = "8">NO DATA FOUND</th></tr>';
+	        }
+	        ?>
+	        </tbody>
+</table>
+	</div>
+</div>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="js/bootstrap.js"></script>
+<script type="text/javascript">
+      $(document).ready(function () {
+  $('#select_item').selectize({
+      sortField: 'text'
+  });
+  $(".alert").alert();
+});
+</script>
+</body>
+</html>
+<?php mysqli_close($con); ?>($row_attendance['attendance_record_month'] && $row_attendance['attendance_record_month'] != '0000-00-00' && $row_attendance['attendance_record_month'] != '0000-00-00 00:00:00' ? date_format(date_create($row_attendance['attendance_record_month']), "t") : ''; ?></td>
+	               <td><?php echo $TOTAL_DUTY; ?></td>
+	               <td><?php echo $TOTAL_LEAVE; ?></td>
+	               <td><?php echo $TOTAL_DOUBLE; ?></td>
+	               <td><?php echo $TOTAL_ABSENT; ?></td>
+	               <td><?php echo $working_days; ?></td>
+	               <td></td>
+	               <td></td>
+	           </tr>
+	           
+	   <?php $working_days = 0;   }
+	        }
+	        else
+	        {
+	            echo '<tr><th colspan = "8">NO DATA FOUND</th></tr>';
+	        }
+	        ?>
+	        </tbody>
+</table>
+	</div>
+</div>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="js/bootstrap.js"></script>
+<script type="text/javascript">
+      $(document).ready(function () {
+  $('#select_item').selectize({
+      sortField: 'text'
+  });
+  $(".alert").alert();
+});
+</script>
+</body>
+</html>
+<?php mysqli_close($con); ?>$row_attendance['attendance_record_month']), "t") : ''; ?></td>
 	               <td><?php echo $TOTAL_DUTY; ?></td>
 	               <td><?php echo $TOTAL_LEAVE; ?></td>
 	               <td><?php echo $TOTAL_DOUBLE; ?></td>

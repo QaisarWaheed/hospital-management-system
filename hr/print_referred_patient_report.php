@@ -13,7 +13,7 @@ $date_esc = mysqli_real_escape_string($con, (string) $date);
 $ref_date_clause = progress_sql_date_clause($con, $date_esc . '%', 'referral_patient_created');
 include 'includes/head.php';
 ?>
-	<title>REFFERED PATIENT <?php echo date_format(date_create($date), 'd F Y'); ?> - <?php echo $company_trademark; ?></title>
+	<title>REFFERED PATIENT <?php echo ($date && $date != '0000-00-00' && $date != '0000-00-00 00:00:00' ? date_format(date_create($date), 'd F Y') : ''; ?> - <?php echo $company_trademark; ?></title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
@@ -49,6 +49,101 @@ include 'includes/head.php';
 			<div class="col-md-12" style = "text-align: center;">
 				<label><h2>Referred Patient </h2></label></br>
 				<label><h6> <?php echo date_format(date_create($date), 'd F Y'); ?> </h6></label>
+			</div>
+			<table class = "table">
+		    <thead>
+		        <tr>
+		            <th>S #</th>
+		            <th>Token #</th>
+		            <th>Patient Name</th>
+		            <!--<th>Patient Phone</th>-->
+		            <th>From</th>
+		            <th>Refer By</th>
+		            <th>Required Opnion</th>
+		            <th>Refer To</th>
+		            <th>Status</th>
+		        </tr>
+		    </thead>
+		    <tbody>
+<?php
+$s = 0;
+if ($br_id > 0) {
+    $select_referral_token = "SELECT * FROM `referral_patients` WHERE branch_id = '$br_id' AND opd_token_id > 0 AND referral_patient_status > 0 AND $ref_date_clause($date && $date != '0000-00-00' && $date != '0000-00($date && $date != '0000-00-00' && $date != '0000-00-00 00:00:00' ? date_format(date_create($date), 'd F Y') : ''; ?> </h6></label>
+			</div>
+			<table class = "table">
+		    <thead>
+		        <tr>
+		            <th>S #</th>
+		            <th>Token #</th>
+		            <th>Patient Name</th>
+		            <!--<th>Patient Phone</th>-->
+		            <th>From</th>
+		            <th>Refer By</th>
+		            <th>Required Opnion</th>
+		            <th>Refer To</th>
+		            <th>Status</th>
+		        </tr>
+		    </thead>
+		    <tbody>
+<?php
+$s = 0;
+if ($br_id > 0) {
+    $select_referral_token = "SELECT * FROM `referral_patients` WHERE branch_id = '$br_id' AND opd_token_id > 0 AND referral_patient_status > 0 AND $ref_date_clause($date && $date != '0000-00-00' && $date != '0000-00-00 00:00:00' ? date_format(date_create($date), 'd F Y') : ''; ?> </h6></label>
+			</div>
+			<table class = "table">
+		    <thead>
+		        <tr>
+		            <th>S #</th>
+		            <th>Token #</th>
+		            <th>Patient Name</th>
+		            <!--<th>Patient Phone</th>-->
+		            <th>From</th>
+		            <th>Refer By</th>
+		            <th>Required Opnion</th>
+		            <th>Refer To</th>
+		            <th>Status</th>
+		        </tr>
+		    </thead>
+		    <tbody>
+<?php
+$s = 0;
+if ($br_id > 0) {
+    $select_referral_token = "SELECT * FROM `referral_patients` WHERE branch_id = '$br_id' AND opd_token_id > 0 AND referral_patient_status > 0 AND $ref_date_clause AND referral_patient_status = '2' ORDER BY branch_id, referral_patient_status ";
+} else {
+    $select_referral_token = "SELECT * FROM `referral_patients` WHERE opd_token_id > 0 AND referral_patient_status > 0 AND $ref_date_clause ORDER BY branch_id, referral_patient_status ";
+}
+$referrals = array();
+$run_referral_token = mysqli_query($con, $select_referral_token);
+if ($run_referral_token) {
+    while ($row_referral_token = mysqli_fetch_array($run_referral_token)) {
+        $referrals[] = $row_referral_token;
+    }
+}
+
+$token_map = array();
+$patient_map = array();
+$user_names = array();
+$branch_tags = array();
+if (count($referrals) > 0) {
+    $token_ids = array();
+    $user_ids = array();
+    $branch_ids = array();
+    foreach ($referrals as $row_referral_token) {
+        $token_ids[] = (int) $row_referral_token['opd_token_id'];
+        $user_ids[] = (int) $row_referral_token['from_user_id'];
+        $user_ids[] = (int) $row_referral_token['to_user_id'];
+        $branch_ids[] = (int) $row_referral_token['branch_id'];
+    }
+    $token_ids = array_values(array_unique(array_filter($token_ids)));
+    $user_ids = array_values(array_unique(array_filter($user_ids)));
+    $branch_ids = array_values(array_unique(array_filter($branch_ids)));
+
+    if (count($token_ids) > 0) {
+        $token_list = implode(',', $token_ids);
+        $run_tokan = mysqli_query($con, "SELECT id, patient_id FROM tokans WHERE id IN ($token_list)");
+        if ($run_tokan) {
+            $patient_ids = array();
+            while ($row_t$date), 'd F Y') : ''; ?> </h6></label>
 			</div>
 			<table class = "table">
 		    <thead>

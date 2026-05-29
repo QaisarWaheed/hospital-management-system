@@ -46,7 +46,150 @@ if ($branch_lookup && mysqli_num_rows($branch_lookup) === 1) {
     	<h6><?php echo $branch_address; ?></h6>
     	<h5>Token Summary</h5>
 
-         <div style="float:left"><strong>Date:</strong><span style="text-align: left;"><?php echo date_format(date_create($from_date), 'd-m-Y'); ?> To <?php echo date_format(date_create($to_date), 'd-m-Y'); ?></span></div>
+         <div style="float:left"><strong>Date:</strong><span style="text-align: left;"><?php echo ($from_date && $from_date != '0000-00-00' && $from_date != '0000-00-00 00:00:00' ? date_format(date_create($from_date), 'd-m-Y') : ''; ?> To <?php echo date_format(date_create($to_date), 'd-m-Y'); ?></span></div>
+
+         <div style="float:right">Print Time: <?php echo date('h:i:s A'); ?></div>
+         </br>
+
+         <div style="float:left"><strong>User Login:</strong> <span style="text-align: left;">All Logins</span></div>
+
+         <div style="float:right">Print Date:<?php echo date('d-m-Y'); ?></div>
+         </td>
+
+	</tr>
+		<tr>
+			<th>S #</th>
+			<th>Name</th>
+			<th>Login Time</th>
+			<th>Logout Time</th>
+			<th>Computer Amount</th>
+			<th>Received Amount</th>
+			<th>Extra</th>
+			<th>Short</th>
+			<th>Total</th>
+		</tr>
+	</thead>
+	<tbody>
+<?php 
+$last_date = date('Y-m-d', strtotime('+1 day', strtotime($to_date)));
+$s = 0;
+$total_cash = 0;
+$total_extra = 0;
+$total_short = 0;
+$total_r_a = 0;
+$total_cash_received = 0;
+
+$users = "SELECT * FROM `summary_details` WHERE login_id IN (SELECT id FROM logins_detail WHERE branch_id = '$b_id' AND login_at <= '$last_date' AND `login_at` >= '$from_date' AND `status` = '2') ORDER BY `created` ";
+$run_users = mysqli_query($con, $users);
+if(mysqli_num_rows($run_users) > 0)
+{
+    while($row_users = mysqli_fetch_array($run_users))
+    {
+        $s = $s + 1;
+        $user_login_id = $row_users['user_id'];
+        $login_id = $row_users['login_id'];
+        $login_at = '';
+        $logout_at = '';
+        $login_detail = "SELECT * FROM logins_detail WHERE id = '$login_id' ";
+        $run = mysqli_query($con, $login_detail);
+     ($to_date && $to_date != '0000-00-00' && $to_date != '0000-00-($to_date && $to_date != '0000-00-00' && $to_date != '0000-00-00 00:00:00' ? date_format(date_create($to_date), 'd-m-Y') : ''; ?></span></div>
+
+         <div style="float:right">Print Time: <?php echo date('h:i:s A'); ?></div>
+         </br>
+
+         <div style="float:left"><strong>User Login:</strong> <span style="text-align: left;">All Logins</span></div>
+
+         <div style="float:right">Print Date:<?php echo date('d-m-Y'); ?></div>
+         </td>
+
+	</tr>
+		<tr>
+			<th>S #</th>
+			<th>Name</th>
+			<th>Login Time</th>
+			<th>Logout Time</th>
+			<th>Computer Amount</th>
+			<th>Received Amount</th>
+			<th>Extra</th>
+			<th>Short</th>
+			<th>Total</th>
+		</tr>
+	</thead>
+	<tbody>
+<?php 
+$last_date = date('Y-m-d', strtotime('+1 day', strtotime($to_date)));
+$s = 0;
+$total_cash = 0;
+$total_extra = 0;
+$total_short = 0;
+$total_r_a = 0;
+$total_cash_received = 0;
+
+$users = "SELECT * FROM `summary_details` WHERE login_id IN (SELECT id FROM logins_detail WHERE branch_id = '$b_id' AND login_at <= '$last_date' AND `login_at` >= '$from_date' AND `status` = '2') ORDER BY `created` ";
+$run_users = mysqli_query($con, $users);
+if(mysqli_num_rows($run_users) > 0)
+{
+    while($row_users = mysqli_fetch_array($run_users))
+    {
+        $s = $s + 1;
+        $user_login_id = $row_users['user_id'];
+        $login_id = $row_users['login_id'];
+        $login_at = '';
+        $logout_at = '';
+        $login_detail = "SELECT * FROM logins_detail WHERE id = '$login_id' ";
+        $run = mysqli_query($con, $login_detail);
+     ($to_date && $to_date != '0000-00-00' && $to_date != '0000-00-00 00:00:00' ? date_format(date_create($to_date), 'd-m-Y') : ''; ?></span></div>
+
+         <div style="float:right">Print Time: <?php echo date('h:i:s A'); ?></div>
+         </br>
+
+         <div style="float:left"><strong>User Login:</strong> <span style="text-align: left;">All Logins</span></div>
+
+         <div style="float:right">Print Date:<?php echo date('d-m-Y'); ?></div>
+         </td>
+
+	</tr>
+		<tr>
+			<th>S #</th>
+			<th>Name</th>
+			<th>Login Time</th>
+			<th>Logout Time</th>
+			<th>Computer Amount</th>
+			<th>Received Amount</th>
+			<th>Extra</th>
+			<th>Short</th>
+			<th>Total</th>
+		</tr>
+	</thead>
+	<tbody>
+<?php 
+$last_date = date('Y-m-d', strtotime('+1 day', strtotime($to_date)));
+$s = 0;
+$total_cash = 0;
+$total_extra = 0;
+$total_short = 0;
+$total_r_a = 0;
+$total_cash_received = 0;
+
+$users = "SELECT * FROM `summary_details` WHERE login_id IN (SELECT id FROM logins_detail WHERE branch_id = '$b_id' AND login_at <= '$last_date' AND `login_at` >= '$from_date' AND `status` = '2') ORDER BY `created` ";
+$run_users = mysqli_query($con, $users);
+if(mysqli_num_rows($run_users) > 0)
+{
+    while($row_users = mysqli_fetch_array($run_users))
+    {
+        $s = $s + 1;
+        $user_login_id = $row_users['user_id'];
+        $login_id = $row_users['login_id'];
+        $login_at = '';
+        $logout_at = '';
+        $login_detail = "SELECT * FROM logins_detail WHERE id = '$login_id' ";
+        $run = mysqli_query($con, $login_detail);
+        if(mysqli_num_rows($run) == 1)
+        {
+            while($row = mysqli_fetch_array($run))
+            {
+                $login_at = $row['login_at'];
+         $to_date), 'd-m-Y') : ''; ?></span></div>
 
          <div style="float:right">Print Time: <?php echo date('h:i:s A'); ?></div>
          </br>

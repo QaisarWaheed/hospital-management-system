@@ -164,7 +164,7 @@ html, body
                         <div style = "font-size:15px;">PARTY NAME: <?php echo $party_name; ?></div>
                         <div style = "font-size:15px;">PARTY INVOICE NO: <?php echo $invoice_party_bill_no; ?></div>
                         <div style = "font-size:15px;">RECEIVE NO: <?php echo $invoice_purchase_lab_item_bill_no; ?></div>
-                        <div style = "font-size:15px;">RECEIVE DATE: <?php echo date_format(date_create($purchase_lab_item_date), "d-m-Y"); ?></div>
+                        <div style = "font-size:15px;">RECEIVE DATE: <?php echo ($purchase_lab_item_date && $purchase_lab_item_date != '0000-00-00' && $purchase_lab_item_date != '0000-00-00 00:00:00' ? date_format(date_create($purchase_lab_item_date), "d-m-Y") : ''; ?></div>
                     </caption>    
     		</table>
     		<?php
@@ -224,6 +224,54 @@ html, body
     		            <div class = "col-md-2">INVOICE NO: <strong> <?php echo $invoice_party_bill_no_get; ?></strong></div>
     		            <div class = "col-md-2">BILL NO: <strong> <?php echo $search_bill; ?></strong></div>
     		            <div class = "col-md-3">RECEIVE DATE: <strong> <?php echo date_format(date_create($invoice_purchase_lab_item_date), "d-m-Y"); ?></strong></div>
+    		        </div>
+    		    </caption>
+
+    		</table>
+    		<?php }
+    		?>
+    	</div>
+    </div>
+</div>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>($invoice_purchase_lab_item_date && $invoice_purchase_lab_item_date != '0000-00-00' && $invoice_purchase_lab_item_date != '0000-00-00 00:00:00' ? date_format(date_create($invoice_purchase_lab_item_date), "d-m-Y") : ''; ?></strong></div>
+    		        </div>
+    		    </caption>
+
+    		</table>
+    		<?php }
+    		?>
+    	</div>
+    </div>
+</div>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>($invoice_purchase_lab_item_date && $invoice_purchase_lab_item_date != '0000-00-00' && $invoice_purchase_lab_item_date != '0000-00-00 00:00:00' ? date_format(date_create($invoice_purchase_lab_item_date), "d-m-Y") : ''; ?></strong></div>
+    		        </div>
+    		    </caption>
+
+    		</table>
+    		<?php }
+    		?>
+    	</div>
+    </div>
+</div>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>($invoice_purchase_lab_item_date && $invoice_purchase_lab_item_date != '0000-00-00' && $invoice_purchase_lab_item_date != '0000-00-00 00:00:00' ? date_format(date_create($invoice_purchase_lab_item_date), "d-m-Y") : ''; ?></strong></div>
+    		        </div>
+    		    </caption>
+
+    		</table>
+    		<?php }
+    		?>
+    	</div>
+    </div>
+</div>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>$invoice_purchase_lab_item_date), "d-m-Y") : ''; ?></strong></div>
     		        </div>
     		    </caption>
 

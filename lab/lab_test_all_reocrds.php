@@ -153,7 +153,7 @@ else
                         <td><?php echo $row_sample['age'].'/ '.$row_sample['gender_title']; ?></td>
                         <td><?php echo $row_sample['phone']; ?></td>
                         <td><?php echo $row_sample['doctor_name']; ?></td>
-                        <td><?php echo date_format(date_create($row_sample['register_at']), "H:s d-M-Y"); ?></td>
+                        <td><?php echo ($row_sample['register_at'] && $row_sample['register_at'] != '0000-00-00' && $row_sample['register_at'] != '0000-00-00 00:00:00' ? date_format(date_create($row_sample['register_at']), "H:s d-M-Y") : ''; ?></td>
                         <td>
                             <a href="#" class = "btn btn-sm btn-warning" onClick="MyWindow=window.open('lab_test_patinet_record_update.php?token_no=<?php echo $row_sample['token_no']; ?>','MyWindow','width=900,height=1200'); return false;"><span class="glyphicon glyphicon-pencil">UPDATE</span></a>
                             <div class = "btn">
@@ -217,6 +217,438 @@ else
                 <td><?php echo $row_sample['phone']; ?></td>
                 <td><?php echo $row_sample['doctor_name']; ?></td>
                 <td><?php echo date_format(date_create($row_sample['register_at']), "H:s d-M-Y"); ?></td>
+                <td>
+                    <a href="#" class = "btn btn-sm btn-warning" onClick="MyWindow=window.open('lab_test_patinet_record_update.php?token_no=<?php echo $row_sample['token_no']; ?>','MyWindow','width=900,height=1200'); return false;"><span class="glyphicon glyphicon-pencil">UPDATE</span></a>
+                </td>
+            </tr>
+                    <?php
+                }
+            }
+            else
+            {
+                echo '<tr><th class = "text-center" colspan = "5">NO RECORD IN LAB TEST</th></tr>';
+            }
+            ?>
+        </tbody>
+    </table>
+</div>
+<div class = "p-2">
+    <div class = "row">
+        <?php
+        $select_status = "SELECT DISTINCT lab_tests.lab_test_status_id, lab_test_statuses.lab_test_status_title, lab_test_statuses.lab_test_status_class, COUNT(DISTINCT token_no) AS total_tokens, COUNT(token_no) AS total_tests FROM `lab_tests` INNER JOIN tokans ON lab_tests.token_no = tokans.id INNER JOIN lab_test_statuses ON lab_tests.lab_test_status_id = lab_test_statuses.lab_test_status_id WHERE tokans.created >= '$from_selected_date' AND tokans.created <= '$to_selected_date 23:59:59' GROUP BY lab_tests.lab_test_status_id ";
+        $tun_status = mysqli_query($con, $select_status);
+        if(mysqli_num_rows($tun_status) > 0)
+        {
+            while($row_status = mysqli_fetch_array($tun_status))
+            { ?>
+                <div class = "col"><div class = "btn btn-<?php echo $row_status['lab_test_status_class']; ?>"><?php echo $row_status['total_tokens'].' '.$row_status['lab_test_status_title'].' '.$row_status['total_tests']; ?></div></div>
+            <?php }
+        }
+        ?>
+    </div>
+</div>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script>
+function myFunction() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[1];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[2];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionPhone() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputPhone");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[4];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+</script>
+<?php mysqli_close($con); ?>($row_sample['register_at'] && $row_sample['register_at'] != '0000-00-00' && $row_sample['register_at'] != '0000-00-00 00:00:00' ? date_format(date_create($row_sample['register_at']), "H:s d-M-Y") : ''; ?></td>
+                <td>
+                    <a href="#" class = "btn btn-sm btn-warning" onClick="MyWindow=window.open('lab_test_patinet_record_update.php?token_no=<?php echo $row_sample['token_no']; ?>','MyWindow','width=900,height=1200'); return false;"><span class="glyphicon glyphicon-pencil">UPDATE</span></a>
+                </td>
+            </tr>
+                    <?php
+                }
+            }
+            else
+            {
+                echo '<tr><th class = "text-center" colspan = "5">NO RECORD IN LAB TEST</th></tr>';
+            }
+            ?>
+        </tbody>
+    </table>
+</div>
+<div class = "p-2">
+    <div class = "row">
+        <?php
+        $select_status = "SELECT DISTINCT lab_tests.lab_test_status_id, lab_test_statuses.lab_test_status_title, lab_test_statuses.lab_test_status_class, COUNT(DISTINCT token_no) AS total_tokens, COUNT(token_no) AS total_tests FROM `lab_tests` INNER JOIN tokans ON lab_tests.token_no = tokans.id INNER JOIN lab_test_statuses ON lab_tests.lab_test_status_id = lab_test_statuses.lab_test_status_id WHERE tokans.created >= '$from_selected_date' AND tokans.created <= '$to_selected_date 23:59:59' GROUP BY lab_tests.lab_test_status_id ";
+        $tun_status = mysqli_query($con, $select_status);
+        if(mysqli_num_rows($tun_status) > 0)
+        {
+            while($row_status = mysqli_fetch_array($tun_status))
+            { ?>
+                <div class = "col"><div class = "btn btn-<?php echo $row_status['lab_test_status_class']; ?>"><?php echo $row_status['total_tokens'].' '.$row_status['lab_test_status_title'].' '.$row_status['total_tests']; ?></div></div>
+            <?php }
+        }
+        ?>
+    </div>
+</div>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script>
+function myFunction() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[1];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[2];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionPhone() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputPhone");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[4];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+</script>
+<?php mysqli_close($con); ?>($row_sample['register_at'] && $row_sample['register_at'] != '0000-00-00' && $row_sample['register_at'] != '0000-00-00 00:00:00' ? date_format(date_create($row_sample['register_at']), "H:s d-M-Y") : ''; ?></td>
+                <td>
+                    <a href="#" class = "btn btn-sm btn-warning" onClick="MyWindow=window.open('lab_test_patinet_record_update.php?token_no=<?php echo $row_sample['token_no']; ?>','MyWindow','width=900,height=1200'); return false;"><span class="glyphicon glyphicon-pencil">UPDATE</span></a>
+                </td>
+            </tr>
+                    <?php
+                }
+            }
+            else
+            {
+                echo '<tr><th class = "text-center" colspan = "5">NO RECORD IN LAB TEST</th></tr>';
+            }
+            ?>
+        </tbody>
+    </table>
+</div>
+<div class = "p-2">
+    <div class = "row">
+        <?php
+        $select_status = "SELECT DISTINCT lab_tests.lab_test_status_id, lab_test_statuses.lab_test_status_title, lab_test_statuses.lab_test_status_class, COUNT(DISTINCT token_no) AS total_tokens, COUNT(token_no) AS total_tests FROM `lab_tests` INNER JOIN tokans ON lab_tests.token_no = tokans.id INNER JOIN lab_test_statuses ON lab_tests.lab_test_status_id = lab_test_statuses.lab_test_status_id WHERE tokans.created >= '$from_selected_date' AND tokans.created <= '$to_selected_date 23:59:59' GROUP BY lab_tests.lab_test_status_id ";
+        $tun_status = mysqli_query($con, $select_status);
+        if(mysqli_num_rows($tun_status) > 0)
+        {
+            while($row_status = mysqli_fetch_array($tun_status))
+            { ?>
+                <div class = "col"><div class = "btn btn-<?php echo $row_status['lab_test_status_class']; ?>"><?php echo $row_status['total_tokens'].' '.$row_status['lab_test_status_title'].' '.$row_status['total_tests']; ?></div></div>
+            <?php }
+        }
+        ?>
+    </div>
+</div>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script>
+function myFunction() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[1];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[2];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionPhone() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputPhone");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[4];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+</script>
+<?php mysqli_close($con); ?>($row_sample['register_at'] && $row_sample['register_at'] != '0000-00-00' && $row_sample['register_at'] != '0000-00-00 00:00:00' ? date_format(date_create($row_sample['register_at']), "H:s d-M-Y") : ''; ?></td>
+                <td>
+                    <a href="#" class = "btn btn-sm btn-warning" onClick="MyWindow=window.open('lab_test_patinet_record_update.php?token_no=<?php echo $row_sample['token_no']; ?>','MyWindow','width=900,height=1200'); return false;"><span class="glyphicon glyphicon-pencil">UPDATE</span></a>
+                </td>
+            </tr>
+                    <?php
+                }
+            }
+            else
+            {
+                echo '<tr><th class = "text-center" colspan = "5">NO RECORD IN LAB TEST</th></tr>';
+            }
+            ?>
+        </tbody>
+    </table>
+</div>
+<div class = "p-2">
+    <div class = "row">
+        <?php
+        $select_status = "SELECT DISTINCT lab_tests.lab_test_status_id, lab_test_statuses.lab_test_status_title, lab_test_statuses.lab_test_status_class, COUNT(DISTINCT token_no) AS total_tokens, COUNT(token_no) AS total_tests FROM `lab_tests` INNER JOIN tokans ON lab_tests.token_no = tokans.id INNER JOIN lab_test_statuses ON lab_tests.lab_test_status_id = lab_test_statuses.lab_test_status_id WHERE tokans.created >= '$from_selected_date' AND tokans.created <= '$to_selected_date 23:59:59' GROUP BY lab_tests.lab_test_status_id ";
+        $tun_status = mysqli_query($con, $select_status);
+        if(mysqli_num_rows($tun_status) > 0)
+        {
+            while($row_status = mysqli_fetch_array($tun_status))
+            { ?>
+                <div class = "col"><div class = "btn btn-<?php echo $row_status['lab_test_status_class']; ?>"><?php echo $row_status['total_tokens'].' '.$row_status['lab_test_status_title'].' '.$row_status['total_tests']; ?></div></div>
+            <?php }
+        }
+        ?>
+    </div>
+</div>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script>
+function myFunction() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[1];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[2];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionPhone() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputPhone");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[4];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+</script>
+<?php mysqli_close($con); ?>$row_sample['register_at']), "H:s d-M-Y") : ''; ?></td>
                 <td>
                     <a href="#" class = "btn btn-sm btn-warning" onClick="MyWindow=window.open('lab_test_patinet_record_update.php?token_no=<?php echo $row_sample['token_no']; ?>','MyWindow','width=900,height=1200'); return false;"><span class="glyphicon glyphicon-pencil">UPDATE</span></a>
                 </td>

@@ -150,9 +150,9 @@ if(mysqli_num_rows($run) > 0)
             <td>'.$row['audit_id'].'</td>
             <td style = "text-align: left">'.$item_name.'</td>
             <td style = "text-align: left">'.$category_name.'</td>
-            <td style = "text-align: right;">'.number_format($price, 2).'</td>
+            <td style = "text-align: right;">'.number_format((float)($price ?? 0), 2).'</td>
             <td style = "text-align: right;">'.$quantity.'</td>
-            <th style = "text-align: right;">'.number_format($amount, 2).'</th>';
+            <th style = "text-align: right;">'.number_format((float)($amount ?? 0), 2).'</th>';
         if($clear_status == 1)
         {
             echo '<td class="noprint"><a href = "add_audit_extra_item_purchase.php?save='.$id.'&audit_id='.$audit_id.'" class = "btn btn-sm btn-warning">
@@ -176,7 +176,7 @@ if(mysqli_num_rows($run) > 0)
 ?>
         <tr>
             <th colspan = "6"></th>
-            <th style = "text-align: right;"><?php echo number_format($total_amount, 2); ?></th>
+            <th style = "text-align: right;"><?php echo number_format((float)($total_amount ?? 0), 2); ?></th>
             <th></th>
         </tr>
 				        </tboby>

@@ -104,7 +104,7 @@ if(mysqli_num_rows($run) > 0)
             <td>'.$branch_item_id.' - '.$row['item_name'].'</td>
             <td>'.$row['item_poor_price'].'</td>
             <td>'.$row['cat_name'].'</td>
-            <td>'.date_format(date_create($updated_at), 'd-m-Y').'</td>
+            <td>'.($updated_at && $updated_at != '0000-00-00' && $updated_at != '0000-00-00 00:00:00' ? date_format(date_create($updated_at), 'd-m-Y') : ''.'</td>
             <td>'.$row['computer_quantity'].'</td>
             <td>'.$row['manual_quantity'].'</td>
             <td>'.$issued_quantity.'</td>

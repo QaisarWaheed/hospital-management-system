@@ -60,7 +60,7 @@ foreach ($doctors as $doc) {
     $opds = (int) $doc['opd'];
     $cons_opds = (int) $doc['cons'];
     $labs = (float) $doc['lab'];
-    $labsDisplay = $labs > 0 ? number_format($labs) : 'N/A';
+    $labsDisplay = $labs > 0 ? number_format((float)($labs ?? 0)) : 'N/A';
     if ($labs > 0) {
         $total_lab += $labs;
     }
@@ -81,7 +81,7 @@ foreach ($doctors as $doc) {
             <th colspan="2">TOTAL</th>
             <th><?php echo $total_opds; ?></th>
             <th><?php echo $total_cons_opds; ?></th>
-            <th><?php echo $total_lab > 0 ? number_format($total_lab) : 'N/A'; ?></th>
+            <th><?php echo $total_lab > 0 ? number_format((float)($total_lab ?? 0)) : 'N/A'; ?></th>
         </tr>
     </tfoot>
 </table>

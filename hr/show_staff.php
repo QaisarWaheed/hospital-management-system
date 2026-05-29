@@ -174,7 +174,7 @@ include 'includes/head.php';
         			            </form>';
         			    }
 			                echo '</td>
-			                <td>'.date_format(date_create($row['staff_time_in']), "h:i:s A").'</td>
+			                <td>'.($row['staff_time_in'] && $row['staff_time_in'] != '0000-00-00' && $row['staff_time_in'] != '0000-00-00 00:00:00' ? date_format(date_create($row['staff_time_in']), "h:i:s A") : ''.'</td>
 			                <td>'.date_format(date_create($row['staff_time_out']), "h:i:s A").'</td>
 			                <td>'.$row['staff_duty_hours'].'</td>
 			                <td>';
@@ -252,6 +252,1733 @@ include 'includes/head.php';
 			                echo '</td>
 			                <td>'.date_format(date_create($row['staff_time_in']), "h:i:s A").'</td>
 			                <td>'.date_format(date_create($row['staff_time_out']), "h:i:s A").'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `statuses` ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST">
+        			            <input type = "hidden" name = "br_id" value = "'.$br_id.'" />
+        			            <input type = "hidden" name = "update_staff_id" value = "'.$row['staff_id'].'" />
+        			            <select id="select_option" onchange="this.form.submit();" required name = "update_staff_status" class = "form-control '.$row['staff_status_class'].'">';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            $staff_status_id = $staff_row['staff_status_id'];
+        			            $staff_status_title = $staff_row['staff_status_title'];
+        			            $staff_status_class = $staff_row['staff_status_class'];
+        			            if($staff_status_id == $staff_status)
+        			            {
+            			            echo '<option class = "'.$staff_status_class.'" SELECTED value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			        }
+        			            echo '</select></form>';
+        			    }
+			                echo '</td>			                
+			                <td>
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                    <a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>
+			                </td>
+			             </tr>
+			                ';
+			            }
+			            }
+			        }
+			        else
+			        {
+			            echo '<tr><td colspan = "9">NO RECORDS FOUND</td></tr>';
+			        }
+			        ?>
+			        </tbody>
+			    </table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<?php mysqli_close($con); ?>($row['staff_time_out'] && $row['staff_time_out'] != '0000-00-00' && $row['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row['staff_time_out']), "h:i:s A") : ''.'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `statuses` ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST">
+        			            <input type = "hidden" name = "br_id" value = "'.$br_id.'" />
+        			            <input type = "hidden" name = "update_staff_id" value = "'.$row['staff_id'].'" />
+        			            <select id="select_option" onchange="this.form.submit();" required name = "update_staff_status" class = "form-control '.$row['staff_status_class'].'">';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            $staff_status_id = $staff_row['staff_status_id'];
+        			            $staff_status_title = $staff_row['staff_status_title'];
+        			            $staff_status_class = $staff_row['staff_status_class'];
+        			            if($staff_status_id == $staff_status)
+        			            {
+            			            echo '<option class = "'.$staff_status_class.'" SELECTED value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			        }
+        			            echo '</select></form>';
+        			    }
+			                echo '</td>
+			                <td>
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                    <a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>
+			                </td>
+			             </tr>';
+			            }
+			            else
+			            {
+			                echo '
+			             <tr>
+			                <td>'.$s.'</td>
+			                <td style = "text-align: left;">'.$row['staff_id'].'</td>
+			                <td style = "text-align: left;">'.$row['staff_name'].'</td>
+			                <td style = "text-align: left;">'.$row['staff_spouse'].'</td>
+			                <td>
+			                    <a target = "_blank" href = "https://ozsaphire.vpreps.com/images/staff/'.$row['staff_($row['staff_time_out'] && $row['staff_time_out'] != '0000-00-00' && $row['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row['staff_time_out']), "h:i:s A") : ''.'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `statuses` ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST">
+        			            <input type = "hidden" name = "br_id" value = "'.$br_id.'" />
+        			            <input type = "hidden" name = "update_staff_id" value = "'.$row['staff_id'].'" />
+        			            <select id="select_option" onchange="this.form.submit();" required name = "update_staff_status" class = "form-control '.$row['staff_status_class'].'">';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            $staff_status_id = $staff_row['staff_status_id'];
+        			            $staff_status_title = $staff_row['staff_status_title'];
+        			            $staff_status_class = $staff_row['staff_status_class'];
+        			            if($staff_status_id == $staff_status)
+        			            {
+            			            echo '<option class = "'.$staff_status_class.'" SELECTED value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			        }
+        			            echo '</select></form>';
+        			    }
+			                echo '</td>
+			                <td>
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                    <a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>
+			                </td>
+			             </tr>';
+			            }
+			            else
+			            {
+			                echo '
+			             <tr>
+			                <td>'.$s.'</td>
+			                <td style = "text-align: left;">'.$row['staff_id'].'</td>
+			                <td style = "text-align: left;">'.$row['staff_name'].'</td>
+			                <td style = "text-align: left;">'.$row['staff_spouse'].'</td>
+			                <td>
+			                    <a target = "_blank" href = "https://ozsaphire.vpreps.com/images/staff/'.$row['staff_image_href'].'">
+			                        <img loading = "lazy" width = "120" height = "50" src = "https://ozsaphire.vpreps.com/images/staff/'.$row['staff_image_href'].'" alt = "https://ozsaphire.vpreps.com/images/staff/'.$row['staff_image_href'].'" /></td>
+			                    </a>
+			                <td>'.$row['staff_phone'].'</td>
+			                <td>'.$row['designation_title'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `branchs` WHERE `status` = '1' ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST" onSubmit="return confirm(\'Do you want to submit?\') ">
+        			            <input type = "hidden" name = "update_staff_branch_id" value = "'.$row['staff_id'].'" />
+        			            <select required name = "update_br_id" class = "form-control">';
+        			            echo '<option value = "0">Organization Staff</option>';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            if($staff_row['id'] == $row['branch_id'])
+        			            {
+            			            echo '<option SELECTED value = "'.$staff_row['id'].'">'.$staff_row['address'].'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_row['id'].'">'.$staff_row['address'].'</option>';
+        			            }
+        			        }
+        			            echo '</select>
+        			            <input type="submit" value = "CHANGE" />
+        			            </form>';
+        			    }
+			                echo '</td>
+			                <td>'.date_format(date_create($row['staff_time_in']), "h:i:s A").'</td>
+			                <td>'.date_format(date_create($row['staff_time_out']), "h:i:s A").'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `statuses` ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST">
+        			            <input type = "hidden" name = "br_id" value = "'.$br_id.'" />
+        			            <input type = "hidden" name = "update_staff_id" value = "'.$row['staff_id'].'" />
+        			            <select id="select_option" onchange="this.form.submit();" required name = "update_staff_status" class = "form-control '.$row['staff_status_class'].'">';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            $staff_status_id = $staff_row['staff_status_id'];
+        			            $staff_status_title = $staff_row['staff_status_title'];
+        			            $staff_status_class = $staff_row['staff_status_class'];
+        			            if($staff_status_id == $staff_status)
+        			            {
+            			            echo '<option class = "'.$staff_status_class.'" SELECTED value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			        }
+        			            echo '</select></form>';
+        			    }
+			                echo '</td>			                
+			                <td>
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                    <a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>
+			                </td>
+			             </tr>
+			                ';
+			            }
+			            }
+			        }
+			        else
+			        {
+			            echo '<tr><td colspan = "9">NO RECORDS FOUND</td></tr>';
+			        }
+			        ?>
+			        </tbody>
+			    </table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<?php mysqli_close($con); ?>($row['staff_time_out'] && $row['staff_time_out'] != '0000-00-00' && $row['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row['staff_time_out']), "h:i:s A") : ''.'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `statuses` ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST">
+        			            <input type = "hidden" name = "br_id" value = "'.$br_id.'" />
+        			            <input type = "hidden" name = "update_staff_id" value = "'.$row['staff_id'].'" />
+        			            <select id="select_option" onchange="this.form.submit();" required name = "update_staff_status" class = "form-control '.$row['staff_status_class'].'">';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            $staff_status_id = $staff_row['staff_status_id'];
+        			            $staff_status_title = $staff_row['staff_status_title'];
+        			            $staff_status_class = $staff_row['staff_status_class'];
+        			            if($staff_status_id == $staff_status)
+        			            {
+            			            echo '<option class = "'.$staff_status_class.'" SELECTED value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			        }
+        			            echo '</select></form>';
+        			    }
+			                echo '</td>
+			                <td>
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                    <a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>
+			                </td>
+			             </tr>';
+			            }
+			            else
+			            {
+			                echo '
+			             <tr>
+			                <td>'.$s.'</td>
+			                <td style = "text-align: left;">'.$row['staff_id'].'</td>
+			                <td style = "text-align: left;">'.$row['staff_name'].'</td>
+			                <td style = "text-align: left;">'.$row['staff_spouse'].'</td>
+			                <td>
+			                    <a target = "_blank" href = "https://ozsaphire.vpreps.com/images/staff/'.$row['staff_image_href'].'">
+			                        <img loading = "lazy" width = "120" height = "50" src = "https://ozsaphire.vpreps.com/images/staff/'.$row['staff_image_href'].'" alt = "https://ozsaphire.vpreps.com/images/staff/'.$row['staff_image_href'].'" /></td>
+			                    </a>
+			                <td>'.$row['staff_phone'].'</td>
+			                <td>'.$row['designation_title'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `branchs` WHERE `status` = '1' ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST" onSubmit="return confirm(\'Do you want to submit?\') ">
+        			            <input type = "hidden" name = "update_staff_branch_id" value = "'.$row['staff_id'].'" />
+        			            <select required name = "update_br_id" class = "form-control">';
+        			            echo '<option value = "0">Organization Staff</option>';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            if($staff_row['id'] == $row['branch_id'])
+        			            {
+            			            echo '<option SELECTED value = "'.$staff_row['id'].'">'.$staff_row['address'].'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_row['id'].'">'.$staff_row['address'].'</option>';
+        			            }
+        			        }
+        			            echo '</select>
+        			            <input type="submit" value = "CHANGE" />
+        			            </form>';
+        			    }
+			                echo '</td>
+			                <td>'.date_format(date_create($row['staff_time_in']), "h:i:s A").'</td>
+			                <td>'.date_format(date_create($row['staff_time_out']), "h:i:s A").'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `statuses` ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST">
+        			            <input type = "hidden" name = "br_id" value = "'.$br_id.'" />
+        			            <input type = "hidden" name = "update_staff_id" value = "'.$row['staff_id'].'" />
+        			            <select id="select_option" onchange="this.form.submit();" required name = "update_staff_status" class = "form-control '.$row['staff_status_class'].'">';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            $staff_status_id = $staff_row['staff_status_id'];
+        			            $staff_status_title = $staff_row['staff_status_title'];
+        			            $staff_status_class = $staff_row['staff_status_class'];
+        			            if($staff_status_id == $staff_status)
+        			            {
+            			            echo '<option class = "'.$staff_status_class.'" SELECTED value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			        }
+        			            echo '</select></form>';
+        			    }
+			                echo '</td>			                
+			                <td>
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                    <a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>
+			                </td>
+			             </tr>
+			                ';
+			            }
+			            }
+			        }
+			        else
+			        {
+			            echo '<tr><td colspan = "9">NO RECORDS FOUND</td></tr>';
+			        }
+			        ?>
+			        </tbody>
+			    </table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<?php mysqli_close($con); ?>($row['staff_time_in'] && $row['staff_time_in'] != '0000-00-00' && $row['staff_time_in'] != '0000-00-00 00:00:00' ? date_format(date_cre($row['staff_time_in'] && $row['staff_time_in'] != '0000-00-00' && $row['staff_time_in'] != '0000-00-00 00:00:00' ? date_format(date_create($row['staff_time_in']), "h:i:s A") : ''.'</td>
+			                <td>'.date_format(date_create($row['staff_time_out']), "h:i:s A").'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `statuses` ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST">
+        			            <input type = "hidden" name = "br_id" value = "'.$br_id.'" />
+        			            <input type = "hidden" name = "update_staff_id" value = "'.$row['staff_id'].'" />
+        			            <select id="select_option" onchange="this.form.submit();" required name = "update_staff_status" class = "form-control '.$row['staff_status_class'].'">';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            $staff_status_id = $staff_row['staff_status_id'];
+        			            $staff_status_title = $staff_row['staff_status_title'];
+        			            $staff_status_class = $staff_row['staff_status_class'];
+        			            if($staff_status_id == $staff_status)
+        			            {
+            			            echo '<option class = "'.$staff_status_class.'" SELECTED value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			        }
+        			            echo '</select></form>';
+        			    }
+			                echo '</td>			                
+			                <td>
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                    <a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>
+			                </td>
+			             </tr>
+			                ';
+			            }
+			            }
+			        }
+			        else
+			        {
+			            echo '<tr><td colspan = "9">NO RECORDS FOUND</td></tr>';
+			        }
+			        ?>
+			        </tbody>
+			    </table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<?php mysqli_close($con); ?>($row['staff_time_out'] && $row['staff_time_out'] != '0000-00-00' && $row['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row['staff_time_out']), "h:i:s A") : ''.'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `statuses` ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST">
+        			            <input type = "hidden" name = "br_id" value = "'.$br_id.'" />
+        			            <input type = "hidden" name = "update_staff_id" value = "'.$row['staff_id'].'" />
+        			            <select id="select_option" onchange="this.form.submit();" required name = "update_staff_status" class = "form-control '.$row['staff_status_class'].'">';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            $staff_status_id = $staff_row['staff_status_id'];
+        			            $staff_status_title = $staff_row['staff_status_title'];
+        			            $staff_status_class = $staff_row['staff_status_class'];
+        			            if($staff_status_id == $staff_status)
+        			            {
+            			            echo '<option class = "'.$staff_status_class.'" SELECTED value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			        }
+        			            echo '</select></form>';
+        			    }
+			                echo '</td>
+			                <td>
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                    <a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>
+			                </td>
+			             </tr>';
+			            }
+			            else
+			            {
+			                echo '
+			             <tr>
+			                <td>'.$s.'</td>
+			                <td style = "text-align: left;">'.$row['staff_id'].'</td>
+			                <td style = "text-align: left;">'.$row['staff_name'].'</td>
+			                <td style = "text-align: left;">'.$row['staff_spouse'].'</td>
+			                <td>
+			                    <a target = "_blank" href = "https://ozsaphire.vpreps.com/images/staff/'.$row['staff_image_href'].'">
+			                        <img loading = "lazy" width = "120" height = "50" src = "https://ozsaphire.vpreps.com/images/staff/'.$row['staff_image_href'].'" alt = "https://ozsaphire.vpreps.com/images/staff/'.$row['staff_image_href'].'" /></td>
+			                    </a>
+			                <td>'.$row['staff_phone'].'</td>
+			                <td>'.$row['designation_title'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `branchs` WHERE `status` = '1' ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST" onSubmit="return confirm(\'Do you want to submit?\') ">
+        			            <input type = "hidden" name = "update_staff_branch_id" value = "'.$row['staff_id'].'" />
+        			            <select required name = "update_br_id" class = "form-control">';
+        			            echo '<option value = "0">Organization Staff</option>';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            if($staff_row['id'] == $row['branch_id'])
+        			            {
+            			            echo '<option SELECTED value = "'.$staff_row['id'].'">'.$staff_row['address'].'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_row['id'].'">'.$staff_row['address'].'</option>';
+        			            }
+        			        }
+        			            echo '</select>
+        			            <input type="submit" value = "CHANGE" />
+        			            </form>';
+        			    }
+			                echo '</td>
+			                <td>'.date_format(date_create($row['staff_time_in']), "h:i:s A").'</td>
+			                <td>'.date_format(date_create($row['staff_time_out']), "h:i:s A").'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `statuses` ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST">
+        			            <input type = "hidden" name = "br_id" value = "'.$br_id.'" />
+        			            <input type = "hidden" name = "update_staff_id" value = "'.$row['staff_id'].'" />
+        			            <select id="select_option" onchange="this.form.submit();" required name = "update_staff_status" class = "form-control '.$row['staff_status_class'].'">';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            $staff_status_id = $staff_row['staff_status_id'];
+        			            $staff_status_title = $staff_row['staff_status_title'];
+        			            $staff_status_class = $staff_row['staff_status_class'];
+        			            if($staff_status_id == $staff_status)
+        			            {
+            			            echo '<option class = "'.$staff_status_class.'" SELECTED value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			        }
+        			            echo '</select></form>';
+        			    }
+			                echo '</td>			                
+			                <td>
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                    <a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>
+			                </td>
+			             </tr>
+			                ';
+			            }
+			            }
+			        }
+			        else
+			        {
+			            echo '<tr><td colspan = "9">NO RECORDS FOUND</td></tr>';
+			        }
+			        ?>
+			        </tbody>
+			    </table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<?php mysqli_close($con); ?>($row['staff_time_in'] && $row['staff_time_in'] != '0000-00-00' && $row['staff_time_in'] != '0000-00-00 00:00:00' ? date_format(date_create($row['staff_time_in']), "h:i:s A") : ''.'</td>
+			                <td>'.date_format(date_create($row['staff_time_out']), "h:i:s A").'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `statuses` ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST">
+        			            <input type = "hidden" name = "br_id" value = "'.$br_id.'" />
+        			            <input type = "hidden" name = "update_staff_id" value = "'.$row['staff_id'].'" />
+        			            <select id="select_option" onchange="this.form.submit();" required name = "update_staff_status" class = "form-control '.$row['staff_status_class'].'">';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            $staff_status_id = $staff_row['staff_status_id'];
+        			            $staff_status_title = $staff_row['staff_status_title'];
+        			            $staff_status_class = $staff_row['staff_status_class'];
+        			            if($staff_status_id == $staff_status)
+        			            {
+            			            echo '<option class = "'.$staff_status_class.'" SELECTED value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			        }
+        			            echo '</select></form>';
+        			    }
+			                echo '</td>			                
+			                <td>
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                    <a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>
+			                </td>
+			             </tr>
+			                ';
+			            }
+			            }
+			        }
+			        else
+			        {
+			            echo '<tr><td colspan = "9">NO RECORDS FOUND</td></tr>';
+			        }
+			        ?>
+			        </tbody>
+			    </table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<?php mysqli_close($con); ?>($row['staff_time_out'] && $row['staff_time_out'] != '0000-00-00' && $row['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row['staff_time_out']), "h:i:s A") : ''.'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `statuses` ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST">
+        			            <input type = "hidden" name = "br_id" value = "'.$br_id.'" />
+        			            <input type = "hidden" name = "update_staff_id" value = "'.$row['staff_id'].'" />
+        			            <select id="select_option" onchange="this.form.submit();" required name = "update_staff_status" class = "form-control '.$row['staff_status_class'].'">';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            $staff_status_id = $staff_row['staff_status_id'];
+        			            $staff_status_title = $staff_row['staff_status_title'];
+        			            $staff_status_class = $staff_row['staff_status_class'];
+        			            if($staff_status_id == $staff_status)
+        			            {
+            			            echo '<option class = "'.$staff_status_class.'" SELECTED value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			        }
+        			            echo '</select></form>';
+        			    }
+			                echo '</td>			                
+			                <td>
+			                    <a class = "btn btn-primary btn-sm" hre($row['staff_time_out'] && $row['staff_time_out'] != '0000-00-00' && $row['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row['staff_time_out']), "h:i:s A") : ''.'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `statuses` ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST">
+        			            <input type = "hidden" name = "br_id" value = "'.$br_id.'" />
+        			            <input type = "hidden" name = "update_staff_id" value = "'.$row['staff_id'].'" />
+        			            <select id="select_option" onchange="this.form.submit();" required name = "update_staff_status" class = "form-control '.$row['staff_status_class'].'">';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            $staff_status_id = $staff_row['staff_status_id'];
+        			            $staff_status_title = $staff_row['staff_status_title'];
+        			            $staff_status_class = $staff_row['staff_status_class'];
+        			            if($staff_status_id == $staff_status)
+        			            {
+            			            echo '<option class = "'.$staff_status_class.'" SELECTED value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			        }
+        			            echo '</select></form>';
+        			    }
+			                echo '</td>			                
+			                <td>
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                    <a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>
+			                </td>
+			             </tr>
+			                ';
+			            }
+			            }
+			        }
+			        else
+			        {
+			            echo '<tr><td colspan = "9">NO RECORDS FOUND</td></tr>';
+			        }
+			        ?>
+			        </tbody>
+			    </table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<?php mysqli_close($con); ?>($row['staff_time_out'] && $row['staff_time_out'] != '0000-00-00' && $row['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row['staff_time_out']), "h:i:s A") : ''.'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `statuses` ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST">
+        			            <input type = "hidden" name = "br_id" value = "'.$br_id.'" />
+        			            <input type = "hidden" name = "update_staff_id" value = "'.$row['staff_id'].'" />
+        			            <select id="select_option" onchange="this.form.submit();" required name = "update_staff_status" class = "form-control '.$row['staff_status_class'].'">';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            $staff_status_id = $staff_row['staff_status_id'];
+        			            $staff_status_title = $staff_row['staff_status_title'];
+        			            $staff_status_class = $staff_row['staff_status_class'];
+        			            if($staff_status_id == $staff_status)
+        			            {
+            			            echo '<option class = "'.$staff_status_class.'" SELECTED value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			        }
+        			            echo '</select></form>';
+        			    }
+			                echo '</td>
+			                <td>
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                    <a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>
+			                </td>
+			             </tr>';
+			            }
+			            else
+			            {
+			                echo '
+			             <tr>
+			                <td>'.$s.'</td>
+			                <td style = "text-align: left;">'.$row['staff_id'].'</td>
+			                <td style = "text-align: left;">'.$row['staff_name'].'</td>
+			                <td style = "text-align: left;">'.$row['staff_spouse'].'</td>
+			                <td>
+			                    <a target = "_blank" href = "https://ozsaphire.vpreps.com/images/staff/'.$row['staff_image_href'].'">
+			                        <img loading = "lazy" width = "120" height = "50" src = "https://ozsaphire.vpreps.com/images/staff/'.$row['staff_image_href'].'" alt = "https://ozsaphire.vpreps.com/images/staff/'.$row['staff_image_href'].'" /></td>
+			                    </a>
+			                <td>'.$row['staff_phone'].'</td>
+			                <td>'.$row['designation_title'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `branchs` WHERE `status` = '1' ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST" onSubmit="return confirm(\'Do you want to submit?\') ">
+        			            <input type = "hidden" name = "update_staff_branch_id" value = "'.$row['staff_id'].'" />
+        			            <select required name = "update_br_id" class = "form-control">';
+        			            echo '<option value = "0">Organization Staff</option>';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            if($staff_row['id'] == $row['branch_id'])
+        			            {
+            			            echo '<option SELECTED value = "'.$staff_row['id'].'">'.$staff_row['address'].'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_row['id'].'">'.$staff_row['address'].'</option>';
+        			            }
+        			        }
+        			            echo '</select>
+        			            <input type="submit" value = "CHANGE" />
+        			            </form>';
+        			    }
+			                echo '</td>
+			                <td>'.date_format(date_create($row['staff_time_in']), "h:i:s A").'</td>
+			                <td>'.date_format(date_create($row['staff_time_out']), "h:i:s A").'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `statuses` ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST">
+        			            <input type = "hidden" name = "br_id" value = "'.$br_id.'" />
+        			            <input type = "hidden" name = "update_staff_id" value = "'.$row['staff_id'].'" />
+        			            <select id="select_option" onchange="this.form.submit();" required name = "update_staff_status" class = "form-control '.$row['staff_status_class'].'">';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            $staff_status_id = $staff_row['staff_status_id'];
+        			            $staff_status_title = $staff_row['staff_status_title'];
+        			            $staff_status_class = $staff_row['staff_status_class'];
+        			            if($staff_status_id == $staff_status)
+        			            {
+            			            echo '<option class = "'.$staff_status_class.'" SELECTED value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			        }
+        			            echo '</select></form>';
+        			    }
+			                echo '</td>			                
+			                <td>
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                    <a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>
+			                </td>
+			             </tr>
+			                ';
+			            }
+			            }
+			        }
+			        else
+			        {
+			            echo '<tr><td colspan = "9">NO RECORDS FOUND</td></tr>';
+			        }
+			        ?>
+			        </tbody>
+			    </table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<?php mysqli_close($con); ?>($row['staff_time_in'] && $row['staff_time_in'] != '0000-00-00' && $row['staff_time_in'] != '0000-00-00 00:00:00' ? date_format(date_create($row['staff_time_in']), "h:i:s A") : ''.'</td>
+			                <td>'.date_format(date_create($row['staff_time_out']), "h:i:s A").'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `statuses` ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST">
+        			            <input type = "hidden" name = "br_id" value = "'.$br_id.'" />
+        			            <input type = "hidden" name = "update_staff_id" value = "'.$row['staff_id'].'" />
+        			            <select id="select_option" onchange="this.form.submit();" required name = "update_staff_status" class = "form-control '.$row['staff_status_class'].'">';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            $staff_status_id = $staff_row['staff_status_id'];
+        			            $staff_status_title = $staff_row['staff_status_title'];
+        			            $staff_status_class = $staff_row['staff_status_class'];
+        			            if($staff_status_id == $staff_status)
+        			            {
+            			            echo '<option class = "'.$staff_status_class.'" SELECTED value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			        }
+        			            echo '</select></form>';
+        			    }
+			                echo '</td>			                
+			                <td>
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                    <a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>
+			                </td>
+			             </tr>
+			                ';
+			            }
+			            }
+			        }
+			        else
+			        {
+			            echo '<tr><td colspan = "9">NO RECORDS FOUND</td></tr>';
+			        }
+			        ?>
+			        </tbody>
+			    </table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<?php mysqli_close($con); ?>($row['staff_time_out'] && $row['staff_time_out'] != '0000-00-00' && $row['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row['staff_time_out']), "h:i:s A") : ''.'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `statuses` ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST">
+        			            <input type = "hidden" name = "br_id" value = "'.$br_id.'" />
+        			            <input type = "hidden" name = "update_staff_id" value = "'.$row['staff_id'].'" />
+        			            <select id="select_option" onchange="this.form.submit();" required name = "update_staff_status" class = "form-control '.$row['staff_status_class'].'">';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            $staff_status_id = $staff_row['staff_status_id'];
+        			            $staff_status_title = $staff_row['staff_status_title'];
+        			            $staff_status_class = $staff_row['staff_status_class'];
+        			            if($staff_status_id == $staff_status)
+        			            {
+            			            echo '<option class = "'.$staff_status_class.'" SELECTED value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			        }
+        			            echo '</select></form>';
+        			    }
+			                echo '</td>			                
+			                <td>
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                    <a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>
+			                </td>
+			             </tr>
+			                ';
+			            }
+			            }
+			        }
+			        else
+			        {
+			            echo '<tr><td colspan = "9">NO RECORDS FOUND</td></tr>';
+			        }
+			        ?>
+			        </tbody>
+			    </table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<?php mysqli_close($con); ?>$row['staff_time_out']), "h:i:s A") : ''.'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `statuses` ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST">
+        			            <input type = "hidden" name = "br_id" value = "'.$br_id.'" />
+        			            <input type = "hidden" name = "update_staff_id" value = "'.$row['staff_id'].'" />
+        			            <select id="select_option" onchange="this.form.submit();" required name = "update_staff_status" class = "form-control '.$row['staff_status_class'].'">';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            $staff_status_id = $staff_row['staff_status_id'];
+        			            $staff_status_title = $staff_row['staff_status_title'];
+        			            $staff_status_class = $staff_row['staff_status_class'];
+        			            if($staff_status_id == $staff_status)
+        			            {
+            			            echo '<option class = "'.$staff_status_class.'" SELECTED value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			        }
+        			            echo '</select></form>';
+        			    }
+			                echo '</td>
+			                <td>
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                    <a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>
+			                </td>
+			             </tr>';
+			            }
+			            else
+			            {
+			                echo '
+			             <tr>
+			                <td>'.$s.'</td>
+			                <td style = "text-align: left;">'.$row['staff_id'].'</td>
+			                <td style = "text-align: left;">'.$row['staff_name'].'</td>
+			                <td style = "text-align: left;">'.$row['staff_spouse'].'</td>
+			                <td>
+			                    <a target = "_blank" href = "https://ozsaphire.vpreps.com/images/staff/'.$row['staff_image_href'].'">
+			                        <img loading = "lazy" width = "120" height = "50" src = "https://ozsaphire.vpreps.com/images/staff/'.$row['staff_image_href'].'" alt = "https://ozsaphire.vpreps.com/images/staff/'.$row['staff_image_href'].'" /></td>
+			                    </a>
+			                <td>'.$row['staff_phone'].'</td>
+			                <td>'.$row['designation_title'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `branchs` WHERE `status` = '1' ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST" onSubmit="return confirm(\'Do you want to submit?\') ">
+        			            <input type = "hidden" name = "update_staff_branch_id" value = "'.$row['staff_id'].'" />
+        			            <select required name = "update_br_id" class = "form-control">';
+        			            echo '<option value = "0">Organization Staff</option>';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            if($staff_row['id'] == $row['branch_id'])
+        			            {
+            			            echo '<option SELECTED value = "'.$staff_row['id'].'">'.$staff_row['address'].'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_row['id'].'">'.$staff_row['address'].'</option>';
+        			            }
+        			        }
+        			            echo '</select>
+        			            <input type="submit" value = "CHANGE" />
+        			            </form>';
+        			    }
+			                echo '</td>
+			                <td>'.date_format(date_create($row['staff_time_in']), "h:i:s A").'</td>
+			                <td>'.date_format(date_create($row['staff_time_out']), "h:i:s A").'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `statuses` ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST">
+        			            <input type = "hidden" name = "br_id" value = "'.$br_id.'" />
+        			            <input type = "hidden" name = "update_staff_id" value = "'.$row['staff_id'].'" />
+        			            <select id="select_option" onchange="this.form.submit();" required name = "update_staff_status" class = "form-control '.$row['staff_status_class'].'">';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            $staff_status_id = $staff_row['staff_status_id'];
+        			            $staff_status_title = $staff_row['staff_status_title'];
+        			            $staff_status_class = $staff_row['staff_status_class'];
+        			            if($staff_status_id == $staff_status)
+        			            {
+            			            echo '<option class = "'.$staff_status_class.'" SELECTED value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			        }
+        			            echo '</select></form>';
+        			    }
+			                echo '</td>			                
+			                <td>
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                    <a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>
+			                </td>
+			             </tr>
+			                ';
+			            }
+			            }
+			        }
+			        else
+			        {
+			            echo '<tr><td colspan = "9">NO RECORDS FOUND</td></tr>';
+			        }
+			        ?>
+			        </tbody>
+			    </table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<?php mysqli_close($con); ?>($row['staff_time_in'] && $row['staff_time_in'] != '0000-00-00' && $row['staff_time_in'] != '0000-00-00 00:00:00' ? date_format(date_create($row['staff_time_in']), "h:i:s A") : ''.'</td>
+			                <td>'.date_format(date_create($row['staff_time_out']), "h:i:s A").'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `statuses` ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST">
+        			            <input type = "hidden" name = "br_id" value = "'.$br_id.'" />
+        			            <input type = "hidden" name = "update_staff_id" value = "'.$row['staff_id'].'" />
+        			            <select id="select_option" onchange="this.form.submit();" required name = "update_staff_status" class = "form-control '.$row['staff_status_class'].'">';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            $staff_status_id = $staff_row['staff_status_id'];
+        			            $staff_status_title = $staff_row['staff_status_title'];
+        			            $staff_status_class = $staff_row['staff_status_class'];
+        			            if($staff_status_id == $staff_status)
+        			            {
+            			            echo '<option class = "'.$staff_status_class.'" SELECTED value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			        }
+        			            echo '</select></form>';
+        			    }
+			                echo '</td>			                
+			                <td>
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                    <a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>
+			                </td>
+			             </tr>
+			                ';
+			            }
+			            }
+			        }
+			        else
+			        {
+			            echo '<tr><td colspan = "9">NO RECORDS FOUND</td></tr>';
+			        }
+			        ?>
+			        </tbody>
+			    </table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<?php mysqli_close($con); ?>($row['staff_time_out'] && $row['staff_time_out'] != '0000-00-00' && $row['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row['staff_time_out']), "h:i:s A") : ''.'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `statuses` ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST">
+        			            <input type = "hidden" name = "br_id" value = "'.$br_id.'" />
+        			            <input type = "hidden" name = "update_staff_id" value = "'.$row['staff_id'].'" />
+        			            <select id="select_option" onchange="this.form.submit();" required name = "update_staff_status" class = "form-control '.$row['staff_status_class'].'">';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            $staff_status_id = $staff_row['staff_status_id'];
+        			            $staff_status_title = $staff_row['staff_status_title'];
+        			            $staff_status_class = $staff_row['staff_status_class'];
+        			            if($staff_status_id == $staff_status)
+        			            {
+            			            echo '<option class = "'.$staff_status_class.'" SELECTED value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			        }
+        			            echo '</select></form>';
+        			    }
+			                echo '</td>			                
+			                <td>
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                    <a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>
+			                </td>
+			             </tr>
+			                ';
+			            }
+			            }
+			        }
+			        else
+			        {
+			            echo '<tr><td colspan = "9">NO RECORDS FOUND</td></tr>';
+			        }
+			        ?>
+			        </tbody>
+			    </table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<?php mysqli_close($con); ?>($row['staff_time_in'] && $row['staff_time_in'] != '0000-00-00' && $row['staff_time_in'] != '0000-00-00 00:00:00' ? date_format(date_create($row['staff_time_in']), "h:i:s A") : ''.'</td>
+			                <td>'.date_format(date_create($row['staff_time_out']), "h:i:s A").'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `statuses` ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST">
+        			            <input type = "hidden" name = "br_id" value = "'.$br_id.'" />
+        			            <input type = "hidden" name = "update_staff_id" value = "'.$row['staff_id'].'" />
+        			            <select id="select_option" onchange="this.form.submit();" required name = "update_staff_status" class = "form-control '.$row['staff_status_class'].'">';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            $staff_status_id = $staff_row['staff_status_id'];
+        			            $staff_status_title = $staff_row['staff_status_title'];
+        			            $staff_status_class = $staff_row['staff_status_class'];
+        			            if($staff_status_id == $staff_status)
+        			            {
+            			            echo '<option class = "'.$staff_status_class.'" SELECTED value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			        }
+        			            echo '</select></form>';
+        			    }
+			                echo '</td>			                
+			                <td>
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                    <a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>
+			                </td>
+			             </tr>
+			                ';
+			            }
+			            }
+			        }
+			        else
+			        {
+			            echo '<tr><td colspan = "9">NO RECORDS FOUND</td></tr>';
+			        }
+			        ?>
+			        </tbody>
+			    </table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<?php mysqli_close($con); ?>($row['staff_time_in'] && $row['staff_time_in'] != '0000-00-00' && $row['staff_time_in'] != '0000-00-00 00:00:00' ? date_format(date_create($row['staff_time_in']), "h:i:s A") : ''.'</td>
+			                <td>'.date_format(date_create($row['staff_time_out']), "h:i:s A").'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `statuses` ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST">
+        			            <input type = "hidden" name = "br_id" value = "'.$br_id.'" />
+        			            <input type = "hidden" name = "update_staff_id" value = "'.$row['staff_id'].'" />
+        			            <select id="select_option" onchange="this.form.submit();" required name = "update_staff_status" class = "form-control '.$row['staff_status_class'].'">';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            $staff_status_id = $staff_row['staff_status_id'];
+        			            $staff_status_title = $staff_row['staff_status_title'];
+        			            $staff_status_class = $staff_row['staff_status_class'];
+        			            if($staff_status_id == $staff_status)
+        			            {
+            			            echo '<option class = "'.$staff_status_class.'" SELECTED value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			        }
+        			            echo '</select></form>';
+        			    }
+			                echo '</td>			                
+			                <td>
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                    <a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>
+			                </td>
+			             </tr>
+			                ';
+			            }
+			            }
+			        }
+			        else
+			        {
+			            echo '<tr><td colspan = "9">NO RECORDS FOUND</td></tr>';
+			        }
+			        ?>
+			        </tbody>
+			    </table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<?php mysqli_close($con); ?>($row['staff_time_out'] && $row['staff_time_out'] != '0000-00-00' && $row['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row['staff_time_out']), "h:i:s A") : ''.'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `statuses` ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST">
+        			            <input type = "hidden" name = "br_id" value = "'.$br_id.'" />
+        			            <input type = "hidden" name = "update_staff_id" value = "'.$row['staff_id'].'" />
+        			            <select id="select_option" onchange="this.form.submit();" required name = "update_staff_status" class = "form-control '.$row['staff_status_class'].'">';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            $staff_status_id = $staff_row['staff_status_id'];
+        			            $staff_status_title = $staff_row['staff_status_title'];
+        			            $staff_status_class = $staff_row['staff_status_class'];
+        			            if($staff_status_id == $staff_status)
+        			            {
+            			            echo '<option class = "'.$staff_status_class.'" SELECTED value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			        }
+        			            echo '</select></form>';
+        			    }
+			                echo '</td>			                
+			                <td>
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                    <a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>
+			                </td>
+			             </tr>
+			                ';
+			            }
+			            }
+			        }
+			        else
+			        {
+			            echo '<tr><td colspan = "9">NO RECORDS FOUND</td></tr>';
+			        }
+			        ?>
+			        </tbody>
+			    </table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<?php mysqli_close($con); ?>($row['staff_time_out'] && $row['staff_time_out'] != '0000-00-00' && $row['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row['staff_time_out']), "h:i:s A") : ''.'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `statuses` ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST">
+        			            <input type = "hidden" name = "br_id" value = "'.$br_id.'" />
+        			            <input type = "hidden" name = "update_staff_id" value = "'.$row['staff_id'].'" />
+        			            <select id="select_option" onchange="this.form.submit();" required name = "update_staff_status" class = "form-control '.$row['staff_status_class'].'">';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            $staff_status_id = $staff_row['staff_status_id'];
+        			            $staff_status_title = $staff_row['staff_status_title'];
+        			            $staff_status_class = $staff_row['staff_status_class'];
+        			            if($staff_status_id == $staff_status)
+        			            {
+            			            echo '<option class = "'.$staff_status_class.'" SELECTED value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			        }
+        			            echo '</select></form>';
+        			    }
+			                echo '</td>			                
+			                <td>
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                    <a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>
+			                </td>
+			             </tr>
+			                ';
+			            }
+			            }
+			        }
+			        else
+			        {
+			            echo '<tr><td colspan = "9">NO RECORDS FOUND</td></tr>';
+			        }
+			        ?>
+			        </tbody>
+			    </table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<?php mysqli_close($con); ?>($row['staff_time_in'] && $row['staff_time_in'] != '0000-00-00' && $row['staff_time_in'] != '0000-00-00 00:00:00' ? date_format(date_create($row['staff_time_in']), "h:i:s A") : ''.'</td>
+			                <td>'.date_format(date_create($row['staff_time_out']), "h:i:s A").'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `statuses` ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST">
+        			            <input type = "hidden" name = "br_id" value = "'.$br_id.'" />
+        			            <input type = "hidden" name = "update_staff_id" value = "'.$row['staff_id'].'" />
+        			            <select id="select_option" onchange="this.form.submit();" required name = "update_staff_status" class = "form-control '.$row['staff_status_class'].'">';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            $staff_status_id = $staff_row['staff_status_id'];
+        			            $staff_status_title = $staff_row['staff_status_title'];
+        			            $staff_status_class = $staff_row['staff_status_class'];
+        			            if($staff_status_id == $staff_status)
+        			            {
+            			            echo '<option class = "'.$staff_status_class.'" SELECTED value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			        }
+        			            echo '</select></form>';
+        			    }
+			                echo '</td>			                
+			                <td>
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                    <a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>
+			                </td>
+			             </tr>
+			                ';
+			            }
+			            }
+			        }
+			        else
+			        {
+			            echo '<tr><td colspan = "9">NO RECORDS FOUND</td></tr>';
+			        }
+			        ?>
+			        </tbody>
+			    </table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<?php mysqli_close($con); ?>($row['staff_time_out'] && $row['staff_time_out'] != '0000-00-00' && $row['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row['staff_time_out']), "h:i:s A") : ''.'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `statuses` ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST">
+        			            <input type = "hidden" name = "br_id" value = "'.$br_id.'" />
+        			            <input type = "hidden" name = "update_staff_id" value = "'.$row['staff_id'].'" />
+        			            <select id="select_option" onchange="this.form.submit();" required name = "update_staff_status" class = "form-control '.$row['staff_status_class'].'">';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            $staff_status_id = $staff_row['staff_status_id'];
+        			            $staff_status_title = $staff_row['staff_status_title'];
+        			            $staff_status_class = $staff_row['staff_status_class'];
+        			            if($staff_status_id == $staff_status)
+        			            {
+            			            echo '<option class = "'.$staff_status_class.'" SELECTED value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			        }
+        			            echo '</select></form>';
+        			    }
+			                echo '</td>			                
+			                <td>
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                    <a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>
+			                </td>
+			             </tr>
+			                ';
+			            }
+			            }
+			        }
+			        else
+			        {
+			            echo '<tr><td colspan = "9">NO RECORDS FOUND</td></tr>';
+			        }
+			        ?>
+			        </tbody>
+			    </table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<?php mysqli_close($con); ?>$row['staff_time_in']), "h:i:s A") : ''.'</td>
+			                <td>'.date_format(date_create($row['staff_time_out']), "h:i:s A").'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `statuses` ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST">
+        			            <input type = "hidden" name = "br_id" value = "'.$br_id.'" />
+        			            <input type = "hidden" name = "update_staff_id" value = "'.$row['staff_id'].'" />
+        			            <select id="select_option" onchange="this.form.submit();" required name = "update_staff_status" class = "form-control '.$row['staff_status_class'].'">';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            $staff_status_id = $staff_row['staff_status_id'];
+        			            $staff_status_title = $staff_row['staff_status_title'];
+        			            $staff_status_class = $staff_row['staff_status_class'];
+        			            if($staff_status_id == $staff_status)
+        			            {
+            			            echo '<option class = "'.$staff_status_class.'" SELECTED value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			        }
+        			            echo '</select></form>';
+        			    }
+			                echo '</td>			                
+			                <td>
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                    <a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>
+			                </td>
+			             </tr>
+			                ';
+			            }
+			            }
+			        }
+			        else
+			        {
+			            echo '<tr><td colspan = "9">NO RECORDS FOUND</td></tr>';
+			        }
+			        ?>
+			        </tbody>
+			    </table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<?php mysqli_close($con); ?>($row['staff_time_out'] && $row['staff_time_out'] != '0000-00-00' && $row['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row['staff_time_out']), "h:i:s A") : ''.'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `statuses` ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST">
+        			            <input type = "hidden" name = "br_id" value = "'.$br_id.'" />
+        			            <input type = "hidden" name = "update_staff_id" value = "'.$row['staff_id'].'" />
+        			            <select id="select_option" onchange="this.form.submit();" required name = "update_staff_status" class = "form-control '.$row['staff_status_class'].'">';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            $staff_status_id = $staff_row['staff_status_id'];
+        			            $staff_status_title = $staff_row['staff_status_title'];
+        			            $staff_status_class = $staff_row['staff_status_class'];
+        			            if($staff_status_id == $staff_status)
+        			            {
+            			            echo '<option class = "'.$staff_status_class.'" SELECTED value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			        }
+        			            echo '</select></form>';
+        			    }
+			                echo '</td>			                
+			                <td>
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                    <a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>
+			                </td>
+			             </tr>
+			                ';
+			            }
+			            }
+			        }
+			        else
+			        {
+			            echo '<tr><td colspan = "9">NO RECORDS FOUND</td></tr>';
+			        }
+			        ?>
+			        </tbody>
+			    </table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<?php mysqli_close($con); ?>($row['staff_time_out'] && $row['staff_time_out'] != '0000-00-00' && $row['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row['staff_time_out']), "h:i:s A") : ''.'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `statuses` ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST">
+        			            <input type = "hidden" name = "br_id" value = "'.$br_id.'" />
+        			            <input type = "hidden" name = "update_staff_id" value = "'.$row['staff_id'].'" />
+        			            <select id="select_option" onchange="this.form.submit();" required name = "update_staff_status" class = "form-control '.$row['staff_status_class'].'">';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            $staff_status_id = $staff_row['staff_status_id'];
+        			            $staff_status_title = $staff_row['staff_status_title'];
+        			            $staff_status_class = $staff_row['staff_status_class'];
+        			            if($staff_status_id == $staff_status)
+        			            {
+            			            echo '<option class = "'.$staff_status_class.'" SELECTED value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			        }
+        			            echo '</select></form>';
+        			    }
+			                echo '</td>			                
+			                <td>
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                    <a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>
+			                </td>
+			             </tr>
+			                ';
+			            }
+			            }
+			        }
+			        else
+			        {
+			            echo '<tr><td colspan = "9">NO RECORDS FOUND</td></tr>';
+			        }
+			        ?>
+			        </tbody>
+			    </table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<?php mysqli_close($con); ?>($row['staff_time_out'] && $row['staff_time_out'] != '0000-00-00' && $row['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row['staff_time_out']), "h:i:s A") : ''.'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			                <td>';
+        			    $staff_query = "SELECT * FROM `statuses` ";
+        			    $staff_run = mysqli_query($con, $staff_query);
+        			    if(mysqli_num_rows($staff_run) > 0)
+        			    {
+        			            echo '
+        			            <form method = "POST">
+        			            <input type = "hidden" name = "br_id" value = "'.$br_id.'" />
+        			            <input type = "hidden" name = "update_staff_id" value = "'.$row['staff_id'].'" />
+        			            <select id="select_option" onchange="this.form.submit();" required name = "update_staff_status" class = "form-control '.$row['staff_status_class'].'">';
+        			        while($staff_row = mysqli_fetch_array($staff_run))
+        			        {
+        			            $staff_status_id = $staff_row['staff_status_id'];
+        			            $staff_status_title = $staff_row['staff_status_title'];
+        			            $staff_status_class = $staff_row['staff_status_class'];
+        			            if($staff_status_id == $staff_status)
+        			            {
+            			            echo '<option class = "'.$staff_status_class.'" SELECTED value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			            else
+        			            {
+            			            echo '<option value = "'.$staff_status_id.'">'.$staff_status_title.'</option>';
+        			            }
+        			        }
+        			            echo '</select></form>';
+        			    }
+			                echo '</td>			                
+			                <td>
+			                    <a class = "btn btn-primary btn-sm" href = "print_staff.php?staff_id='.$row['staff_id'].'">PRINT</a>
+			                    <a class = "btn btn-warning btn-sm" href = "update_staff.php?staff_id='.$row['staff_id'].'">UPDATE</a>
+			                </td>
+			             </tr>
+			                ';
+			            }
+			            }
+			        }
+			        else
+			        {
+			            echo '<tr><td colspan = "9">NO RECORDS FOUND</td></tr>';
+			        }
+			        ?>
+			        </tbody>
+			    </table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<?php mysqli_close($con); ?>$row['staff_time_out']), "h:i:s A") : ''.'</td>
 			                <td>'.$row['staff_duty_hours'].'</td>
 			                <td>';
         			    $staff_query = "SELECT * FROM `statuses` ";

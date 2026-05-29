@@ -36,7 +36,130 @@ elseif (isset($_GET['s']) && $_GET['s'] != '') {
     	<h6><?php echo $branch_address; ?></h6>
     	<h5>Token Summary</h5>
 
-         <div style="float:left"><strong>Date:</strong><span style="text-align: left;"><?php echo date_format(date_create($from_date), 'd-m-Y'); ?> To <?php echo date_format(date_create($to_date), 'd-m-Y'); ?></span></div>
+         <div style="float:left"><strong>Date:</strong><span style="text-align: left;"><?php echo ($from_date && $from_date != '0000-00-00' && $from_date != '0000-00-00 00:00:00' ? date_format(date_create($from_date), 'd-m-Y') : ''; ?> To <?php echo date_format(date_create($to_date), 'd-m-Y'); ?></span></div>
+
+         <div style="float:right">Print Time: <?php echo date('h:i:s A'); ?></div>
+         </br>
+
+         <div style="float:left"><strong>User Name:</strong> <span style="text-align: left;"><?php echo $u_name; ?></span></div>
+
+         <div style="float:right">Print Date:<?php echo date('d-m-Y'); ?></div>
+         </td>
+
+	</tr>
+		<tr style="text-align: center;">
+			<th colspan="5">Total Amount</th>
+			<th colspan="6">Received Amount</th>
+		</tr>
+	</thead>
+	<tbody>
+<?php 
+$last_date = date('Y-m-d', strtotime('+1 day', strtotime($to_date)));
+$s = 0;
+$total_cash = 0;
+$total_cash_received = 0;
+if($u_id != 0)
+{
+$select = "SELECT sum(`cash`),sum(`cash_received`) FROM tokans WHERE 
+	user_id = '$u_id' AND 
+	`created` <= '$last_date' AND 
+	`created` >= '$from_date' AND
+	`status` = '1' 
+	ORDER BY `created` ";
+}
+else
+{
+$select = "SELECT sum(`cash`),sum(`cash_received`) FROM tokans WHERE 
+	`created` <= '$last_date' AND 
+	`created` >= '$from_date' AND
+	`status` = '1' 
+	ORDER BY `created` ";
+}
+$run = m($to_date && $to_date != '0000-00-00' && $to_date != '0000-00-($to_date && $to_date != '0000-00-00' && $to_date != '0000-00-00 00:00:00' ? date_format(date_create($to_date), 'd-m-Y') : ''; ?></span></div>
+
+         <div style="float:right">Print Time: <?php echo date('h:i:s A'); ?></div>
+         </br>
+
+         <div style="float:left"><strong>User Name:</strong> <span style="text-align: left;"><?php echo $u_name; ?></span></div>
+
+         <div style="float:right">Print Date:<?php echo date('d-m-Y'); ?></div>
+         </td>
+
+	</tr>
+		<tr style="text-align: center;">
+			<th colspan="5">Total Amount</th>
+			<th colspan="6">Received Amount</th>
+		</tr>
+	</thead>
+	<tbody>
+<?php 
+$last_date = date('Y-m-d', strtotime('+1 day', strtotime($to_date)));
+$s = 0;
+$total_cash = 0;
+$total_cash_received = 0;
+if($u_id != 0)
+{
+$select = "SELECT sum(`cash`),sum(`cash_received`) FROM tokans WHERE 
+	user_id = '$u_id' AND 
+	`created` <= '$last_date' AND 
+	`created` >= '$from_date' AND
+	`status` = '1' 
+	ORDER BY `created` ";
+}
+else
+{
+$select = "SELECT sum(`cash`),sum(`cash_received`) FROM tokans WHERE 
+	`created` <= '$last_date' AND 
+	`created` >= '$from_date' AND
+	`status` = '1' 
+	ORDER BY `created` ";
+}
+$run = m($to_date && $to_date != '0000-00-00' && $to_date != '0000-00-00 00:00:00' ? date_format(date_create($to_date), 'd-m-Y') : ''; ?></span></div>
+
+         <div style="float:right">Print Time: <?php echo date('h:i:s A'); ?></div>
+         </br>
+
+         <div style="float:left"><strong>User Name:</strong> <span style="text-align: left;"><?php echo $u_name; ?></span></div>
+
+         <div style="float:right">Print Date:<?php echo date('d-m-Y'); ?></div>
+         </td>
+
+	</tr>
+		<tr style="text-align: center;">
+			<th colspan="5">Total Amount</th>
+			<th colspan="6">Received Amount</th>
+		</tr>
+	</thead>
+	<tbody>
+<?php 
+$last_date = date('Y-m-d', strtotime('+1 day', strtotime($to_date)));
+$s = 0;
+$total_cash = 0;
+$total_cash_received = 0;
+if($u_id != 0)
+{
+$select = "SELECT sum(`cash`),sum(`cash_received`) FROM tokans WHERE 
+	user_id = '$u_id' AND 
+	`created` <= '$last_date' AND 
+	`created` >= '$from_date' AND
+	`status` = '1' 
+	ORDER BY `created` ";
+}
+else
+{
+$select = "SELECT sum(`cash`),sum(`cash_received`) FROM tokans WHERE 
+	`created` <= '$last_date' AND 
+	`created` >= '$from_date' AND
+	`status` = '1' 
+	ORDER BY `created` ";
+}
+$run = mysqli_query($con, $select);
+if (mysqli_num_rows($run) > 0) 
+{
+	while ($row = mysqli_fetch_array($run)) 
+	{
+		$total_cash =  $row['0'];
+		$total_cash_received =  $r$to_date), 'd-m-Y') : ''; ?></span></div>
 
          <div style="float:right">Print Time: <?php echo date('h:i:s A'); ?></div>
          </br>
@@ -86,8 +209,8 @@ if (mysqli_num_rows($run) > 0)
 }
 ?>
 <tr style="text-align: center;">
-	<th colspan="5"><?php echo number_format($total_cash); ?></th>
-	<th colspan="6"><?php echo number_format($total_cash_received); ?></th>
+	<th colspan="5"><?php echo number_format((float)($total_cash ?? 0)); ?></th>
+	<th colspan="6"><?php echo number_format((float)($total_cash_received ?? 0)); ?></th>
 </tr>
 
 <?php
@@ -394,7 +517,7 @@ if (mysqli_num_rows($run_medicine) > 0)
 		echo '
 		<tr>
 			<th colspan="9" style="text-align: right;">TOTAL AMOUNT</th>
-			<th style="text-align: center;" colspan="2"><u>'.number_format($consultent_opd_total+$opd_total+$medicine_amount).'</u></th>
+			<th style="text-align: center;" colspan="2"><u>'.number_format((float)($consultent_opd_total+$opd_total+$medicine_amount ?? 0)).'</u></th>
 		</tr>';
 
 
@@ -450,7 +573,7 @@ if (mysqli_num_rows($run_medicine) > 0)
                         }
         }
         echo 
-    '<h3 style="text-align: left;text-align: center;" colspan="11">PENDING TOKEN Amount -> '.number_format($pending_token_amount).' </h3>';
+    '<h3 style="text-align: left;text-align: center;" colspan="11">PENDING TOKEN Amount -> '.number_format((float)($pending_token_amount ?? 0)).' </h3>';
 // 	echo '</table>';
 	echo '</td></tr>';
 	}
@@ -477,7 +600,7 @@ if (mysqli_num_rows($run_medicine) > 0)
         }
         echo 
     '
-    <h3 style="text-align: left;text-align: center;" colspan="11">PENDING RECEIVED AMOUNT -> '.number_format($pending_receive_amount).' </h3>
+    <h3 style="text-align: left;text-align: center;" colspan="11">PENDING RECEIVED AMOUNT -> '.number_format((float)($pending_receive_amount ?? 0)).' </h3>
 	</table>
 	</td></tr>';
 	}

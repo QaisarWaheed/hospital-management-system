@@ -9,7 +9,7 @@ require_once __DIR__ . '/report_helpers.php';
 function hr_monthly_progress_month_bounds($con, $dateInput)
 {
     $raw = substr((string) $dateInput, 0, 10);
-    if (strlen($raw) === 7) {
+    if (strlen($raw ?? '') === 7) {
         $raw .= '-01';
     }
     $ym = ycdo_parse_year_month($raw);

@@ -11,7 +11,7 @@ else
     $selected_date = date('Y-m-d');
 }
 ?>
-	<title>REFERAL PATIENTS OF <?php echo date_format(date_create($selected_date), 'd-M-Y'); ?> - <?php echo $company_trademark; ?></title>
+	<title>REFERAL PATIENTS OF <?php echo ($selected_date && $selected_date != '0000-00-00' && $selected_date != '0000-00-00 00:00:00' ? date_format(date_create($selected_date), 'd-M-Y') : ''; ?> - <?php echo $company_trademark; ?></title>
 </head>
 
 <body class="background_image">
@@ -27,6 +27,48 @@ else
 	    <table class = "table" style = "color: black;">
 	        <caption style = "caption-side: top; text-align: center;color: black;">
 	            <h2>REFERAL PATIENTS OF <?php echo date_format(date_create($selected_date), 'd-M-Y'); ?></h2>
+	        </caption>
+	        <thead>
+	            <tr class = "nodisplay_print">
+	                <th></th>
+	                <th>
+	                    <form action = "referral_patients.php">
+	                        <input onchange="this.form.submit()" class = "form-control" type = "date" name = "se($selected_date && $selected_date != '0000-00-00' && $selected_date !=($selected_date && $selected_date != '0000-00-00' && $selected_date != '0000-00-00 00:00:00' ? date_format(date_create($selected_date), 'd-M-Y') : ''; ?></h2>
+	        </caption>
+	        <thead>
+	            <tr class = "nodisplay_print">
+	                <th></th>
+	                <th>
+	                    <form action = "referral_patients.php">
+	                        <input onchange="this.form.submit()" class = "form-control" type = "date" name = "se($selected_date && $selected_date != '0000-00-00' && $selected_date != '0000-00-00 00:00:00' ? date_format(date_create($selected_date), 'd-M-Y') : ''; ?></h2>
+	        </caption>
+	        <thead>
+	            <tr class = "nodisplay_print">
+	                <th></th>
+	                <th>
+	                    <form action = "referral_patients.php">
+	                        <input onchange="this.form.submit()" class = "form-control" type = "date" name = "selected_date" value = "<?php echo $selected_date; ?>" />
+	                    </form>
+	                </th>
+	                <th colspan = "4"></th>
+	                <th>
+	                    <a href = "referral_patients_report.php" class = "btn btn-primary"> REPORT</a>
+	                </th>
+	            </tr>
+	            <tr>
+	                <th>S#</th>
+	                <th>TimeDate</th>
+	                <th>Token No</th>
+	                <th>Patient Name</th>
+	                <th>Patient Phone</th>
+	                <th>Referal By</th>
+	                <th>Branch</th>
+	            </tr>
+	        </thead>
+	        <tbody>
+<?php
+$s = 0;
+$select = "SELECT DISTINCT item_by_doctor.tokan_no FROM item_by$selected_date), 'd-M-Y') : ''; ?></h2>
 	        </caption>
 	        <thead>
 	            <tr class = "nodisplay_print">
@@ -92,6 +134,212 @@ if(mysqli_num_rows($run) > 0)
                 <tr>
                     <td><?php echo $s; ?></td>
                     <td><?php echo date_format(date_create($token_create), 'h:i:s A'); ?></td>
+                    <td><?php echo $row['tokan_no']; ?></td>
+                    <td><?php echo $patient_name; ?></td>
+                    <td><?php echo ($token_create && $token_create != '0000-00-00' && $token_create != '0000-00-00 00:00:00' ? date_format(date_create($token_create),'Y-m-d') : '';
+                if($select_date != $searech_date)
+                {
+                    $INSERT = "INSERT INTO `referral_test_reports`
+                    (`referral_test_report_id`, `referral_test_report_date`, `referral_test_report_token_no`, `referral_test_report_doctor_id`, `referral_test_report_status`, `referral_test_report_created`, `user_id`, `branch_id`) 
+                  ($token_create && $token_create != '0000-00-00' && $token_create != '0000-00-00 00:00:00' ? date_format(date_create($token_create),'Y-m-d') : '';
+                if($select_date != $searech_date)
+                {
+                    $INSERT = "INSERT INTO `referral_test_reports`
+                    (`referral_test_report_id`, `referral_test_report_date`, `referral_test_report_token_no`, `referral_test_report_doctor_id`, `referral_test_report_status`, `referral_test_report_created`, `user_id`, `branch_id`) 
+                    VALUES
+                    (NULL, '$token_create', '$token_no', '$doctor_id', '1', '$current_date', '$lab_user_id', '".$row_token['branch_id']."')";
+                }
+            }
+        }
+        $s++;
+?>
+                <tr>
+                    <td><?php echo $s; ?></td>
+                    <td><?php echo date_format(date_create($token_create), 'h:i:s A'); ?></td>
+                    <td><?php echo $row['tokan_no']; ?></td>
+                    <td><?php echo $patient_name; ?></td>
+                    <td><?php echo ($token_create && $token_create != '0000-00-00' && $token_create != '0000-00-00 00:00:00' ? date_format(date_create($token_create),'Y-m-d') : '';
+                if($select_date != $searech_date)
+                {
+                    $INSERT = "INSERT INTO `referral_test_reports`
+                    (`referral_test_report_id`, `referral_test_report_date`, `referral_test_report_token_no`, `referral_test_report_doctor_id`, `referral_test_report_status`, `referral_test_report_created`, `user_id`, `branch_id`) 
+                    VALUES
+                    (NULL, '$token_create', '$token_no', '$doctor_id', '1', '$current_date', '$lab_user_id', '".$row_token['branch_id']."')";
+                }
+            }
+        }
+        $s++;
+?>
+                <tr>
+                    <td><?php echo $s; ?></td>
+                    <td><?php echo date_format(date_create($token_create), 'h:i:s A'); ?></td>
+                    <td><?php echo $row['tokan_no']; ?></td>
+                    <td><?php echo $patient_name; ?></td>
+                    <td><?php echo $patient_phone; ?></td>
+                    <td><?php echo $doctor_name; ?></td>
+                    <td><?php echo $referal_from_branch_name; ?></td>
+                </tr>
+<?php
+    }
+}
+?>
+	        </tbody>
+	    </table>
+	</div>
+</div>
+
+</body>
+</html>($token_create && $token_create != '0000-00-00' && $token_create != '0000-00-00 00:00:00' ? date_format(date_create($token_create), 'h:i:s A') : ''; ?></td>
+                    <td><?php echo $row['tokan_no']; ?></td>
+                    <td><?php echo $patient_name; ?></td>
+                    <td><?php echo $patient_phone; ?></td>
+                    <td><?php echo $doctor_name; ?></td>
+                    <td><?php echo $referal_from_branch_name; ?></td>
+                </tr>
+<?php
+    }
+}
+?>
+	        </tbody>
+	    </table>
+	</div>
+</div>
+
+</body>
+</html>($token_create && $token_create != '0000-00-00' && $token_create != '0000-00-00 00:00:00' ? date_format(date_create($token_create), 'h:i:s A') : ''; ?></td>
+                    <td><?php echo $row['tokan_no']; ?></td>
+                    <td><?php echo $patient_name; ?></td>
+                    <td><?php echo ($token_create && $token_create != '0000-00-00' && $token_create != '0000-00-00 00:00:00' ? date_format(date_create($token_create),'Y-m-d') : '';
+                if($select_date != $searech_date)
+                {
+                    $INSERT = "INSERT INTO `referral_test_reports`
+                    (`referral_test_report_id`, `referral_test_report_date`, `referral_test_report_token_no`, `referral_test_report_doctor_id`, `referral_test_report_status`, `referral_test_report_created`, `user_id`, `branch_id`) 
+                    VALUES
+                    (NULL, '$token_create', '$token_no', '$doctor_id', '1', '$current_date', '$lab_user_id', '".$row_token['branch_id']."')";
+                }
+            }
+        }
+        $s++;
+?>
+                <tr>
+                    <td><?php echo $s; ?></td>
+                    <td><?php echo date_format(date_create($token_create), 'h:i:s A'); ?></td>
+                    <td><?php echo $row['tokan_no']; ?></td>
+                    <td><?php echo $patient_name; ?></td>
+                    <td><?php echo $patient_phone; ?></td>
+                    <td><?php echo $doctor_name; ?></td>
+                    <td><?php echo $referal_from_branch_name; ?></td>
+                </tr>
+<?php
+    }
+}
+?>
+	        </tbody>
+	    </table>
+	</div>
+</div>
+
+</body>
+</html>($token_create && $token_create != '0000-00-00' && $token_create != '0000-00-00 00:00:00' ? date_format(date_create($token_create), 'h:i:s A') : ''; ?></td>
+                    <td><?php echo $row['tokan_no']; ?></td>
+                    <td><?php echo $patient_name; ?></td>
+                    <td><?php echo $patient_phone; ?></td>
+                    <td><?php echo $doctor_name; ?></td>
+                    <td><?php echo $referal_from_branch_name; ?></td>
+                </tr>
+<?php
+    }
+}
+?>
+	        </tbody>
+	    </table>
+	</div>
+</div>
+
+</body>
+</html>$token_create),'Y-m-d') : '';
+                if($select_date != $searech_date)
+                {
+                    $INSERT = "INSERT INTO `referral_test_reports`
+                    (`referral_test_report_id`, `referral_test_report_date`, `referral_test_report_token_no`, `referral_test_report_doctor_id`, `referral_test_report_status`, `referral_test_report_created`, `user_id`, `branch_id`) 
+                    VALUES
+                    (NULL, '$token_create', '$token_no', '$doctor_id', '1', '$current_date', '$lab_user_id', '".$row_token['branch_id']."')";
+                }
+            }
+        }
+        $s++;
+?>
+                <tr>
+                    <td><?php echo $s; ?></td>
+                    <td><?php echo date_format(date_create($token_create), 'h:i:s A'); ?></td>
+                    <td><?php echo $row['tokan_no']; ?></td>
+                    <td><?php echo $patient_name; ?></td>
+                    <td><?php echo $patient_phone; ?></td>
+                    <td><?php echo $doctor_name; ?></td>
+                    <td><?php echo $referal_from_branch_name; ?></td>
+                </tr>
+<?php
+    }
+}
+?>
+	        </tbody>
+	    </table>
+	</div>
+</div>
+
+</body>
+</html>($token_create && $token_create != '0000-00-00' && $token_create != '0000-00-00 00:00:00' ? date_format(date_create($token_create), 'h:i:s A') : ''; ?></td>
+                    <td><?php echo $row['tokan_no']; ?></td>
+                    <td><?php echo $patient_name; ?></td>
+                    <td><?php echo $patient_phone; ?></td>
+                    <td><?php echo $doctor_name; ?></td>
+                    <td><?php echo $referal_from_branch_name; ?></td>
+                </tr>
+<?php
+    }
+}
+?>
+	        </tbody>
+	    </table>
+	</div>
+</div>
+
+</body>
+</html>($token_create && $token_create != '0000-00-00' && $token_create != '0000-00-00 00:00:00' ? date_format(date_create($token_create), 'h:i:s A') : ''; ?></td>
+                    <td><?php echo $row['tokan_no']; ?></td>
+                    <td><?php echo $patient_name; ?></td>
+                    <td><?php echo $patient_phone; ?></td>
+                    <td><?php echo $doctor_name; ?></td>
+                    <td><?php echo $referal_from_branch_name; ?></td>
+                </tr>
+<?php
+    }
+}
+?>
+	        </tbody>
+	    </table>
+	</div>
+</div>
+
+</body>
+</html>($token_create && $token_create != '0000-00-00' && $token_create != '0000-00-00 00:00:00' ? date_format(date_create($token_create), 'h:i:s A') : ''; ?></td>
+                    <td><?php echo $row['tokan_no']; ?></td>
+                    <td><?php echo $patient_name; ?></td>
+                    <td><?php echo $patient_phone; ?></td>
+                    <td><?php echo $doctor_name; ?></td>
+                    <td><?php echo $referal_from_branch_name; ?></td>
+                </tr>
+<?php
+    }
+}
+?>
+	        </tbody>
+	    </table>
+	</div>
+</div>
+
+</body>
+</html>$token_create), 'h:i:s A') : ''; ?></td>
                     <td><?php echo $row['tokan_no']; ?></td>
                     <td><?php echo $patient_name; ?></td>
                     <td><?php echo $patient_phone; ?></td>

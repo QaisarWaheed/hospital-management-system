@@ -173,8 +173,406 @@ else
 			                <td>'.$row['staff_phone'].'</td>
 			                <td>'.$row['designation_title'].'</td>
 			                <td>'.$row['tag_name'].'</td>
-			                <td>'.date_format(date_create($row['staff_time_in']), "h:i:s A").'</td>
+			                <td>'.($row['staff_time_in'] && $row['staff_time_in'] != '0000-00-00' && $row['staff_time_in'] != '0000-00-00 00:00:00' ? date_format(date_create($row['staff_time_in']), "h:i:s A") : ''.'</td>
 			                <td>'.date_format(date_create($row['staff_time_out']), "h:i:s A").'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			             </tr>'; ?>
+			             <tr>
+			                 <td colspan = "10" class = "text-left">
+			                     <form method = "GET">
+    			                 <div class = "row">
+    			                     <div class = "col-sm-12">
+    			                         <h4 style = "text-align: left;">Pay & Allowances</h4>
+    			                     </div>
+    			                     <div class = "col">
+    			                         <label>Stipend </label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "staff_salary" />
+    			                     </div>
+    			                         
+    			                     <div class = "col">
+    			                         <label>Extra Days </label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "staff_extra_days" />
+    			                     </div>
+    			                         
+    			                     <div class = "col">
+    			                         <label>Reward On Progess</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "reward_on_progess" />
+    			                     </div>
+    			                         
+    			                     <div class = "col">
+    			                         <label>Rewards</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "rewards" />
+    			                     </div>
+    			                         
+    			                     <div class = "col">
+    			                         <label>Rashan</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "rashan_allowance" />
+    			                     </div>
+    			                         
+    			                     <div class = "col">
+    			                         <label>Petrol</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "petrol" />
+    			                     </div>
+    			                         
+    			                     <div class = "col">
+    			                         <label>Mobile Load</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "mobile_load" />
+    			                     </div>
+    			                         
+    			                     <div class = "col">
+    			                         <label>Previous Arrears</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "previous_arrears" />
+    			                     </div>
+    			                         
+    			                     <div class = "col">
+    			                         <label>Other Allowances</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "other_allownaces" />
+    			                     </div>
+			                     </div>
+    			                 <div class = "row">
+    			                     <div class = "col-sm-12">
+    			                         <h4 style = "text-align: left;">Deduction</h4>
+			                         </div>
+    			                     <div class = "col">
+    			                         <label>Absence</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "absence" />
+			                         </div>
+    			                     <div class = "col">
+    			                         <label>Less Hours</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "less_hours" />
+			                         </div>
+    			                     <div class = "col">
+    			                         <label>Advance </label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "advance" />
+			                         </div>
+    			                     <div class = "col">
+    			                         <label>Pending Medicines </label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "pending_medicines" />
+			                         </div>
+    			                     <div class = "col">
+    			                         <label>Kitchen Expense</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "kitchen_expense" />
+			                         </div>
+    			                     <div class = "col">
+    			                         <label>Fine</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "fine" />
+			                         </div>
+    			                     <div class = "col">
+    			                         <label>Health</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "health" />
+			                         </div>
+    			                     <div class = "col">
+    			                         <label>Rashan</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "rashan_deduction" />
+			                         </div>
+    			                     <div class = "col">
+    			                         <label>Other Deductions</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "other_deductions" />
+			                         </div>
+			                     </div>
+    			                     <div class = "col-sm-12 text-right d-print-none">
+    			                         <div style = "min-width:100%">
+        			                         <input type = "hidden" name = "staff_id" value = "<?php echo $row['staff_id']; ?>" />
+        			                         <input type = "hidden" name = "payroll_month" value = "<?php echo $_GET['payroll_month']; ?>" />
+        			                         <input type = "submit" name = "save_staff_salary_details" value = "SAVE SALARY DETAILS" class = "btn btn-primary btn-sm" />
+    			                         </div>
+    			                     </div>
+    			                 </div>
+    			                 </form>
+			                 </td>
+			             </tr>
+			            <?php }
+			        }
+			        else
+			        {
+			            echo '<tr><td colspan = "9">NO RECORDS FOUND</td></tr>';
+			        }
+			        ?>
+			        </tbody>
+			    </table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<?php mysqli_close($con); ?>($row['staff_time_out'] && $row['staff_time_out'] != '0000-00-00' && $row['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row['staff_time_out']), "h:i:s A") : ''.'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			             </tr>'; ?>
+			             <tr>
+			                 <td colspan = "10" class = "text-left">
+			                     <form method = "GET">
+    			                 <div class = "row">
+    			                     <div class = "col-sm-12">
+    			                         <h4 style = "text-align: left;">Pay & Allowances</h4>
+    			                     </div>
+    			                     <div class = "col">
+    			                         <label>Stipend </label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "staff_salary" />
+    			                     </div>
+    			                         
+    			                     <div class = "col">
+    			                         <label>Extra Days </label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "staff_extra_days" />
+    			                     </div>
+    			                         
+    			                 ($row['staff_time_out'] && $row['staff_time_out'] != '0000-00-00' && $row['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row['staff_time_out']), "h:i:s A") : ''.'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			             </tr>'; ?>
+			             <tr>
+			                 <td colspan = "10" class = "text-left">
+			                     <form method = "GET">
+    			                 <div class = "row">
+    			                     <div class = "col-sm-12">
+    			                         <h4 style = "text-align: left;">Pay & Allowances</h4>
+    			                     </div>
+    			                     <div class = "col">
+    			                         <label>Stipend </label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "staff_salary" />
+    			                     </div>
+    			                         
+    			                     <div class = "col">
+    			                         <label>Extra Days </label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "staff_extra_days" />
+    			                     </div>
+    			                         
+    			                     <div class = "col">
+    			                         <label>Reward On Progess</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "reward_on_progess" />
+    			                     </div>
+    			                         
+    			                     <div class = "col">
+    			                         <label>Rewards</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "rewards" />
+    			                     </div>
+    			                         
+    			                     <div class = "col">
+    			                         <label>Rashan</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "rashan_allowance" />
+    			                     </div>
+    			                         
+    			                     <div class = "col">
+    			                         <label>Petrol</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "petrol" />
+    			                     </div>
+    			                         
+    			                     <div class = "col">
+    			                         <label>Mobile Load</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "mobile_load" />
+    			                     </div>
+    			                         
+    			                     <div class = "col">
+    			                         <label>Previous Arrears</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "previous_arrears" />
+    			                     </div>
+    			                         
+    			                     <div class = "col">
+    			                         <label>Other Allowances</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "other_allownaces" />
+    			                     </div>
+			                     </div>
+    			                 <div class = "row">
+    			                     <div class = "col-sm-12">
+    			                         <h4 style = "text-align: left;">Deduction</h4>
+			                         </div>
+    			                     <div class = "col">
+    			                         <label>Absence</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "absence" />
+			                         </div>
+    			                     <div class = "col">
+    			                         <label>Less Hours</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "less_hours" />
+			                         </div>
+    			                     <div class = "col">
+    			                         <label>Advance </label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "advance" />
+			                         </div>
+    			                     <div class = "col">
+    			                         <label>Pending Medicines </label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "pending_medicines" />
+			                         </div>
+    			                     <div class = "col">
+    			                         <label>Kitchen Expense</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "kitchen_expense" />
+			                         </div>
+    			                     <div class = "col">
+    			                         <label>Fine</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "fine" />
+			                         </div>
+    			                     <div class = "col">
+    			                         <label>Health</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "health" />
+			                         </div>
+    			                     <div class = "col">
+    			                         <label>Rashan</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "rashan_deduction" />
+			                         </div>
+    			                     <div class = "col">
+    			                         <label>Other Deductions</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "other_deductions" />
+			                         </div>
+			                     </div>
+    			                     <div class = "col-sm-12 text-right d-print-none">
+    			                         <div style = "min-width:100%">
+        			                         <input type = "hidden" name = "staff_id" value = "<?php echo $row['staff_id']; ?>" />
+        			                         <input type = "hidden" name = "payroll_month" value = "<?php echo $_GET['payroll_month']; ?>" />
+        			                         <input type = "submit" name = "save_staff_salary_details" value = "SAVE SALARY DETAILS" class = "btn btn-primary btn-sm" />
+    			                         </div>
+    			                     </div>
+    			                 </div>
+    			                 </form>
+			                 </td>
+			             </tr>
+			            <?php }
+			        }
+			        else
+			        {
+			            echo '<tr><td colspan = "9">NO RECORDS FOUND</td></tr>';
+			        }
+			        ?>
+			        </tbody>
+			    </table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<?php mysqli_close($con); ?>($row['staff_time_out'] && $row['staff_time_out'] != '0000-00-00' && $row['staff_time_out'] != '0000-00-00 00:00:00' ? date_format(date_create($row['staff_time_out']), "h:i:s A") : ''.'</td>
+			                <td>'.$row['staff_duty_hours'].'</td>
+			             </tr>'; ?>
+			             <tr>
+			                 <td colspan = "10" class = "text-left">
+			                     <form method = "GET">
+    			                 <div class = "row">
+    			                     <div class = "col-sm-12">
+    			                         <h4 style = "text-align: left;">Pay & Allowances</h4>
+    			                     </div>
+    			                     <div class = "col">
+    			                         <label>Stipend </label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "staff_salary" />
+    			                     </div>
+    			                         
+    			                     <div class = "col">
+    			                         <label>Extra Days </label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "staff_extra_days" />
+    			                     </div>
+    			                         
+    			                     <div class = "col">
+    			                         <label>Reward On Progess</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "reward_on_progess" />
+    			                     </div>
+    			                         
+    			                     <div class = "col">
+    			                         <label>Rewards</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "rewards" />
+    			                     </div>
+    			                         
+    			                     <div class = "col">
+    			                         <label>Rashan</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "rashan_allowance" />
+    			                     </div>
+    			                         
+    			                     <div class = "col">
+    			                         <label>Petrol</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "petrol" />
+    			                     </div>
+    			                         
+    			                     <div class = "col">
+    			                         <label>Mobile Load</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "mobile_load" />
+    			                     </div>
+    			                         
+    			                     <div class = "col">
+    			                         <label>Previous Arrears</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "previous_arrears" />
+    			                     </div>
+    			                         
+    			                     <div class = "col">
+    			                         <label>Other Allowances</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "other_allownaces" />
+    			                     </div>
+			                     </div>
+    			                 <div class = "row">
+    			                     <div class = "col-sm-12">
+    			                         <h4 style = "text-align: left;">Deduction</h4>
+			                         </div>
+    			                     <div class = "col">
+    			                         <label>Absence</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "absence" />
+			                         </div>
+    			                     <div class = "col">
+    			                         <label>Less Hours</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "less_hours" />
+			                         </div>
+    			                     <div class = "col">
+    			                         <label>Advance </label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "advance" />
+			                         </div>
+    			                     <div class = "col">
+    			                         <label>Pending Medicines </label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "pending_medicines" />
+			                         </div>
+    			                     <div class = "col">
+    			                         <label>Kitchen Expense</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "kitchen_expense" />
+			                         </div>
+    			                     <div class = "col">
+    			                         <label>Fine</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "fine" />
+			                         </div>
+    			                     <div class = "col">
+    			                         <label>Health</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "health" />
+			                         </div>
+    			                     <div class = "col">
+    			                         <label>Rashan</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "rashan_deduction" />
+			                         </div>
+    			                     <div class = "col">
+    			                         <label>Other Deductions</label>
+    			                         <input class = "form-control" value = "0" required type = "number" name = "other_deductions" />
+			                         </div>
+			                     </div>
+    			                     <div class = "col-sm-12 text-right d-print-none">
+    			                         <div style = "min-width:100%">
+        			                         <input type = "hidden" name = "staff_id" value = "<?php echo $row['staff_id']; ?>" />
+        			                         <input type = "hidden" name = "payroll_month" value = "<?php echo $_GET['payroll_month']; ?>" />
+        			                         <input type = "submit" name = "save_staff_salary_details" value = "SAVE SALARY DETAILS" class = "btn btn-primary btn-sm" />
+    			                         </div>
+    			                     </div>
+    			                 </div>
+    			                 </form>
+			                 </td>
+			             </tr>
+			            <?php }
+			        }
+			        else
+			        {
+			            echo '<tr><td colspan = "9">NO RECORDS FOUND</td></tr>';
+			        }
+			        ?>
+			        </tbody>
+			    </table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<?php mysqli_close($con); ?>$row['staff_time_out']), "h:i:s A") : ''.'</td>
 			                <td>'.$row['staff_duty_hours'].'</td>
 			             </tr>'; ?>
 			             <tr>

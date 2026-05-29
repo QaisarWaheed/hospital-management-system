@@ -35,7 +35,7 @@ if (count($doctor_ids) > 0) {
 ?>
 <html>
 <head>
-    <title><?php echo get_branch_name_by($br_id); ?> <?php echo date_format(date_create($date), ' d F Y'); ?> OTHER SERIVES PROGRESS REPORT</title>
+    <title><?php echo get_branch_name_by($br_id); ?> <?php echo ($date && $date != '0000-00-00' && $date != '0000-00-00 00:00:00' ? date_format(date_create($date), ' d F Y') : ''; ?> OTHER SERIVES PROGRESS REPORT</title>
 </head>
 <body>
 
@@ -44,6 +44,143 @@ if (count($doctor_ids) > 0) {
     <h2><?php echo $company_name; ?></h2>
     <h2><?php echo get_branch_name_by($br_id); ?></h2>
     <h3>OTHER SERIVES PROGRESS DATE <?php echo date_format(date_create($date), ' d F Y'); ?></h3>
+</caption>
+    <thead>
+        <tr>
+            <th>S#</th>
+            <th>DOCTOR NAME</th>
+            <th>TOTAL PATIENT</th>
+            <th>ADMISSION</th>
+            <th>USG</th>
+            <th>GYANE SYSTEM</th>
+            <th>REFERAL</th>
+        </tr>
+    </thead>
+<?php
+$s = 0;
+$total_opds = 0;
+$total_admission = 0;
+$total_usg = 0;
+$total_gynae_system = 0;
+$total_referred = 0;
+
+if (count($doctor_ids) > 0) {
+    echo '<tbody>';
+    foreach ($doctor_ids as $doctor) {
+        $s++;
+        $opd = $opds[$doctor] ?? 0;
+        $adm = $admissions[$doctor] ?? 0;
+        $usg = $usgs[$doctor] ?? 0;
+        $gyn = $gynae_system[$doctor] ?? 0;
+        $ref = $referred[$doctor] ?? 0;
+        $total_opds += $opd;
+        $total_admission += $adm;
+        $total_usg += $usg;
+        $total_gynae_system += $gyn;
+        $total_referred += $ref;
+        $doctor_name = $user_names[$doctor] ?? get_uname_by_id($doctor);
+        echo '<tr style="text-align: right;">';
+        echo '<td>' . $s . '</td>';
+        echo '<td style="text-align: left;">' . htmlspecialchars($doctor_name, ENT_QUOTES, 'UTF-8') . '</td>';
+        echo '<td>' . $opd . '</td><td>' . $adm . '</td><td>' . $usg . '</td><td>' . $gyn . '</td><td>' . $ref . '</td>';
+        echo '</tr>';
+    }
+    echo '</tbody><tfoot><tr style="text-align: right;"><th></th><th></th>';
+    echo '<th>' . $total_opds($date && $date != '0000-00-00' && $date != '0000-0($date && $date != '0000-00-00' && $date != '0000-00-00 00:00:00' ? date_format(date_create($date), ' d F Y') : ''; ?></h3>
+</caption>
+    <thead>
+        <tr>
+            <th>S#</th>
+            <th>DOCTOR NAME</th>
+            <th>TOTAL PATIENT</th>
+            <th>ADMISSION</th>
+            <th>USG</th>
+            <th>GYANE SYSTEM</th>
+            <th>REFERAL</th>
+        </tr>
+    </thead>
+<?php
+$s = 0;
+$total_opds = 0;
+$total_admission = 0;
+$total_usg = 0;
+$total_gynae_system = 0;
+$total_referred = 0;
+
+if (count($doctor_ids) > 0) {
+    echo '<tbody>';
+    foreach ($doctor_ids as $doctor) {
+        $s++;
+        $opd = $opds[$doctor] ?? 0;
+        $adm = $admissions[$doctor] ?? 0;
+        $usg = $usgs[$doctor] ?? 0;
+        $gyn = $gynae_system[$doctor] ?? 0;
+        $ref = $referred[$doctor] ?? 0;
+        $total_opds += $opd;
+        $total_admission += $adm;
+        $total_usg += $usg;
+        $total_gynae_system += $gyn;
+        $total_referred += $ref;
+        $doctor_name = $user_names[$doctor] ?? get_uname_by_id($doctor);
+        echo '<tr style="text-align: right;">';
+        echo '<td>' . $s . '</td>';
+        echo '<td style="text-align: left;">' . htmlspecialchars($doctor_name, ENT_QUOTES, 'UTF-8') . '</td>';
+        echo '<td>' . $opd . '</td><td>' . $adm . '</td><td>' . $usg . '</td><td>' . $gyn . '</td><td>' . $ref . '</td>';
+        echo '</tr>';
+    }
+    echo '</tbody><tfoot><tr style="text-align: right;"><th></th><th></th>';
+    echo '<th>' . $total_opds($date && $date != '0000-00-00' && $date != '0000-00-00 00:00:00' ? date_format(date_create($date), ' d F Y') : ''; ?></h3>
+</caption>
+    <thead>
+        <tr>
+            <th>S#</th>
+            <th>DOCTOR NAME</th>
+            <th>TOTAL PATIENT</th>
+            <th>ADMISSION</th>
+            <th>USG</th>
+            <th>GYANE SYSTEM</th>
+            <th>REFERAL</th>
+        </tr>
+    </thead>
+<?php
+$s = 0;
+$total_opds = 0;
+$total_admission = 0;
+$total_usg = 0;
+$total_gynae_system = 0;
+$total_referred = 0;
+
+if (count($doctor_ids) > 0) {
+    echo '<tbody>';
+    foreach ($doctor_ids as $doctor) {
+        $s++;
+        $opd = $opds[$doctor] ?? 0;
+        $adm = $admissions[$doctor] ?? 0;
+        $usg = $usgs[$doctor] ?? 0;
+        $gyn = $gynae_system[$doctor] ?? 0;
+        $ref = $referred[$doctor] ?? 0;
+        $total_opds += $opd;
+        $total_admission += $adm;
+        $total_usg += $usg;
+        $total_gynae_system += $gyn;
+        $total_referred += $ref;
+        $doctor_name = $user_names[$doctor] ?? get_uname_by_id($doctor);
+        echo '<tr style="text-align: right;">';
+        echo '<td>' . $s . '</td>';
+        echo '<td style="text-align: left;">' . htmlspecialchars($doctor_name, ENT_QUOTES, 'UTF-8') . '</td>';
+        echo '<td>' . $opd . '</td><td>' . $adm . '</td><td>' . $usg . '</td><td>' . $gyn . '</td><td>' . $ref . '</td>';
+        echo '</tr>';
+    }
+    echo '</tbody><tfoot><tr style="text-align: right;"><th></th><th></th>';
+    echo '<th>' . $total_opds . '</th><th>' . $total_admission . '</th><th>' . $total_usg . '</th>';
+    echo '<th>' . $total_gynae_system . '</th><th>' . $total_referred . '</th></tr></tfoot>';
+}
+?>
+</table>
+</body>
+</html>
+<?php mysqli_close($con); ?>
+$date), ' d F Y') : ''; ?></h3>
 </caption>
     <thead>
         <tr>

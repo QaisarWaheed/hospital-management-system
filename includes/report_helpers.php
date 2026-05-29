@@ -275,11 +275,11 @@ function gynae_report_resolve_params(array $get, array $post, int $sessionBranch
     );
 }
 
-function report_safe_number_format($value, int $decimals = 0): string
+function report_safe_number_format((float)($value ?? 0), int $decimals = 0): string
 {
     if ($value === null || $value === '') {
-        return number_format(0, $decimals);
+        return number_format((float)(0 ?? 0), $decimals);
     }
 
-    return number_format((float) $value, $decimals);
+    return number_format((float)((float) $value ?? 0), $decimals);
 }

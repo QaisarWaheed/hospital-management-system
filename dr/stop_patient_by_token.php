@@ -95,7 +95,7 @@ if(isset($_GET['token_id']) && $_GET['token_id'] != '')
             	        {
             	            while($row_token = mysqli_fetch_array($run_token))
             	            {
-            	                $token_date = date_format(date_create($row_token['created']), 'd-m-Y');
+            	                $token_date = ($row_token['created'] && $row_token['created'] != '0000-00-00' && $row_token['created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['created']), 'd-m-Y') : '';
             	                $docotr_id = $row_token['doctor_id'];
             	                $docotr_name = get_uname_by_id($docotr_id);
             	                $patient_id = $row_token['patient_id'];
@@ -292,6 +292,1001 @@ else
                         {
                             $token_no = $row_token['id'];
                             $token_created = date_format(date_create($row_token['created']), 'd-m'); ?>
+                            <a href="?token_id=<?php echo $token_no; ?>" class="btn btn-outline-danger btn-sm">
+                                <span><?php echo $token_created; ?> - <?php echo $token_no; ?></span>
+                            </a></br>
+                            <?php    
+                        } 
+                    }
+                    ?>
+            </div>
+        </div>        	    
+	</div>
+<?php
+    echo "</div>";
+}
+?>
+</body>
+</html>
+<script type="text/javascript">
+      $(document).ready(function () {
+  $('#select_item').selectize({
+      sortField: 'text'
+  });
+  $(".alert").alert();
+});
+</script>
+
+<script type="text/javascript">
+      $(document).ready(function () {
+  $('#select_department').selectize({
+      sortField: 'text'
+  });
+  $(".alert").alert();
+});
+</script>
+
+<script type="text/javascript">
+function del_medicine() 
+{
+	var x = document.getElementById("mySelect").value;
+	window.open('patient_by_token.php?token_id=<?php echo $token_id; ?>&del_medicine='+x,'_self');
+}	
+function del_medicine_2() 
+{
+	var x = document.getElementById("mySelect_2").value;
+	window.open('patient_by_token.php?token_id=<?php echo $token_id; ?>&del_medicine='+x,'_self');
+}	
+</script>
+
+<script type = "text/javascript" >  
+    function preventBack() { window.history.forward(); }  
+    setTimeout("preventBack()", 0);  
+    window.onunload = function () { null };  
+</script> 
+
+<script>
+function myDisplayGone() {
+  document.getElementById("clear").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneAdd() {
+  document.getElementById("add").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneAddDr() {
+  document.getElementById("add_dr").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneSave() {
+  document.getElementById("save").style.display = "none";
+}
+</script>
+<?php mysqli_close($con); ?>($row_token['created'] && $row_token['created'] != '0000-00-00' && $row_token['created'] != '0000-00-($row_token['created'] && $row_token['created'] != '0000-00-00' && $row_token['created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['created']), 'd-m') : ''; 
+                                    ?>
+                                    <!--<a href="?token_id=<?php echo $token_no; ?>" class="btn btn-outline-danger btn-sm">-->
+                                    <!--    <span><?php echo $token_created; ?> - <?php echo $token_no; ?></span>-->
+                                    <!--</a></br>-->
+                                    <?php    
+                            //     } 
+                            // }
+                            ?>
+                    </div>
+                </div>        	    
+        	</div>
+	    </div>
+
+			
+	</div>
+</div>
+<?php }
+else
+{ ?>
+	<div class="col-md-9">
+        <div style="text-align: right;float: right;">
+            <div style="background-color: white;overflow:auto; max-height:550px;">
+                        <form>
+                            <input type="text" id="token_id" required name="token_id" maxlength="8" size="8" pattern="[0-9]{1,}" title="Eight or more characters"><br>
+                            <input type="submit" class="btn btn-outline-success" value="SEARCH" />
+                        </form>
+                        <p>Token & Date</p>
+                    <?php
+                    $date_select = date("Y-m-d");
+                    $select_token = "SELECT id, created FROM tokans WHERE branch_id = '$branch_id' AND status = '1' AND `created` LIKE '$date_select%' ORDER BY `id` DESC ";
+                    $run_token = mysqli_query($con, $select_token);
+                    if(mysqli_num_rows($run_token) > 0)
+                    {
+                        while($row_token = mysqli_fetch_array($run_token))
+                        {
+                            $token_no = $row_token['id'];
+                            $token_created = date_format(date_create($row_token['created']), 'd-m'); ?>
+                            <a href="?token_id=<?php echo $token_no; ?>" class="btn btn-outline-danger btn-sm">
+                                <span><?php echo $token_created; ?> - <?php echo $token_no; ?></span>
+                            </a></br>
+                            <?php    
+                        } 
+                    }
+                    ?>
+            </div>
+        </div>        	    
+	</div>
+<?php
+    echo "</div>";
+}
+?>
+</body>
+</html>
+<script type="text/javascript">
+      $(document).ready(function () {
+  $('#select_item').selectize({
+      sortField: 'text'
+  });
+  $(".alert").alert();
+});
+</script>
+
+<script type="text/javascript">
+      $(document).ready(function () {
+  $('#select_department').selectize({
+      sortField: 'text'
+  });
+  $(".alert").alert();
+});
+</script>
+
+<script type="text/javascript">
+function del_medicine() 
+{
+	var x = document.getElementById("mySelect").value;
+	window.open('patient_by_token.php?token_id=<?php echo $token_id; ?>&del_medicine='+x,'_self');
+}	
+function del_medicine_2() 
+{
+	var x = document.getElementById("mySelect_2").value;
+	window.open('patient_by_token.php?token_id=<?php echo $token_id; ?>&del_medicine='+x,'_self');
+}	
+</script>
+
+<script type = "text/javascript" >  
+    function preventBack() { window.history.forward(); }  
+    setTimeout("preventBack()", 0);  
+    window.onunload = function () { null };  
+</script> 
+
+<script>
+function myDisplayGone() {
+  document.getElementById("clear").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneAdd() {
+  document.getElementById("add").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneAddDr() {
+  document.getElementById("add_dr").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneSave() {
+  document.getElementById("save").style.display = "none";
+}
+</script>
+<?php mysqli_close($con); ?>($row_token['created'] && $row_token['created'] != '0000-00-00' && $row_token['created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['created']), 'd-m') : ''; 
+                                    ?>
+                                    <!--<a href="?token_id=<?php echo $token_no; ?>" class="btn btn-outline-danger btn-sm">-->
+                                    <!--    <span><?php echo $token_created; ?> - <?php echo $token_no; ?></span>-->
+                                    <!--</a></br>-->
+                                    <?php    
+                            //     } 
+                            // }
+                            ?>
+                    </div>
+                </div>        	    
+        	</div>
+	    </div>
+
+			
+	</div>
+</div>
+<?php }
+else
+{ ?>
+	<div class="col-md-9">
+        <div style="text-align: right;float: right;">
+            <div style="background-color: white;overflow:auto; max-height:550px;">
+                        <form>
+                            <input type="text" id="token_id" required name="token_id" maxlength="8" size="8" pattern="[0-9]{1,}" title="Eight or more characters"><br>
+                            <input type="submit" class="btn btn-outline-success" value="SEARCH" />
+                        </form>
+                        <p>Token & Date</p>
+                    <?php
+                    $date_select = date("Y-m-d");
+                    $select_token = "SELECT id, created FROM tokans WHERE branch_id = '$branch_id' AND status = '1' AND `created` LIKE '$date_select%' ORDER BY `id` DESC ";
+                    $run_token = mysqli_query($con, $select_token);
+                    if(mysqli_num_rows($run_token) > 0)
+                    {
+                        while($row_token = mysqli_fetch_array($run_token))
+                        {
+                            $token_no = $row_token['id'];
+                            $token_created = date_format(date_create($row_token['created']), 'd-m'); ?>
+                            <a href="?token_id=<?php echo $token_no; ?>" class="btn btn-outline-danger btn-sm">
+                                <span><?php echo $token_created; ?> - <?php echo $token_no; ?></span>
+                            </a></br>
+                            <?php    
+                        } 
+                    }
+                    ?>
+            </div>
+        </div>        	    
+	</div>
+<?php
+    echo "</div>";
+}
+?>
+</body>
+</html>
+<script type="text/javascript">
+      $(document).ready(function () {
+  $('#select_item').selectize({
+      sortField: 'text'
+  });
+  $(".alert").alert();
+});
+</script>
+
+<script type="text/javascript">
+      $(document).ready(function () {
+  $('#select_department').selectize({
+      sortField: 'text'
+  });
+  $(".alert").alert();
+});
+</script>
+
+<script type="text/javascript">
+function del_medicine() 
+{
+	var x = document.getElementById("mySelect").value;
+	window.open('patient_by_token.php?token_id=<?php echo $token_id; ?>&del_medicine='+x,'_self');
+}	
+function del_medicine_2() 
+{
+	var x = document.getElementById("mySelect_2").value;
+	window.open('patient_by_token.php?token_id=<?php echo $token_id; ?>&del_medicine='+x,'_self');
+}	
+</script>
+
+<script type = "text/javascript" >  
+    function preventBack() { window.history.forward(); }  
+    setTimeout("preventBack()", 0);  
+    window.onunload = function () { null };  
+</script> 
+
+<script>
+function myDisplayGone() {
+  document.getElementById("clear").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneAdd() {
+  document.getElementById("add").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneAddDr() {
+  document.getElementById("add_dr").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneSave() {
+  document.getElementById("save").style.display = "none";
+}
+</script>
+<?php mysqli_close($con); ?>($row_token['created'] && $row_token['created'] != '0000-00-00' && $row_token['created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['created']), 'd-m') : ''; ?>
+                            <a href="?token_id=<?php echo $token_no; ?>" class="btn btn-outline-danger btn-sm">
+                                <span><?php echo $token_created; ?> - <?php echo $token_no; ?></span>
+                            </a></br>
+                            <?php    
+                        } 
+                    }
+                    ?>
+            </div>
+        </div>        	    
+	</div>
+<?php
+    echo "</div>";
+}
+?>
+</body>
+</html>
+<script type="text/javascript">
+      $(document).ready(function () {
+  $('#select_item').selectize({
+      sortField: 'text'
+  });
+  $(".alert").alert();
+});
+</script>
+
+<script type="text/javascript">
+      $(document).ready(function () {
+  $('#select_department').selectize({
+      sortField: 'text'
+  });
+  $(".alert").alert();
+});
+</script>
+
+<script type="text/javascript">
+function del_medicine() 
+{
+	var x = document.getElementById("mySelect").value;
+	window.open('patient_by_token.php?token_id=<?php echo $token_id; ?>&del_medicine='+x,'_self');
+}	
+function del_medicine_2() 
+{
+	var x = document.getElementById("mySelect_2").value;
+	window.open('patient_by_token.php?token_id=<?php echo $token_id; ?>&del_medicine='+x,'_self');
+}	
+</script>
+
+<script type = "text/javascript" >  
+    function preventBack() { window.history.forward(); }  
+    setTimeout("preventBack()", 0);  
+    window.onunload = function () { null };  
+</script> 
+
+<script>
+function myDisplayGone() {
+  document.getElementById("clear").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneAdd() {
+  document.getElementById("add").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneAddDr() {
+  document.getElementById("add_dr").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneSave() {
+  document.getElementById("save").style.display = "none";
+}
+</script>
+<?php mysqli_close($con); ?>($row_token['created'] && $row_token['created'] != '0000-00-00' && $row_token['created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['created']), 'd-m') : ''; ?>
+                            <a href="?token_id=<?php echo $token_no; ?>" class="btn btn-outline-danger btn-sm">
+                                <span><?php echo $token_created; ?> - <?php echo $token_no; ?></span>
+                            </a></br>
+                            <?php    
+                        } 
+                    }
+                    ?>
+            </div>
+        </div>        	    
+	</div>
+<?php
+    echo "</div>";
+}
+?>
+</body>
+</html>
+<script type="text/javascript">
+      $(document).ready(function () {
+  $('#select_item').selectize({
+      sortField: 'text'
+  });
+  $(".alert").alert();
+});
+</script>
+
+<script type="text/javascript">
+      $(document).ready(function () {
+  $('#select_department').selectize({
+      sortField: 'text'
+  });
+  $(".alert").alert();
+});
+</script>
+
+<script type="text/javascript">
+function del_medicine() 
+{
+	var x = document.getElementById("mySelect").value;
+	window.open('patient_by_token.php?token_id=<?php echo $token_id; ?>&del_medicine='+x,'_self');
+}	
+function del_medicine_2() 
+{
+	var x = document.getElementById("mySelect_2").value;
+	window.open('patient_by_token.php?token_id=<?php echo $token_id; ?>&del_medicine='+x,'_self');
+}	
+</script>
+
+<script type = "text/javascript" >  
+    function preventBack() { window.history.forward(); }  
+    setTimeout("preventBack()", 0);  
+    window.onunload = function () { null };  
+</script> 
+
+<script>
+function myDisplayGone() {
+  document.getElementById("clear").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneAdd() {
+  document.getElementById("add").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneAddDr() {
+  document.getElementById("add_dr").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneSave() {
+  document.getElementById("save").style.display = "none";
+}
+</script>
+<?php mysqli_close($con); ?>($row_token['created'] && $row_token['created'] != '0000-00-00' && $row_token['created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['created']), 'd-m') : ''; 
+                                    ?>
+                                    <!--<a href="?token_id=<?php echo $token_no; ?>" class="btn btn-outline-danger btn-sm">-->
+                                    <!--    <span><?php echo $token_created; ?> - <?php echo $token_no; ?></span>-->
+                                    <!--</a></br>-->
+                                    <?php    
+                            //     } 
+                            // }
+                            ?>
+                    </div>
+                </div>        	    
+        	</div>
+	    </div>
+
+			
+	</div>
+</div>
+<?php }
+else
+{ ?>
+	<div class="col-md-9">
+        <div style="text-align: right;float: right;">
+            <div style="background-color: white;overflow:auto; max-height:550px;">
+                        <form>
+                            <input type="text" id="token_id" required name="token_id" maxlength="8" size="8" pattern="[0-9]{1,}" title="Eight or more characters"><br>
+                            <input type="submit" class="btn btn-outline-success" value="SEARCH" />
+                        </form>
+                        <p>Token & Date</p>
+                    <?php
+                    $date_select = date("Y-m-d");
+                    $select_token = "SELECT id, created FROM tokans WHERE branch_id = '$branch_id' AND status = '1' AND `created` LIKE '$date_select%' ORDER BY `id` DESC ";
+                    $run_token = mysqli_query($con, $select_token);
+                    if(mysqli_num_rows($run_token) > 0)
+                    {
+                        while($row_token = mysqli_fetch_array($run_token))
+                        {
+                            $token_no = $row_token['id'];
+                            $token_created = date_format(date_create($row_token['created']), 'd-m'); ?>
+                            <a href="?token_id=<?php echo $token_no; ?>" class="btn btn-outline-danger btn-sm">
+                                <span><?php echo $token_created; ?> - <?php echo $token_no; ?></span>
+                            </a></br>
+                            <?php    
+                        } 
+                    }
+                    ?>
+            </div>
+        </div>        	    
+	</div>
+<?php
+    echo "</div>";
+}
+?>
+</body>
+</html>
+<script type="text/javascript">
+      $(document).ready(function () {
+  $('#select_item').selectize({
+      sortField: 'text'
+  });
+  $(".alert").alert();
+});
+</script>
+
+<script type="text/javascript">
+      $(document).ready(function () {
+  $('#select_department').selectize({
+      sortField: 'text'
+  });
+  $(".alert").alert();
+});
+</script>
+
+<script type="text/javascript">
+function del_medicine() 
+{
+	var x = document.getElementById("mySelect").value;
+	window.open('patient_by_token.php?token_id=<?php echo $token_id; ?>&del_medicine='+x,'_self');
+}	
+function del_medicine_2() 
+{
+	var x = document.getElementById("mySelect_2").value;
+	window.open('patient_by_token.php?token_id=<?php echo $token_id; ?>&del_medicine='+x,'_self');
+}	
+</script>
+
+<script type = "text/javascript" >  
+    function preventBack() { window.history.forward(); }  
+    setTimeout("preventBack()", 0);  
+    window.onunload = function () { null };  
+</script> 
+
+<script>
+function myDisplayGone() {
+  document.getElementById("clear").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneAdd() {
+  document.getElementById("add").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneAddDr() {
+  document.getElementById("add_dr").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneSave() {
+  document.getElementById("save").style.display = "none";
+}
+</script>
+<?php mysqli_close($con); ?>($row_token['created'] && $row_token['created'] != '0000-00-00' && $row_token['created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['created']), 'd-m') : ''; ?>
+                            <a href="?token_id=<?php echo $token_no; ?>" class="btn btn-outline-danger btn-sm">
+                                <span><?php echo $token_created; ?> - <?php echo $token_no; ?></span>
+                            </a></br>
+                            <?php    
+                        } 
+                    }
+                    ?>
+            </div>
+        </div>        	    
+	</div>
+<?php
+    echo "</div>";
+}
+?>
+</body>
+</html>
+<script type="text/javascript">
+      $(document).ready(function () {
+  $('#select_item').selectize({
+      sortField: 'text'
+  });
+  $(".alert").alert();
+});
+</script>
+
+<script type="text/javascript">
+      $(document).ready(function () {
+  $('#select_department').selectize({
+      sortField: 'text'
+  });
+  $(".alert").alert();
+});
+</script>
+
+<script type="text/javascript">
+function del_medicine() 
+{
+	var x = document.getElementById("mySelect").value;
+	window.open('patient_by_token.php?token_id=<?php echo $token_id; ?>&del_medicine='+x,'_self');
+}	
+function del_medicine_2() 
+{
+	var x = document.getElementById("mySelect_2").value;
+	window.open('patient_by_token.php?token_id=<?php echo $token_id; ?>&del_medicine='+x,'_self');
+}	
+</script>
+
+<script type = "text/javascript" >  
+    function preventBack() { window.history.forward(); }  
+    setTimeout("preventBack()", 0);  
+    window.onunload = function () { null };  
+</script> 
+
+<script>
+function myDisplayGone() {
+  document.getElementById("clear").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneAdd() {
+  document.getElementById("add").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneAddDr() {
+  document.getElementById("add_dr").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneSave() {
+  document.getElementById("save").style.display = "none";
+}
+</script>
+<?php mysqli_close($con); ?>$row_token['created']), 'd-m') : ''; 
+                                    ?>
+                                    <!--<a href="?token_id=<?php echo $token_no; ?>" class="btn btn-outline-danger btn-sm">-->
+                                    <!--    <span><?php echo $token_created; ?> - <?php echo $token_no; ?></span>-->
+                                    <!--</a></br>-->
+                                    <?php    
+                            //     } 
+                            // }
+                            ?>
+                    </div>
+                </div>        	    
+        	</div>
+	    </div>
+
+			
+	</div>
+</div>
+<?php }
+else
+{ ?>
+	<div class="col-md-9">
+        <div style="text-align: right;float: right;">
+            <div style="background-color: white;overflow:auto; max-height:550px;">
+                        <form>
+                            <input type="text" id="token_id" required name="token_id" maxlength="8" size="8" pattern="[0-9]{1,}" title="Eight or more characters"><br>
+                            <input type="submit" class="btn btn-outline-success" value="SEARCH" />
+                        </form>
+                        <p>Token & Date</p>
+                    <?php
+                    $date_select = date("Y-m-d");
+                    $select_token = "SELECT id, created FROM tokans WHERE branch_id = '$branch_id' AND status = '1' AND `created` LIKE '$date_select%' ORDER BY `id` DESC ";
+                    $run_token = mysqli_query($con, $select_token);
+                    if(mysqli_num_rows($run_token) > 0)
+                    {
+                        while($row_token = mysqli_fetch_array($run_token))
+                        {
+                            $token_no = $row_token['id'];
+                            $token_created = date_format(date_create($row_token['created']), 'd-m'); ?>
+                            <a href="?token_id=<?php echo $token_no; ?>" class="btn btn-outline-danger btn-sm">
+                                <span><?php echo $token_created; ?> - <?php echo $token_no; ?></span>
+                            </a></br>
+                            <?php    
+                        } 
+                    }
+                    ?>
+            </div>
+        </div>        	    
+	</div>
+<?php
+    echo "</div>";
+}
+?>
+</body>
+</html>
+<script type="text/javascript">
+      $(document).ready(function () {
+  $('#select_item').selectize({
+      sortField: 'text'
+  });
+  $(".alert").alert();
+});
+</script>
+
+<script type="text/javascript">
+      $(document).ready(function () {
+  $('#select_department').selectize({
+      sortField: 'text'
+  });
+  $(".alert").alert();
+});
+</script>
+
+<script type="text/javascript">
+function del_medicine() 
+{
+	var x = document.getElementById("mySelect").value;
+	window.open('patient_by_token.php?token_id=<?php echo $token_id; ?>&del_medicine='+x,'_self');
+}	
+function del_medicine_2() 
+{
+	var x = document.getElementById("mySelect_2").value;
+	window.open('patient_by_token.php?token_id=<?php echo $token_id; ?>&del_medicine='+x,'_self');
+}	
+</script>
+
+<script type = "text/javascript" >  
+    function preventBack() { window.history.forward(); }  
+    setTimeout("preventBack()", 0);  
+    window.onunload = function () { null };  
+</script> 
+
+<script>
+function myDisplayGone() {
+  document.getElementById("clear").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneAdd() {
+  document.getElementById("add").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneAddDr() {
+  document.getElementById("add_dr").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneSave() {
+  document.getElementById("save").style.display = "none";
+}
+</script>
+<?php mysqli_close($con); ?>($row_token['created'] && $row_token['created'] != '0000-00-00' && $row_token['created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['created']), 'd-m') : ''; ?>
+                            <a href="?token_id=<?php echo $token_no; ?>" class="btn btn-outline-danger btn-sm">
+                                <span><?php echo $token_created; ?> - <?php echo $token_no; ?></span>
+                            </a></br>
+                            <?php    
+                        } 
+                    }
+                    ?>
+            </div>
+        </div>        	    
+	</div>
+<?php
+    echo "</div>";
+}
+?>
+</body>
+</html>
+<script type="text/javascript">
+      $(document).ready(function () {
+  $('#select_item').selectize({
+      sortField: 'text'
+  });
+  $(".alert").alert();
+});
+</script>
+
+<script type="text/javascript">
+      $(document).ready(function () {
+  $('#select_department').selectize({
+      sortField: 'text'
+  });
+  $(".alert").alert();
+});
+</script>
+
+<script type="text/javascript">
+function del_medicine() 
+{
+	var x = document.getElementById("mySelect").value;
+	window.open('patient_by_token.php?token_id=<?php echo $token_id; ?>&del_medicine='+x,'_self');
+}	
+function del_medicine_2() 
+{
+	var x = document.getElementById("mySelect_2").value;
+	window.open('patient_by_token.php?token_id=<?php echo $token_id; ?>&del_medicine='+x,'_self');
+}	
+</script>
+
+<script type = "text/javascript" >  
+    function preventBack() { window.history.forward(); }  
+    setTimeout("preventBack()", 0);  
+    window.onunload = function () { null };  
+</script> 
+
+<script>
+function myDisplayGone() {
+  document.getElementById("clear").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneAdd() {
+  document.getElementById("add").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneAddDr() {
+  document.getElementById("add_dr").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneSave() {
+  document.getElementById("save").style.display = "none";
+}
+</script>
+<?php mysqli_close($con); ?>($row_token['created'] && $row_token['created'] != '0000-00-00' && $row_token['created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['created']), 'd-m') : ''; ?>
+                            <a href="?token_id=<?php echo $token_no; ?>" class="btn btn-outline-danger btn-sm">
+                                <span><?php echo $token_created; ?> - <?php echo $token_no; ?></span>
+                            </a></br>
+                            <?php    
+                        } 
+                    }
+                    ?>
+            </div>
+        </div>        	    
+	</div>
+<?php
+    echo "</div>";
+}
+?>
+</body>
+</html>
+<script type="text/javascript">
+      $(document).ready(function () {
+  $('#select_item').selectize({
+      sortField: 'text'
+  });
+  $(".alert").alert();
+});
+</script>
+
+<script type="text/javascript">
+      $(document).ready(function () {
+  $('#select_department').selectize({
+      sortField: 'text'
+  });
+  $(".alert").alert();
+});
+</script>
+
+<script type="text/javascript">
+function del_medicine() 
+{
+	var x = document.getElementById("mySelect").value;
+	window.open('patient_by_token.php?token_id=<?php echo $token_id; ?>&del_medicine='+x,'_self');
+}	
+function del_medicine_2() 
+{
+	var x = document.getElementById("mySelect_2").value;
+	window.open('patient_by_token.php?token_id=<?php echo $token_id; ?>&del_medicine='+x,'_self');
+}	
+</script>
+
+<script type = "text/javascript" >  
+    function preventBack() { window.history.forward(); }  
+    setTimeout("preventBack()", 0);  
+    window.onunload = function () { null };  
+</script> 
+
+<script>
+function myDisplayGone() {
+  document.getElementById("clear").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneAdd() {
+  document.getElementById("add").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneAddDr() {
+  document.getElementById("add_dr").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneSave() {
+  document.getElementById("save").style.display = "none";
+}
+</script>
+<?php mysqli_close($con); ?>($row_token['created'] && $row_token['created'] != '0000-00-00' && $row_token['created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['created']), 'd-m') : ''; ?>
+                            <a href="?token_id=<?php echo $token_no; ?>" class="btn btn-outline-danger btn-sm">
+                                <span><?php echo $token_created; ?> - <?php echo $token_no; ?></span>
+                            </a></br>
+                            <?php    
+                        } 
+                    }
+                    ?>
+            </div>
+        </div>        	    
+	</div>
+<?php
+    echo "</div>";
+}
+?>
+</body>
+</html>
+<script type="text/javascript">
+      $(document).ready(function () {
+  $('#select_item').selectize({
+      sortField: 'text'
+  });
+  $(".alert").alert();
+});
+</script>
+
+<script type="text/javascript">
+      $(document).ready(function () {
+  $('#select_department').selectize({
+      sortField: 'text'
+  });
+  $(".alert").alert();
+});
+</script>
+
+<script type="text/javascript">
+function del_medicine() 
+{
+	var x = document.getElementById("mySelect").value;
+	window.open('patient_by_token.php?token_id=<?php echo $token_id; ?>&del_medicine='+x,'_self');
+}	
+function del_medicine_2() 
+{
+	var x = document.getElementById("mySelect_2").value;
+	window.open('patient_by_token.php?token_id=<?php echo $token_id; ?>&del_medicine='+x,'_self');
+}	
+</script>
+
+<script type = "text/javascript" >  
+    function preventBack() { window.history.forward(); }  
+    setTimeout("preventBack()", 0);  
+    window.onunload = function () { null };  
+</script> 
+
+<script>
+function myDisplayGone() {
+  document.getElementById("clear").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneAdd() {
+  document.getElementById("add").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneAddDr() {
+  document.getElementById("add_dr").style.display = "none";
+}
+</script> 
+
+<script>
+function myDisplayGoneSave() {
+  document.getElementById("save").style.display = "none";
+}
+</script>
+<?php mysqli_close($con); ?>$row_token['created']), 'd-m') : ''; ?>
                             <a href="?token_id=<?php echo $token_no; ?>" class="btn btn-outline-danger btn-sm">
                                 <span><?php echo $token_created; ?> - <?php echo $token_no; ?></span>
                             </a></br>

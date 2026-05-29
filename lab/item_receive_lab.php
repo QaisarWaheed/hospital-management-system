@@ -96,7 +96,7 @@ if (mysqli_num_rows($run) > 0) {
 				<td>'.$s.'</td>
 				<td>'.$issue_lab_item_id.'</td>
 				<td>'.$issue_lab_item_record_id.'</td>
-                <td>'.date_format(date_create($issue_lab_item_record_date), "d-M-Y").'</td>
+                <td>'.($issue_lab_item_record_date && $issue_lab_item_record_date != '0000-00-00' && $issue_lab_item_record_date != '0000-00-00 00:00:00' ? date_format(date_create($issue_lab_item_record_date), "d-M-Y") : ''.'</td>
 				<td>'.$row['item_name'].'</td>
 				<td>'.$row['tag_name'].'</td>
 				<td>'.$row['u_name'].'</td>
@@ -151,6 +151,315 @@ if (mysqli_num_rows($run) > 0) {
                 <td>'.date_format(date_create($issue_lab_item_record_date), "d-M-Y").'</td>
 				<td>'.$row['item_name'].'</td>
                 <td>'.date_format(date_create($issue_lab_item_record_updated_at), "d-M-Y").'</td>
+				<td>'.$row['tag_name'].'</td>
+				<td>'.$row['issue_lab_item_record_quantity'].'</td>
+				<td>'.$row['issue_lab_item_record_attempt']+'1'.'</td>
+				<td>'.$row['lab_admin'].'</td>
+				<td>'.$row['lab_staff'].'</td>
+			</tr>
+		';
+	}
+}
+?>      </tbody>
+	</table>
+	</div>
+</div>
+</div>
+<?php 
+mysqli_close($con);
+?>    
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>($issue_lab_item_record_date && $issue_lab_item_record_date != '0000-00-00' && $issue_lab_item_record_date != '0000-00-00 00:00:00' ? date_format(date_create($issue_lab_item_record_date), "d-M-Y") : ''.'</td>
+				<td>'.$row['item_name'].'</td>
+                <td>'.date_format(date_create($issue_lab_item_record_updated_at), "d-M-Y").'</td>
+				<td>'.$row['tag_name'].'</td>
+				<td>'.$row['issue_lab_item_record_quantity'].'</td>
+				<td>'.$row['issue_lab_item_record_attempt']+'1'.'</td>
+				<td>'.$row['lab_admin'].'</td>
+				<td>'.$row['lab_staff'].'</td>
+			</tr>
+		';
+	}
+}
+?>      </tbody>
+	</table>
+	</div>
+</div>
+</div>
+<?php 
+mysqli_close($con);
+?>    
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>($issue_lab_item_record_updated_at && $issue_lab_item_record_updated_at != '0000-00-00' && $issue_lab_item_record_updated_at != '0000-00-00 00:00:00' ? date_format(date_create($issue_lab_item_record_updated_at), "d-M-Y") : ''.'</td>
+				<td>'.$row['tag_name'].'</td>
+				<td>'.$row['issue_lab_item_record_quantity'].'</td>
+				<td>'.$row['issue_lab_item_record_attempt']+'1'.'</td>
+				<td>'.$row['lab_admin'].'</td>
+				<td>'.$row['lab_staff'].'</td>
+			</tr>
+		';
+	}
+}
+?>      </tbody>
+	</table>
+	</div>
+</div>
+</div>
+<?php 
+mysqli_close($con);
+?>    
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>($issue_lab_item_record_date && $issue_lab_item_record_date != '0000-00-00' && $issue_lab_item_record_date != '0000-00-00 00:00:00' ? date_format(date_create($issue_lab_item_record_date), "d-M-Y") : ''.'</td>
+				<td>'.$row['item_name'].'</td>
+                <td>'.date_format(date_create($issue_lab_item_record_updated_at), "d-M-Y").'</td>
+				<td>'.$row['tag_name'].'</td>
+				<td>'.$row['issue_lab_item_record_quantity'].'</td>
+				<td>'.$row['issue_lab_item_record_attempt']+'1'.'</td>
+				<td>'.$row['lab_admin'].'</td>
+				<td>'.$row['lab_staff'].'</td>
+			</tr>
+		';
+	}
+}
+?>      </tbody>
+	</table>
+	</div>
+</div>
+</div>
+<?php 
+mysqli_close($con);
+?>    
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>($issue_lab_item_record_date && $issue_lab_item_record_date != '0000-00-00' && $issue_lab_item_record_date != '0000-00-00 00:00:00' ? date_format(date_create($issue_lab_item_record_date), "d-M-Y") : ''.'</td>
+				<td>'.$row['item_name'].'</td>
+                <td>'.date_format(date_create($issue_lab_item_record_updated_at), "d-M-Y").'</td>
+				<td>'.$row['tag_name'].'</td>
+				<td>'.$row['issue_lab_item_record_quantity'].'</td>
+				<td>'.$row['issue_lab_item_record_attempt']+'1'.'</td>
+				<td>'.$row['lab_admin'].'</td>
+				<td>'.$row['lab_staff'].'</td>
+			</tr>
+		';
+	}
+}
+?>      </tbody>
+	</table>
+	</div>
+</div>
+</div>
+<?php 
+mysqli_close($con);
+?>    
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>($issue_lab_item_record_updated_at && $issue_lab_item_record_updated_at != '0000-00-00' && $issue_lab_item_record_updated_at != '0000-00-00 00:00:00' ? date_format(date_create($issue_lab_item_record_updated_at), "d-M-Y") : ''.'</td>
+				<td>'.$row['tag_name'].'</td>
+				<td>'.$row['issue_lab_item_record_quantity'].'</td>
+				<td>'.$row['issue_lab_item_record_attempt']+'1'.'</td>
+				<td>'.$row['lab_admin'].'</td>
+				<td>'.$row['lab_staff'].'</td>
+			</tr>
+		';
+	}
+}
+?>      </tbody>
+	</table>
+	</div>
+</div>
+</div>
+<?php 
+mysqli_close($con);
+?>    
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>($issue_lab_item_record_updated_at && $issue_lab_item_record_updated_at != '0000-00-00' && $issue_lab_item_record_updated_at != '0000-00-00 00:00:00' ? date_format(date_create($issue_lab_item_record_updated_at), "d-M-Y") : ''.'</td>
+				<td>'.$row['tag_name'].'</td>
+				<td>'.$row['issue_lab_item_record_quantity'].'</td>
+				<td>'.$row['issue_lab_item_record_attempt']+'1'.'</td>
+				<td>'.$row['lab_admin'].'</td>
+				<td>'.$row['lab_staff'].'</td>
+			</tr>
+		';
+	}
+}
+?>      </tbody>
+	</table>
+	</div>
+</div>
+</div>
+<?php 
+mysqli_close($con);
+?>    
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>($issue_lab_item_record_date && $issue_lab_item_record_date != '0000-00-00' && $issue_lab_item_record_date != '0000-00-00 00:00:00' ? date_format(date_create($issue_lab_item_record_date), "d-M-Y") : ''.'</td>
+				<td>'.$row['item_name'].'</td>
+                <td>'.date_format(date_create($issue_lab_item_record_updated_at), "d-M-Y").'</td>
+				<td>'.$row['tag_name'].'</td>
+				<td>'.$row['issue_lab_item_record_quantity'].'</td>
+				<td>'.$row['issue_lab_item_record_attempt']+'1'.'</td>
+				<td>'.$row['lab_admin'].'</td>
+				<td>'.$row['lab_staff'].'</td>
+			</tr>
+		';
+	}
+}
+?>      </tbody>
+	</table>
+	</div>
+</div>
+</div>
+<?php 
+mysqli_close($con);
+?>    
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>($issue_lab_item_record_updated_at && $issue_lab_item_record_updated_at != '0000-00-00' && $issue_lab_item_record_updated_at != '0000-00-00 00:00:00' ? date_format(date_create($issue_lab_item_record_updated_at), "d-M-Y") : ''.'</td>
+				<td>'.$row['tag_name'].'</td>
+				<td>'.$row['issue_lab_item_record_quantity'].'</td>
+				<td>'.$row['issue_lab_item_record_attempt']+'1'.'</td>
+				<td>'.$row['lab_admin'].'</td>
+				<td>'.$row['lab_staff'].'</td>
+			</tr>
+		';
+	}
+}
+?>      </tbody>
+	</table>
+	</div>
+</div>
+</div>
+<?php 
+mysqli_close($con);
+?>    
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>$issue_lab_item_record_date), "d-M-Y") : ''.'</td>
+				<td>'.$row['item_name'].'</td>
+                <td>'.date_format(date_create($issue_lab_item_record_updated_at), "d-M-Y").'</td>
+				<td>'.$row['tag_name'].'</td>
+				<td>'.$row['issue_lab_item_record_quantity'].'</td>
+				<td>'.$row['issue_lab_item_record_attempt']+'1'.'</td>
+				<td>'.$row['lab_admin'].'</td>
+				<td>'.$row['lab_staff'].'</td>
+			</tr>
+		';
+	}
+}
+?>      </tbody>
+	</table>
+	</div>
+</div>
+</div>
+<?php 
+mysqli_close($con);
+?>    
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>($issue_lab_item_record_updated_at && $issue_lab_item_record_updated_at != '0000-00-00' && $issue_lab_item_record_updated_at != '0000-00-00 00:00:00' ? date_format(date_create($issue_lab_item_record_updated_at), "d-M-Y") : ''.'</td>
+				<td>'.$row['tag_name'].'</td>
+				<td>'.$row['issue_lab_item_record_quantity'].'</td>
+				<td>'.$row['issue_lab_item_record_attempt']+'1'.'</td>
+				<td>'.$row['lab_admin'].'</td>
+				<td>'.$row['lab_staff'].'</td>
+			</tr>
+		';
+	}
+}
+?>      </tbody>
+	</table>
+	</div>
+</div>
+</div>
+<?php 
+mysqli_close($con);
+?>    
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>($issue_lab_item_record_updated_at && $issue_lab_item_record_updated_at != '0000-00-00' && $issue_lab_item_record_updated_at != '0000-00-00 00:00:00' ? date_format(date_create($issue_lab_item_record_updated_at), "d-M-Y") : ''.'</td>
+				<td>'.$row['tag_name'].'</td>
+				<td>'.$row['issue_lab_item_record_quantity'].'</td>
+				<td>'.$row['issue_lab_item_record_attempt']+'1'.'</td>
+				<td>'.$row['lab_admin'].'</td>
+				<td>'.$row['lab_staff'].'</td>
+			</tr>
+		';
+	}
+}
+?>      </tbody>
+	</table>
+	</div>
+</div>
+</div>
+<?php 
+mysqli_close($con);
+?>    
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>($issue_lab_item_record_updated_at && $issue_lab_item_record_updated_at != '0000-00-00' && $issue_lab_item_record_updated_at != '0000-00-00 00:00:00' ? date_format(date_create($issue_lab_item_record_updated_at), "d-M-Y") : ''.'</td>
+				<td>'.$row['tag_name'].'</td>
+				<td>'.$row['issue_lab_item_record_quantity'].'</td>
+				<td>'.$row['issue_lab_item_record_attempt']+'1'.'</td>
+				<td>'.$row['lab_admin'].'</td>
+				<td>'.$row['lab_staff'].'</td>
+			</tr>
+		';
+	}
+}
+?>      </tbody>
+	</table>
+	</div>
+</div>
+</div>
+<?php 
+mysqli_close($con);
+?>    
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>$issue_lab_item_record_updated_at), "d-M-Y") : ''.'</td>
 				<td>'.$row['tag_name'].'</td>
 				<td>'.$row['issue_lab_item_record_quantity'].'</td>
 				<td>'.$row['issue_lab_item_record_attempt']+'1'.'</td>

@@ -145,14 +145,14 @@ if(mysqli_num_rows($run) > 0)
                 <tr>
                     <td class ="h6">'.$s.'</td>
                     <td class ="noprint h6">'.$pending_id.'</td>
-                    <td class ="h6">'.date_format(date_create($created), "d-m-Y").'</td>
+                    <td class ="h6">'.($created && $created != '0000-00-00' && $created != '0000-00-00 00:00:00' ? date_format(date_create($created), "d-m-Y") : ''.'</td>
                     <td class ="h6">'.$patient_name.'</td>
                     <td class ="noprint h6">'.$ref_name.'</td>
                     <td class ="noprint h6">'.$recommended_by.'</td>
                     <td class ="h6">'.$token_no.'</td>
-                    <td class ="h6" style = "text-align: center;">'.number_format($total_amount).'</td>
-                    <td class ="h6" style = "text-align: center;">'.number_format($received).'</td>
-                    <td class ="h6" style = "text-align: center;">'.number_format($pending_amount).'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($total_amount ?? 0)).'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($received ?? 0)).'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($pending_amount ?? 0)).'</td>
         ';
         }
     }

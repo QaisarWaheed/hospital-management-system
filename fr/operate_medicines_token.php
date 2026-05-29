@@ -96,19 +96,19 @@ html, body
                 echo '
                 <tr>
                     <td>'.$s.'</td>
-                    <td style = "text-align: center;">'.date_format(date_create($today), "d-F-Y").'</td>
+                    <td style = "text-align: center;">'.($today && $today != '0000-00-00' && $today != '0000-00-00 00:00:00' ? date_format(date_create($today), "d-F-Y") : ''.'</td>
                     <td style = "text-align: center;">'.$patient_name.'</td>
                     <td style = "text-align: center;">'.$token_id.'</td>
                     <td>'.$token_by.'</td>
                     <td>'.$bra_address.'</td>
-                    <td style = "text-align: center;">'.number_format($cash).'</td>
+                    <td style = "text-align: center;">'.number_format((float)($cash ?? 0)).'</td>
                 </tr>
                 ';
             }
                 echo '
                 <tr>
                     <td colspan = "5"></td>
-                    <td style = "text-align: center;">'.number_format($total_cash).'</td>
+                    <td style = "text-align: center;">'.number_format((float)($total_cash ?? 0)).'</td>
                 </tr>
                 ';
         }

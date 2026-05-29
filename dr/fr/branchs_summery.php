@@ -160,26 +160,26 @@ html, body
                 <tr>
                     <td>'.$s.'</td>
                     <td>'.$bra_address.'</td>
-                    <td style = "text-align: right">'.number_format($token_patient).'</td>
-                    <td style = "text-align: right">'.number_format($token_lab).'</td>
-                    <td style = "text-align: right">'.number_format($token_usg).'</td>
-                    <td style = "text-align: right">'.number_format($token_admission).'</td>
-                    <td style = "text-align: right">'.number_format($token_svd).'</td>
-                    <td style = "text-align: right">'.number_format($token_procedure).'</td>
-                    <td style = "text-align: right">'.number_format($cash_received).'</td>
+                    <td style = "text-align: right">'.number_format((float)($token_patient ?? 0)).'</td>
+                    <td style = "text-align: right">'.number_format((float)($token_lab ?? 0)).'</td>
+                    <td style = "text-align: right">'.number_format((float)($token_usg ?? 0)).'</td>
+                    <td style = "text-align: right">'.number_format((float)($token_admission ?? 0)).'</td>
+                    <td style = "text-align: right">'.number_format((float)($token_svd ?? 0)).'</td>
+                    <td style = "text-align: right">'.number_format((float)($token_procedure ?? 0)).'</td>
+                    <td style = "text-align: right">'.number_format((float)($cash_received ?? 0)).'</td>
                 </tr>
                 ';
             }
             echo '
                 <tr>
                     <th style = "text-align: right;" colspan = "2">GRAND TOTAL</th>
-                    <th style = "text-align: right;">'.number_format($total_patient).'</th>
-                    <th style = "text-align: right;">'.number_format($total_lab).'</th>
-                    <th style = "text-align: right;">'.number_format($total_usg).'</th>
-                    <th style = "text-align: right;">'.number_format($total_admission).'</th>
-                    <th style = "text-align: right;">'.number_format($total_svd).'</th>
-                    <th style = "text-align: right;">'.number_format($total_procedure).'</th>
-                    <th style = "text-align: right;">'.number_format($total_cash_received).'</th>
+                    <th style = "text-align: right;">'.number_format((float)($total_patient ?? 0)).'</th>
+                    <th style = "text-align: right;">'.number_format((float)($total_lab ?? 0)).'</th>
+                    <th style = "text-align: right;">'.number_format((float)($total_usg ?? 0)).'</th>
+                    <th style = "text-align: right;">'.number_format((float)($total_admission ?? 0)).'</th>
+                    <th style = "text-align: right;">'.number_format((float)($total_svd ?? 0)).'</th>
+                    <th style = "text-align: right;">'.number_format((float)($total_procedure ?? 0)).'</th>
+                    <th style = "text-align: right;">'.number_format((float)($total_cash_received ?? 0)).'</th>
                 </tr>
             ';
         }

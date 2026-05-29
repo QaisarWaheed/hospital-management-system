@@ -82,7 +82,7 @@ if (count($doctors) > 0) {
         if ($total_labs === 0 || $total_ops === 0) {
             $per_lab = '0';
         } else {
-            $per_lab = number_format(($total_labs / $total_ops) * 100, 2);
+            $per_lab = number_format((float)(($total_labs / $total_ops) * 100 ?? 0), 2);
         }
 
         $s++;
@@ -94,9 +94,9 @@ if (count($doctors) > 0) {
             <td>' . $consultant_opd . '</td>
             <td>' . $total_labs . '</td>
             <td>' . $per_lab . '%</td>
-            <td style="text-align: right;">' . number_format($lab_cash) . '</td>
+            <td style="text-align: right;">' . number_format((float)($lab_cash ?? 0)) . '</td>
             <td></td>
-            <td style="text-align: right;">' . number_format($total) . '</td>
+            <td style="text-align: right;">' . number_format((float)($total ?? 0)) . '</td>
         </tr>
         ';
     }
@@ -110,9 +110,9 @@ if (count($doctors) > 0) {
             <th><?php echo $count_consultant_opd; ?></th>
             <th><?php echo $count_total_lab; ?></th>
             <th></th>
-            <th style="text-align: right;"><?php echo number_format($count_lab); ?></th>
+            <th style="text-align: right;"><?php echo number_format((float)($count_lab ?? 0)); ?></th>
             <th></th>
-            <th style="text-align: right;"><?php echo number_format($count_total); ?></th>
+            <th style="text-align: right;"><?php echo number_format((float)($count_total ?? 0)); ?></th>
         </tr>
     </tfoot>
 </table>

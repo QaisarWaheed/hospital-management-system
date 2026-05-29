@@ -287,9 +287,9 @@ if(mysqli_num_rows($run) > 0)
             <td class = "noprint">'.$row['warrantee'].'</td>
             <td class = "noprint">'.$row['mfg_date'].'</td>
             <td>'.$row['expiry_date'].'</td>
-            <td style = "text-align: right;">'.number_format($row['per_item_price'], 2).'</td>
+            <td style = "text-align: right;">'.number_format((float)($row['per_item_price'] ?? 0), 2).'</td>
             <td style = "text-align: right;">'.$row['quantity'].'</td>
-            <th style = "text-align: right;">'.number_format($amount).'</th>
+            <th style = "text-align: right;">'.number_format((float)($amount ?? 0)).'</th>
             <td class="noprint">
             </td>
         </tr>
@@ -302,7 +302,7 @@ if(mysqli_num_rows($run) > 0)
         <tr>
             <th colspan = "7"></th>
             <th colspan = "3" class = "noprint"></th>
-            <th colspan = "2" style = "text-align: right;"><?php echo intval($total_amount); ?></th>
+            <th colspan = "2" style = "text-align: right;"><?php echo intval($total_amount ?? 0); ?></th>
             <td class="noprint">
         </tr>
 				        </tboby>

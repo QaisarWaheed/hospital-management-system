@@ -51,7 +51,7 @@ if(!isset($_SESSION['ao_id']) && $_SESSION['ao_id'] != 1)
                             <td>'.$row['5'].'</td>
                             <td>'.$row['6'].'</td>
                             <td>'.$row['7'].'</td>
-                            <td>'.number_format($row['8']).'</td>
+                            <td>'.number_format((float)($row['8'] ?? 0)).'</td>
                         </tr>
                         ';  
                     }
@@ -59,7 +59,7 @@ if(!isset($_SESSION['ao_id']) && $_SESSION['ao_id'] != 1)
                 echo '
                     <tr>
                         <th colspan = "8"></th>
-                        <th>'.number_format($total_extra).'</th>
+                        <th>'.number_format((float)($total_extra ?? 0)).'</th>
                     </tr>';
                 ?>
             </tbody>

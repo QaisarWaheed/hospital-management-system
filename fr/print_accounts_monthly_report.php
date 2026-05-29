@@ -104,10 +104,10 @@ for ($day = 1; $day <= $days; $day++) {
         <td>' . $count_urgent . '</td>
         <td>' . $total . '</td>
         <td>' . $count_consultent . '</td>
-        <td>' . number_format($cash_received_procedure) . '</td>
-        <td>' . number_format($cash_received_medicine) . '</td>
-        <td>' . number_format($cash_received_lab) . '</td>
-        <td>' . number_format($collection_amount) . '</td>
+        <td>' . number_format((float)($cash_received_procedure ?? 0)) . '</td>
+        <td>' . number_format((float)($cash_received_medicine ?? 0)) . '</td>
+        <td>' . number_format((float)($cash_received_lab ?? 0)) . '</td>
+        <td>' . number_format((float)($collection_amount ?? 0)) . '</td>
     </tr>';
 }
 $grandTotal = (int) $totals['poor'] + (int) $totals['general'] + (int) $totals['private'] + (int) $totals['urgent'];
@@ -122,10 +122,10 @@ $grandTotal = (int) $totals['poor'] + (int) $totals['general'] + (int) $totals['
             <th><?php echo (int) $totals['urgent']; ?></th>
             <th><?php echo $grandTotal; ?></th>
             <th><?php echo (int) $totals['consultant']; ?></th>
-            <th><?php echo number_format((float) $totals['procedure']); ?></th>
-            <th><?php echo number_format((float) $totals['medicine']); ?></th>
-            <th><?php echo number_format((float) $totals['lab']); ?></th>
-            <th><?php echo number_format((float) $totals['collection']); ?></th>
+            <th><?php echo number_format((float)((float) $totals['procedure'] ?? 0)); ?></th>
+            <th><?php echo number_format((float)((float) $totals['medicine'] ?? 0)); ?></th>
+            <th><?php echo number_format((float)((float) $totals['lab'] ?? 0)); ?></th>
+            <th><?php echo number_format((float)((float) $totals['collection'] ?? 0)); ?></th>
         </tr>
     </tfoot>
 </table>

@@ -68,7 +68,7 @@ body
 		<th>Name</th>
 		<td><?php echo $user_login_name; ?></td>
 		<th>Login Time</th>
-		<td><?php echo date_format(date_create($login_at), 'd-M-Y h:i:s A'); ?></td>
+		<td><?php echo ($login_at && $login_at != '0000-00-00' && $login_at != '0000-00-00 00:00:00' ? date_format(date_create($login_at), 'd-M-Y h:i:s A') : ''; ?></td>
 	</tr>
 	<tr>
 		<th>Login As</th>
@@ -78,36 +78,181 @@ body
 	</tr>
 	<tr>
 		<th colspan="2" style="text-align: right;">Computer Total Cash</th>
-		<td colspan="2"><?php echo number_format($computer_total); ?></td>
+		<td colspan="2"><?php echo number_format((float)($computer_total ?? 0)); ?></td>
 	</tr>
 	<tr>
 		<th colspan="2" style="text-align: right;">Cash Received</th>
-		<td colspan="2"><?php echo  number_format($received_amount); ?></td>
+		<td colspan="2"><?php echo  number_format((float)($received_amount ?? 0)); ?></td>
 	</tr>
 	<tr>
 		<th colspan="2" style="text-align: right;">Donation Collection</th>
-		<td colspan="2"><?php echo number_format($donation_collection); ?></td>
+		<td colspan="2"><?php echo number_format((float)($donation_collection ?? 0)); ?></td>
 	</tr>
 	<tr>
 		<th colspan="2" style="text-align: right;">Total Cash</th>
-		<td colspan="2"><?php echo number_format($received_amount + $donation_collection); ?></td>
+		<td colspan="2"><?php echo number_format((float)($received_amount + $donation_collection ?? 0)); ?></td>
 	</tr>
 	<tr>
 		<th colspan="2" style="text-align: right;">Submitted / Physical Cash</th>
-		<td colspan="2"><?php echo number_format($submitted_amount); ?></td>
+		<td colspan="2"><?php echo number_format((float)($submitted_amount ?? 0)); ?></td>
 	</tr>
 
 	<tr>
 		<th colspan="2" style="text-align: right;">Extra Cash</th>
-		<td colspan="2"><?php echo number_format($extra_amount); ?></td>
+		<td colspan="2"><?php echo number_format((float)($extra_amount ?? 0)); ?></td>
 	</tr>
 	<tr>
 		<th colspan="2" style="text-align: right;">Short Cash</th>
-		<td colspan="2"><?php echo number_format($short_amount); ?></td>
+		<td colspan="2"><?php echo number_format((float)($short_amount ?? 0)); ?></td>
 	</tr>
 	<tr>
 		<th colspan="2" style="text-align: right;">Submitted Amount with Report</th>
-		<td colspan="2"><?php echo number_format($submitted_amount+$short_amount); ?></td>
+		<td colspan="2"><?php echo number_format((float)($submitted_amount+$short_amount ?? 0)); ?></td>
+	</tr>
+<?php
+?>
+</table>
+</body>
+</html>($logout_at && $logout_at != '0000-00-00' && $logout_at != '0000-00-00 00:00:00' ? date_format(date_create($logout_at), 'd-M-Y h:i:s A') : ''; ?></td>
+	</tr>
+	<tr>
+		<th colspan="2" style="text-align: right;">Computer Total Cash</th>
+		<td colspan="2"><?php echo number_format((float)($computer_total ?? 0)); ?></td>
+	</tr>
+	<tr>
+		<th colspan="2" style="text-align: right;">Cash Received</th>
+		<td colspan="2"><?php echo  number_format((float)($received_amount ?? 0)); ?></td>
+	</tr>
+	<tr>
+		<th colspan="2" style="text-align: right;">Donation Collection</th>
+		<td colspan="2"><?php echo number_format((float)($donation_collection ?? 0)); ?></td>
+	</tr>
+	<tr>
+		<th colspan="2" style="text-align: right;">Total Cash</th>
+		<td colspan="2"><?php echo number_format((float)($received_amount + $donation_collection ?? 0)); ?></td>
+	</tr>
+	<tr>
+		<th colspan="2" style="text-align: right;">Submitted / Physical Cash</th>
+		<td colspan="2"><?php echo number_format((float)($submitted_amount ?? 0)); ?></td>
+	</tr>
+
+	<tr>
+		<th colspan="2" style="text-align: right;">Extra Cash</th>
+		<td colspan="2"><?php echo number_format((float)($extra_amount ?? 0)); ?></td>
+	</tr>
+	<tr>
+		($logout_at && $logout_at != '0000-00-00' && $logout_at != '0000-00-00 00:00:00' ? date_format(date_create($logout_at), 'd-M-Y h:i:s A') : ''; ?></td>
+	</tr>
+	<tr>
+		<th colspan="2" style="text-align: right;">Computer Total Cash</th>
+		<td colspan="2"><?php echo number_format((float)($computer_total ?? 0)); ?></td>
+	</tr>
+	<tr>
+		<th colspan="2" style="text-align: right;">Cash Received</th>
+		<td colspan="2"><?php echo  number_format((float)($received_amount ?? 0)); ?></td>
+	</tr>
+	<tr>
+		<th colspan="2" style="text-align: right;">Donation Collection</th>
+		<td colspan="2"><?php echo number_format((float)($donation_collection ?? 0)); ?></td>
+	</tr>
+	<tr>
+		<th colspan="2" style="text-align: right;">Total Cash</th>
+		<td colspan="2"><?php echo number_format((float)($received_amount + $donation_collection ?? 0)); ?></td>
+	</tr>
+	<tr>
+		<th colspan="2" style="text-align: right;">Submitted / Physical Cash</th>
+		<td colspan="2"><?php echo number_format((float)($submitted_amount ?? 0)); ?></td>
+	</tr>
+
+	<tr>
+		<th colspan="2" style="text-align: right;">Extra Cash</th>
+		<td colspan="2"><?php echo number_format((float)($extra_amount ?? 0)); ?></td>
+	</tr>
+	<tr>
+		<th colspan="2" style="text-align: right;">Short Cash</th>
+		<td colspan="2"><?php echo number_format((float)($short_amount ?? 0)); ?></td>
+	</tr>
+	<tr>
+		<th colspan="2" style="text-align: right;">Submitted Amount with Report</th>
+		<td colspan="2"><?php echo number_format((float)($submitted_amount+$short_amount ?? 0)); ?></td>
+	</tr>
+<?php
+?>
+</table>
+</body>
+</html>($logout_at && $logout_at != '0000-00-00' && $logout_at != '0000-00-00 00:00:00' ? date_format(date_create($logout_at), 'd-M-Y h:i:s A') : ''; ?></td>
+	</tr>
+	<tr>
+		<th colspan="2" style="text-align: right;">Computer Total Cash</th>
+		<td colspan="2"><?php echo number_format((float)($computer_total ?? 0)); ?></td>
+	</tr>
+	<tr>
+		<th colspan="2" style="text-align: right;">Cash Received</th>
+		<td colspan="2"><?php echo  number_format((float)($received_amount ?? 0)); ?></td>
+	</tr>
+	<tr>
+		<th colspan="2" style="text-align: right;">Donation Collection</th>
+		<td colspan="2"><?php echo number_format((float)($donation_collection ?? 0)); ?></td>
+	</tr>
+	<tr>
+		<th colspan="2" style="text-align: right;">Total Cash</th>
+		<td colspan="2"><?php echo number_format((float)($received_amount + $donation_collection ?? 0)); ?></td>
+	</tr>
+	<tr>
+		<th colspan="2" style="text-align: right;">Submitted / Physical Cash</th>
+		<td colspan="2"><?php echo number_format((float)($submitted_amount ?? 0)); ?></td>
+	</tr>
+
+	<tr>
+		<th colspan="2" style="text-align: right;">Extra Cash</th>
+		<td colspan="2"><?php echo number_format((float)($extra_amount ?? 0)); ?></td>
+	</tr>
+	<tr>
+		<th colspan="2" style="text-align: right;">Short Cash</th>
+		<td colspan="2"><?php echo number_format((float)($short_amount ?? 0)); ?></td>
+	</tr>
+	<tr>
+		<th colspan="2" style="text-align: right;">Submitted Amount with Report</th>
+		<td colspan="2"><?php echo number_format((float)($submitted_amount+$short_amount ?? 0)); ?></td>
+	</tr>
+<?php
+?>
+</table>
+</body>
+</html>$logout_at), 'd-M-Y h:i:s A') : ''; ?></td>
+	</tr>
+	<tr>
+		<th colspan="2" style="text-align: right;">Computer Total Cash</th>
+		<td colspan="2"><?php echo number_format((float)($computer_total ?? 0)); ?></td>
+	</tr>
+	<tr>
+		<th colspan="2" style="text-align: right;">Cash Received</th>
+		<td colspan="2"><?php echo  number_format((float)($received_amount ?? 0)); ?></td>
+	</tr>
+	<tr>
+		<th colspan="2" style="text-align: right;">Donation Collection</th>
+		<td colspan="2"><?php echo number_format((float)($donation_collection ?? 0)); ?></td>
+	</tr>
+	<tr>
+		<th colspan="2" style="text-align: right;">Total Cash</th>
+		<td colspan="2"><?php echo number_format((float)($received_amount + $donation_collection ?? 0)); ?></td>
+	</tr>
+	<tr>
+		<th colspan="2" style="text-align: right;">Submitted / Physical Cash</th>
+		<td colspan="2"><?php echo number_format((float)($submitted_amount ?? 0)); ?></td>
+	</tr>
+
+	<tr>
+		<th colspan="2" style="text-align: right;">Extra Cash</th>
+		<td colspan="2"><?php echo number_format((float)($extra_amount ?? 0)); ?></td>
+	</tr>
+	<tr>
+		<th colspan="2" style="text-align: right;">Short Cash</th>
+		<td colspan="2"><?php echo number_format((float)($short_amount ?? 0)); ?></td>
+	</tr>
+	<tr>
+		<th colspan="2" style="text-align: right;">Submitted Amount with Report</th>
+		<td colspan="2"><?php echo number_format((float)($submitted_amount+$short_amount ?? 0)); ?></td>
 	</tr>
 <?php
 ?>

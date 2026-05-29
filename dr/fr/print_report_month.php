@@ -78,26 +78,26 @@ for ($day = 1; $day <= $days; $day++) {
         <tr style="text-align: right;">
             <td><?php echo $s; ?></td>
             <td><?php echo htmlspecialchars($select_date); ?></td>
-            <td><?php echo report_safe_number_format($cash_amount); ?></td>
-            <td><?php echo report_safe_number_format($return_token_amount); ?></td>
-            <td><?php echo report_safe_number_format($collection_amount); ?></td>
-            <td><?php echo report_safe_number_format($received_amount); ?></td>
-            <td><?php echo report_safe_number_format($extra_amount); ?></td>
-            <td><?php echo report_safe_number_format($short_amount); ?></td>
-            <td><?php echo report_safe_number_format($received_amount + $extra_amount); ?></td>
+            <td><?php echo report_safe_number_format((float)($cash_amount ?? 0)); ?></td>
+            <td><?php echo report_safe_number_format((float)($return_token_amount ?? 0)); ?></td>
+            <td><?php echo report_safe_number_format((float)($collection_amount ?? 0)); ?></td>
+            <td><?php echo report_safe_number_format((float)($received_amount ?? 0)); ?></td>
+            <td><?php echo report_safe_number_format((float)($extra_amount ?? 0)); ?></td>
+            <td><?php echo report_safe_number_format((float)($short_amount ?? 0)); ?></td>
+            <td><?php echo report_safe_number_format((float)($received_amount + $extra_amount ?? 0)); ?></td>
         </tr>
 <?php } ?>
     </tbody>
     <tfoot>
         <tr style="text-align: right;">
             <th colspan="2">TOTAL</th>
-            <th><?php echo report_safe_number_format($totals['cash']); ?></th>
-            <th><?php echo report_safe_number_format($totals['return_token']); ?></th>
-            <th><?php echo report_safe_number_format($totals['collection']); ?></th>
-            <th><?php echo report_safe_number_format($totals['received_amount']); ?></th>
-            <th><?php echo report_safe_number_format($totals['extra_amount']); ?></th>
-            <th><?php echo report_safe_number_format($totals['short_amount']); ?></th>
-            <th><?php echo report_safe_number_format($totals['received_amount'] + $totals['extra_amount']); ?></th>
+            <th><?php echo report_safe_number_format((float)($totals['cash'] ?? 0)); ?></th>
+            <th><?php echo report_safe_number_format((float)($totals['return_token'] ?? 0)); ?></th>
+            <th><?php echo report_safe_number_format((float)($totals['collection'] ?? 0)); ?></th>
+            <th><?php echo report_safe_number_format((float)($totals['received_amount'] ?? 0)); ?></th>
+            <th><?php echo report_safe_number_format((float)($totals['extra_amount'] ?? 0)); ?></th>
+            <th><?php echo report_safe_number_format((float)($totals['short_amount'] ?? 0)); ?></th>
+            <th><?php echo report_safe_number_format((float)($totals['received_amount'] + $totals['extra_amount'] ?? 0)); ?></th>
         </tr>
     </tfoot>
 </table>

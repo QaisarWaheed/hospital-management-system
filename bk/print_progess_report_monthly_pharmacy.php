@@ -10,7 +10,7 @@ $like = $req['like'];
 ?>
 <html>
 <head>
-    <title>PRINT PHARMACY PROGRESS REPORT <?php echo get_branch_tag_by($br_id); echo date_format(date_create($date), " F Y"); ?></title>
+    <title>PRINT PHARMACY PROGRESS REPORT <?php echo get_branch_tag_by($br_id); echo ($date && $date != '0000-00-00' && $date != '0000-00-00 00:00:00' ? date_format(date_create($date), " F Y") : ''; ?></title>
 </head>
 <body>
     
@@ -19,6 +19,61 @@ $like = $req['like'];
     <h2><?php echo $company_name; ?></h2>
     <h2><?php echo get_branch_name_by($br_id); ?></h2>
     <h3>PHARMACY PROGRESS <?php echo date_format(date_create($date), " F Y"); ?></h3>
+</caption>
+    <thead>
+        <tr>
+            <th>S#</th>
+            <th>ID</th>
+            <th>NAME</th>
+            <th>PURCHASE</th>
+            <th>SALE </th>
+            <th>PROFIT </th>
+            <th>INCENTIVE</th>
+        </tr>
+    </thead>
+<?php
+$s = 0; 
+$total_sale = 0;
+$total_incentive = 0;
+$total_purchase = 0;
+$ibd_date_clause = progress_sql_date_clause($c($date && $date != '0000-00-00' && $date != '0000-00-($date && $date != '0000-00-00' && $date != '0000-00-00 00:00:00' ? date_format(date_create($date), " F Y") : ''; ?></h3>
+</caption>
+    <thead>
+        <tr>
+            <th>S#</th>
+            <th>ID</th>
+            <th>NAME</th>
+            <th>PURCHASE</th>
+            <th>SALE </th>
+            <th>PROFIT </th>
+            <th>INCENTIVE</th>
+        </tr>
+    </thead>
+<?php
+$s = 0; 
+$total_sale = 0;
+$total_incentive = 0;
+$total_purchase = 0;
+$ibd_date_clause = progress_sql_date_clause($c($date && $date != '0000-00-00' && $date != '0000-00-00 00:00:00' ? date_format(date_create($date), " F Y") : ''; ?></h3>
+</caption>
+    <thead>
+        <tr>
+            <th>S#</th>
+            <th>ID</th>
+            <th>NAME</th>
+            <th>PURCHASE</th>
+            <th>SALE </th>
+            <th>PROFIT </th>
+            <th>INCENTIVE</th>
+        </tr>
+    </thead>
+<?php
+$s = 0; 
+$total_sale = 0;
+$total_incentive = 0;
+$total_purchase = 0;
+$ibd_date_clause = progress_sql_date_clause($con, $like, 'item_by_doctor.created');
+$select = "SELECT DISTINCT item_by_doctor.user_id, users.u_name, SUM(item_by_doctor.sale_quantity*item_by_doctor.sale_price_poor)AS sale_poor, SUM(item_by_doctor.sale_quantity*item_by_doctor.purchase_price)AS purchase_price FROM `item_by_doctor` INNER JOIN users ON item_by_doctor.user_id = users.id IN$date), " F Y") : ''; ?></h3>
 </caption>
     <thead>
         <tr>
@@ -76,10 +131,10 @@ if(mysqli_num_rows($run) > 0)
                 <td>'.$s.'</td>
                 <td>'.$row['user_id'].'</td>
                 <td style = "text-align: left;">'.$row['u_name'].'</td>';
-                echo '<td>'.number_format(intval($purchase)).'</td>';
-                echo '<td>'.number_format(intval($sale)).'</td>';
-                echo '<td>'.number_format(intval($sale-$purchase)).'</td>';
-                echo '<td>'.number_format(intval($incentive)).'</td>';
+                echo '<td>'.number_format((float)(intval($purchase ?? 0) ?? 0)).'</td>';
+                echo '<td>'.number_format((float)(intval($sale ?? 0) ?? 0)).'</td>';
+                echo '<td>'.number_format((float)(intval($sale-$purchase) ?? 0)).'</td>';
+                echo '<td>'.number_format((float)(intval($incentive ?? 0) ?? 0)).'</td>';
                 echo '
             </tr>';
     }
@@ -87,10 +142,10 @@ if(mysqli_num_rows($run) > 0)
     echo '<tfoot>
             <tr style = "text-align: right;">
                 <th colspan = "3"></th>';
-                echo '<th>'.number_format(intval($total_purchase)).'</th>';
-                echo '<th>'.number_format(intval($total_sale)).'</th>';
-                echo '<th>'.number_format(intval($total_sale-$total_purchase)).'</th>';
-                echo '<th>'.number_format(intval($total_incentive)).'</th>';
+                echo '<th>'.number_format((float)(intval($total_purchase ?? 0) ?? 0)).'</th>';
+                echo '<th>'.number_format((float)(intval($total_sale ?? 0) ?? 0)).'</th>';
+                echo '<th>'.number_format((float)(intval($total_sale-$total_purchase) ?? 0)).'</th>';
+                echo '<th>'.number_format((float)(intval($total_incentive ?? 0) ?? 0)).'</th>';
                 echo '
             </tr>
         </tfoor>';

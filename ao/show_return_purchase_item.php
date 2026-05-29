@@ -111,7 +111,7 @@ if ($result) {
 
                     <td class="p-4">
                         <div class="text-sm font-bold text-gray-800"><?php echo $row['return_quantity']; ?> Units</div>
-                        <div class="text-sm text-green-600 font-semibold">Rs.<?php echo number_format($row['return_amount'], 2); ?></div>
+                        <div class="text-sm text-green-600 font-semibold">Rs.<?php echo number_format((float)($row['return_amount'] ?? 0), 2); ?></div>
                     </td>
 
                     <td class="p-4">

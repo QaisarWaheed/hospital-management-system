@@ -171,7 +171,7 @@ if(mysqli_num_rows($run) > 0)
         echo '				            
         <tr  style = "font-size: 15px;">
             <td style = "text-align: center;">'.$s.'</td>
-            <td style = "text-align: center">'.date_format(date_create($row['audit_lab_store_form_date']), "d-m-Y").'</td>
+            <td style = "text-align: center">'.($row['audit_lab_store_form_date'] && $row['audit_lab_store_form_date'] != '0000-00-00' && $row['audit_lab_store_form_date'] != '0000-00-00 00:00:00' ? date_format(date_create($row['audit_lab_store_form_date']), "d-m-Y") : ''.'</td>
             <td style = "text-align: center">
             '.$count_entery_items.'
             <progress style = "width: 50px;height:10px;" id="file" value="'.$count_entery_items.'" max="'.$count_items.'">  </progress>

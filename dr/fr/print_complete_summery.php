@@ -64,41 +64,41 @@ $toLabel = ycdo_safe_date_format($to_date, 'd-m-Y', $to_date);
 	</thead>
 	<tbody>
 <tr>
-	<th style="text-align: right;" colspan="5"><?php echo number_format($totals['cash']); ?></th>
+	<th style="text-align: right;" colspan="5"><?php echo number_format((float)($totals['cash'] ?? 0)); ?></th>
 	<th></th>
-	<th colspan="5"><?php echo number_format($totals['cash_received']); ?></th>
+	<th colspan="5"><?php echo number_format((float)($totals['cash_received'] ?? 0)); ?></th>
 </tr>
 <?php
 foreach (fr_summary_tokan_type_breakdown($con, $from_date, $to_date, $u_id, $br_id, false) as $typeRow) {
     echo '<tr>
         <th style="text-align: right;" colspan="4">' . htmlspecialchars($typeRow['title']) . '</th>
         <th style="text-align: center;" colspan="3">' . (int) $typeRow['count'] . '</th>
-        <th style="text-align: left;" colspan="4">' . number_format($typeRow['amount']) . '</th>
+        <th style="text-align: left;" colspan="4">' . number_format((float)($typeRow['amount'] ?? 0)) . '</th>
     </tr>';
 }
 $lab = fr_summary_ibd_category_totals($con, $from_date, $to_date, true, false);
 echo '<tr>
     <th style="text-align: right;" colspan="4">LAB AMOUNT</th>
     <th style="text-align: center;" colspan="3">' . (int) $lab['count'] . '</th>
-    <th style="text-align: left;" colspan="4">' . number_format($lab['amount']) . '</th>
+    <th style="text-align: left;" colspan="4">' . number_format((float)($lab['amount'] ?? 0)) . '</th>
 </tr>';
 $medicine = fr_summary_ibd_category_totals($con, $from_date, $to_date, false, false);
 echo '<tr>
     <th style="text-align: right;" colspan="4">MEDICINE AMOUNT</th>
     <th style="text-align: center;" colspan="3">' . (int) $medicine['count'] . '</th>
-    <th style="text-align: left;" colspan="4">' . number_format($medicine['amount']) . ' Approx</th>
+    <th style="text-align: left;" colspan="4">' . number_format((float)($medicine['amount'] ?? 0)) . ' Approx</th>
 </tr>';
 $returns = fr_summary_return_tokens($con, $from_date, $to_date, $br_id, false);
 if ($returns['amount'] > 0 || $returns['token_list'] !== '') {
-    echo '<tr><th style="text-align: left;" colspan="11">RETURN TOKEN: Amount -> <u>' . number_format($returns['amount']) . '</u> --- Token Nos -> <u>' . htmlspecialchars($returns['token_list']) . '</u></th></tr>';
+    echo '<tr><th style="text-align: left;" colspan="11">RETURN TOKEN: Amount -> <u>' . number_format((float)($returns['amount'] ?? 0)) . '</u> --- Token Nos -> <u>' . htmlspecialchars($returns['token_list']) . '</u></th></tr>';
 }
 $pending = fr_summary_pending_amount($con, $from_date, $to_date, false);
 if ($pending > 0) {
-    echo '<tr><td colspan="11"><h3 style="text-align: center;">PENDING TOKEN Amount -> ' . number_format($pending) . '</h3></td></tr>';
+    echo '<tr><td colspan="11"><h3 style="text-align: center;">PENDING TOKEN Amount -> ' . number_format((float)($pending ?? 0)) . '</h3></td></tr>';
 }
 $pendingReceive = fr_summary_pending_receive_amount($con, $from_date, $to_date, false);
 if ($pendingReceive > 0) {
-    echo '<tr><td colspan="11"><h3 style="text-align: center;">PENDING RECEIVED AMOUNT -> ' . number_format($pendingReceive) . '</h3></td></tr>';
+    echo '<tr><td colspan="11"><h3 style="text-align: center;">PENDING RECEIVED AMOUNT -> ' . number_format((float)($pendingReceive ?? 0)) . '</h3></td></tr>';
 }
 ?>
 	</tbody>

@@ -31,7 +31,7 @@ if (function_exists('ob_flush')) {
 
 $doctorRows = hr_monthly_progress_doctor_rows($con, $br_id, $date);
 $branchHeader = summary_branch_header($con, $br_id, $company_name);
-$monthLabel = ycdo_safe_date_format(strlen($date) === 7 ? $date . '-01' : $date, 'F Y', $date);
+$monthLabel = ycdo_safe_date_format(strlen($date ?? '') === 7 ? $date . '-01' : $date, 'F Y', $date);
 $generatedBy = htmlspecialchars($hr_name, ENT_QUOTES, 'UTF-8');
 
 $totals = hr_monthly_progress_doctor_empty_row();
@@ -102,7 +102,7 @@ foreach ($doctorRows as $row) {
         <td><?php echo $opd; ?></td>
         <td><?php echo $tests; ?></td>
         <td><?php echo hr_monthly_progress_lab_percent($opd, $tests); ?></td>
-        <td><?php echo number_format((float) $row['lab_test_cash']); ?></td>
+        <td><?php echo number_format((float)((float) $row['lab_test_cash'] ?? 0)); ?></td>
         <td><?php echo (int) $row['usgs']; ?></td>
         <td><?php echo (int) $row['svds']; ?></td>
         <td><?php echo (int) $row['dncs']; ?></td>
@@ -117,7 +117,7 @@ foreach ($doctorRows as $row) {
         <td><?php echo (int) $row['gynae_system']; ?></td>
         <td><?php echo (int) $row['refered']; ?></td>
         <td><?php echo (int) $row['refered_to']; ?></td>
-        <td style="text-align:right;"><?php echo number_format((float) $row['cash']); ?></td>
+        <td style="text-align:right;"><?php echo number_format((float)((float) $row['cash'] ?? 0)); ?></td>
     </tr>
     <?php
 }
@@ -128,7 +128,7 @@ foreach ($doctorRows as $row) {
         <th><?php echo (int) $totals['opd']; ?></th>
         <th><?php echo (int) $totals['tests']; ?></th>
         <th></th>
-        <th><?php echo number_format((float) $totals['lab_test_cash']); ?></th>
+        <th><?php echo number_format((float)((float) $totals['lab_test_cash'] ?? 0)); ?></th>
         <th><?php echo (int) $totals['usgs']; ?></th>
         <th><?php echo (int) $totals['svds']; ?></th>
         <th><?php echo (int) $totals['dncs']; ?></th>
@@ -143,7 +143,7 @@ foreach ($doctorRows as $row) {
         <th><?php echo (int) $totals['gynae_system']; ?></th>
         <th><?php echo (int) $totals['refered']; ?></th>
         <th><?php echo (int) $totals['refered_to']; ?></th>
-        <th><?php echo number_format((float) $totals['cash']); ?></th>
+        <th><?php echo number_format((float)((float) $totals['cash'] ?? 0)); ?></th>
     </tr>
 </tbody>
 </table>

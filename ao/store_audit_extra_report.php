@@ -70,7 +70,7 @@ else
                             <td>'.$manual_stock.'</td>
                             <td>'.$computer_stock.'</td>
                             <td>'.$difference.'</td>
-                            <td>'.number_format(abs($poor*$difference)).'</td>
+                            <td>'.number_format((float)(abs($poor*$difference) ?? 0)).'</td>
                         </tr>
                         ';    
                     }
@@ -78,7 +78,7 @@ else
                 echo '
                     <tr>
                         <th colspan = "6"></th>
-                        <th style = "font-size:23px;">'.number_format($total_extra).'</th>
+                        <th style = "font-size:23px;">'.number_format((float)($total_extra ?? 0)).'</th>
                     </tr>
                 ';
                 ?>
@@ -86,11 +86,11 @@ else
             <caption style = "caption-side: top;color: black;text-align: center;"> 
                 <h2>AUDIT EXTRA MEDICINE REPORT - YCDO</h2>
                 <h3><?php echo $audit_branch_name; ?></h3>
-                <h3><?php echo date_format(date_create($audit_created), "d-F-Y"); ?></h3>
+                <h3><?php echo ($audit_created && $audit_created != '0000-00-00' && $audit_created != '0000-00-00 00:00:00' ? date_format(date_create($audit_created), "d-F-Y") : ''; ?></h3>
             </caption>
         </table>
         <div style = "font-size: 24px;text-align: center;color: black;">
-            <p>EXTRA MEDICINE AMOUNT: <strong> <?php echo number_format($total_extra); ?></strong></p>
+            <p>EXTRA MEDICINE AMOUNT: <strong> <?php echo number_format((float)($total_extra ?? 0)); ?></strong></p>
         </div>
     </div>
 </div>

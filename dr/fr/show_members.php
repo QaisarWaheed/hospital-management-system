@@ -92,7 +92,7 @@ if(mysqli_num_rows($run_member) > 0)
 	                <th><?php echo $row_member['2']; ?></th>
 	                <th><?php echo $row_member['3']; ?></th>
 	                <th><?php echo $row_member['5']; ?></th>
-	                <th><?php echo date_format(date_create($row_member['7']), "d-M-Y"); ?></th>
+	                <th><?php echo ($row_member['7'] && $row_member['7'] != '0000-00-00' && $row_member['7'] != '0000-00-00 00:00:00' ? date_format(date_create($row_member['7']), "d-M-Y") : ''; ?></th>
 	                <th><?php echo $row_member['6']; ?></th>
 	                <th><a href = "show_members.php?member_id=<?php echo $member_id; ?>"></a></th>
 	            </tr>

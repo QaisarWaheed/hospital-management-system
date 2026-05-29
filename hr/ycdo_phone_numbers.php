@@ -64,7 +64,79 @@ if(!isset($_SESSION['hr_id']))
                         	                        <td><?php echo $s; ?></td>
                         	                        <td><?php echo $user_name; ?></td>
                         	                        <td><?php echo $role_title; ?></td>
-                        	                        <td><?php echo date_format(date_create($user_in_time), "h:i:s A").' - '.date_format(date_create($user_out_time), "h:i:s A"); ?></td>
+                        	                        <td><?php echo ($user_in_time && $user_in_time != '0000-00-00' && $user_in_time != '0000-00-00 00:00:00' ? date_format(date_create($user_in_time), "h:i:s A") : ''.' - '.date_format(date_create($user_out_time), "h:i:s A"); ?></td>
+                        	                        <td><?php echo $user_phone; ?></td>
+                        	                    </tr>
+                    	           <?php     }
+                        	            }
+                                        ?>
+                                        </tbody>
+                                  </table>
+                              </details>
+           <?php     }
+	            }
+	            ?>
+	        </div>
+	    </div>
+	</div>
+</div>
+
+</body>
+</html>($user_out_time && $user_out_time != '0000-00-00' && $user_out_time != '0000-00-00 00:00:00' ? date_format(date_create($user_out_time), "h:i:s A") : ''; ?></td>
+                        	                        <td><?php echo $user_phone; ?></td>
+                        	                    </tr>
+                    	           <?php     }
+                        	            }
+                                        ?>
+                                        </tbody>
+                                  </table>
+                              </details>
+           <?php     }
+	            }
+	            ?>
+	        </div>
+	    </div>
+	</div>
+</div>
+
+</body>
+</html>($user_out_time && $user_out_time != '0000-00-00' && $user_out_time != '0000-00-00 00:00:00' ? date_format(date_create($user_out_time), "h:i:s A") : ''; ?></td>
+                        	                        <td><?php echo $user_phone; ?></td>
+                        	                    </tr>
+                    	           <?php     }
+                        	            }
+                                        ?>
+                                        </tbody>
+                                  </table>
+                              </details>
+           <?php     }
+	            }
+	            ?>
+	        </div>
+	    </div>
+	</div>
+</div>
+
+</body>
+</html>($user_out_time && $user_out_time != '0000-00-00' && $user_out_time != '0000-00-00 00:00:00' ? date_format(date_create($user_out_time), "h:i:s A") : ''; ?></td>
+                        	                        <td><?php echo $user_phone; ?></td>
+                        	                    </tr>
+                    	           <?php     }
+                        	            }
+                                        ?>
+                                        </tbody>
+                                  </table>
+                              </details>
+           <?php     }
+	            }
+	            ?>
+	        </div>
+	    </div>
+	</div>
+</div>
+
+</body>
+</html>$user_out_time), "h:i:s A") : ''; ?></td>
                         	                        <td><?php echo $user_phone; ?></td>
                         	                    </tr>
                     	           <?php     }

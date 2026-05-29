@@ -134,11 +134,1322 @@ $list_truncated = $list_result['truncated'];
     	                <td><?php echo $row_sample['name']; ?></td>
     	                <td><?php echo $row_sample['phone']; ?></td>
     	                <td><?php echo $row_sample['age']; ?></td>
-    	                <td><?php echo date_format(date_create($row_sample['added_at']), 'h:i:s A d-m-Y'); ?></td>
+    	                <td><?php echo ($row_sample['added_at'] && $row_sample['added_at'] != '0000-00-00' && $row_sample['added_at'] != '0000-00-00 00:00:00' ? date_format(date_create($row_sample['added_at']), 'h:i:s A d-m-Y') : ''; ?></td>
         	                <td><?php echo $row_sample['added_by']; ?></td>
     	                <td><?php echo date_format(date_create($row_sample['collected_at']), 'h:i:s A d-m-Y'); ?></td>
         	                <td><?php echo $row_sample['collected_by']; ?></td>
         	                <td><?php echo date_format(date_create($row_sample['processed_at']), 'h:i:s A d-m-Y'); ?></td>
+        	                <td><?php echo $row_sample['processed_by']; ?></td>
+        	                <td>
+        	                    <a href="#" class = "btn btn-sm btn-success" onClick="MyWindow=window.open('lab_test_type_report.php?lab_test_id=<?php echo $row_sample['lab_test_id']; ?>','MyWindow','width=900,height=1200'); return false;"><span class="glyphicon glyphicon-pencil">U</span></a>
+        	                </td>
+    	            </tr>
+    	                <?php }
+    	            }
+    	            else
+    	            {
+    	                echo '<tr><th colspan = "8">NO PENDING SAMPLES IN PROCESS</th></tr>';
+    	            }
+    	            ?>
+    	        </tbody>
+    	    </table>
+    	</div>
+    </div>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script>
+function myFunction() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[1];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionTestName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputTestName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[2];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[3];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionPhone() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputPhone");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[4];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+</script>
+<?php mysqli_close($con); ?>($row_sample['collected_at'] && $row_sample['collected_at'] != '0000-00-00' && $row_sample['collected_at'] != '0000-00-00 00:00:00' ? date_format(date_create($row_sample['collected_at']), 'h:i:s A d-m-Y') : ''; ?></td>
+        	                <td><?php echo $row_sample['collected_by']; ?></td>
+        	                <td><?php echo date_format(date_create($row_sample['processed_at']), 'h:i:s A d-m-Y'); ?></td>
+        	                <td><?php echo $row_sample['processed_by']; ?></td>
+        	                <td>
+        	                    <a href="#" class = "btn btn-sm btn-success" onClick="MyWindow=window.open('lab_test_type_report.php?lab_test_id=<?php echo $row_sample['lab_test_id']; ?>','MyWindow','width=900,height=1200'); return false;"><span class="glyphicon glyphicon-pencil">U</span></a>
+        	                </td>
+    	            </tr>
+    	                <?php }
+    	            }
+    	            else
+    	            {
+    	                echo '<tr><th colspan = "8">NO PENDING SAMPLES IN PROCESS</th></tr>';
+    	            }
+    	            ?>
+    	        </tbody>
+    	    </table>
+    	</div>
+    </div>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script>
+function myFunction() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[1];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionTestName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputTestName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[2];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[3];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionPhone() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputPhone");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[4];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+</script>
+<?php mysqli_close($con); ?>($row_sample['processed_at'] && $row_sample['processed_at'] != '0000-00-00' && $row_sample['pr($row_sample['collected_at'] && $row_sample['collected_at'] != '0000-00-00' && $row_sample['collected_at'] != '0000-00-00 00:00:00' ? date_format(date_create($row_sample['collected_at']), 'h:i:s A d-m-Y') : ''; ?></td>
+        	                <td><?php echo $row_sample['collected_by']; ?></td>
+        	                <td><?php echo date_format(date_create($row_sample['processed_at']), 'h:i:s A d-m-Y'); ?></td>
+        	                <td><?php echo $row_sample['processed_by']; ?></td>
+        	                <td>
+        	                    <a href="#" class = "btn btn-sm btn-success" onClick="MyWindow=window.open('lab_test_type_report.php?lab_test_id=<?php echo $row_sample['lab_test_id']; ?>','MyWindow','width=900,height=1200'); return false;"><span class="glyphicon glyphicon-pencil">U</span></a>
+        	                </td>
+    	            </tr>
+    	                <?php }
+    	            }
+    	            else
+    	            {
+    	                echo '<tr><th colspan = "8">NO PENDING SAMPLES IN PROCESS</th></tr>';
+    	            }
+    	            ?>
+    	        </tbody>
+    	    </table>
+    	</div>
+    </div>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script>
+function myFunction() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[1];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionTestName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputTestName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[2];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[3];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionPhone() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputPhone");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[4];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+</script>
+<?php mysqli_close($con); ?>($row_sample['collected_at'] && $row_sample['collected_at'] != '0000-00-00' && $row_sample['collected_at'] != '0000-00-00 00:00:00' ? date_format(date_create($row_sample['collected_at']), 'h:i:s A d-m-Y') : ''; ?></td>
+        	                <td><?php echo $row_sample['collected_by']; ?></td>
+        	                <td><?php echo date_format(date_create($row_sample['processed_at']), 'h:i:s A d-m-Y'); ?></td>
+        	                <td><?php echo $row_sample['processed_by']; ?></td>
+        	                <td>
+        	                    <a href="#" class = "btn btn-sm btn-success" onClick="MyWindow=window.open('lab_test_type_report.php?lab_test_id=<?php echo $row_sample['lab_test_id']; ?>','MyWindow','width=900,height=1200'); return false;"><span class="glyphicon glyphicon-pencil">U</span></a>
+        	                </td>
+    	            </tr>
+    	                <?php }
+    	            }
+    	            else
+    	            {
+    	                echo '<tr><th colspan = "8">NO PENDING SAMPLES IN PROCESS</th></tr>';
+    	            }
+    	            ?>
+    	        </tbody>
+    	    </table>
+    	</div>
+    </div>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script>
+function myFunction() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[1];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionTestName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputTestName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[2];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[3];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionPhone() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputPhone");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[4];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+</script>
+<?php mysqli_close($con); ?>($row_sample['processed_at'] && $row_sample['processed_at'] != '0000-00-00' && $row_sample['processed_at'] != '0000-00-00 00:00:00' ? date_format(date_create($row_sample['processed_at']), 'h:i:s A d-m-Y') : ''; ?></td>
+        	                <td><?php echo $row_sample['processed_by']; ?></td>
+        	                <td>
+        	                    <a href="#" class = "btn btn-sm btn-success" onClick="MyWindow=window.open('lab_test_type_report.php?lab_test_id=<?php echo $row_sample['lab_test_id']; ?>','MyWindow','width($row_sample['processed_at'] && $row_sample['processed_at'] != '0000-00-00' && $row_sample['processed_at'] != '0000-00-00 00:00:00' ? date_format(date_create($row_sample['processed_at']), 'h:i:s A d-m-Y') : ''; ?></td>
+        	                <td><?php echo $row_sample['processed_by']; ?></td>
+        	                <td>
+        	                    <a href="#" class = "btn btn-sm btn-success" onClick="MyWindow=window.open('lab_test_type_report.php?lab_test_id=<?php echo $row_sample['lab_test_id']; ?>','MyWindow','width=900,height=1200'); return false;"><span class="glyphicon glyphicon-pencil">U</span></a>
+        	                </td>
+    	            </tr>
+    	                <?php }
+    	            }
+    	            else
+    	            {
+    	                echo '<tr><th colspan = "8">NO PENDING SAMPLES IN PROCESS</th></tr>';
+    	            }
+    	            ?>
+    	        </tbody>
+    	    </table>
+    	</div>
+    </div>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script>
+function myFunction() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[1];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionTestName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputTestName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[2];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[3];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionPhone() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputPhone");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[4];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+</script>
+<?php mysqli_close($con); ?>($row_sample['collected_at'] && $row_sample['collected_at'] != '0000-00-00' && $row_sample['collected_at'] != '0000-00-00 00:00:00' ? date_format(date_create($row_sample['collected_at']), 'h:i:s A d-m-Y') : ''; ?></td>
+        	                <td><?php echo $row_sample['collected_by']; ?></td>
+        	                <td><?php echo date_format(date_create($row_sample['processed_at']), 'h:i:s A d-m-Y'); ?></td>
+        	                <td><?php echo $row_sample['processed_by']; ?></td>
+        	                <td>
+        	                    <a href="#" class = "btn btn-sm btn-success" onClick="MyWindow=window.open('lab_test_type_report.php?lab_test_id=<?php echo $row_sample['lab_test_id']; ?>','MyWindow','width=900,height=1200'); return false;"><span class="glyphicon glyphicon-pencil">U</span></a>
+        	                </td>
+    	            </tr>
+    	                <?php }
+    	            }
+    	            else
+    	            {
+    	                echo '<tr><th colspan = "8">NO PENDING SAMPLES IN PROCESS</th></tr>';
+    	            }
+    	            ?>
+    	        </tbody>
+    	    </table>
+    	</div>
+    </div>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script>
+function myFunction() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[1];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionTestName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputTestName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[2];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[3];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionPhone() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputPhone");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[4];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+</script>
+<?php mysqli_close($con); ?>($row_sample['processed_at'] && $row_sample['processed_at'] != '0000-00-00' && $row_sample['processed_at'] != '0000-00-00 00:00:00' ? date_format(date_create($row_sample['processed_at']), 'h:i:s A d-m-Y') : ''; ?></td>
+        	                <td><?php echo $row_sample['processed_by']; ?></td>
+        	                <td>
+        	                    <a href="#" class = "btn btn-sm btn-success" onClick="MyWindow=window.open('lab_test_type_report.php?lab_test_id=<?php echo $row_sample['lab_test_id']; ?>','MyWindow','width=900,height=1200'); return false;"><span class="glyphicon glyphicon-pencil">U</span></a>
+        	                </td>
+    	            </tr>
+    	                <?php }
+    	            }
+    	            else
+    	            {
+    	                echo '<tr><th colspan = "8">NO PENDING SAMPLES IN PROCESS</th></tr>';
+    	            }
+    	            ?>
+    	        </tbody>
+    	    </table>
+    	</div>
+    </div>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script>
+function myFunction() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[1];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionTestName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputTestName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[2];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[3];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionPhone() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputPhone");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[4];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+</script>
+<?php mysqli_close($con); ?>$row_sample['collected_at']), 'h:i:s A d-m-Y') : ''; ?></td>
+        	                <td><?php echo $row_sample['collected_by']; ?></td>
+        	                <td><?php echo date_format(date_create($row_sample['processed_at']), 'h:i:s A d-m-Y'); ?></td>
+        	                <td><?php echo $row_sample['processed_by']; ?></td>
+        	                <td>
+        	                    <a href="#" class = "btn btn-sm btn-success" onClick="MyWindow=window.open('lab_test_type_report.php?lab_test_id=<?php echo $row_sample['lab_test_id']; ?>','MyWindow','width=900,height=1200'); return false;"><span class="glyphicon glyphicon-pencil">U</span></a>
+        	                </td>
+    	            </tr>
+    	                <?php }
+    	            }
+    	            else
+    	            {
+    	                echo '<tr><th colspan = "8">NO PENDING SAMPLES IN PROCESS</th></tr>';
+    	            }
+    	            ?>
+    	        </tbody>
+    	    </table>
+    	</div>
+    </div>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script>
+function myFunction() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[1];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionTestName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputTestName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[2];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[3];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionPhone() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputPhone");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[4];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+</script>
+<?php mysqli_close($con); ?>($row_sample['processed_at'] && $row_sample['processed_at'] != '0000-00-00' && $row_sample['processed_at'] != '0000-00-00 00:00:00' ? date_format(date_create($row_sample['processed_at']), 'h:i:s A d-m-Y') : ''; ?></td>
+        	                <td><?php echo $row_sample['processed_by']; ?></td>
+        	                <td>
+        	                    <a href="#" class = "btn btn-sm btn-success" onClick="MyWindow=window.open('lab_test_type_report.php?lab_test_id=<?php echo $row_sample['lab_test_id']; ?>','MyWindow','width=900,height=1200'); return false;"><span class="glyphicon glyphicon-pencil">U</span></a>
+        	                </td>
+    	            </tr>
+    	                <?php }
+    	            }
+    	            else
+    	            {
+    	                echo '<tr><th colspan = "8">NO PENDING SAMPLES IN PROCESS</th></tr>';
+    	            }
+    	            ?>
+    	        </tbody>
+    	    </table>
+    	</div>
+    </div>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script>
+function myFunction() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[1];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionTestName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputTestName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[2];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[3];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionPhone() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputPhone");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[4];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+</script>
+<?php mysqli_close($con); ?>($row_sample['processed_at'] && $row_sample['processed_at'] != '0000-00-00' && $row_sample['processed_at'] != '0000-00-00 00:00:00' ? date_format(date_create($row_sample['processed_at']), 'h:i:s A d-m-Y') : ''; ?></td>
+        	                <td><?php echo $row_sample['processed_by']; ?></td>
+        	                <td>
+        	                    <a href="#" class = "btn btn-sm btn-success" onClick="MyWindow=window.open('lab_test_type_report.php?lab_test_id=<?php echo $row_sample['lab_test_id']; ?>','MyWindow','width=900,height=1200'); return false;"><span class="glyphicon glyphicon-pencil">U</span></a>
+        	                </td>
+    	            </tr>
+    	                <?php }
+    	            }
+    	            else
+    	            {
+    	                echo '<tr><th colspan = "8">NO PENDING SAMPLES IN PROCESS</th></tr>';
+    	            }
+    	            ?>
+    	        </tbody>
+    	    </table>
+    	</div>
+    </div>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script>
+function myFunction() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[1];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionTestName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputTestName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[2];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[3];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionPhone() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputPhone");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[4];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+</script>
+<?php mysqli_close($con); ?>($row_sample['processed_at'] && $row_sample['processed_at'] != '0000-00-00' && $row_sample['processed_at'] != '0000-00-00 00:00:00' ? date_format(date_create($row_sample['processed_at']), 'h:i:s A d-m-Y') : ''; ?></td>
+        	                <td><?php echo $row_sample['processed_by']; ?></td>
+        	                <td>
+        	                    <a href="#" class = "btn btn-sm btn-success" onClick="MyWindow=window.open('lab_test_type_report.php?lab_test_id=<?php echo $row_sample['lab_test_id']; ?>','MyWindow','width=900,height=1200'); return false;"><span class="glyphicon glyphicon-pencil">U</span></a>
+        	                </td>
+    	            </tr>
+    	                <?php }
+    	            }
+    	            else
+    	            {
+    	                echo '<tr><th colspan = "8">NO PENDING SAMPLES IN PROCESS</th></tr>';
+    	            }
+    	            ?>
+    	        </tbody>
+    	    </table>
+    	</div>
+    </div>
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script>
+function myFunction() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[1];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionTestName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputTestName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[2];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionName() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputName");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[3];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+function myFunctionPhone() 
+{
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInputPhone");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) 
+    {
+        user_name = tr[i].getElementsByTagName("td")[4];
+        if (user_name) 
+        {
+            txtValue = user_name.textContent || user_name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) 
+            {
+                tr[i].style.display = "";
+            } 
+            else 
+            {
+                tr[i].style.display = "none";
+            }
+        }       
+    }
+}
+</script>
+<?php mysqli_close($con); ?>$row_sample['processed_at']), 'h:i:s A d-m-Y') : ''; ?></td>
         	                <td><?php echo $row_sample['processed_by']; ?></td>
         	                <td>
         	                    <a href="#" class = "btn btn-sm btn-success" onClick="MyWindow=window.open('lab_test_type_report.php?lab_test_id=<?php echo $row_sample['lab_test_id']; ?>','MyWindow','width=900,height=1200'); return false;"><span class="glyphicon glyphicon-pencil">U</span></a>

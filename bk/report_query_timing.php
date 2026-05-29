@@ -16,7 +16,7 @@ function report_time_query($con, $label, callable $fn)
 {
     $t0 = microtime(true);
     $fn($con);
-    $ms = round((microtime(true) - $t0) * 1000);
+    $ms = round((microtime(true) - $t0) * 1000 ?? 0);
     echo $label . ': ' . $ms . " ms\n";
 }
 

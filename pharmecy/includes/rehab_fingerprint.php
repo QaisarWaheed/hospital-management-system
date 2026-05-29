@@ -216,7 +216,7 @@ function rehab_fp_external_identify_one_shot($con, $probe)
 function rehab_probe_matches_stored_pair($stored_left, $stored_right, $probe_raw)
 {
     $probe = trim((string) $probe_raw);
-    if (strlen($probe) < REHAB_FP_MIN_TEMPLATE_LEN) {
+    if (strlen($probe ?? '') < REHAB_FP_MIN_TEMPLATE_LEN) {
         return false;
     }
     $ext = rehab_fp_external_verify($stored_left, $stored_right, $probe);
@@ -229,7 +229,7 @@ function rehab_probe_matches_stored_pair($stored_left, $stored_right, $probe_raw
 function verify_rehab_patient_fingerprint($con, $patient_id, $probe_raw)
 {
     $probe = trim((string) $probe_raw);
-    if (strlen($probe) < REHAB_FP_MIN_TEMPLATE_LEN) {
+    if (strlen($probe ?? '') < REHAB_FP_MIN_TEMPLATE_LEN) {
         return false;
     }
     $pid = (int) $patient_id;
@@ -260,7 +260,7 @@ function verify_rehab_patient_fingerprint($con, $patient_id, $probe_raw)
 function rehab_find_patient_by_fingerprint($con, $probe_raw)
 {
     $probe = trim((string) $probe_raw);
-    if (strlen($probe) < REHAB_FP_MIN_TEMPLATE_LEN) {
+    if (strlen($probe ?? '') < REHAB_FP_MIN_TEMPLATE_LEN) {
         return null;
     }
     $shot = rehab_fp_external_identify_one_shot($con, $probe);

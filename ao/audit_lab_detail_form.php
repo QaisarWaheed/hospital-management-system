@@ -171,7 +171,7 @@ if(mysqli_num_rows($run) > 0)
         <tr  style = "font-size: 15px;">
             <td style = "text-align: center;">'.$s.'</td>
             <td style = "text-align: center;">'.$id.'</td>
-            <td style = "text-align: center">'.date_format(date_create($created), "d-m-Y").'</td>
+            <td style = "text-align: center">'.($created && $created != '0000-00-00' && $created != '0000-00-00 00:00:00' ? date_format(date_create($created), "d-m-Y") : ''.'</td>
             <td style = "text-align: left">'.$tag_name.'</td>
             <td style = "text-align: center">
             '.$count_remaining_items.'

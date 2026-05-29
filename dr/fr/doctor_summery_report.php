@@ -26,7 +26,7 @@ else
     $from_date = $to_date = date('Y-m-d');
 }
 ?>
-	<title>DOCTOR PROFILE - <?php if($from_date == $to_date){ echo date_format(date_create($from_date), 'F-Y');}else{ 'FROM '.$from_date.'TO '.$to_date;} ?> <?php echo $company_trademark; ?></title>
+	<title>DOCTOR PROFILE - <?php if($from_date == $to_date){ echo ($from_date && $from_date != '0000-00-00' && $from_date != '0000-00-00 00:00:00' ? date_format(date_create($from_date), 'F-Y') : '';}else{ 'FROM '.$from_date.'TO '.$to_date;} ?> <?php echo $company_trademark; ?></title>
 <script src="js/jquery.min.js"></script>
 <script src="js/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
@@ -100,6 +100,101 @@ if(isset($_POST['from_date']))
     <table class = "table" border = "solid">
     <caption style = "caption-side: top; text-align: center;color: black;">
         <h3>SUMMERY REPORT OF '.date_format(date_create($from_date), "F Y").'</h3>
+    </caption>
+    <thead>
+        <tr>
+            <th>NAME</th>
+            <th>OPD</th>
+            <th>CONS</th>
+            <th>LAB</th>
+            <th>USG</th>
+            <th>SVD</th>
+            <th>D&C</th>
+            <th>PROCEDURE</th>
+            <th>ADMISSION</th>
+            <th>GYNAE SYSTEM</th>
+            <th>REFERRED BY</th>
+            <th>REFERRED OPD</th>
+        </tr>
+    </thead>
+    <tbody>';
+    {
+        $br_id = $branch_id;
+        $doctor = $_POST['doctor_id'];
+
+        $opd = mysqli_query($con, "SELECT COUNT(id) FROM tokans WHERE `tokan_type_id` < 100 AND status = 1 and doctor_id = '$doctor' AND created($from_date && $from_date != '0000-00-00' && $from_date != '0000($from_date && $from_date != '0000-00-00' && $from_date != '0000-00-00 00:00:00' ? date_format(date_create($from_date), "F Y") : ''.'</h3>
+    </caption>
+    <thead>
+        <tr>
+            <th>NAME</th>
+            <th>OPD</th>
+            <th>CONS</th>
+            <th>LAB</th>
+            <th>USG</th>
+            <th>SVD</th>
+            <th>D&C</th>
+            <th>PROCEDURE</th>
+            <th>ADMISSION</th>
+            <th>GYNAE SYSTEM</th>
+            <th>REFERRED BY</th>
+            <th>REFERRED OPD</th>
+        </tr>
+    </thead>
+    <tbody>';
+    {
+        $br_id = $branch_id;
+        $doctor = $_POST['doctor_id'];
+
+        $opd = mysqli_query($con, "SELECT COUNT(id) FROM tokans WHERE `tokan_type_id` < 100 AND status = 1 and doctor_id = '$doctor' AND created($from_date && $from_date != '0000-00-00' && $from_date != '0000-00-00 00:00:00' ? date_format(date_create($from_date), "F Y") : ''.'</h3>
+    </caption>
+    <thead>
+        <tr>
+            <th>NAME</th>
+            <th>OPD</th>
+            <th>CONS</th>
+            <th>LAB</th>
+            <th>USG</th>
+            <th>SVD</th>
+            <th>D&C</th>
+            <th>PROCEDURE</th>
+            <th>ADMISSION</th>
+            <th>GYNAE SYSTEM</th>
+            <th>REFERRED BY</th>
+            <th>REFERRED OPD</th>
+        </tr>
+    </thead>
+    <tbody>';
+    {
+        $br_id = $branch_id;
+        $doctor = $_POST['doctor_id'];
+
+        $opd = mysqli_query($con, "SELECT COUNT(id) FROM tokans WHERE `tokan_type_id` < 100 AND status = 1 and doctor_id = '$doctor' AND created >= '$from_date' AND created <= '$to_date' AND created like '$to_date%' AND `branch_id` = '$br_id' ");
+        while($row_opd = mysqli_fetch_array($opd))
+        {
+            $opds = $row_opd['0'];
+            $total_opds = $total_opds + $opds;
+        }
+
+        $select_cons_opd = "SELECT DISTINCT tokan_no FROM item_by_doctor INNER JOIN item_register_to_branches ON item_by_doctor.item_id = item_register_to_branches.id WHERE item_by_doctor.doctor_id LIKE '$doctor' AND item_by_doctor.created >= '$from_date' AND item_by_doctor.created <= '$to_date' AND item_by_doctor.created LIKE '$to_date%' AND item_by_doctor.branch_id = '$br_id' AND item_by_doctor.status = 2 AND item_register_to_branches.item_id IN( SELECT id FROM items WHERE category_id = 29 )";
+        $cons_opds = mysqli_num_rows(mysqli_query($con,$select_cons_opd));
+        $total_cons_opds = $total_cons_opds + $cons_opds;
+
+
+        $select_svd = "SELECT DISTINCT tokan_no FROM item_by_doctor INNER JOIN item_register_to_branches ON item_by_doctor.item_id = item_register_to_branches.id WHERE item_by_doctor.doctor_id LIKE '$doctor' AND item_by_doctor.created >= '$from_date' AND item_by_doctor.created <= '$to_date' AND item_by_doctor.created LIKE '$to_date%' AND item_by_doctor.branch_id = '$br_id' AND item_by_doctor.status = 2 AND item_register_to_branches.item_id IN( SELECT id FROM items WHERE id IN(472, 1118, 1313, 1577) )";
+        $svds = mysqli_num_rows(mysqli_query($con, $select_svd));
+        $total_svd = $total_svd + $svds;
+
+        $select_dnc = "SELECT DISTINCT tokan_no FROM item_by_doctor INNER JOIN item_register_to_branches ON item_by_doctor.item_id = item_register_to_branches.id WHERE item_by_doctor.doctor_id LIKE '$doctor' AND item_by_doctor.created >= '$from_date' AND item_by_doctor.created <= '$to_date' AND item_by_doctor.created LIKE '$to_date%' AND item_by_doctor.branch_id = '$br_id' AND item_by_doctor.status = 2 AND item_register_to_branches.item_id IN( SELECT id FROM items WHERE id IN(473, 1119, 1314, 1578) )";
+        $dncs = mysqli_num_rows(mysqli_query($con, $select_dnc));
+        $total_dnc = $total_dnc + $dncs;
+
+        $select_procedure = "SELECT DISTINCT tokan_no FROM item_by_doctor INNER JOIN item_register_to_branches ON item_by_doctor.item_id = item_register_to_branches.id WHERE item_by_doctor.doctor_id LIKE '$doctor' AND item_by_doctor.created >= '$from_date' AND item_by_doctor.created <= '$to_date' AND item_by_doctor.created LIKE '$to_date%' AND item_by_doctor.branch_id = '$br_id' AND item_by_doctor.status = 2 AND item_register_to_branches.item_id IN( SELECT id FROM items WHERE id NOT IN(473, 1119, 1314, 472, 1118, 1313) AND category_id = 3 )";
+        $procedures = mysqli_num_rows(mysqli_query($con, $select_procedure));
+        $total_procedure = $total_procedure + $procedures;
+
+
+        $select_lab = "SELECT DISTINCT tokan_no FROM item_by_doctor INNER JOIN item_register_to_branches ON item_by_doctor.item_id = item_register_to_branches.id WHERE item_by_doctor.doctor_id LIKE '$doctor' AND item_by_doctor.created >= '$from_date' AND item_by_doctor.created <= '$to_date' AND item_by_doctor.created LIKE '$to_date%' AND item_by_doctor.branch_id = '$br_id' AND item_by_doctor.status = 2 AND item_register_to_branches.item_id IN(SELECT id FROM items WHERE category_id = '2')";
+        $labs$from_date), "F Y") : ''.'</h3>
     </caption>
     <thead>
         <tr>
@@ -225,7 +320,7 @@ if(isset($_POST['date']) && $_POST['date'] != '')
                 <tr>
                     <td>'.$sr++.'</td>
                     <td>'.$row_opd['1'].'</td>
-                    <td>'.intval($row_opd['4']).'</td>
+                    <td>'.intval($row_opd['4'] ?? 0).'</td>
                     <td>'.$row_opd['2'].'</td>
                     <td>'.$row_opd['3'].'</td>
                 </tr>
@@ -260,6 +355,206 @@ if(isset($_POST['date']) && $_POST['date'] != '')
                 <tr>
                     <td>'.$sr_procedure.'</td>
                     <td>'.date_format(date_create($row_procedure['3']), "d-m-Y").'</td>
+                    <td>'.$row_procedure['0'].'</td>
+                    <td>'.$row_procedure['2'].'</td>
+                    <td>'.$row_procedure['1'].'</td>
+                </tr>
+            ';
+                $procedure_sum = $procedure_sum + $row_procedure['1'];
+        }
+            $output_procedure .= '
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>'.$procedure_sum.'</td>
+                </tr>
+            ';
+    }
+$get_referal = mysqli_query($con, "SELECT COUNT(`referral_patient_id`) AS count, SUM(`received_cash`) As sum FROM `referral_patients` WHERE `to_user_id` = '$doctor_id' AND `received_cash` > 0 AND `referral_patient_created` LIKE '$date%'; ");
+$row_referal = mysqli_fetch_array($get_referal);
+?>
+        <div class = "col-md-12">
+                <table class = "table">
+                    <?php echo $output_opd; 
+                    echo '  
+                    <tr>
+                        <td>'.$sr.'</td>
+                        <td>REFERRAL CHECKUP</td>
+                        <td></td>
+                        <td>'.$row_referal['count'].'</td>
+                        <td>'.$row_referal['sum'].'</td>
+                    </tr>      
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th>'.$opd_count+$row_referal['count'].'</th>
+                        <th>'.$opd_sum+$row_referal['sum'].'</th>
+                    </tr>';
+                    echo $output_procedure; 
+                    ?>  
+                </table>
+    </div>
+<?php
+}
+?>
+    </div>
+</div>
+</body>
+<?php mysqli_close($con); ?>
+</html>($row_procedure['3'] && $row_procedure['3'] != '0000-00-00' && $row_procedure['3'] != '0000-00-00 00:00:00' ? date_format(date_create($row_procedure['3']), "d-m-Y") : ''.'</td>
+                    <td>'.$row_procedure['0'].'</td>
+                    <td>'.$row_procedure['2'].'</td>
+                    <td>'.$row_procedure['1'].'</td>
+                </tr>
+            ';
+                $procedure_sum = $procedure_sum + $row_procedure['1'];
+        }
+            $output_procedure .= '
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>'.$procedure_sum.'</td>
+                </tr>
+            ';
+    }
+$get_referal = mysqli_query($con, "SELECT COUNT(`referral_patient_id`) AS count, SUM(`received_cash`) As sum FROM `referral_patients` WHERE `to_user_id` = '$doctor_id' AND `received_cash` > 0 AND `referral_patient_created` LIKE '$date%'; ");
+$row_referal = mysqli_fetch_array($get_referal);
+?>
+        <div class = "col-md-12">
+                <table class = "table">
+                    <?php echo $output_opd; 
+                    echo '  
+                    <tr>
+                        <td>'.$sr.'</td>
+                        <td>REFERRAL CHECKUP</td>
+                        <td></td>
+                        <td>'.$row_referal['count'].'</td>
+                        <td>'.$row_referal['sum'].'</td>
+                    </tr>      
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th>'.$opd_count+$row_referal['count'].'</th>
+                        <th>'.$opd_sum+$row_referal['sum'].'</th>
+                    </tr>';
+                    echo $output_procedure; 
+                    ?>  
+                </table>
+    </div>
+<?php
+}
+?>
+    </div>
+</div>
+</body>
+<?php mysqli_close($con); ?>
+</html>($row_procedure['3'] && $row_procedure['3'] != '0000-00-00' && $row_procedure['3'] != '0000-00-00 00:00:00' ? date_format(date_create($row_procedure['3']), "d-m-Y") : ''.'</td>
+                    <td>'.$row_procedure['0'].'</td>
+                    <td>'.$row_procedure['2'].'</td>
+                    <td>'.$row_procedure['1'].'</td>
+                </tr>
+            ';
+                $procedure_sum = $procedure_sum + $row_procedure['1'];
+        }
+            $output_procedure .= '
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>'.$procedure_sum.'</td>
+                </tr>
+            ';
+    }
+$get_referal = mysqli_query($con, "SELECT COUNT(`referral_patient_id`) AS count, SUM(`received_cash`) As sum FROM `referral_patients` WHERE `to_user_id` = '$doctor_id' AND `received_cash` > 0 AND `referral_patient_created` LIKE '$date%'; ");
+$row_referal = mysqli_fetch_array($get_referal);
+?>
+        <div class = "col-md-12">
+                <table class = "table">
+                    <?php echo $output_opd; 
+                    echo '  
+                    <tr>
+                        <td>'.$sr.'</td>
+                        <td>REFERRAL CHECKUP</td>
+                        <td></td>
+                        <td>'.$row_referal['count'].'</td>
+                        <td>'.$row_referal['sum'].'</td>
+                    </tr>      
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th>'.$opd_count+$row_referal['count'].'</th>
+                        <th>'.$opd_sum+$row_referal['sum'].'</th>
+                    </tr>';
+                    echo $output_procedure; 
+                    ?>  
+                </table>
+    </div>
+<?php
+}
+?>
+    </div>
+</div>
+</body>
+<?php mysqli_close($con); ?>
+</html>($row_procedure['3'] && $row_procedure['3'] != '0000-00-00' && $row_procedure['3'] != '0000-00-00 00:00:00' ? date_format(date_create($row_procedure['3']), "d-m-Y") : ''.'</td>
+                    <td>'.$row_procedure['0'].'</td>
+                    <td>'.$row_procedure['2'].'</td>
+                    <td>'.$row_procedure['1'].'</td>
+                </tr>
+            ';
+                $procedure_sum = $procedure_sum + $row_procedure['1'];
+        }
+            $output_procedure .= '
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>'.$procedure_sum.'</td>
+                </tr>
+            ';
+    }
+$get_referal = mysqli_query($con, "SELECT COUNT(`referral_patient_id`) AS count, SUM(`received_cash`) As sum FROM `referral_patients` WHERE `to_user_id` = '$doctor_id' AND `received_cash` > 0 AND `referral_patient_created` LIKE '$date%'; ");
+$row_referal = mysqli_fetch_array($get_referal);
+?>
+        <div class = "col-md-12">
+                <table class = "table">
+                    <?php echo $output_opd; 
+                    echo '  
+                    <tr>
+                        <td>'.$sr.'</td>
+                        <td>REFERRAL CHECKUP</td>
+                        <td></td>
+                        <td>'.$row_referal['count'].'</td>
+                        <td>'.$row_referal['sum'].'</td>
+                    </tr>      
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th>'.$opd_count+$row_referal['count'].'</th>
+                        <th>'.$opd_sum+$row_referal['sum'].'</th>
+                    </tr>';
+                    echo $output_procedure; 
+                    ?>  
+                </table>
+    </div>
+<?php
+}
+?>
+    </div>
+</div>
+</body>
+<?php mysqli_close($con); ?>
+</html>$row_procedure['3']), "d-m-Y") : ''.'</td>
                     <td>'.$row_procedure['0'].'</td>
                     <td>'.$row_procedure['2'].'</td>
                     <td>'.$row_procedure['1'].'</td>

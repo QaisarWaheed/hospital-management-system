@@ -121,7 +121,7 @@ if ($run_consume) {
                     <tr>
                         <td><?php echo htmlspecialchars($record['date'], ENT_QUOTES, 'UTF-8'); ?></td>
                         <td><?php echo htmlspecialchars($record['item'], ENT_QUOTES, 'UTF-8'); ?></td>
-                        <td><?php echo htmlspecialchars(rtrim(rtrim(number_format($record['qty'], 2, '.', ''), '0'), '.'), ENT_QUOTES, 'UTF-8'); ?></td>
+                        <td><?php echo htmlspecialchars(rtrim(rtrim(number_format((float)($record['qty'] ?? 0), 2, '.', ''), '0'), '.'), ENT_QUOTES, 'UTF-8'); ?></td>
                     </tr>
                     <?php } ?>
                 <?php } ?>

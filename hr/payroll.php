@@ -229,13 +229,13 @@ if(isset($_GET['staff_id']) && $_GET['staff_id'] != '')
                         }
                         $bia_start_time = strtotime($payroll_month.'-'.$row_staff_attendence['attendance_record_date'].' '.$row_staff_attendence['attendance_record_bio_start_time']);
                         $bia_end_time = strtotime($payroll_month.'-'.$row_staff_attendence['attendance_record_date'].' '.$row_staff_attendence['attendance_record_bio_end_time']);
-                        $minutes = round(abs($bia_start_time - $bia_end_time) / 60,2);
+                        $minutes = round(abs($bia_start_time - $bia_end_time) / 60 ?? 0,2);
             
                         $staff_duty_in = strtotime($payroll_month.'-'.$row_staff_attendence['attendance_record_date'].' '.$row_staff_attendence['staff_duty_in']);
                         $staff_duty_out = strtotime($payroll_month.'-'.$row_staff_attendence['attendance_record_date'].' '.$row_staff_attendence['staff_duty_out']);
-                        $hours2 = round(abs($staff_duty_in - $staff_duty_out) / 3600,2);
+                        $hours2 = round(abs($staff_duty_in - $staff_duty_out) / 3600 ?? 0,2);
                         
-                        $minutes2 = round(abs($staff_duty_in - $staff_duty_out) / 60,2);
+                        $minutes2 = round(abs($staff_duty_in - $staff_duty_out) / 60 ?? 0,2);
 
                         echo '<tr>';
                             echo '<td>'.$s.'</td>';

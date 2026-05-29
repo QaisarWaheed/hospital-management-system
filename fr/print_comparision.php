@@ -12,7 +12,50 @@ include 'includes/head.php';
 <body style = "text-transform: uppercase;">
     <div class = "row">
         <div class = "col-md-12" style = "text-transform: uppercase;text-align: center;">
-            <label><h1>COMPARISION ALL BRANCHES <?php echo date_format(date_create($first_month), "F Y"); ?> & <?php echo date_format(date_create($second_month), "F Y"); ?></h1></label>
+            <label><h1>COMPARISION ALL BRANCHES <?php echo ($first_month && $first_month != '0000-00-00' && $first_month != '0000-00-00 00:00:00' ? date_format(date_create($first_month), "F Y") : ''; ?> & <?php echo date_format(date_create($second_month), "F Y"); ?></h1></label>
+        </div>
+<?php
+$select_branch = "SELECT * FROM `branchs` WHERE `status` = 1 ";
+$run_branch = mysqli_query($con, $select_branch);
+if(mysqli_num_rows($run_branch) > 0)
+{
+    while($row_branch = mysqli_fetch_array($run_branch))
+    {
+        $comparision_branch_id = $row_branch['id'];
+        $comparision_branch_name = $row_branch['name'];
+        $comparision_branch_address = $row_branch['address'];
+        
+        // PATIENT FIRST MONTH
+        $patient_first_month = mysqli_num_rows(($second_month && $second_month != '0000-00-00' && $second_month != ($second_month && $second_month != '0000-00-00' && $second_month != '0000-00-00 00:00:00' ? date_format(date_create($second_month), "F Y") : ''; ?></h1></label>
+        </div>
+<?php
+$select_branch = "SELECT * FROM `branchs` WHERE `status` = 1 ";
+$run_branch = mysqli_query($con, $select_branch);
+if(mysqli_num_rows($run_branch) > 0)
+{
+    while($row_branch = mysqli_fetch_array($run_branch))
+    {
+        $comparision_branch_id = $row_branch['id'];
+        $comparision_branch_name = $row_branch['name'];
+        $comparision_branch_address = $row_branch['address'];
+        
+        // PATIENT FIRST MONTH
+        $patient_first_month = mysqli_num_rows(($second_month && $second_month != '0000-00-00' && $second_month != '0000-00-00 00:00:00' ? date_format(date_create($second_month), "F Y") : ''; ?></h1></label>
+        </div>
+<?php
+$select_branch = "SELECT * FROM `branchs` WHERE `status` = 1 ";
+$run_branch = mysqli_query($con, $select_branch);
+if(mysqli_num_rows($run_branch) > 0)
+{
+    while($row_branch = mysqli_fetch_array($run_branch))
+    {
+        $comparision_branch_id = $row_branch['id'];
+        $comparision_branch_name = $row_branch['name'];
+        $comparision_branch_address = $row_branch['address'];
+        
+        // PATIENT FIRST MONTH
+        $patient_first_month = mysqli_num_rows(mysqli_query($con, "SELECT `id` FROM `tokans` WHERE `status` = 1 AND `branch_id` = '$comparision_branch_id' AND `created` LIKE '$first_month%' AND `tokan_type_id` <= 10 " ));
+ $second_month), "F Y") : ''; ?></h1></label>
         </div>
 <?php
 $select_branch = "SELECT * FROM `branchs` WHERE `status` = 1 ";
@@ -124,6 +167,269 @@ if(mysqli_num_rows($run_branch) > 0)
                         </tr>
                         <tr>
                             <th><?php echo date_format(date_create($second_month), "M-y"); ?></th>
+                           ($first_month && $first_month != '0000-00-00' && $first_month != '0000-00-00 00:00:00' ? date_format(date_create($first_month), "M-y") : ''; ?></th>
+                            <th><?php echo $patient_first_month; ?> + <?php echo $cons_first_month; ?> => <?php echo intval($patient_first_month+$cons_first_month); ?></th>
+                            <th><?php echo $lab_first_month; ?></th>
+                            <th><?php echo $select_procedure; ?></th>
+                            <th><?php echo $collection_first_month; ?></th>
+                        </tr>
+                        <tr>
+                            <th><?php echo date_format(date_create($second_month), "M-y"); ?></th>
+                            <th><($first_month && $first_month != '0000-00-00' && $first_month != '0000-00-00 00:00:00' ? date_format(date_create($first_month), "M-y") : ''; ?></th>
+                            <th><?php echo $patient_first_month; ?> + <?php echo $cons_first_month; ?> => <?php echo intval($patient_first_month+$cons_first_month); ?></th>
+                            <th><?php echo $lab_first_month; ?></th>
+                            <th><?php echo $select_procedure; ?></th>
+                            <th><?php echo $collection_first_month; ?></th>
+                        </tr>
+                        <tr>
+                            <th><?php echo date_format(date_create($second_month), "M-y"); ?></th>
+                           ($first_month && $first_month != '0000-00-00' && $first_month != '0000-00-00 00:00:00' ? date_format(date_create($first_month), "M-y") : ''; ?></th>
+                            <th><?php echo $patient_first_month; ?> + <?php echo $cons_first_month; ?> => <?php echo intval($patient_first_month+$cons_first_month); ?></th>
+                            <th><?php echo $lab_first_month; ?></th>
+                            <th><?php echo $select_procedure; ?></th>
+                            <th><?php echo $collection_first_month; ?></th>
+                        </tr>
+                        <tr>
+                            <th><?php echo date_format(date_create($second_month), "M-y"); ?></th>
+                            <th><?php echo $patient_second_month; ?> + <?php echo $cons_second_month; ?> => <?php echo intval($patient_second_month+$cons_second_month); ?></th>
+                            <th><?php echo $lab_second_month; ?></th>
+                            <th><?php echo $select_procedure_2; ?></th>
+                            <th><?php echo $collection_second_month; ?></th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th><?php echo $patient_second_month-$patient_first_month; ?> + <?php echo $cons_second_month-$cons_first_month; ?> => <?php echo intval(($patient_second_month-$patient_first_month)+($cons_second_month-$cons_first_month)); ?></th>
+                            <th><?php echo $lab_second_month-$lab_first_month; ?></th>
+                            <th><?php echo $select_procedure_2-$select_procedure; ?></th>
+                            <th><?php echo $collection_second_month-$collection_first_month; ?></th>
+                        </tr>
+</table>
+                </div>
+            </div>
+        </div>
+<?php }
+}
+else
+{ ?>
+        <div class = "col-md-12">
+            <label style = "text-transform: uppercase;">PLEASE ADD BRANCH FIRST</label>
+        </div>
+<?php }
+?>
+    </div>
+</body>
+</html>($second_month && $second_month != '0000-00-00' && $second_month != '0000-00-00 00:00:00' ? date_format(date_create($second_month), "M-y") : ''; ?></th>
+                            <th><?php echo $patient_second_month; ?> + <?php echo $cons_second_month; ?> => <?php echo intval($patient_second_month+$cons_second_month); ?></th>
+                            <th><?php echo $lab_second_month; ?></th>
+                            <th><?php echo $select_procedure_2; ?></th>
+                            <th><?php echo $collection_second_month; ?></th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th><?php echo $patient_second_month-$patient_first_month; ?> + <?php echo $cons_second_month-$cons_first_month; ?> => <?php echo intval(($patient_second_month-$patient_first_month)+($cons_second_month-$cons_first_month)); ?></th>
+                            <th><?php echo $lab_second_month-$lab_first_month; ?></th>
+                            <th><?php echo $select_procedure_2-$select_procedure; ?></th>
+                            <th><?php echo $collection_second_month-$collection_first_month; ?></th>
+                        </tr>
+</table>
+                </div>
+            </div>
+        </div>
+<?php }
+}
+else
+{ ?>
+        <div class = "col-md-12">
+            <label style = "text-transform: uppercase;">PLEASE ADD BRANCH FIRST</label>
+        </div>
+<?php }
+?>
+    </div>
+</body>
+</html>($second_month && $second_month != '0000-00-00' && $second_month != '0000-00-00 00:00:00' ? date_format(date_create($second_month), "M-y") : ''; ?></th>
+                           ($first_month && $first_month != '0000-00-00' && $first_month != '0000-00-00 00:00:00' ? date_format(date_create($first_month), "M-y") : ''; ?></th>
+                            <th><?php echo $patient_first_month; ?> + <?php echo $cons_first_month; ?> => <?php echo intval($patient_first_month+$cons_first_month); ?></th>
+                            <th><?php echo $lab_first_month; ?></th>
+                            <th><?php echo $select_procedure; ?></th>
+                            <th><?php echo $collection_first_month; ?></th>
+                        </tr>
+                        <tr>
+                            <th><?php echo date_format(date_create($second_month), "M-y"); ?></th>
+                            <th><?php echo $patient_second_month; ?> + <?php echo $cons_second_month; ?> => <?php echo intval($patient_second_month+$cons_second_month); ?></th>
+                            <th><?php echo $lab_second_month; ?></th>
+                            <th><?php echo $select_procedure_2; ?></th>
+                            <th><?php echo $collection_second_month; ?></th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th><?php echo $patient_second_month-$patient_first_month; ?> + <?php echo $cons_second_month-$cons_first_month; ?> => <?php echo intval(($patient_second_month-$patient_first_month)+($cons_second_month-$cons_first_month)); ?></th>
+                            <th><?php echo $lab_second_month-$lab_first_month; ?></th>
+                            <th><?php echo $select_procedure_2-$select_procedure; ?></th>
+                            <th><?php echo $collection_second_month-$collection_first_month; ?></th>
+                        </tr>
+</table>
+                </div>
+            </div>
+        </div>
+<?php }
+}
+else
+{ ?>
+        <div class = "col-md-12">
+            <label style = "text-transform: uppercase;">PLEASE ADD BRANCH FIRST</label>
+        </div>
+<?php }
+?>
+    </div>
+</body>
+</html>($second_month && $second_month != '0000-00-00' && $second_month != '0000-00-00 00:00:00' ? date_format(date_create($second_month), "M-y") : ''; ?></th>
+                            <th><?php echo $patient_second_month; ?> + <?php echo $cons_second_month; ?> => <?php echo intval($patient_second_month+$cons_second_month); ?></th>
+                            <th><?php echo $lab_second_month; ?></th>
+                            <th><?php echo $select_procedure_2; ?></th>
+                            <th><?php echo $collection_second_month; ?></th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th><?php echo $patient_second_month-$patient_first_month; ?> + <?php echo $cons_second_month-$cons_first_month; ?> => <?php echo intval(($patient_second_month-$patient_first_month)+($cons_second_month-$cons_first_month)); ?></th>
+                            <th><?php echo $lab_second_month-$lab_first_month; ?></th>
+                            <th><?php echo $select_procedure_2-$select_procedure; ?></th>
+                            <th><?php echo $collection_second_month-$collection_first_month; ?></th>
+                        </tr>
+</table>
+                </div>
+            </div>
+        </div>
+<?php }
+}
+else
+{ ?>
+        <div class = "col-md-12">
+            <label style = "text-transform: uppercase;">PLEASE ADD BRANCH FIRST</label>
+        </div>
+<?php }
+?>
+    </div>
+</body>
+</html>$first_month), "M-y") : ''; ?></th>
+                            <th><?php echo $patient_first_month; ?> + <?php echo $cons_first_month; ?> => <?php echo intval($patient_first_month+$cons_first_month); ?></th>
+                            <th><?php echo $lab_first_month; ?></th>
+                            <th><?php echo $select_procedure; ?></th>
+                            <th><?php echo $collection_first_month; ?></th>
+                        </tr>
+                        <tr>
+                            <th><?php echo date_format(date_create($second_month), "M-y"); ?></th>
+                            <th><?php echo $patient_second_month; ?> + <?php echo $cons_second_month; ?> => <?php echo intval($patient_second_month+$cons_second_month); ?></th>
+                            <th><?php echo $lab_second_month; ?></th>
+                            <th><?php echo $select_procedure_2; ?></th>
+                            <th><?php echo $collection_second_month; ?></th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th><?php echo $patient_second_month-$patient_first_month; ?> + <?php echo $cons_second_month-$cons_first_month; ?> => <?php echo intval(($patient_second_month-$patient_first_month)+($cons_second_month-$cons_first_month)); ?></th>
+                            <th><?php echo $lab_second_month-$lab_first_month; ?></th>
+                            <th><?php echo $select_procedure_2-$select_procedure; ?></th>
+                            <th><?php echo $collection_second_month-$collection_first_month; ?></th>
+                        </tr>
+</table>
+                </div>
+            </div>
+        </div>
+<?php }
+}
+else
+{ ?>
+        <div class = "col-md-12">
+            <label style = "text-transform: uppercase;">PLEASE ADD BRANCH FIRST</label>
+        </div>
+<?php }
+?>
+    </div>
+</body>
+</html>($second_month && $second_month != '0000-00-00' && $second_month != '0000-00-00 00:00:00' ? date_format(date_create($second_month), "M-y") : ''; ?></th>
+                            <th><?php echo $patient_second_month; ?> + <?php echo $cons_second_month; ?> => <?php echo intval($patient_second_month+$cons_second_month); ?></th>
+                            <th><?php echo $lab_second_month; ?></th>
+                            <th><?php echo $select_procedure_2; ?></th>
+                            <th><?php echo $collection_second_month; ?></th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th><?php echo $patient_second_month-$patient_first_month; ?> + <?php echo $cons_second_month-$cons_first_month; ?> => <?php echo intval(($patient_second_month-$patient_first_month)+($cons_second_month-$cons_first_month)); ?></th>
+                            <th><?php echo $lab_second_month-$lab_first_month; ?></th>
+                            <th><?php echo $select_procedure_2-$select_procedure; ?></th>
+                            <th><?php echo $collection_second_month-$collection_first_month; ?></th>
+                        </tr>
+</table>
+                </div>
+            </div>
+        </div>
+<?php }
+}
+else
+{ ?>
+        <div class = "col-md-12">
+            <label style = "text-transform: uppercase;">PLEASE ADD BRANCH FIRST</label>
+        </div>
+<?php }
+?>
+    </div>
+</body>
+</html>($second_month && $second_month != '0000-00-00' && $second_month != '0000-00-00 00:00:00' ? date_format(date_create($second_month), "M-y") : ''; ?></th>
+                            <th><?php echo $patient_second_month; ?> + <?php echo $cons_second_month; ?> => <?php echo intval($patient_second_month+$cons_second_month); ?></th>
+                            <th><?php echo $lab_second_month; ?></th>
+                            <th><?php echo $select_procedure_2; ?></th>
+                            <th><?php echo $collection_second_month; ?></th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th><?php echo $patient_second_month-$patient_first_month; ?> + <?php echo $cons_second_month-$cons_first_month; ?> => <?php echo intval(($patient_second_month-$patient_first_month)+($cons_second_month-$cons_first_month)); ?></th>
+                            <th><?php echo $lab_second_month-$lab_first_month; ?></th>
+                            <th><?php echo $select_procedure_2-$select_procedure; ?></th>
+                            <th><?php echo $collection_second_month-$collection_first_month; ?></th>
+                        </tr>
+</table>
+                </div>
+            </div>
+        </div>
+<?php }
+}
+else
+{ ?>
+        <div class = "col-md-12">
+            <label style = "text-transform: uppercase;">PLEASE ADD BRANCH FIRST</label>
+        </div>
+<?php }
+?>
+    </div>
+</body>
+</html>($second_month && $second_month != '0000-00-00' && $second_month != '0000-00-00 00:00:00' ? date_format(date_create($second_month), "M-y") : ''; ?></th>
+                            <th><?php echo $patient_second_month; ?> + <?php echo $cons_second_month; ?> => <?php echo intval($patient_second_month+$cons_second_month); ?></th>
+                            <th><?php echo $lab_second_month; ?></th>
+                            <th><?php echo $select_procedure_2; ?></th>
+                            <th><?php echo $collection_second_month; ?></th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th><?php echo $patient_second_month-$patient_first_month; ?> + <?php echo $cons_second_month-$cons_first_month; ?> => <?php echo intval(($patient_second_month-$patient_first_month)+($cons_second_month-$cons_first_month)); ?></th>
+                            <th><?php echo $lab_second_month-$lab_first_month; ?></th>
+                            <th><?php echo $select_procedure_2-$select_procedure; ?></th>
+                            <th><?php echo $collection_second_month-$collection_first_month; ?></th>
+                        </tr>
+</table>
+                </div>
+            </div>
+        </div>
+<?php }
+}
+else
+{ ?>
+        <div class = "col-md-12">
+            <label style = "text-transform: uppercase;">PLEASE ADD BRANCH FIRST</label>
+        </div>
+<?php }
+?>
+    </div>
+</body>
+</html>$second_month), "M-y") : ''; ?></th>
                             <th><?php echo $patient_second_month; ?> + <?php echo $cons_second_month; ?> => <?php echo intval($patient_second_month+$cons_second_month); ?></th>
                             <th><?php echo $lab_second_month; ?></th>
                             <th><?php echo $select_procedure_2; ?></th>

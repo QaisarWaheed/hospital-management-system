@@ -10,7 +10,7 @@ if(isset($_POST['item_id']) && isset($_POST['from']) && $_POST['item_id'] != '')
     $br_id = (int) $_POST['br_id'];
     $from = (string) $_POST['from'];
     $to = (string) $_POST['to'];
-    $end_date = date_format(date_create($to), "Y-m-d 23:59:59");
+    $end_date = ($to && $to != '0000-00-00' && $to != '0000-00-00 00:00:00' ? date_format(date_create($to), "Y-m-d 23:59:59") : '';
 }
 ?>
 <?php include 'includes/head.php'; ?>
@@ -144,6 +144,34 @@ if(isset($_POST['item_id']) && isset($_POST['from']) && $_POST['item_id'] != '')
                         <th>Quantity</th>
                     </tr>
                 </thead>
+         ($to && $to != '0000-00-00' && $to != '($to && $to != '0000-00-00' && $to != '0000-00-00 00:00:00' ? date_format(date_create($to), "Y-m-d 23:59:59") : '';
+?>
+        <div class=""> 
+        <div id="divID">
+            <table class = "table">
+                <thead>
+                    <tr>
+                        <th>S#</th>
+                        <th>Date</th>
+                        <th>Branch</th>
+                        <th>Issua No</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+         ($to && $to != '0000-00-00' && $to != '0000-00-00 00:00:00' ? date_format(date_create($to), "Y-m-d 23:59:59") : '';
+?>
+        <div class=""> 
+        <div id="divID">
+            <table class = "table">
+                <thead>
+                    <tr>
+                        <th>S#</th>
+                        <th>Date</th>
+                        <th>Branch</th>
+                        <th>Issua No</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
                 <tbody>
                     <?php
                     $s = 0;
@@ -168,6 +196,258 @@ if(isset($_POST['item_id']) && isset($_POST['from']) && $_POST['item_id'] != '')
                     <tr>
                         <td>'.$s.'</td>
                         <td>'.date_format(date_create($row_token['0']), "d-M-Y").'</td>
+                        <td>'.$row_token['2'].'</td>
+                        <td>'.$row_token['1'].'</td>
+                        <td>'.$row_token['4'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "7">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "4">Total Issunce Quanitity</th>
+                        <th><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo $item_name; ?> </h2>
+                    <h3>ISSUANCE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                    <?php if($br_id == 0){ echo '<h3>ALL BRANCHES</h3>';}else{echo '<h3>'.get_branch_name_by($br_id).'</h3>';} ?>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    ($row_token['0'] && $row_token['0'] != '0000-00-00' && $row_token['0'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['0']), "d-M-Y") : ''.'</td>
+                        <td>'.$row_token['2'].'</td>
+                        <td>'.$row_token['1'].'</td>
+                        <td>'.$row_token['4'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "7">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "4">Total Issunce Quanitity</th>
+                        <th><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo $item_name; ?> </h2>
+                    <h3>ISSUANCE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                    <?php if($br_id == 0){ echo '<h3>ALL BRANCHES</h3>';}else{echo '<h3>'.get_branch_name_by($br_id).'</h3>';} ?>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?ph$to), "Y-m-d 23:59:59") : '';
+?>
+        <div class=""> 
+        <div id="divID">
+            <table class = "table">
+                <thead>
+                    <tr>
+                        <th>S#</th>
+                        <th>Date</th>
+                        <th>Branch</th>
+                        <th>Issua No</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $s = 0;
+                    $total = 0;
+                    if($br_id != '0')
+                    {
+                        $select_token = "SELECT item_register_branchs_by_sm.created,item_register_branchs_by_sm.issue_id, branchs.tag_name,items.name, item_register_branchs_by_sm.quantity FROM `item_register_branchs_by_sm` INNER JOIN item_register_to_branches ON item_register_branchs_by_sm.branch_item_id = item_register_to_branches.id INNER JOIN items ON item_register_to_branches.item_id = items.id INNER JOIN branchs ON item_register_branchs_by_sm.branch_id = branchs.id WHERE item_register_branchs_by_sm.created >= '$from' AND item_register_branchs_by_sm.created < '$end_date' AND item_register_branchs_by_sm.branch_id = '$br_id' AND `branch_item_id` IN (SELECT id FROM item_register_to_branches WHERE item_register_to_branches.item_id = '$item_id') ORDER BY `item_register_branchs_by_sm`.`created` ASC";
+                    }
+                    else
+                    {
+                        $select_token = "SELECT item_register_branchs_by_sm.created,item_register_branchs_by_sm.issue_id, branchs.tag_name,items.name, item_register_branchs_by_sm.quantity FROM `item_register_branchs_by_sm` INNER JOIN item_register_to_branches ON item_register_branchs_by_sm.branch_item_id = item_register_to_branches.id INNER JOIN items ON item_register_to_branches.item_id = items.id INNER JOIN branchs ON item_register_branchs_by_sm.branch_id = branchs.id WHERE item_register_branchs_by_sm.created >= '$from' AND item_register_branchs_by_sm.created < '$end_date' AND `branch_item_id` IN (SELECT id FROM item_register_to_branches WHERE item_register_to_branches.item_id = '$item_id') ORDER BY `item_register_branchs_by_sm`.`created` ASC";
+                    }
+                    $run_token = mysqli_query($con, $select_token);
+                    if(mysqli_num_rows($run_token) > 0)
+                    {
+                    while($row_token = mysqli_fetch_array($run_token))
+                    {
+                        $total = $total + $row_token['4'];
+                        $item_name = $row_token['3'];
+                        $s++;
+                    echo '
+                    <tr>
+                        <td>'.$s.'</td>
+                        <td>'.date_format(date_create($row_token['0']), "d-M-Y").'</td>
+                        <td>'.$row_token['2'].'</td>
+                        <td>'.$row_token['1'].'</td>
+                        <td>'.$row_token['4'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "7">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "4">Total Issunce Quanitity</th>
+                        <th><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo $item_name; ?> </h2>
+                    <h3>ISSUANCE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                    <?php if($br_id == 0){ echo '<h3>ALL BRANCHES</h3>';}else{echo '<h3>'.get_branch_name_by($br_id).'</h3>';} ?>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    ($row_token['0'] && $row_token['0'] != '0000-00-00' && $row_token['0'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['0']), "d-M-Y") : ''.'</td>
+                        <td>'.$row_token['2'].'</td>
+                        <td>'.$row_token['1'].'</td>
+                        <td>'.$row_token['4'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "7">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "4">Total Issunce Quanitity</th>
+                        <th><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo $item_name; ?> </h2>
+                    <h3>ISSUANCE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                    <?php if($br_id == 0){ echo '<h3>ALL BRANCHES</h3>';}else{echo '<h3>'.get_branch_name_by($br_id).'</h3>';} ?>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    ($row_token['0'] && $row_token['0'] != '0000-00-00' && $row_token['0'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['0']), "d-M-Y") : ''.'</td>
+                        <td>'.$row_token['2'].'</td>
+                        <td>'.$row_token['1'].'</td>
+                        <td>'.$row_token['4'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "7">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "4">Total Issunce Quanitity</th>
+                        <th><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo $item_name; ?> </h2>
+                    <h3>ISSUANCE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                    <?php if($br_id == 0){ echo '<h3>ALL BRANCHES</h3>';}else{echo '<h3>'.get_branch_name_by($br_id).'</h3>';} ?>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    ($row_token['0'] && $row_token['0'] != '0000-00-00' && $row_token['0'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['0']), "d-M-Y") : ''.'</td>
+                        <td>'.$row_token['2'].'</td>
+                        <td>'.$row_token['1'].'</td>
+                        <td>'.$row_token['4'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "7">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "4">Total Issunce Quanitity</th>
+                        <th><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo $item_name; ?> </h2>
+                    <h3>ISSUANCE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                    <?php if($br_id == 0){ echo '<h3>ALL BRANCHES</h3>';}else{echo '<h3>'.get_branch_name_by($br_id).'</h3>';} ?>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    $row_token['0']), "d-M-Y") : ''.'</td>
                         <td>'.$row_token['2'].'</td>
                         <td>'.$row_token['1'].'</td>
                         <td>'.$row_token['4'].'</td>

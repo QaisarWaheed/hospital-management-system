@@ -102,8 +102,8 @@ if ($detailRun) {
 ?>
 <tr style="text-align: right;">
 	<th colspan="7"></th>
-	<th colspan="2"><?php echo number_format($totals['cash']); ?></th>
-	<th colspan="2"><?php echo number_format($totals['cash_received']); ?></th>
+	<th colspan="2"><?php echo number_format((float)($totals['cash'] ?? 0)); ?></th>
+	<th colspan="2"><?php echo number_format((float)($totals['cash_received'] ?? 0)); ?></th>
 </tr>
 <?php
 fr_render_summary_type_breakdown_rows($con, $from_date, $to_date, $u_id, $br_id, true);

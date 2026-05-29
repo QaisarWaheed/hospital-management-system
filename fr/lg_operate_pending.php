@@ -105,7 +105,7 @@ $run = mysqli_query($con, $select);
 	                        </div>
 	                        <div class = "col-md-3">
 	                            <input type = "hidden" value = "<?php echo $br_id; ?>" name = "br_id" id = "br_id" required />
-	                            <input type = "date" name = "from_date" value = "<?php echo date_format(date_create($from_date), 'Y-m-d'); ?>" id = "from_date" class = "form-control"required />
+	                            <input type = "date" name = "from_date" value = "<?php echo ($from_date && $from_date != '0000-00-00' && $from_date != '0000-00-00 00:00:00' ? date_format(date_create($from_date), 'Y-m-d') : ''; ?>" id = "from_date" class = "form-control"required />
 	                        </div>
 	                        <div class = "col-md-2" style  = "text-align: right;">
 	                            <label for = "to_date">To Date:</label>
@@ -162,9 +162,589 @@ if(mysqli_num_rows($run) > 0)
                     <td class ="noprint h6">'.$rf_name.'</td>
                     <td class ="noprint h6">'.$recommended_by.'</td>
                     <td class ="h6">'.$token_no.'</td>
-                    <td class ="h6" style = "text-align: center;">'.number_format($total_amount).'</td>
-                    <td class ="h6" style = "text-align: center;">'.number_format($received).'</td>
-                    <td class ="h6" style = "text-align: center;">'.number_format($pending_amount).'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($total_amount ?? 0)).'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($received ?? 0)).'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($pending_amount ?? 0)).'</td>
+        ';
+    }
+    $total = intval($select_count/20)+1;
+    if($total > 0){ ?>
+    <tbody>
+        <tr>
+            <td colspan = "11">
+                <div class = "row">
+                    <div class = "col" style  = "text-align: center;">
+                        <?php
+                        if($page_no != 1)
+                        {
+                            echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&&from_date='.$from_date.'&to_date='.$_GET['to_date'].'&page_no=1" class = "btn btn-sm btn-info" style = "margin: 2px;">Start</a>';
+                        }
+                        for($i=1; $i<=$total; $i++)
+                        {
+                            if($i == $page_no)
+                            {
+                                echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&from_date='.$from_date.'&to_date='.$_GET['to_date'].'&page_no='.$i.'" class = "btn btn-sm btn-info active" style = "margin: 2px;">'.$i.'</a>';
+                            }
+                            else
+                            {
+                                echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&from_date='.$from_date.'&to_date='.$_GET['to($_GET['to_date'] && $_GET['to_date'] != '0000-00-00' && $_GET($_GET['to_date'] && $_GET['to_date'] != '0000-00-00' && $_GET['to_date'] != '0000-00-00 00:00:00' ? date_format(date_create($_GET['to_date']), 'Y-m-d') : '';}else{echo date('Y-m-d');} ?>" id = "to_date" class = "form-control" required />
+	                        </div>
+	                        <div class = "col-md-2" style  = "text-align: center;">
+	                            <input type = "submit" value = "SEARCH" name = "submit" style  = "min-width: 100%;min-height: 100%;" id = "submit" class = "btn btn-sm btn-info" />
+	                        </div>
+	                    </div>
+	                </th>
+	                </form>
+                </tr>
+	            <tr>
+	                <th>S #</th>
+	                <th class ="noprint" title = "Penging ID">Id</th>
+	                <th>Date</th>
+	                <th>Name</th>
+	                <th class ="noprint">Procedure </th>
+	                <th class ="noprint" title = "Referance Name">Ref. Name</th>
+	                <th class ="noprint" title = "Referance Name">Recommended By</th>
+	                <th>Token #</th>
+	                <th>Total Amount</th>
+	                <th>Received Amount</th>
+	                <th>Pending Amount</th>
+	            </tr>
+	        </thead>
+<?php
+if(mysqli_num_rows($run) > 0)
+{
+    while($row = mysqli_fetch_array($run))
+    {
+        $created = $row['created'];
+        $rf_name = $row['gardian_name'];
+        $recommended_by = $row['recommended_by'];
+        $token_no = $row['token_no'];
+        $pending_id = get_pending_id_by_token_id($token_no);
+        $receive = get_receive_amount_by_pending_id($pending_id);
+        $total_amount = get_token_amount_by_id($token_no);
+        $receive_amount = get_receive_amount_by_token_id($token_no);
+        $received = $receive + $receive_amount;
+        $pending_amount = $total_amount - $received;
+        $s = $s + 1;
+        $patient_name = get_patient_name_by_token_id($token_no);
+        $procedure_name = get_procedure_name_by_register_item_id($token_no);
+        echo '
+                <tr>
+                    <td class ="h6">'.$s.'</td>
+                    <td class ="noprint h6">'.$pending_id.'</td>
+                    <td class ="h6">'.date_format(date_create($created), "d-m-Y").'</td>
+                    <td class ="h6">'.$patient_name.'</td>
+                    <td class ="noprint h6">'.$procedure_name.'</td>
+                    <td class ="noprint h6">'.$rf_name.'</td>
+                    <td class ="noprint h6">'.$recommended_by.'</td>
+                    <td class ="h6">'.$token_no.'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($total_amount ?? 0)).'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($received ?? 0)).'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($pending_amount ?? 0)).'</td>
+        ';
+    }
+    $total = intval($select_count/20)+1;
+    if($total > 0){ ?>
+    <tbody>
+        <tr>
+            <td colspan = "11">
+                <div class = "row">
+                    <div class = "col" style  = "text-align: center;">
+                        <?php
+                        if($page_no != 1)
+                        {
+                            echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&&from_date='.$from_date.'&to_date='.$_GET['to_date'].'&page_no=1" class = "btn btn-sm btn-info" style = "margin: 2px;">Start</a>';
+                        }
+                        for($i=1; $i<=$total; $i++)
+                        {
+                            if($i == $page_no)
+                            {
+                                echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&from_date='.$from_date.'&to_date='.$_GET['to_date'].'&page_no='.$i.'" class = "btn btn-sm btn-info active" style = "margin: 2px;">'.$i.'</a>';
+                            }
+                            else
+                            {
+                                echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&from_date='.$from_date.'&to_date='.$_GET['to($_GET['to_date'] && $_GET['to_date'] != '0000-00-00' && $_GET['to_date'] != '0000-00-00 00:00:00' ? date_format(date_create($_GET['to_date']), 'Y-m-d') : '';}else{echo date('Y-m-d');} ?>" id = "to_date" class = "form-control" required />
+	                        </div>
+	                        <div class = "col-md-2" style  = "text-align: center;">
+	                            <input type = "submit" value = "SEARCH" name = "submit" style  = "min-width: 100%;min-height: 100%;" id = "submit" class = "btn btn-sm btn-info" />
+	                        </div>
+	                    </div>
+	                </th>
+	                </form>
+                </tr>
+	            <tr>
+	                <th>S #</th>
+	                <th class ="noprint" title = "Penging ID">Id</th>
+	                <th>Date</th>
+	                <th>Name</th>
+	                <th class ="noprint">Procedure </th>
+	                <th class ="noprint" title = "Referance Name">Ref. Name</th>
+	                <th class ="noprint" title = "Referance Name">Recommended By</th>
+	                <th>Token #</th>
+	                <th>Total Amount</th>
+	                <th>Received Amount</th>
+	                <th>Pending Amount</th>
+	            </tr>
+	        </thead>
+<?php
+if(mysqli_num_rows($run) > 0)
+{
+    while($row = mysqli_fetch_array($run))
+    {
+        $created = $row['created'];
+        $rf_name = $row['gardian_name'];
+        $recommended_by = $row['recommended_by'];
+        $token_no = $row['token_no'];
+        $pending_id = get_pending_id_by_token_id($token_no);
+        $receive = get_receive_amount_by_pending_id($pending_id);
+        $total_amount = get_token_amount_by_id($token_no);
+        $receive_amount = get_receive_amount_by_token_id($token_no);
+        $received = $receive + $receive_amount;
+        $pending_amount = $total_amount - $received;
+        $s = $s + 1;
+        $patient_name = get_patient_name_by_token_id($token_no);
+        $procedure_name = get_procedure_name_by_register_item_id($token_no);
+        echo '
+                <tr>
+                    <td class ="h6">'.$s.'</td>
+                    <td class ="noprint h6">'.$pending_id.'</td>
+                    <td class ="h6">'.date_format(date_create($created), "d-m-Y").'</td>
+                    <td class ="h6">'.$patient_name.'</td>
+                    <td class ="noprint h6">'.$procedure_name.'</td>
+                    <td class ="noprint h6">'.$rf_name.'</td>
+                    <td class ="noprint h6">'.$recommended_by.'</td>
+                    <td class ="h6">'.$token_no.'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($total_amount($created && $created != '0000-00-00' && $created != '0000-00-00 00:00:00' ? date_format(date_create($created), "d-m-Y") : ''.'</td>
+                    <td class ="h6">'.$patient_name.'</td>
+                    <td class ="noprint h6">'.$procedure_name.'</td>
+                    <td class ="noprint h6">'.$rf_name.'</td>
+                    <td class ="noprint h6">'.$recommended_by.'</td>
+                    <td class ="h6">'.$token_no.'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($total_amount ?? 0)).'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($received ?? 0)).'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($pending_amount ?? 0)).'</td>
+        ';
+    }
+    $total = intval($select_count/20)+1;
+    if($total > 0){ ?>
+    <tbody>
+        <tr>
+            <td colspan = "11">
+                <div class = "row">
+                    <div class = "col" style  = "text-align: center;">
+                        <?php
+                        if($page_no != 1)
+                        {
+                            echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&&from_date='.$from_date.'&to_date='.$_GET['to_date'].'&page_no=1" class = "btn btn-sm btn-info" style = "margin: 2px;">Start</a>';
+                        }
+                        for($i=1; $i<=$total; $i++)
+                        {
+                            if($i == $page_no)
+                            {
+                                echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&from_date='.$from_date.'&to_date='.$_GET['to_date'].'&page_no='.$i.'" class = "btn btn-sm btn-info active" style = "margin: 2px;">'.$i.'</a>';
+                            }
+                            else
+                            {
+                                echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&from_date='.$from_date.'&to_date='.$_GET['to($_GET['to_date'] && $_GET['to_date'] != '0000-00-00' && $_GET['to_date'] != '0000-00-00 00:00:00' ? date_format(date_create($_GET['to_date']), 'Y-m-d') : '';}else{echo date('Y-m-d');} ?>" id = "to_date" class = "form-control" required />
+	                        </div>
+	                        <div class = "col-md-2" style  = "text-align: center;">
+	                            <input type = "submit" value = "SEARCH" name = "submit" style  = "min-width: 100%;min-height: 100%;" id = "submit" class = "btn btn-sm btn-info" />
+	                        </div>
+	                    </div>
+	                </th>
+	                </form>
+                </tr>
+	            <tr>
+	                <th>S #</th>
+	                <th class ="noprint" title = "Penging ID">Id</th>
+	                <th>Date</th>
+	                <th>Name</th>
+	                <th class ="noprint">Procedure </th>
+	                <th class ="noprint" title = "Referance Name">Ref. Name</th>
+	                <th class ="noprint" title = "Referance Name">Recommended By</th>
+	                <th>Token #</th>
+	                <th>Total Amount</th>
+	                <th>Received Amount</th>
+	                <th>Pending Amount</th>
+	            </tr>
+	        </thead>
+<?php
+if(mysqli_num_rows($run) > 0)
+{
+    while($row = mysqli_fetch_array($run))
+    {
+        $created = $row['created'];
+        $rf_name = $row['gardian_name'];
+        $recommended_by = $row['recommended_by'];
+        $token_no = $row['token_no'];
+        $pending_id = get_pending_id_by_token_id($token_no);
+        $receive = get_receive_amount_by_pending_id($pending_id);
+        $total_amount = get_token_amount_by_id($token_no);
+        $receive_amount = get_receive_amount_by_token_id($token_no);
+        $received = $receive + $receive_amount;
+        $pending_amount = $total_amount - $received;
+        $s = $s + 1;
+        $patient_name = get_patient_name_by_token_id($token_no);
+        $procedure_name = get_procedure_name_by_register_item_id($token_no);
+        echo '
+                <tr>
+                    <td class ="h6">'.$s.'</td>
+                    <td class ="noprint h6">'.$pending_id.'</td>
+                    <td class ="h6">'.date_format(date_create($created), "d-m-Y").'</td>
+                    <td class ="h6">'.$patient_name.'</td>
+                    <td class ="noprint h6">'.$procedure_name.'</td>
+                    <td class ="noprint h6">'.$rf_name.'</td>
+                    <td class ="noprint h6">'.$recommended_by.'</td>
+                    <td class ="h6">'.$token_no.'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($total_amount ?? 0)).'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($received ?? 0)).'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($pending_amount ?? 0)).'</td>
+        ';
+    }
+    $total = intval($select_count/20)+1;
+    if($total > 0){ ?>
+    <tbody>
+        <tr>
+            <td colspan = "11">
+                <div class = "row">
+                    <div class = "col" style  = "text-align: center;">
+                        <?php
+                        if($page_no != 1)
+                        {
+                            echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&&from_date='.$from_date.'&to_date='.$_GET['to_date'].'&page_no=1" class = "btn btn-sm btn-info" style = "margin: 2px;">Start</a>';
+                        }
+                        for($i=1; $i<=$total; $i++)
+                        {
+                            if($i == $page_no)
+                            {
+                                echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&from_date='.$from_date.'&to_date='.$_GET['to_date'].'&page_no='.$i.'" class = "btn btn-sm btn-info active" style = "margin: 2px;">'.$i.'</a>';
+                            }
+                            else
+                            {
+                                echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&from_date='.$from_date.'&to_date='.$_GET['to_date'].'&page_no='.$i.'" class = "btn btn-sm btn-info" style = "margin: 2px;">'.$i.'</a>';
+                            }
+                        }
+                        if($page_no != $total)
+                        {
+                            echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&from_date='.$from_date.'&to_date='.$_GET['to_date'].'&page_no='.$total.'" class = "btn btn-sm btn-info" style = "margin: 2px;">Last</a>';
+                        }
+                        ?>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </tbody>    
+<?php }
+} ?>
+
+	    </table>
+	</div>
+			
+	</div>
+</div>
+
+</body>
+</html>($created && $created != '0000-00-00' && $created != '0000-00-00 00:00:00' ? date_format(date_create($created), "d-m-Y") : ''.'</td>
+                    <td class ="h6">'.$patient_name.'</td>
+                    <td class ="noprint h6">'.$procedure_name.'</td>
+                    <td class ="noprint h6">'.$rf_name.'</td>
+                    <td class ="noprint h6">'.$recommended_by.'</td>
+                    <td class ="h6">'.$token_no.'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($total_amount ?? 0)).'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($received ?? 0)).'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($pending_amount ?? 0)).'</td>
+        ';
+    }
+    $total = intval($select_count/20)+1;
+    if($total > 0){ ?>
+    <tbody>
+        <tr>
+            <td colspan = "11">
+                <div class = "row">
+                    <div class = "col" style  = "text-align: center;">
+                        <?php
+                        if($page_no != 1)
+                        {
+                            echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&&from_date='.$from_date.'&to_date='.$_GET['to_date'].'&page_no=1" class = "btn btn-sm btn-info" style = "margin: 2px;">Start</a>';
+                        }
+                        for($i=1; $i<=$total; $i++)
+                        {
+                            if($i == $page_no)
+                            {
+                                echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&from_date='.$from_date.'&to_date='.$_GET['to_date'].'&page_no='.$i.'" class = "btn btn-sm btn-info active" style = "margin: 2px;">'.$i.'</a>';
+                            }
+                            else
+                            {
+                                echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&from_date='.$from_date.'&to_date='.$_GET['to_date'].'&page$_GET['to_date']), 'Y-m-d') : '';}else{echo date('Y-m-d');} ?>" id = "to_date" class = "form-control" required />
+	                        </div>
+	                        <div class = "col-md-2" style  = "text-align: center;">
+	                            <input type = "submit" value = "SEARCH" name = "submit" style  = "min-width: 100%;min-height: 100%;" id = "submit" class = "btn btn-sm btn-info" />
+	                        </div>
+	                    </div>
+	                </th>
+	                </form>
+                </tr>
+	            <tr>
+	                <th>S #</th>
+	                <th class ="noprint" title = "Penging ID">Id</th>
+	                <th>Date</th>
+	                <th>Name</th>
+	                <th class ="noprint">Procedure </th>
+	                <th class ="noprint" title = "Referance Name">Ref. Name</th>
+	                <th class ="noprint" title = "Referance Name">Recommended By</th>
+	                <th>Token #</th>
+	                <th>Total Amount</th>
+	                <th>Received Amount</th>
+	                <th>Pending Amount</th>
+	            </tr>
+	        </thead>
+<?php
+if(mysqli_num_rows($run) > 0)
+{
+    while($row = mysqli_fetch_array($run))
+    {
+        $created = $row['created'];
+        $rf_name = $row['gardian_name'];
+        $recommended_by = $row['recommended_by'];
+        $token_no = $row['token_no'];
+        $pending_id = get_pending_id_by_token_id($token_no);
+        $receive = get_receive_amount_by_pending_id($pending_id);
+        $total_amount = get_token_amount_by_id($token_no);
+        $receive_amount = get_receive_amount_by_token_id($token_no);
+        $received = $receive + $receive_amount;
+        $pending_amount = $total_amount - $received;
+        $s = $s + 1;
+        $patient_name = get_patient_name_by_token_id($token_no);
+        $procedure_name = get_procedure_name_by_register_item_id($token_no);
+        echo '
+                <tr>
+                    <td class ="h6">'.$s.'</td>
+                    <td class ="noprint h6">'.$pending_id.'</td>
+                    <td class ="h6">'.date_format(date_create($created), "d-m-Y").'</td>
+                    <td class ="h6">'.$patient_name.'</td>
+                    <td class ="noprint h6">'.$procedure_name.'</td>
+                    <td class ="noprint h6">'.$rf_name.'</td>
+                    <td class ="noprint h6">'.$recommended_by.'</td>
+                    <td class ="h6">'.$token_no.'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($total_amount ?? 0)).'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($received ?? 0)).'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($pending_amount ?? 0)).'</td>
+        ';
+    }
+    $total = intval($select_count/20)+1;
+    if($total > 0){ ?>
+    <tbody>
+        <tr>
+            <td colspan = "11">
+                <div class = "row">
+                    <div class = "col" style  = "text-align: center;">
+                        <?php
+                        if($page_no != 1)
+                        {
+                            echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&&from_date='.$from_date.'&to_date='.$_GET['to_date'].'&page_no=1" class = "btn btn-sm btn-info" style = "margin: 2px;">Start</a>';
+                        }
+                        for($i=1; $i<=$total; $i++)
+                        {
+                            if($i == $page_no)
+                            {
+                                echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&from_date='.$from_date.'&to_date='.$_GET['to_date'].'&page_no='.$i.'" class = "btn btn-sm btn-info active" style = "margin: 2px;">'.$i.'</a>';
+                            }
+                            else
+                            {
+                                echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&from_date='.$from_date.'&to_date='.$_GET['to_date'].'&page_no='.$i.'" class = "btn btn-sm btn-info" style = "margin: 2px;">'.$i.'</a>';
+                            }
+                        }
+                        if($page_no != $total)
+                        {
+                            echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&from_date='.$from_date.'&to_date='.$_GET['to_date'].'&page_no='.$total.'" class = "btn btn-sm btn-info" style = "margin: 2px;">Last</a>';
+                        }
+                        ?>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </tbody>    
+<?php }
+} ?>
+
+	    </table>
+	</div>
+			
+	</div>
+</div>
+
+</body>
+</html>($created && $created != '0000-00-00' && $created != '0000-00-00 00:00:00' ? date_format(date_create($created), "d-m-Y") : ''.'</td>
+                    <td class ="h6">'.$patient_name.'</td>
+                    <td class ="noprint h6">'.$procedure_name.'</td>
+                    <td class ="noprint h6">'.$rf_name.'</td>
+                    <td class ="noprint h6">'.$recommended_by.'</td>
+                    <td class ="h6">'.$token_no.'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($total_amount ?? 0)).'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($received ?? 0)).'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($pending_amount ?? 0)).'</td>
+        ';
+    }
+    $total = intval($select_count/20)+1;
+    if($total > 0){ ?>
+    <tbody>
+        <tr>
+            <td colspan = "11">
+                <div class = "row">
+                    <div class = "col" style  = "text-align: center;">
+                        <?php
+                        if($page_no != 1)
+                        {
+                            echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&&from_date='.$from_date.'&to_date='.$_GET['to_date'].'&page_no=1" class = "btn btn-sm btn-info" style = "margin: 2px;">Start</a>';
+                        }
+                        for($i=1; $i<=$total; $i++)
+                        {
+                            if($i == $page_no)
+                            {
+                                echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&from_date='.$from_date.'&to_date='.$_GET['to_date'].'&page_no='.$i.'" class = "btn btn-sm btn-info active" style = "margin: 2px;">'.$i.'</a>';
+                            }
+                            else
+                            {
+                                echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&from_date='.$from_date.'&to_date='.$_GET['to_date'].'&page_no='.$i.'" class = "btn btn-sm btn-info" style = "margin: 2px;">'.$i.'</a>';
+                            }
+                        }
+                        if($page_no != $total)
+                        {
+                            echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&from_date='.$from_date.'&to_date='.$_GET['to_date'].'&page_no='.$total.'" class = "btn btn-sm btn-info" style = "margin: 2px;">Last</a>';
+                        }
+                        ?>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </tbody>    
+<?php }
+} ?>
+
+	    </table>
+	</div>
+			
+	</div>
+</div>
+
+</body>
+</html>($created && $created != '0000-00-00' && $created != '0000-00-00 00:00:00' ? date_format(date_create($created), "d-m-Y") : ''.'</td>
+                    <td class ="h6">'.$patient_name.'</td>
+                    <td class ="noprint h6">'.$procedure_name.'</td>
+                    <td class ="noprint h6">'.$rf_name.'</td>
+                    <td class ="noprint h6">'.$recommended_by.'</td>
+                    <td class ="h6">'.$token_no.'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($total_amount ?? 0)).'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($received ?? 0)).'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($pending_amount ?? 0)).'</td>
+        ';
+    }
+    $total = intval($select_count/20)+1;
+    if($total > 0){ ?>
+    <tbody>
+        <tr>
+            <td colspan = "11">
+                <div class = "row">
+                    <div class = "col" style  = "text-align: center;">
+                        <?php
+                        if($page_no != 1)
+                        {
+                            echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&&from_date='.$from_date.'&to_date='.$_GET['to_date'].'&page_no=1" class = "btn btn-sm btn-info" style = "margin: 2px;">Start</a>';
+                        }
+                        for($i=1; $i<=$total; $i++)
+                        {
+                            if($i == $page_no)
+                            {
+                                echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&from_date='.$from_date.'&to_date='.$_GET['to_date'].'&page_no='.$i.'" class = "btn btn-sm btn-info active" style = "margin: 2px;">'.$i.'</a>';
+                            }
+                            else
+                            {
+                                echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&from_date='.$from_date.'&to_date='.$_GET['to_date'].'&page_no='.$i.'" class = "btn btn-sm btn-info" style = "margin: 2px;">'.$i.'</a>';
+                            }
+                        }
+                        if($page_no != $total)
+                        {
+                            echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&from_date='.$from_date.'&to_date='.$_GET['to_date'].'&page_no='.$total.'" class = "btn btn-sm btn-info" style = "margin: 2px;">Last</a>';
+                        }
+                        ?>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </tbody>    
+<?php }
+} ?>
+
+	    </table>
+	</div>
+			
+	</div>
+</div>
+
+</body>
+</html>($created && $created != '0000-00-00' && $created != '0000-00-00 00:00:00' ? date_format(date_create($created), "d-m-Y") : ''.'</td>
+                    <td class ="h6">'.$patient_name.'</td>
+                    <td class ="noprint h6">'.$procedure_name.'</td>
+                    <td class ="noprint h6">'.$rf_name.'</td>
+                    <td class ="noprint h6">'.$recommended_by.'</td>
+                    <td class ="h6">'.$token_no.'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($total_amount ?? 0)).'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($received ?? 0)).'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($pending_amount ?? 0)).'</td>
+        ';
+    }
+    $total = intval($select_count/20)+1;
+    if($total > 0){ ?>
+    <tbody>
+        <tr>
+            <td colspan = "11">
+                <div class = "row">
+                    <div class = "col" style  = "text-align: center;">
+                        <?php
+                        if($page_no != 1)
+                        {
+                            echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&&from_date='.$from_date.'&to_date='.$_GET['to_date'].'&page_no=1" class = "btn btn-sm btn-info" style = "margin: 2px;">Start</a>';
+                        }
+                        for($i=1; $i<=$total; $i++)
+                        {
+                            if($i == $page_no)
+                            {
+                                echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&from_date='.$from_date.'&to_date='.$_GET['to_date'].'&page_no='.$i.'" class = "btn btn-sm btn-info active" style = "margin: 2px;">'.$i.'</a>';
+                            }
+                            else
+                            {
+                                echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&from_date='.$from_date.'&to_date='.$_GET['to_date'].'&page_no='.$i.'" class = "btn btn-sm btn-info" style = "margin: 2px;">'.$i.'</a>';
+                            }
+                        }
+                        if($page_no != $total)
+                        {
+                            echo '<a href = "lg_operate_pending.php?br_id='.$br_id.'&from_date='.$from_date.'&to_date='.$_GET['to_date'].'&page_no='.$total.'" class = "btn btn-sm btn-info" style = "margin: 2px;">Last</a>';
+                        }
+                        ?>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </tbody>    
+<?php }
+} ?>
+
+	    </table>
+	</div>
+			
+	</div>
+</div>
+
+</body>
+</html>$created), "d-m-Y") : ''.'</td>
+                    <td class ="h6">'.$patient_name.'</td>
+                    <td class ="noprint h6">'.$procedure_name.'</td>
+                    <td class ="noprint h6">'.$rf_name.'</td>
+                    <td class ="noprint h6">'.$recommended_by.'</td>
+                    <td class ="h6">'.$token_no.'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($total_amount ?? 0)).'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($received ?? 0)).'</td>
+                    <td class ="h6" style = "text-align: center;">'.number_format((float)($pending_amount ?? 0)).'</td>
         ';
     }
     $total = intval($select_count/20)+1;

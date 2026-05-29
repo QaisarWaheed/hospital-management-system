@@ -116,7 +116,7 @@ else
         <?php
         if($lab_test_status_id >= '1')
         {
-            echo '<tr><td>'.date_format(date_create($register_at), 'h:i:s A d-m-Y').'</td><td>Register Test</td><td></td><td>'.$register_by.'</td></tr>';
+            echo '<tr><td>'.($register_at && $register_at != '0000-00-00' && $register_at != '0000-00-00 00:00:00' ? date_format(date_create($register_at), 'h:i:s A d-m-Y') : ''.'</td><td>Register Test</td><td></td><td>'.$register_by.'</td></tr>';
         }
         if($lab_test_status_id >= '2')
         {
@@ -137,6 +137,996 @@ else
         if($lab_test_status_id >= '6')
         {
             echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($collected_at && $collected_at != '0000-00-00' && $collected_at != '0000-00-00 00:00:00' ? date_format(date_create($collected_at), 'h:i:s A d-m-Y') : ''.'</td><td>Specimen Collected</td><td>'.$lab_test_collected_comments.'</td><td>'.$collected_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '3')
+        {
+            echo '<tr><td>'.date_format(date_create($processed_at), 'h:i:s A d-m-Y').'</td><td>Test Process</td><td>'.$lab_test_processed_comments.'</td><td>'.$processed_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '4')
+        {
+            echo '<tr><td>'.date_format(date_create($conducted_at), 'h:i:s A d-m-Y').'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($processed_at && $processed_at != '0000-00-00' && $processed_at != '0000-00-00 00:00:00' ? date_format(date_create($processed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Test Process</td><td>'.$lab_test_processed_comments.'</td><td>'.$processed_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '4')
+        {
+            echo '<tr><td>'.date_format(date_create($conducted_at), 'h:i:s A d-m-Y').'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($conducted_at && $conducted_at != '0000-00-00' && $conducted_at != '0000-00-00 00:00:00' ? date_format(date_create($conducted_at), 'h:i:s A d-m-Y') : ''.'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($approved_at && $approved_at != '0000-00-00' && $approved_at != '0000-00-00 00:00:00' ? date_format(date_create($approved_at), 'h:i:s A d-m-Y') : ''.'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($printed_at && $printed_at != '0000-00-00' && $printed_at != '0000-00-00 00:00:00' ? date_format(date_create($printed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($collected_at && $collected_at != '0000-00-00' && $collected_at != '0000-00-00 00:00:00' ? date_format(date_create($collected_at), 'h:i:s A d-m-Y') : ''.'</td><td>Specimen Collected</td><td>'.$lab_test_collected_comments.'</td><td>'.$collected_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '3')
+        {
+            echo '<tr><td>'.date_format(date_create($processed_at), 'h:i:s A d-m-Y').'</td><td>Test Process</td><td>'.$lab_test_processed_comments.'</td><td>'.$processed_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '4')
+        {
+            echo '<tr><td>'.date_format(date_create($conducted_at), 'h:i:s A d-m-Y').'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($collected_at && $collected_at != '0000-00-00' && $collected_at != '0000-00-00 00:00:00' ? date_format(date_create($collected_at), 'h:i:s A d-m-Y') : ''.'</td><td>Specimen Collected</td><td>'.$lab_test_collected_comments.'</td><td>'.$collected_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '3')
+        {
+            echo '<tr><td>'.date_format(date_create($processed_at), 'h:i:s A d-m-Y').'</td><td>Test Process</td><td>'.$lab_test_processed_comments.'</td><td>'.$processed_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '4')
+        {
+            echo '<tr><td>'.date_format(date_create($conducted_at), 'h:i:s A d-m-Y').'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($processed_at && $processed_at != '0000-00-00' && $processed_at != '0000-00-00 00:00:00' ? date_format(date_create($processed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Test Process</td><td>'.$lab_test_processed_comments.'</td><td>'.$processed_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '4')
+        {
+            echo '<tr><td>'.date_format(date_create($conducted_at), 'h:i:s A d-m-Y').'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($conducted_at && $conducted_at != '0000-00-00' && $conducted_at != '0000-00-00 00:00:00' ? date_format(date_create($conducted_at), 'h:i:s A d-m-Y') : ''.'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($approved_at && $approved_at != '0000-00-00' && $approved_at != '0000-00-00 00:00:00' ? date_format(date_create($approved_at), 'h:i:s A d-m-Y') : ''.'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($printed_at && $printed_at != '0000-00-00' && $printed_at != '0000-00-00 00:00:00' ? date_format(date_create($printed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($processed_at && $processed_at != '0000-00-00' && $processed_at != '0000-00-00 00:00:00' ? date_format(date_create($processed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Test Process</td><td>'.$lab_test_processed_comments.'</td><td>'.$processed_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '4')
+        {
+            echo '<tr><td>'.date_format(date_create($conducted_at), 'h:i:s A d-m-Y').'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($collected_at && $collected_at != '0000-00-00' && $collected_at != '0000-00-00 00:00:00' ? date_format(date_create($collected_at), 'h:i:s A d-m-Y') : ''.'</td><td>Specimen Collected</td><td>'.$lab_test_collected_comments.'</td><td>'.$collected_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '3')
+        {
+            echo '<tr><td>'.date_format(date_create($processed_at), 'h:i:s A d-m-Y').'</td><td>Test Process</td><td>'.$lab_test_processed_comments.'</td><td>'.$processed_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '4')
+        {
+            echo '<tr><td>'.date_format(date_create($conducted_at), 'h:i:s A d-m-Y').'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($processed_at && $processed_at != '0000-00-00' && $processed_at != '0000-00-00 00:00:00' ? date_format(date_create($processed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Test Process</td><td>'.$lab_test_processed_comments.'</td><td>'.$processed_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '4')
+        {
+            echo '<tr><td>'.date_format(date_create($conducted_at), 'h:i:s A d-m-Y').'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($conducted_at && $conducted_at != '0000-00-00' && $conducted_at != '0000-00-00 00:00:00' ? date_format(date_create($conducted_at), 'h:i:s A d-m-Y') : ''.'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($approved_at && $approved_at != '0000-00-00' && $approved_at != '0000-00-00 00:00:00' ? date_format(date_create($approved_at), 'h:i:s A d-m-Y') : ''.'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($printed_at && $printed_at != '0000-00-00' && $printed_at != '0000-00-00 00:00:00' ? date_format(date_create($printed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($conducted_at && $conducted_at != '0000-00-00' && $conducted_at != '0000-00-00 00:00:00' ? date_format(date_create($conducted_at), 'h:i:s A d-m-Y') : ''.'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($collected_at && $collected_at != '0000-00-00' && $collected_at != '0000-00-00 00:00:00' ? date_format(date_create($collected_at), 'h:i:s A d-m-Y') : ''.'</td><td>Specimen Collected</td><td>'.$lab_test_collected_comments.'</td><td>'.$collected_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '3')
+        {
+            echo '<tr><td>'.date_format(date_create($processed_at), 'h:i:s A d-m-Y').'</td><td>Test Process</td><td>'.$lab_test_processed_comments.'</td><td>'.$processed_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '4')
+        {
+            echo '<tr><td>'.date_format(date_create($conducted_at), 'h:i:s A d-m-Y').'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($processed_at && $processed_at != '0000-00-00' && $processed_at != '0000-00-00 00:00:00' ? date_format(date_create($processed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Test Process</td><td>'.$lab_test_processed_comments.'</td><td>'.$processed_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '4')
+        {
+            echo '<tr><td>'.date_format(date_create($conducted_at), 'h:i:s A d-m-Y').'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($conducted_at && $conducted_at != '0000-00-00' && $conducted_at != '0000-00-00 00:00:00' ? date_format(date_create($conducted_at), 'h:i:s A d-m-Y') : ''.'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($approved_at && $approved_at != '0000-00-00' && $approved_at != '0000-00-00 00:00:00' ? date_format(date_create($approved_at), 'h:i:s A d-m-Y') : ''.'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($printed_at && $printed_at != '0000-00-00' && $printed_at != '0000-00-00 00:00:00' ? date_format(date_create($printed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($approved_at && $approved_at != '0000-00-00' && $approved_at != '0000-00-00 00:00:00' ? date_format(date_create($approved_at), 'h:i:s A d-m-Y') : ''.'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($collected_at && $collected_at != '0000-00-00' && $collected_at != '0000-00-00 00:00:00' ? date_format(date_create($collected_at), 'h:i:s A d-m-Y') : ''.'</td><td>Specimen Collected</td><td>'.$lab_test_collected_comments.'</td><td>'.$collected_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '3')
+        {
+            echo '<tr><td>'.date_format(date_create($processed_at), 'h:i:s A d-m-Y').'</td><td>Test Process</td><td>'.$lab_test_processed_comments.'</td><td>'.$processed_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '4')
+        {
+            echo '<tr><td>'.date_format(date_create($conducted_at), 'h:i:s A d-m-Y').'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($processed_at && $processed_at != '0000-00-00' && $processed_at != '0000-00-00 00:00:00' ? date_format(date_create($processed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Test Process</td><td>'.$lab_test_processed_comments.'</td><td>'.$processed_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '4')
+        {
+            echo '<tr><td>'.date_format(date_create($conducted_at), 'h:i:s A d-m-Y').'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($conducted_at && $conducted_at != '0000-00-00' && $conducted_at != '0000-00-00 00:00:00' ? date_format(date_create($conducted_at), 'h:i:s A d-m-Y') : ''.'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($approved_at && $approved_at != '0000-00-00' && $approved_at != '0000-00-00 00:00:00' ? date_format(date_create($approved_at), 'h:i:s A d-m-Y') : ''.'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($printed_at && $printed_at != '0000-00-00' && $printed_at != '0000-00-00 00:00:00' ? date_format(date_create($printed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($printed_at && $printed_at != '0000-00-00' && $printed_at != '0000-00-00 00:00:00' ? date_format(date_create($printed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($collected_at && $collected_at != '0000-00-00' && $collected_at != '0000-00-00 00:00:00' ? date_format(date_create($collected_at), 'h:i:s A d-m-Y') : ''.'</td><td>Specimen Collected</td><td>'.$lab_test_collected_comments.'</td><td>'.$collected_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '3')
+        {
+            echo '<tr><td>'.date_format(date_create($processed_at), 'h:i:s A d-m-Y').'</td><td>Test Process</td><td>'.$lab_test_processed_comments.'</td><td>'.$processed_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '4')
+        {
+            echo '<tr><td>'.date_format(date_create($conducted_at), 'h:i:s A d-m-Y').'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($processed_at && $processed_at != '0000-00-00' && $processed_at != '0000-00-00 00:00:00' ? date_format(date_create($processed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Test Process</td><td>'.$lab_test_processed_comments.'</td><td>'.$processed_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '4')
+        {
+            echo '<tr><td>'.date_format(date_create($conducted_at), 'h:i:s A d-m-Y').'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($conducted_at && $conducted_at != '0000-00-00' && $conducted_at != '0000-00-00 00:00:00' ? date_format(date_create($conducted_at), 'h:i:s A d-m-Y') : ''.'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($approved_at && $approved_at != '0000-00-00' && $approved_at != '0000-00-00 00:00:00' ? date_format(date_create($approved_at), 'h:i:s A d-m-Y') : ''.'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($printed_at && $printed_at != '0000-00-00' && $printed_at != '0000-00-00 00:00:00' ? date_format(date_create($printed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>$collected_at), 'h:i:s A d-m-Y') : ''.'</td><td>Specimen Collected</td><td>'.$lab_test_collected_comments.'</td><td>'.$collected_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '3')
+        {
+            echo '<tr><td>'.date_format(date_create($processed_at), 'h:i:s A d-m-Y').'</td><td>Test Process</td><td>'.$lab_test_processed_comments.'</td><td>'.$processed_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '4')
+        {
+            echo '<tr><td>'.date_format(date_create($conducted_at), 'h:i:s A d-m-Y').'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($processed_at && $processed_at != '0000-00-00' && $processed_at != '0000-00-00 00:00:00' ? date_format(date_create($processed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Test Process</td><td>'.$lab_test_processed_comments.'</td><td>'.$processed_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '4')
+        {
+            echo '<tr><td>'.date_format(date_create($conducted_at), 'h:i:s A d-m-Y').'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($conducted_at && $conducted_at != '0000-00-00' && $conducted_at != '0000-00-00 00:00:00' ? date_format(date_create($conducted_at), 'h:i:s A d-m-Y') : ''.'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($approved_at && $approved_at != '0000-00-00' && $approved_at != '0000-00-00 00:00:00' ? date_format(date_create($approved_at), 'h:i:s A d-m-Y') : ''.'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($printed_at && $printed_at != '0000-00-00' && $printed_at != '0000-00-00 00:00:00' ? date_format(date_create($printed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($processed_at && $processed_at != '0000-00-00' && $processed_at != '0000-00-00 00:00:00' ? date_format(date_create($processed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Test Process</td><td>'.$lab_test_processed_comments.'</td><td>'.$processed_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '4')
+        {
+            echo '<tr><td>'.date_format(date_create($conducted_at), 'h:i:s A d-m-Y').'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($processed_at && $processed_at != '0000-00-00' && $processed_at != '0000-00-00 00:00:00' ? date_format(date_create($processed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Test Process</td><td>'.$lab_test_processed_comments.'</td><td>'.$processed_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '4')
+        {
+            echo '<tr><td>'.date_format(date_create($conducted_at), 'h:i:s A d-m-Y').'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($conducted_at && $conducted_at != '0000-00-00' && $conducted_at != '0000-00-00 00:00:00' ? date_format(date_create($conducted_at), 'h:i:s A d-m-Y') : ''.'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($approved_at && $approved_at != '0000-00-00' && $approved_at != '0000-00-00 00:00:00' ? date_format(date_create($approved_at), 'h:i:s A d-m-Y') : ''.'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($printed_at && $printed_at != '0000-00-00' && $printed_at != '0000-00-00 00:00:00' ? date_format(date_create($printed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($conducted_at && $conducted_at != '0000-00-00' && $conducted_at != '0000-00-00 00:00:00' ? date_format(date_create($conducted_at), 'h:i:s A d-m-Y') : ''.'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($processed_at && $processed_at != '0000-00-00' && $processed_at != '0000-00-00 00:00:00' ? date_format(date_create($processed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Test Process</td><td>'.$lab_test_processed_comments.'</td><td>'.$processed_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '4')
+        {
+            echo '<tr><td>'.date_format(date_create($conducted_at), 'h:i:s A d-m-Y').'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($conducted_at && $conducted_at != '0000-00-00' && $conducted_at != '0000-00-00 00:00:00' ? date_format(date_create($conducted_at), 'h:i:s A d-m-Y') : ''.'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($approved_at && $approved_at != '0000-00-00' && $approved_at != '0000-00-00 00:00:00' ? date_format(date_create($approved_at), 'h:i:s A d-m-Y') : ''.'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($printed_at && $printed_at != '0000-00-00' && $printed_at != '0000-00-00 00:00:00' ? date_format(date_create($printed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($approved_at && $approved_at != '0000-00-00' && $approved_at != '0000-00-00 00:00:00' ? date_format(date_create($approved_at), 'h:i:s A d-m-Y') : ''.'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($processed_at && $processed_at != '0000-00-00' && $processed_at != '0000-00-00 00:00:00' ? date_format(date_create($processed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Test Process</td><td>'.$lab_test_processed_comments.'</td><td>'.$processed_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '4')
+        {
+            echo '<tr><td>'.date_format(date_create($conducted_at), 'h:i:s A d-m-Y').'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($conducted_at && $conducted_at != '0000-00-00' && $conducted_at != '0000-00-00 00:00:00' ? date_format(date_create($conducted_at), 'h:i:s A d-m-Y') : ''.'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($approved_at && $approved_at != '0000-00-00' && $approved_at != '0000-00-00 00:00:00' ? date_format(date_create($approved_at), 'h:i:s A d-m-Y') : ''.'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($printed_at && $printed_at != '0000-00-00' && $printed_at != '0000-00-00 00:00:00' ? date_format(date_create($printed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($printed_at && $printed_at != '0000-00-00' && $printed_at != '0000-00-00 00:00:00' ? date_format(date_create($printed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($processed_at && $processed_at != '0000-00-00' && $processed_at != '0000-00-00 00:00:00' ? date_format(date_create($processed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Test Process</td><td>'.$lab_test_processed_comments.'</td><td>'.$processed_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '4')
+        {
+            echo '<tr><td>'.date_format(date_create($conducted_at), 'h:i:s A d-m-Y').'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($conducted_at && $conducted_at != '0000-00-00' && $conducted_at != '0000-00-00 00:00:00' ? date_format(date_create($conducted_at), 'h:i:s A d-m-Y') : ''.'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($approved_at && $approved_at != '0000-00-00' && $approved_at != '0000-00-00 00:00:00' ? date_format(date_create($approved_at), 'h:i:s A d-m-Y') : ''.'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($printed_at && $printed_at != '0000-00-00' && $printed_at != '0000-00-00 00:00:00' ? date_format(date_create($printed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>$processed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Test Process</td><td>'.$lab_test_processed_comments.'</td><td>'.$processed_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '4')
+        {
+            echo '<tr><td>'.date_format(date_create($conducted_at), 'h:i:s A d-m-Y').'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($conducted_at && $conducted_at != '0000-00-00' && $conducted_at != '0000-00-00 00:00:00' ? date_format(date_create($conducted_at), 'h:i:s A d-m-Y') : ''.'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($approved_at && $approved_at != '0000-00-00' && $approved_at != '0000-00-00 00:00:00' ? date_format(date_create($approved_at), 'h:i:s A d-m-Y') : ''.'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($printed_at && $printed_at != '0000-00-00' && $printed_at != '0000-00-00 00:00:00' ? date_format(date_create($printed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($conducted_at && $conducted_at != '0000-00-00' && $conducted_at != '0000-00-00 00:00:00' ? date_format(date_create($conducted_at), 'h:i:s A d-m-Y') : ''.'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($conducted_at && $conducted_at != '0000-00-00' && $conducted_at != '0000-00-00 00:00:00' ? date_format(date_create($conducted_at), 'h:i:s A d-m-Y') : ''.'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($approved_at && $approved_at != '0000-00-00' && $approved_at != '0000-00-00 00:00:00' ? date_format(date_create($approved_at), 'h:i:s A d-m-Y') : ''.'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($printed_at && $printed_at != '0000-00-00' && $printed_at != '0000-00-00 00:00:00' ? date_format(date_create($printed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($approved_at && $approved_at != '0000-00-00' && $approved_at != '0000-00-00 00:00:00' ? date_format(date_create($approved_at), 'h:i:s A d-m-Y') : ''.'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($conducted_at && $conducted_at != '0000-00-00' && $conducted_at != '0000-00-00 00:00:00' ? date_format(date_create($conducted_at), 'h:i:s A d-m-Y') : ''.'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($approved_at && $approved_at != '0000-00-00' && $approved_at != '0000-00-00 00:00:00' ? date_format(date_create($approved_at), 'h:i:s A d-m-Y') : ''.'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($printed_at && $printed_at != '0000-00-00' && $printed_at != '0000-00-00 00:00:00' ? date_format(date_create($printed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($printed_at && $printed_at != '0000-00-00' && $printed_at != '0000-00-00 00:00:00' ? date_format(date_create($printed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($conducted_at && $conducted_at != '0000-00-00' && $conducted_at != '0000-00-00 00:00:00' ? date_format(date_create($conducted_at), 'h:i:s A d-m-Y') : ''.'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($approved_at && $approved_at != '0000-00-00' && $approved_at != '0000-00-00 00:00:00' ? date_format(date_create($approved_at), 'h:i:s A d-m-Y') : ''.'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($printed_at && $printed_at != '0000-00-00' && $printed_at != '0000-00-00 00:00:00' ? date_format(date_create($printed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>$conducted_at), 'h:i:s A d-m-Y') : ''.'</td><td>Conducted</td><td>'.$lab_test_conducted_comments.'</td><td>'.$conducted_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '5')
+        {
+            echo '<tr><td>'.date_format(date_create($approved_at), 'h:i:s A d-m-Y').'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($approved_at && $approved_at != '0000-00-00' && $approved_at != '0000-00-00 00:00:00' ? date_format(date_create($approved_at), 'h:i:s A d-m-Y') : ''.'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($printed_at && $printed_at != '0000-00-00' && $printed_at != '0000-00-00 00:00:00' ? date_format(date_create($printed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($approved_at && $approved_at != '0000-00-00' && $approved_at != '0000-00-00 00:00:00' ? date_format(date_create($approved_at), 'h:i:s A d-m-Y') : ''.'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($approved_at && $approved_at != '0000-00-00' && $approved_at != '0000-00-00 00:00:00' ? date_format(date_create($approved_at), 'h:i:s A d-m-Y') : ''.'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($printed_at && $printed_at != '0000-00-00' && $printed_at != '0000-00-00 00:00:00' ? date_format(date_create($printed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($printed_at && $printed_at != '0000-00-00' && $printed_at != '0000-00-00 00:00:00' ? date_format(date_create($printed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($approved_at && $approved_at != '0000-00-00' && $approved_at != '0000-00-00 00:00:00' ? date_format(date_create($approved_at), 'h:i:s A d-m-Y') : ''.'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($printed_at && $printed_at != '0000-00-00' && $printed_at != '0000-00-00 00:00:00' ? date_format(date_create($printed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>$approved_at), 'h:i:s A d-m-Y') : ''.'</td><td>Approved Report</td><td>'.$lab_test_approved_comments.'</td><td>'.$approved_by.'</td></tr>';
+        }
+        if($lab_test_status_id >= '6')
+        {
+            echo '<tr><td>'.date_format(date_create($printed_at), 'h:i:s A d-m-Y').'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($printed_at && $printed_at != '0000-00-00' && $printed_at != '0000-00-00 00:00:00' ? date_format(date_create($printed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($printed_at && $printed_at != '0000-00-00' && $printed_at != '0000-00-00 00:00:00' ? date_format(date_create($printed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>($printed_at && $printed_at != '0000-00-00' && $printed_at != '0000-00-00 00:00:00' ? date_format(date_create($printed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
+        }
+        ?>
+    </table>
+</body>
+</html>$printed_at), 'h:i:s A d-m-Y') : ''.'</td><td>Print</td><td>'.$lab_test_print_comments.'</td><td>'.$printed_by.'</td></tr>';
         }
         ?>
     </table>

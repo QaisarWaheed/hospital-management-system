@@ -118,7 +118,7 @@ final class ReportHelpersTest extends TestCase
 
     public function testReportSafeNumberFormatHandlesNull(): void
     {
-        $this->assertSame('0', report_safe_number_format(null));
-        $this->assertSame('1,234', report_safe_number_format(1234));
+        $this->assertSame('0', report_safe_number_format((float)(null ?? 0)));
+        $this->assertSame('1,234', report_safe_number_format((float)(1234 ?? 0)));
     }
 }

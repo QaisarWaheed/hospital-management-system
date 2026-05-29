@@ -68,7 +68,7 @@ $s = $summary;
         <tr style="text-align:right;">
             <td style="text-align:left;"><?php echo htmlspecialchars($doctor_name); ?></td>
             <td><?php echo (int) $s['opds']; ?></td>
-            <td><?php echo (int) $s['cons_opds'] . ' (' . number_format($s['cons_opds_cash']) . ')'; ?></td>
+            <td><?php echo (int) $s['cons_opds'] . ' (' . number_format((float)($s['cons_opds_cash'] ?? 0)) . ')'; ?></td>
             <td><?php echo (int) $s['labs']; ?></td>
             <td><?php echo (int) $s['usgs']; ?></td>
             <td><?php echo (int) $s['svds']; ?></td>
@@ -78,7 +78,7 @@ $s = $summary;
             <td><?php echo (int) $s['gynae_system']; ?></td>
             <td><?php echo (int) $s['referred']; ?></td>
             <td><?php echo (int) $s['referred_opd']; ?></td>
-            <td><?php echo number_format($s['collections']); ?></td>
+            <td><?php echo number_format((float)($s['collections'] ?? 0)); ?></td>
         </tr>
     </tbody>
 </table>
@@ -98,23 +98,23 @@ foreach ($opdBreakdown as $row) {
         <td>' . htmlspecialchars($row['title']) . '</td>
         <td>' . (int) $row['rate'] . '</td>
         <td>' . (int) $row['count'] . '</td>
-        <td>' . number_format($row['total']) . '</td>
+        <td>' . number_format((float)($row['total'] ?? 0)) . '</td>
     </tr>';
 }
 echo '<tr>
     <td>' . $sr++ . '</td><td>REFERRAL CHECKUP</td><td></td>
     <td>' . (int) $referralReceived['count'] . '</td>
-    <td>' . number_format($referralReceived['sum']) . '</td>
+    <td>' . number_format((float)($referralReceived['sum'] ?? 0)) . '</td>
 </tr>
 <tr>
     <td>' . $sr . '</td><td>CONS CHECKUP</td><td></td>
     <td>' . (int) $s['cons_opds'] . '</td>
-    <td>' . number_format($s['cons_opds_cash']) . '</td>
+    <td>' . number_format((float)($s['cons_opds_cash'] ?? 0)) . '</td>
 </tr>
 <tr>
     <th colspan="3"></th>
     <th>' . ($opd_count + (int) $referralReceived['count'] + (int) $s['cons_opds']) . '</th>
-    <th>' . number_format($opd_sum + $referralReceived['sum'] + $s['cons_opds_cash']) . '</th>
+    <th>' . number_format((float)($opd_sum + $referralReceived['sum'] + $s['cons_opds_cash'] ?? 0)) . '</th>
 </tr>';
 
 if ($procedureRows !== array()) {
@@ -130,10 +130,10 @@ if ($procedureRows !== array()) {
             <td>' . htmlspecialchars(ycdo_safe_date_format($row['created'], 'd-m-Y', '')) . '</td>
             <td>' . (int) $row['token_no'] . '</td>
             <td>' . htmlspecialchars($row['title']) . '</td>
-            <td>' . number_format($row['cash']) . '</td>
+            <td>' . number_format((float)($row['cash'] ?? 0)) . '</td>
         </tr>';
     }
-    echo '<tr><td colspan="4"></td><td>' . number_format($procedure_sum) . '</td></tr>';
+    echo '<tr><td colspan="4"></td><td>' . number_format((float)($procedure_sum ?? 0)) . '</td></tr>';
 }
 ?>
 </table>

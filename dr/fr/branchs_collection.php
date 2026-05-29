@@ -136,22 +136,22 @@ html, body
                 <tr>
                     <td>'.$s.'</td>
                     <td>'.$bra_address.'</td>
-                    <td style = "text-align: right">'.number_format($token_patient).'</td>
-                    <td style = "text-align: right">'.number_format($token_operate).'</td>
-                    <td style = "text-align: right">'.number_format($return_token).'</td>
-                    <td style = "text-align: right">'.number_format($cash).'</td>
-                    <td style = "text-align: right">'.number_format($cash_received).'</td>
+                    <td style = "text-align: right">'.number_format((float)($token_patient ?? 0)).'</td>
+                    <td style = "text-align: right">'.number_format((float)($token_operate ?? 0)).'</td>
+                    <td style = "text-align: right">'.number_format((float)($return_token ?? 0)).'</td>
+                    <td style = "text-align: right">'.number_format((float)($cash ?? 0)).'</td>
+                    <td style = "text-align: right">'.number_format((float)($cash_received ?? 0)).'</td>
                 </tr>
                 ';
             }
             echo '
                 <tr>
                     <th style = "text-align: right;" colspan = "2">GRAND TOTAL</th>
-                    <th style = "text-align: right;">'.number_format($total_patient).'</th>
-                    <th style = "text-align: right;">'.number_format($total_operate).'</th>
-                    <th style = "text-align: right;">'.number_format($total_return_token).'</th>
-                    <th style = "text-align: right;">'.number_format($total_cash).'</th>
-                    <th style = "text-align: right;">'.number_format($total_cash_received).'</th>
+                    <th style = "text-align: right;">'.number_format((float)($total_patient ?? 0)).'</th>
+                    <th style = "text-align: right;">'.number_format((float)($total_operate ?? 0)).'</th>
+                    <th style = "text-align: right;">'.number_format((float)($total_return_token ?? 0)).'</th>
+                    <th style = "text-align: right;">'.number_format((float)($total_cash ?? 0)).'</th>
+                    <th style = "text-align: right;">'.number_format((float)($total_cash_received ?? 0)).'</th>
                 </tr>
             ';
         }

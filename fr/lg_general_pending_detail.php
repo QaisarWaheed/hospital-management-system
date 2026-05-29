@@ -120,9 +120,9 @@ foreach ($pendingRows as $row) {
         <td class="noprint h6">' . htmlspecialchars($row['ref_name']) . '</td>
         <td class="noprint h6">' . htmlspecialchars($row['recommended_by']) . '</td>
         <td class="h6">' . $token_no . '</td>
-        <td class="h6" style="text-align:center;">' . number_format($total_amount) . '</td>
-        <td class="h6" style="text-align:center;">' . number_format($receive_amount) . '</td>
-        <td class="h6" style="text-align:center;">' . number_format($pending_amount) . '</td>
+        <td class="h6" style="text-align:center;">' . number_format((float)($total_amount ?? 0)) . '</td>
+        <td class="h6" style="text-align:center;">' . number_format((float)($receive_amount ?? 0)) . '</td>
+        <td class="h6" style="text-align:center;">' . number_format((float)($pending_amount ?? 0)) . '</td>
     </tr>';
 
     if (isset($itemsByToken[$token_no]) && $itemsByToken[$token_no] !== array()) {

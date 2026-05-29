@@ -118,7 +118,7 @@ if(isset($_POST['add_procedure_expense']) && isset($_POST['token_no']) && $_POST
     	                                    <td><?php echo $row['token_no']; ?></td>
     	                                    <td><?php echo $row['expense_by']; ?></td>
     	                                    <td><?php echo $row['expense_to']; ?></td>
-    	                                    <td><?php echo number_format($row['expense_amount']); ?></td>
+    	                                    <td><?php echo number_format((float)($row['expense_amount'] ?? 0)); ?></td>
     	                                </tr>
     	                        <?php 
     	                        }
@@ -126,7 +126,7 @@ if(isset($_POST['add_procedure_expense']) && isset($_POST['token_no']) && $_POST
                                       <tfoot>
                                         <tr>
                                             <th colspan = "4"></th>
-                                            <th>'.number_format($total_amount).'</th>
+                                            <th>'.number_format((float)($total_amount ?? 0)).'</th>
                                         </tr>
                                       </tfoot>
     	                        </table>';

@@ -6,7 +6,7 @@ if(isset($_POST['item_id']) && isset($_POST['from']) && $_POST['item_id'] != '')
     $br_id = $_POST['br_id'];
     $from = $_POST['from'];
     $to = $_POST['to'];
-    $end_date = date_format(date_create($to), "Y-m-d 23:59:59");
+    $end_date = ($to && $to != '0000-00-00' && $to != '0000-00-00 00:00:00' ? date_format(date_create($to), "Y-m-d 23:59:59") : '';
 }
 ?>
 	<title>PURCHASE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> - <?php echo $company_trademark; ?></title>
@@ -112,6 +112,26 @@ if(isset($_POST['item_id']) && isset($_POST['from']) && $_POST['item_id'] != '')
                         <th>S#</th>
                         <th>INVOICE</th>
                         <th>Date</th>
+                        <th>PARTY</t($to && $to != '0000-00-00' && $to != '($to && $to != '0000-00-00' && $to != '0000-00-00 00:00:00' ? date_format(date_create($to), "Y-m-d 23:59:59") : '';
+?>
+        <div class=""> 
+        <div id="divID">
+            <table class = "table">
+                <thead>
+                    <tr>
+                        <th>S#</th>
+                        <th>INVOICE</th>
+                        <th>Date</th>
+                        <th>PARTY</t($to && $to != '0000-00-00' && $to != '0000-00-00 00:00:00' ? date_format(date_create($to), "Y-m-d 23:59:59") : '';
+?>
+        <div class=""> 
+        <div id="divID">
+            <table class = "table">
+                <thead>
+                    <tr>
+                        <th>S#</th>
+                        <th>INVOICE</th>
+                        <th>Date</th>
                         <th>PARTY</th>
                         <th>BATCH</th>
                         <th>MFG</th>
@@ -142,6 +162,1115 @@ if(isset($_POST['item_id']) && isset($_POST['from']) && $_POST['item_id'] != '')
                         <td>'.$row_token['batch_no'].'</td>
                         <td>'.date_format(date_create($row_token['mfg_date']), "d-M-Y").'</td>
                         <td>'.date_format(date_create($row_token['expiry_date']), "d-M-Y").'</td>
+                        <td>'.$row_token['per_item_price'].'</td>
+                        <td>'.$row_token['quantity'].'</td>
+                        <td>'.$row_token['total_price'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "10">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "5">Total Purchase Quanitity</th>
+                        <th colspan = "5"><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo get_item_name_and_category_by_item_id($item_id); ?> </h2>
+                    <h3>PURCHASE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    ($row_token['created'] && $row_token['created'] != '0000-00-00' && $row_token['created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['created']), "d-M-Y") : ''.'</td>
+                        <td>'.$row_token['name'].'</td>
+                        <td>'.$row_token['batch_no'].'</td>
+                        <td>'.date_format(date_create($row_token['mfg_date']), "d-M-Y").'</td>
+                        <td>'.date_format(date_create($row_token['expiry_date']), "d-M-Y").'</td>
+                        <td>'.$row_token['per_item_price'].'</td>
+                        <td>'.$row_token['quantity'].'</td>
+                $to), "Y-m-d 23:59:59") : '';
+?>
+        <div class=""> 
+        <div id="divID">
+            <table class = "table">
+                <thead>
+                    <tr>
+                        <th>S#</th>
+                        <th>INVOICE</th>
+                        <th>Date</th>
+                        <th>PARTY</th>
+                        <th>BATCH</th>
+                        <th>MFG</th>
+                        <th>EXPIRY</th>
+                        <th>PRICE</th>
+                        <th>QTY</th>
+                        <th>TOTAL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $s = 0;
+                    $total = 0;
+                    $select_token = "SELECT purchase_items.`created`,purchase_items.invoice_no,purchase_items.`mfg_date`, purchase_items.expiry_date,purchase_items.batch_no,purchase_items.quantity, purchase_items.per_item_price, purchase_items.total_price, parties.name FROM `purchase_items` INNER JOIN parties ON purchase_items.party_id = parties.id WHERE purchase_items.`item_id` = '$item_id' AND purchase_items.created < '$end_date' AND purchase_items.created > '$from' ORDER BY purchase_items.`created` ASC";
+                    $run_token = mysqli_query($con, $select_token);
+                    if(mysqli_num_rows($run_token) > 0)
+                    {
+                    while($row_token = mysqli_fetch_array($run_token))
+                    {
+                        $total = $total + $row_token['quantity'];
+                        $s++;
+                    echo '
+                    <tr>
+                        <td>'.$s.'</td>
+                        <td>'.$row_token['invoice_no'].'</td>
+                        <td>'.date_format(date_create($row_token['created']), "d-M-Y").'</td>
+                        <td>'.$row_token['name'].'</td>
+                        <td>'.$row_token['batch_no'].'</td>
+                        <td>'.date_format(date_create($row_token['mfg_date']), "d-M-Y").'</td>
+                        <td>'.date_format(date_create($row_token['expiry_date']), "d-M-Y").'</td>
+                        <td>'.$row_token['per_item_price'].'</td>
+                        <td>'.$row_token['quantity'].'</td>
+                        <td>'.$row_token['total_price'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "10">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "5">Total Purchase Quanitity</th>
+                        <th colspan = "5"><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo get_item_name_and_category_by_item_id($item_id); ?> </h2>
+                    <h3>PURCHASE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    ($row_token['created'] && $row_token['created'] != '0000-00-00' && $row_token['created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['created']), "d-M-Y") : ''.'</td>
+                        <td>'.$row_token['name'].'</td>
+                        <td>'.$row_token['batch_no'].'</td>
+                        <td>'.date_format(date_create($row_token['mfg_date']), "d-M-Y").'</td>
+                        <td>'.date_format(date_create($row_token['expiry_date']), "d-M-Y").'</td>
+                        <td>'.$row_token['per_item_price'].'</td>
+                        <td>'.$row_token['quantity'].'</td>
+                        <td>'.$row_token['total_price'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "10">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "5">Total Purchase Quanitity</th>
+                        <th colspan = "5"><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo get_item_name_and_category_by_item_id($item_id); ?> </h2>
+                    <h3>PURCHASE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    ($row_token['mfg_date'] && $row_token['mfg_date'] != '0000-00-00' && $row_token['mfg_date'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['mfg_date']), "d-M-Y") : ''.'</td>
+                        <td>'.date_format(date_create($row_token['expiry_date']), "d-M-Y").'</td>
+                        <td>'.$row_token['per_item_price'].'</td>
+                        <td>'.$row_token['quantity'].'</td>
+                        <td>'.$row_token['total_price'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "10">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "5">Total Purchase Quanitity</th>
+                        <th colspan = "5"><?php echo $total; ?></th>
+                    </tr>
+       ($row_token['created'] && $row_token['created'] != '0000-00-00' && $row_token['created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['created']), "d-M-Y") : ''.'</td>
+                        <td>'.$row_token['name'].'</td>
+                        <td>'.$row_token['batch_no'].'</td>
+                        <td>'.date_format(date_create($row_token['mfg_date']), "d-M-Y").'</td>
+                        <td>'.date_format(date_create($row_token['expiry_date']), "d-M-Y").'</td>
+                        <td>'.$row_token['per_item_price'].'</td>
+                        <td>'.$row_token['quantity'].'</td>
+                        <td>'.$row_token['total_price'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "10">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "5">Total Purchase Quanitity</th>
+                        <th colspan = "5"><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo get_item_name_and_category_by_item_id($item_id); ?> </h2>
+                    <h3>PURCHASE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    ($row_token['created'] && $row_token['created'] != '0000-00-00' && $row_token['created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['created']), "d-M-Y") : ''.'</td>
+                        <td>'.$row_token['name'].'</td>
+                        <td>'.$row_token['batch_no'].'</td>
+                        <td>'.date_format(date_create($row_token['mfg_date']), "d-M-Y").'</td>
+                        <td>'.date_format(date_create($row_token['expiry_date']), "d-M-Y").'</td>
+                        <td>'.$row_token['per_item_price'].'</td>
+                        <td>'.$row_token['quantity'].'</td>
+                        <td>'.$row_token['total_price'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "10">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "5">Total Purchase Quanitity</th>
+                        <th colspan = "5"><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo get_item_name_and_category_by_item_id($item_id); ?> </h2>
+                    <h3>PURCHASE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    ($row_token['mfg_date'] && $row_token['mfg_date'] != '0000-00-00' && $row_token['mfg_date'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['mfg_date']), "d-M-Y") : ''.'</td>
+                        <td>'.date_format(date_create($row_token['expiry_date']), "d-M-Y").'</td>
+                        <td>'.$row_token['per_item_price'].'</td>
+                        <td>'.$row_token['quantity'].'</td>
+                        <td>'.$row_token['total_price'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "10">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "5">Total Purchase Quanitity</th>
+                        <th colspan = "5"><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo get_item_name_and_category_by_item_id($item_id); ?> </h2>
+                    <h3>PURCHASE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    ($row_token['expiry_date'] && $row_token['expiry_date'] != '0000-00-00' && $row_token['expiry_date'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['expiry_date']), "d-M-Y") : ''.'</td>
+                        <td>'.$row_token['per_item_price'].'</td>
+                        <td>'.$row_token['quantity'].'</td>
+                        <td>'.$row_token['total_price'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "10">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "5">Total Purchase Quanitity</th>
+                        <th colspan = "5"><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo get_item_name_and_category_by_item_id($item_id); ?> </h2>
+                    <h3>PURCHASE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    ($row_token['mfg_date'] && $row_token['mfg_date'] != '0000-00-00' && $row_token['mfg_date'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['mfg_date']), "d-M-Y") : ''.'</td>
+                        <td>'.date_format(date_create($row_token['expiry_date']), "d-M-Y").'</td>
+                        <td>'.$row_token['per_item_price'].'</td>
+                        <td>'.$row_token['quantity'].'</td>
+                        <td>'.$row_token['total_price'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "10">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "5">Total Purchase Quanitity</th>
+                        <th colspan = "5"><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo get_item_name_and_category_by_item_id($item_id); ?> </h2>
+                    <h3>PURCHASE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    ($row_token['created'] && $row_token['created'] != '0000-00-00' && $row_token['created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['created']), "d-M-Y") : ''.'</td>
+                        <td>'.$row_token['name'].'</td>
+                        <td>'.$row_token['batch_no'].'</td>
+                        <td>'.date_format(date_create($row_token['mfg_date']), "d-M-Y").'</td>
+                        <td>'.date_format(date_create($row_token['expiry_date']), "d-M-Y").'</td>
+                        <td>'.$row_token['per_item_price'].'</td>
+                        <td>'.$row_token['quantity'].'</td>
+                        <td>'.$row_token['total_price'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "10">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "5">Total Purchase Quanitity</th>
+                        <th colspan = "5"><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo get_item_name_and_category_by_item_id($item_id); ?> </h2>
+                    <h3>PURCHASE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    ($row_token['mfg_date'] && $row_token['mfg_date'] != '0000-00-00' && $row_token['mfg_date'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['mfg_date']), "d-M-Y") : ''.'</td>
+                        <td>'.date_format(date_create($row_token['expiry_date']), "d-M-Y").'</td>
+                        <td>'.$row_token['per_item_price'].'</td>
+                        <td>'.$row_token['quantity'].'</td>
+                        <td>'.$row_token['total_price'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "10">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "5">Total Purchase Quanitity</th>
+                        <th colspan = "5"><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo get_item_name_and_category_by_item_id($item_id); ?> </h2>
+                    <h3>PURCHASE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    ($row_token['expiry_date'] && $row_token['expiry_date'] != '0000-00-00' && $row_token['expiry_date'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['expiry_date']), "d-M-Y") : ''.'</td>
+                        <td>'.$row_token['per_item_price'].'</td>
+                        <td>'.$row_token['quantity'].'</td>
+                        <td>'.$row_token['total_price'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "10">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "5">Total Purchase Quanitity</th>
+                        <th colspan = "5"><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo get_item_name_and_category_by_item_id($item_id); ?> </h2>
+                    <h3>PURCHASE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    ($row_token['expiry_date'] && $row_token['expiry_date'] != '0000-00-00' && $row_token['expiry_date'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['expiry_date']), "d-M-Y") : ''.'</td>
+                        <td>'.$row_token['per_item_price'].'</td>
+                        <td>'.$row_token['quantity'].'</td>
+                        <td>'.$row_token['total_price'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "10">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "5">Total Purchase Quanitity</th>
+                        <th colspan = "5"><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo get_item_name_and_category_by_item_id($item_id); ?> </h2>
+                    <h3>PURCHASE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    ($row_token['created'] && $row_token['created'] != '0000-00-00' && $row_token['created'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['created']), "d-M-Y") : ''.'</td>
+                        <td>'.$row_token['name'].'</td>
+                        <td>'.$row_token['batch_no'].'</td>
+                        <td>'.date_format(date_create($row_token['mfg_date']), "d-M-Y").'</td>
+                        <td>'.date_format(date_create($row_token['expiry_date']), "d-M-Y").'</td>
+                        <td>'.$row_token['per_item_price'].'</td>
+                        <td>'.$row_token['quantity'].'</td>
+                        <td>'.$row_token['total_price'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "10">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "5">Total Purchase Quanitity</th>
+                        <th colspan = "5"><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo get_item_name_and_category_by_item_id($item_id); ?> </h2>
+                    <h3>PURCHASE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    ($row_token['mfg_date'] && $row_token['mfg_date'] != '0000-00-00' && $row_token['mfg_date'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['mfg_date']), "d-M-Y") : ''.'</td>
+                        <td>'.date_format(date_create($row_token['expiry_date']), "d-M-Y").'</td>
+                        <td>'.$row_token['per_item_price'].'</td>
+                        <td>'.$row_token['quantity'].'</td>
+                        <td>'.$row_token['total_price'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "10">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "5">Total Purchase Quanitity</th>
+                        <th colspan = "5"><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo get_item_name_and_category_by_item_id($item_id); ?> </h2>
+                    <h3>PURCHASE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    ($row_token['expiry_date'] && $row_token['expiry_date'] != '0000-00-00' && $row_token['expiry_date'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['expiry_date']), "d-M-Y") : ''.'</td>
+                        <td>'.$row_token['per_item_price'].'</td>
+                        <td>'.$row_token['quantity'].'</td>
+                        <td>'.$row_token['total_price'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "10">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "5">Total Purchase Quanitity</th>
+                        <th colspan = "5"><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo get_item_name_and_category_by_item_id($item_id); ?> </h2>
+                    <h3>PURCHASE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    $row_token['created']), "d-M-Y") : ''.'</td>
+                        <td>'.$row_token['name'].'</td>
+                        <td>'.$row_token['batch_no'].'</td>
+                        <td>'.date_format(date_create($row_token['mfg_date']), "d-M-Y").'</td>
+                        <td>'.date_format(date_create($row_token['expiry_date']), "d-M-Y").'</td>
+                        <td>'.$row_token['per_item_price'].'</td>
+                        <td>'.$row_token['quantity'].'</td>
+                        <td>'.$row_token['total_price'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "10">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "5">Total Purchase Quanitity</th>
+                        <th colspan = "5"><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo get_item_name_and_category_by_item_id($item_id); ?> </h2>
+                    <h3>PURCHASE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    ($row_token['mfg_date'] && $row_token['mfg_date'] != '0000-00-00' && $row_token['mfg_date'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['mfg_date']), "d-M-Y") : ''.'</td>
+                        <td>'.date_format(date_create($row_token['expiry_date']), "d-M-Y").'</td>
+                        <td>'.$row_token['per_item_price'].'</td>
+                        <td>'.$row_token['quantity'].'</td>
+                        <td>'.$row_token['total_price'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "10">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "5">Total Purchase Quanitity</th>
+                        <th colspan = "5"><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo get_item_name_and_category_by_item_id($item_id); ?> </h2>
+                    <h3>PURCHASE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    ($row_token['expiry_date'] && $row_token['expiry_date'] != '0000-00-00' && $row_token['expiry_date'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['expiry_date']), "d-M-Y") : ''.'</td>
+                        <td>'.$row_token['per_item_price'].'</td>
+                        <td>'.$row_token['quantity'].'</td>
+                        <td>'.$row_token['total_price'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "10">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "5">Total Purchase Quanitity</th>
+                        <th colspan = "5"><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo get_item_name_and_category_by_item_id($item_id); ?> </h2>
+                    <h3>PURCHASE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    ($row_token['mfg_date'] && $row_token['mfg_date'] != '0000-00-00' && $row_token['mfg_date'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['mfg_date']), "d-M-Y") : ''.'</td>
+                        <td>'.date_format(date_create($row_token['expiry_date']), "d-M-Y").'</td>
+                        <td>'.$row_token['per_item_price'].'</td>
+                        <td>'.$row_token['quantity'].'</td>
+                        <td>'.$row_token['total_price'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "10">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "5">Total Purchase Quanitity</th>
+                        <th colspan = "5"><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo get_item_name_and_category_by_item_id($item_id); ?> </h2>
+                    <h3>PURCHASE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    ($row_token['mfg_date'] && $row_token['mfg_date'] != '0000-00-00' && $row_token['mfg_date'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['mfg_date']), "d-M-Y") : ''.'</td>
+                        <td>'.date_format(date_create($row_token['expiry_date']), "d-M-Y").'</td>
+                        <td>'.$row_token['per_item_price'].'</td>
+                        <td>'.$row_token['quantity'].'</td>
+                        <td>'.$row_token['total_price'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "10">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "5">Total Purchase Quanitity</th>
+                        <th colspan = "5"><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo get_item_name_and_category_by_item_id($item_id); ?> </h2>
+                    <h3>PURCHASE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    ($row_token['expiry_date'] && $row_token['expiry_date'] != '0000-00-00' && $row_token['expiry_date'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['expiry_date']), "d-M-Y") : ''.'</td>
+                        <td>'.$row_token['per_item_price'].'</td>
+                        <td>'.$row_token['quantity'].'</td>
+                        <td>'.$row_token['total_price'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "10">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "5">Total Purchase Quanitity</th>
+                        <th colspan = "5"><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo get_item_name_and_category_by_item_id($item_id); ?> </h2>
+                    <h3>PURCHASE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    ($row_token['expiry_date'] && $row_token['expiry_date'] != '0000-00-00' && $row_token['expiry_date'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['expiry_date']), "d-M-Y") : ''.'</td>
+                        <td>'.$row_token['per_item_price'].'</td>
+                        <td>'.$row_token['quantity'].'</td>
+                        <td>'.$row_token['total_price'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "10">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "5">Total Purchase Quanitity</th>
+                        <th colspan = "5"><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo get_item_name_and_category_by_item_id($item_id); ?> </h2>
+                    <h3>PURCHASE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    ($row_token['mfg_date'] && $row_token['mfg_date'] != '0000-00-00' && $row_token['mfg_date'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['mfg_date']), "d-M-Y") : ''.'</td>
+                        <td>'.date_format(date_create($row_token['expiry_date']), "d-M-Y").'</td>
+                        <td>'.$row_token['per_item_price'].'</td>
+                        <td>'.$row_token['quantity'].'</td>
+                        <td>'.$row_token['total_price'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "10">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "5">Total Purchase Quanitity</th>
+                        <th colspan = "5"><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo get_item_name_and_category_by_item_id($item_id); ?> </h2>
+                    <h3>PURCHASE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    ($row_token['expiry_date'] && $row_token['expiry_date'] != '0000-00-00' && $row_token['expiry_date'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['expiry_date']), "d-M-Y") : ''.'</td>
+                        <td>'.$row_token['per_item_price'].'</td>
+                        <td>'.$row_token['quantity'].'</td>
+                        <td>'.$row_token['total_price'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "10">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "5">Total Purchase Quanitity</th>
+                        <th colspan = "5"><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo get_item_name_and_category_by_item_id($item_id); ?> </h2>
+                    <h3>PURCHASE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    $row_token['mfg_date']), "d-M-Y") : ''.'</td>
+                        <td>'.date_format(date_create($row_token['expiry_date']), "d-M-Y").'</td>
+                        <td>'.$row_token['per_item_price'].'</td>
+                        <td>'.$row_token['quantity'].'</td>
+                        <td>'.$row_token['total_price'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "10">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "5">Total Purchase Quanitity</th>
+                        <th colspan = "5"><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo get_item_name_and_category_by_item_id($item_id); ?> </h2>
+                    <h3>PURCHASE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    ($row_token['expiry_date'] && $row_token['expiry_date'] != '0000-00-00' && $row_token['expiry_date'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['expiry_date']), "d-M-Y") : ''.'</td>
+                        <td>'.$row_token['per_item_price'].'</td>
+                        <td>'.$row_token['quantity'].'</td>
+                        <td>'.$row_token['total_price'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "10">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "5">Total Purchase Quanitity</th>
+                        <th colspan = "5"><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo get_item_name_and_category_by_item_id($item_id); ?> </h2>
+                    <h3>PURCHASE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    ($row_token['expiry_date'] && $row_token['expiry_date'] != '0000-00-00' && $row_token['expiry_date'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['expiry_date']), "d-M-Y") : ''.'</td>
+                        <td>'.$row_token['per_item_price'].'</td>
+                        <td>'.$row_token['quantity'].'</td>
+                        <td>'.$row_token['total_price'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "10">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "5">Total Purchase Quanitity</th>
+                        <th colspan = "5"><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo get_item_name_and_category_by_item_id($item_id); ?> </h2>
+                    <h3>PURCHASE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    ($row_token['expiry_date'] && $row_token['expiry_date'] != '0000-00-00' && $row_token['expiry_date'] != '0000-00-00 00:00:00' ? date_format(date_create($row_token['expiry_date']), "d-M-Y") : ''.'</td>
+                        <td>'.$row_token['per_item_price'].'</td>
+                        <td>'.$row_token['quantity'].'</td>
+                        <td>'.$row_token['total_price'].'</td>
+                    <tr>
+                    ';
+                    }
+                    }
+                    else
+                    {
+                    echo '
+                    <tr>
+                        <td colspan = "10">'.$con->error.'</td>
+                    <tr>
+                    ';
+                    }
+                    ?>
+                    <tr>
+                        <th style = "text-align: right;" colspan = "5">Total Purchase Quanitity</th>
+                        <th colspan = "5"><?php echo $total; ?></th>
+                    </tr>
+                </tbody>
+                <caption style = "color: black; caption-side: top; text-align: center;">
+                    <h2><?php echo get_item_name_and_category_by_item_id($item_id); ?> </h2>
+                    <h3>PURCHASE DETAIL FROM <?php echo $_POST['from']; ?> TO <?php echo $_POST['to']; ?> </h3>
+                </caption>
+            </table>
+        </div>
+        </div>
+<?php
+}
+?>
+	</div>
+</div>
+
+</body>
+</html>    $row_token['expiry_date']), "d-M-Y") : ''.'</td>
                         <td>'.$row_token['per_item_price'].'</td>
                         <td>'.$row_token['quantity'].'</td>
                         <td>'.$row_token['total_price'].'</td>

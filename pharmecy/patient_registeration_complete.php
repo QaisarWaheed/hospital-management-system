@@ -4,7 +4,7 @@ if (isset($_POST['save'])) {
 	if (is_rehabilitation_branch($branch_id)) {
 		$fp_left = trim($_POST['fp_thumb_left'] ?? '');
 		$fp_right = trim($_POST['fp_thumb_right'] ?? '');
-		if (strlen($fp_left) < REHAB_FP_MIN_TEMPLATE_LEN || strlen($fp_right) < REHAB_FP_MIN_TEMPLATE_LEN) {
+		if (strlen($fp_left ?? '') < REHAB_FP_MIN_TEMPLATE_LEN || strlen($fp_right ?? '') < REHAB_FP_MIN_TEMPLATE_LEN) {
 			echo '<script>alert("Rehabilitation branch: both thumb templates are required. Capture left and right thumb on the reader, then save."); history.back();</script>';
 			exit(0);
 		}

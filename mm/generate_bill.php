@@ -102,9 +102,9 @@ if(mysqli_num_rows($run) > 0)
             <td style = "text-align: center;">'.$s.'</td>
             <td style = "text-align: left">'.$item_name.'</td>
             <td style = "text-align: center">'.$category_name.'</td>
-            <td style = "text-align: right;">'.number_format($price, 2).'</td>
+            <td style = "text-align: right;">'.number_format((float)($price ?? 0), 2).'</td>
             <td style = "text-align: right;">'.intval($quantity+$difference).'</td>
-            <td style = "text-align: right;">'.number_format($amount, 2).'</td>
+            <td style = "text-align: right;">'.number_format((float)($amount ?? 0), 2).'</td>
             <td class = "noprint">
                 '.$status_msg.'
             </td>';
@@ -118,12 +118,12 @@ if(mysqli_num_rows($run) > 0)
 ?>
     <tr style = "text-align: right;">
         <th colspan = "5">GRAND TOTAL</th>
-        <th><?php echo number_format($total_amount,2); ?></th>
+        <th><?php echo number_format((float)($total_amount ?? 0),2); ?></th>
     </tr>
     <caption style = "caption-side: top;">
         <div style = "font-size:15px;">BRANCH NAME: <?php echo $tag_name; ?></div>
         <div style = "font-size:15px;">Issue No:  <?php echo $bill_no; ?></div>
-        <div style = "font-size:15px;">Issue Date: <?php echo date_format(date_create($created), "d-m-Y"); ?></div>
+        <div style = "font-size:15px;">Issue Date: <?php echo ($created && $created != '0000-00-00' && $created != '0000-00-00 00:00:00' ? date_format(date_create($created), "d-m-Y") : ''; ?></div>
         <div style = "font-size:15px;">RECEIVED BY:  <?php echo $receiver_name; ?></div>
     </caption>    
         </tboby>

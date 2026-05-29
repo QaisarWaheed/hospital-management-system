@@ -11,7 +11,7 @@ $br_name = get_branch_tag_by($br_id);
 ?>
 <html>
 <head>
-    <title>PRINT PROGRESS SUMMERY REPORT <?php echo $br_name; ?> DATE <?php echo date_format(date_create($date), " d F Y"); ?></title>
+    <title>PRINT PROGRESS SUMMERY REPORT <?php echo $br_name; ?> DATE <?php echo ($date && $date != '0000-00-00' && $date != '0000-00-00 00:00:00' ? date_format(date_create($date), " d F Y") : ''; ?></title>
 </head>
 <body>
     
@@ -20,6 +20,77 @@ $br_name = get_branch_tag_by($br_id);
     <h2><?php echo $company_name; ?></h2>
     <h2><?php echo get_branch_name_by($br_id); ?></h2>
     <h3>PROGRESS SUMMERY <?php echo $br_name; ?> DATE <?php echo date_format(date_create($date), " d F Y"); ?></h3>
+</caption>
+    <thead>
+        <tr>
+            <th>S#</th>
+            <th>NAME</th>
+            <th>OPD</th>
+            <th>CONS</th>
+            <th>% Bill</th>
+            <th>LAB</th>
+            <th>USG</th>
+            <th>SVD</th>
+            <th>D&C</th>
+            <th>PROCEDURE</th>
+            <th>ADMISSION</th>
+            <th>GYNAE SYSTEM</th>
+            <th>REFERRED</th>
+        </tr>
+    <($date && $date != '0000-00-00' && $date != '0000-0($date && $date != '0000-00-00' && $date != '0000-00-00 00:00:00' ? date_format(date_create($date), " d F Y") : ''; ?></h3>
+</caption>
+    <thead>
+        <tr>
+            <th>S#</th>
+            <th>NAME</th>
+            <th>OPD</th>
+            <th>CONS</th>
+            <th>% Bill</th>
+            <th>LAB</th>
+            <th>USG</th>
+            <th>SVD</th>
+            <th>D&C</th>
+            <th>PROCEDURE</th>
+            <th>ADMISSION</th>
+            <th>GYNAE SYSTEM</th>
+            <th>REFERRED</th>
+        </tr>
+    <($date && $date != '0000-00-00' && $date != '0000-00-00 00:00:00' ? date_format(date_create($date), " d F Y") : ''; ?></h3>
+</caption>
+    <thead>
+        <tr>
+            <th>S#</th>
+            <th>NAME</th>
+            <th>OPD</th>
+            <th>CONS</th>
+            <th>% Bill</th>
+            <th>LAB</th>
+            <th>USG</th>
+            <th>SVD</th>
+            <th>D&C</th>
+            <th>PROCEDURE</th>
+            <th>ADMISSION</th>
+            <th>GYNAE SYSTEM</th>
+            <th>REFERRED</th>
+        </tr>
+    </thead>
+<?php
+$s = 0;
+$cash_received = 0;
+$labs = 0;
+$medicines = 0;
+$total_admission = 0;
+$total_procedure = 0;
+$total_dnc = 0;
+$total_svd = 0;
+$total_referred = 0;
+$total_usg = 0;
+$total_lab = 0;
+$total_medicine = 0;
+$total_opds = 0;
+$total_cons_opds = 0;
+$total_gynae = 0;
+// $select = "SELECT DISTINCT `doctor_id` FROM `tokans` WHERE doctor_id IN (SE$date), " d F Y") : ''; ?></h3>
 </caption>
     <thead>
         <tr>
@@ -109,7 +180,7 @@ $total_gynae = 0;
                 <td style = "text-align: left;">'.$br_name.'</td>
                 <td>'.$opds.'</td>
                 <td>'.$cons_opds.'</td>';
-                echo '<td>'.intval($per_patient).'</td>';
+                echo '<td>'.intval($per_patient ?? 0).'</td>';
                 echo '<td>'.$labs.'</td>';
                 echo '<td>'.$usgs.'</td>
                 <td>'.$svds.'</td>

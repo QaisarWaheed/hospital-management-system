@@ -100,7 +100,7 @@ for ($day = 1; $day <= $days; $day++) {
             <td><?php echo (int) $row['usg']; ?></td>
             <td><?php echo (int) $row['gynae']; ?></td>
             <td><?php echo (int) $row['admission']; ?></td>
-            <td><?php echo number_format($collection_amount); ?></td>
+            <td><?php echo number_format((float)($collection_amount ?? 0)); ?></td>
         </tr>
 <?php } ?>
     </tbody>
@@ -118,7 +118,7 @@ for ($day = 1; $day <= $days; $day++) {
             <th><?php echo (int) $totals['usg']; ?></th>
             <th><?php echo (int) $totals['gynae']; ?></th>
             <th><?php echo (int) $totals['admission']; ?></th>
-            <th><?php echo number_format($totals['collection']); ?></th>
+            <th><?php echo number_format((float)($totals['collection'] ?? 0)); ?></th>
         </tr>
     </tfoot>
 </table>

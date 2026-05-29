@@ -254,7 +254,7 @@ if (isset($_POST['date']) && $_POST['date'] !== '' && isset($_POST['doctor_id'])
                 <tr>
                     <td>'.$sr++.'</td>
                     <td>'.$row_opd['1'].'</td>
-                    <td>'.intval($row_opd['4']).'</td>
+                    <td>'.intval($row_opd['4'] ?? 0).'</td>
                     <td>'.$row_opd['2'].'</td>
                     <td>'.$row_opd['3'].'</td>
                 </tr>

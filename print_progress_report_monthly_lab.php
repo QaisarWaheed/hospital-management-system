@@ -20,7 +20,7 @@ else
 <caption>
     <h2><?php echo $company_name; ?></h2>
     <h2><?php echo get_branch_name_by($br_id); ?></h2>
-    <h3>PROGRESS MONTH <?php echo date_format(date_create($date), " F Y"); ?></h3>
+    <h3>PROGRESS MONTH <?php echo ($date && $date != '0000-00-00' && $date != '0000-00-00 00:00:00' ? date_format(date_create($date), " F Y") : ''; ?></h3>
 </caption>
     <thead>
         <tr>
@@ -110,7 +110,7 @@ if(mysqli_num_rows($run_dr) > 0)
                 }
                 else
                 {
-                    $per_lab = number_format(($total_labs/$total_ops)*100,2);
+                    $per_lab = number_format((float)(($total_labs/$total_ops)*100 ?? 0),2);
                 }
             }
         }
@@ -124,8 +124,8 @@ if(mysqli_num_rows($run_dr) > 0)
             <td>'.$consultant_opd.'</td>
             <td>'.$total_labs.'</td>
             <td>'.$per_lab.'%</td>
-            <td style = "text-align: right;">'.number_format($lab_cash).'</td>
-            <td style = "text-align: right;">'.number_format($total).'</td>
+            <td style = "text-align: right;">'.number_format((float)($lab_cash ?? 0)).'</td>
+            <td style = "text-align: right;">'.number_format((float)($total ?? 0)).'</td>
         </tr>
         ';
         // echo '
@@ -153,8 +153,8 @@ if(mysqli_num_rows($run_dr) > 0)
             <th><?php echo $count_consultant_opd; ?></th>
             <th><?php echo $count_total_lab; ?></th>
             <th></th>
-            <th style = "text-align: right;"><?php echo number_format($count_lab); ?></th>
-            <th style = "text-align: right;"><?php echo number_format($count_total); ?></th>
+            <th style = "text-align: right;"><?php echo number_format((float)($count_lab ?? 0)); ?></th>
+            <th style = "text-align: right;"><?php echo number_format((float)($count_total ?? 0)); ?></th>
         </tr>
         
     </tfoot>

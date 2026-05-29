@@ -131,9 +131,81 @@ if (mysqli_num_rows($run) > 0) {
 			<tr>
 				<td>'.$s.'</td>
 				<td>'.$issue_id.'</td>
-				<td>'.date_format(date_create($row['created']), "d-m-Y").'</td>
+				<td>'.($row['created'] && $row['created'] != '0000-00-00' && $row['created'] != '0000-00-00 00:00:00' ? date_format(date_create($row['created']), "d-m-Y") : ''.'</td>
 				<td>'.get_item_name_by_register_item_id($row['branch_item_id']).'</td>
 				<td>'.date_format(date_create($row['receiving_date']), "d-m-Y").'</td>
+				<td>'.get_branch_name_by($row['branch_id']).'</td>
+				<td>'.$quantity.'</td>
+				<td>'.$row['attempts'].'</td>
+				<td>'.get_uname_by_id($row['sm_id']).'</th>
+			</tr>
+		';
+	}
+}
+mysqli_close($con);
+?>
+		</table>
+	</div>
+</div>
+</div>
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>($row['receiving_date'] && $row['receiving_date'] != '0000-00-00' && $row['receiving_date'] != '0000-00-00 00:00:00' ? date_format(date_create($row['receiving_date']), "d-m-Y") : ''.'</td>
+				<td>'.get_branch_name_by($row['branch_id']).'</td>
+				<td>'.$quantity.'</td>
+				<td>'.$row['attempts'].'</td>
+				<td>'.get_uname_by_id($row['sm_id']).'</th>
+			</tr>
+		';
+	}
+}
+mysqli_close($con);
+?>
+		</table>
+	</div>
+</div>
+</div>
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>($row['receiving_date'] && $row['receiving_date'] != '0000-00-00' && $row['receiving_date'] != '0000-00-00 00:00:00' ? date_format(date_create($row['receiving_date']), "d-m-Y") : ''.'</td>
+				<td>'.get_branch_name_by($row['branch_id']).'</td>
+				<td>'.$quantity.'</td>
+				<td>'.$row['attempts'].'</td>
+				<td>'.get_uname_by_id($row['sm_id']).'</th>
+			</tr>
+		';
+	}
+}
+mysqli_close($con);
+?>
+		</table>
+	</div>
+</div>
+</div>
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>($row['receiving_date'] && $row['receiving_date'] != '0000-00-00' && $row['receiving_date'] != '0000-00-00 00:00:00' ? date_format(date_create($row['receiving_date']), "d-m-Y") : ''.'</td>
+				<td>'.get_branch_name_by($row['branch_id']).'</td>
+				<td>'.$quantity.'</td>
+				<td>'.$row['attempts'].'</td>
+				<td>'.get_uname_by_id($row['sm_id']).'</th>
+			</tr>
+		';
+	}
+}
+mysqli_close($con);
+?>
+		</table>
+	</div>
+</div>
+</div>
+
+</body>
+</html>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>$row['receiving_date']), "d-m-Y") : ''.'</td>
 				<td>'.get_branch_name_by($row['branch_id']).'</td>
 				<td>'.$quantity.'</td>
 				<td>'.$row['attempts'].'</td>
