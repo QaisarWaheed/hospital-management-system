@@ -426,3 +426,124 @@ function pharmecy_render_branch_pending_procedure_rows($con, $branch_id, $search
         echo '</tr>';
     }
 }
+
+/** Procedure categories for branch procedure turn dropdown. */
+function pharmecy_procedure_category_ids_sql_in()
+{
+    return '3, 37, 38';
+}
+
+/**
+ * Fast next token number (MAX on primary key, not ORDER BY scan).
+ */
+function pharmecy_next_tokan_no_fast($con)
+{
+    $run = mysqli_query($con, 'SELECT COALESCE(MAX(id), 0) + 1 AS next_id FROM tokans');
+    if ($run && ($row = mysqli_fetch_assoc($run))) {
+        return (int) $row['next_id'];
+    }
+    return 1;
+}
+
+/**
+ * Registration token + patient for second_procedure_turn (single query).
+ *
+ * @return array<string, mixed>|null
+ */
+function pharmecy_load_procedure_turn_token($con, $token_no)
+{
+    $token_no = (int) $token_no;
+    if ($token_no < 1) {
+        return null;
+    }
+    $sql = "SELECT t.id AS token_no, t.doctor_id, t.patient_id, p.name, p.age, p.gender
+        FROM tokans t
+        INNER JOIN patients p ON t.patient_id = p.id
+        WHERE t.id = '$token_no' AND t.tokan_type_id < 100
+        LIMIT 1";
+    $run = mysqli_query($con, $sql);
+    if (!$run || mysqli_num_rows($run) !== 1) {
+        return null;
+    }
+    return mysqli_fetch_assoc($run);
+}
+
+/**
+ * Cart lines not yet assigned to a procedure token (for procedure turn page).
+ */
+function pharmecy_procedure_turn_cart_count($con, $user_id)
+{
+    $user_id = (int) $user_id;
+    $run = mysqli_query(
+        $con,
+        "SELECT COUNT(*) AS c FROM item_by_doctor
+        WHERE user_id = '$user_id' AND status = '1'
+        AND (tokan_no IS NULL OR tokan_no = '' OR tokan_no = '0')"
+    );
+    if ($run && ($row = mysqli_fetch_assoc($run))) {
+        return (int) $row['c'];
+    }
+    return 0;
+}
+
+/**
+ * Procedure dropdown options for this branch (one JOIN, no per-item queries).
+ */
+function pharmecy_branch_procedures_options_html($con, $branch_id, $limit = 1500)
+{
+    $branch_id = (int) $branch_id;
+    $limit = max(1, min((int) $limit, 2000));
+    $cats = pharmecy_procedure_category_ids_sql_in();
+    $sql = "SELECT irb.id AS reg_item_id, i.name AS item_name
+        FROM item_register_to_branches irb
+        INNER JOIN items i ON irb.item_id = i.id AND i.status = '1'
+        WHERE irb.branch_id = '$branch_id' AND irb.status = '1'
+          AND i.category_id IN ($cats)
+        ORDER BY i.name ASC
+        LIMIT $limit";
+    $run = mysqli_query($con, $sql);
+    if (!$run || mysqli_num_rows($run) < 1) {
+        return '<option value="">NO DATA FOUND</option>';
+    }
+    $html = '';
+    while ($row = mysqli_fetch_assoc($run)) {
+        $id = (int) $row['reg_item_id'];
+        $name = htmlspecialchars((string) $row['item_name'], ENT_QUOTES, 'UTF-8');
+        $html .= '<option value="' . $id . '">' . $name . '</option>';
+    }
+    return $html;
+}
+
+/**
+ * Selected cart items for procedure turn (one JOIN).
+ */
+function pharmecy_medicine_selected_cart_options_html($con, $branch_id, $user_id)
+{
+    $branch_id = (int) $branch_id;
+    $user_id = (int) $user_id;
+    $sql = "SELECT ibd.id, ibd.fix_dose, ibd.dose, ibd.feed, ibd.days, i.name AS item_name
+        FROM item_by_doctor ibd
+        INNER JOIN item_register_to_branches irb ON ibd.item_id = irb.id
+        INNER JOIN items i ON irb.item_id = i.id
+        WHERE ibd.branch_id = '$branch_id' AND ibd.user_id = '$user_id' AND ibd.status = '1'
+          AND (ibd.tokan_no IS NULL OR ibd.tokan_no = '' OR ibd.tokan_no = '0')
+        ORDER BY i.name ASC";
+    $run = mysqli_query($con, $sql);
+    if (!$run || mysqli_num_rows($run) < 1) {
+        return '<option value="">ADD DATA IN BRANCH</option>';
+    }
+    $html = '';
+    while ($row = mysqli_fetch_assoc($run)) {
+        $fix_dose = (int) $row['fix_dose'];
+        $quantity = ($fix_dose === 0)
+            ? (int) $row['dose'] * (int) $row['days'] * (int) $row['feed']
+            : $fix_dose;
+        if ($quantity < 1) {
+            $quantity = 1;
+        }
+        $id = (int) $row['id'];
+        $name = htmlspecialchars((string) $row['item_name'], ENT_QUOTES, 'UTF-8');
+        $html .= '<option value="' . $id . '">' . $name . ' - ' . $quantity . '</option>';
+    }
+    return $html;
+}
