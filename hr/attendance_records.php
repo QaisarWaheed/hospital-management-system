@@ -9,8 +9,8 @@ if (isset($_POST['save_records'])) {
     $employee_id = (int) ($_POST['employee_id'] ?? 0);
     $attendance_record_title = mysqli_real_escape_string($con, (string) ($_POST['attendance_record_title'] ?? '1'));
     $attendance_record_remarks = mysqli_real_escape_string($con, (string) ($_POST['attendance_record_remarks'] ?? ''));
-    $br_id = hr_resolve_attendance_branch_id($employee_id, $posted_br_id);
-    if ($employee_id < 1 || $br_id < 1) {
+    $br_id = hr_resolve_attendance_branch_id($employee_id, (int) $posted_br_id);
+    if ($employee_id < 1 || $br_id < 0) {
         header('Location: attendance_records.php?br_id=' . urlencode((string) $posted_br_id) . '&msg=error');
         exit;
     }
@@ -94,7 +94,7 @@ include 'includes/head.php';
 	                </td>
 	                <td>
 	                    <select onchange="this.form.submit();" required name = "br_id" id = "br_id" class = "form-control">
-	                        <option value = "0">ORGANIZATION</option>
+	                        <option value = "0"<?php echo ((int) $br_id === 0) ? ' SELECTED' : ''; ?>>ORGANIZATION</option>
                             <?php
                             $user = "SELECT * FROM `branchs` WHERE `branchs`.`status` = '1' ";
                             $run_user = mysqli_query($con, $user);
@@ -125,7 +125,9 @@ include 'includes/head.php';
                 		<select class = "bg-primary text-white" required name = "employee_id" id="select_item" placeholder="Pick Staff...">
                 			<option value="">Select Staff...</option>
                             <?php
-                            $staff_branch_sql = ((int) $br_id > 0) ? " AND staff.branch_id = '$br_id' " : " AND staff.branch_id > 0 ";
+                            $staff_branch_sql = ((int) $br_id > 0)
+                                ? " AND staff.branch_id = '" . (int) $br_id . "' "
+                                : " AND staff.branch_id = '0' ";
                             $user = "SELECT staff.* FROM `staff` WHERE staff.staff_status = '1' $staff_branch_sql AND staff.staff_id NOT IN (
                                 SELECT employee_id FROM attendance_records
                                 WHERE attendance_record_month = '$month' AND attendance_record_date = '$day'
@@ -199,9 +201,14 @@ include 'includes/head.php';
 	        <tbody>
 	        <?php
 	        $s = 0;
-	        $branch_list_sql = ((int) $br_id > 0) ? " AND attendance_records.branch_id = '" . (int) $br_id . "' " : '';
+	        $branch_list_sql = ((int) $br_id > 0)
+	            ? " AND attendance_records.branch_id = '" . (int) $br_id . "' AND staff.branch_id = '" . (int) $br_id . "' "
+	            : " AND attendance_records.branch_id = '0' AND staff.branch_id = '0' ";
 	        $attendance = "SELECT attendance_records.*, staff.staff_name,
-	            COALESCE(branch_rec.tag_name, branch_staff.tag_name, '') AS tag_name
+	            CASE
+	                WHEN staff.branch_id = 0 THEN 'ORGANIZATION'
+	                ELSE COALESCE(NULLIF(branch_rec.tag_name, ''), NULLIF(branch_staff.tag_name, ''), '')
+	            END AS tag_name
 	            FROM attendance_records
 	            INNER JOIN staff ON attendance_records.employee_id = staff.staff_id
 	            LEFT JOIN branchs AS branch_rec ON attendance_records.branch_id = branch_rec.id AND attendance_records.branch_id > 0

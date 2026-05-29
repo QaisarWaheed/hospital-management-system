@@ -76,26 +76,35 @@ function get_staff_time_in($staff_id)
 }
 
 /**
- * Branch for attendance: posted HR selection, else staff.branch_id.
+ * Whether employee belongs to the selected HR branch context (0 = organization staff).
  */
-function hr_resolve_attendance_branch_id($employee_id, $posted_branch_id = 0)
+function hr_staff_matches_attendance_branch($employee_id, $context_branch_id)
 {
-    $branch_id = (int) $posted_branch_id;
-    if ($branch_id > 0) {
-        return $branch_id;
-    }
     $employee_id = (int) $employee_id;
+    $context_branch_id = (int) $context_branch_id;
     if ($employee_id < 1) {
-        return 0;
+        return false;
     }
     $run = mysqli_query(
         $GLOBALS['con'],
-        "SELECT branch_id FROM staff WHERE staff_id = '$employee_id' LIMIT 1"
+        "SELECT branch_id FROM staff WHERE staff_id = '$employee_id' AND staff_status = '1' LIMIT 1"
     );
-    if ($run && ($row = mysqli_fetch_assoc($run))) {
-        return (int) $row['branch_id'];
+    if (!$run || !($row = mysqli_fetch_assoc($run))) {
+        return false;
     }
-    return 0;
+    return (int) $row['branch_id'] === $context_branch_id;
+}
+
+/**
+ * Posted branch for attendance (0 = organization); -1 when employee does not belong to that context.
+ */
+function hr_resolve_attendance_branch_id($employee_id, $posted_branch_id = 0)
+{
+    $posted_branch_id = (int) $posted_branch_id;
+    if (!hr_staff_matches_attendance_branch($employee_id, $posted_branch_id)) {
+        return -1;
+    }
+    return $posted_branch_id;
 }
 
 function get_staff_time_out($staff_id)
