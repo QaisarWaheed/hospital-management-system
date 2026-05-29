@@ -594,45 +594,165 @@ function pharmecy_procedure_limits_token_column($con)
 }
 
 /**
- * Medicine limit: procedure_tokens_medicine_limits first, else branch_pending_details.amount.
+ * Catalog items.id for the procedure line on this token.
  */
-function pharmecy_procedure_medicine_limit_preset($con, $token_no)
+function pharmecy_procedure_catalog_item_id_for_token($con, $token_no)
+{
+    $token_no = (int) $token_no;
+    if ($token_no < 1) {
+        return 0;
+    }
+    $cats = pharmecy_procedure_category_ids_sql_in();
+    $run = mysqli_query(
+        $con,
+        "SELECT irb.item_id AS catalog_item_id
+        FROM item_by_doctor ibd
+        INNER JOIN item_register_to_branches irb ON ibd.item_id = irb.id
+        WHERE ibd.tokan_no = '$token_no'
+        AND ibd.category_id IN ($cats)
+        ORDER BY ibd.id ASC
+        LIMIT 1"
+    );
+    if ($run && ($row = mysqli_fetch_assoc($run))) {
+        return (int) ($row['catalog_item_id'] ?? 0);
+    }
+    return 0;
+}
+
+/**
+ * Medicine limit from procedure_medicine_limits for the procedure item on this token.
+ */
+function pharmecy_procedure_medicine_limit_for_token($con, $token_no)
 {
     $token_no = (int) $token_no;
     if ($token_no < 1) {
         return 0;
     }
 
+    $catalog_item_id = pharmecy_procedure_catalog_item_id_for_token($con, $token_no);
+    if ($catalog_item_id < 1) {
+        return 0;
+    }
+
     $run = mysqli_query(
         $con,
-        "SELECT procedure_tokens_medicine_limit_amount
-        FROM procedure_tokens_medicine_limits
-        WHERE token_no = '$token_no'
-        ORDER BY procedure_tokens_medicine_limit_status DESC
+        "SELECT medicine_limit FROM procedure_medicine_limits
+        WHERE item_id = '$catalog_item_id'
         LIMIT 1"
     );
     if ($run && ($row = mysqli_fetch_assoc($run))) {
-        $limit = (int) round((float) ($row['procedure_tokens_medicine_limit_amount'] ?? 0));
-        if ($limit > 0) {
-            return $limit;
-        }
+        return (int) round((float) ($row['medicine_limit'] ?? 0));
     }
 
-    $run_bpd = mysqli_query(
+    return 0;
+}
+
+/**
+ * Total medicine cash collected for this procedure token (partial payments).
+ */
+function pharmecy_procedure_medicine_cash_received_total($con, $token_no)
+{
+    $token_no = (int) $token_no;
+    if ($token_no < 1) {
+        return 0;
+    }
+    $run = mysqli_query(
         $con,
-        "SELECT amount FROM branch_pending_details
+        "SELECT COALESCE(SUM(amount), 0) AS total
+        FROM branch_pending_receive
+        WHERE token_no = '$token_no'"
+    );
+    if ($run && ($row = mysqli_fetch_assoc($run))) {
+        return (int) round((float) ($row['total'] ?? 0));
+    }
+    return 0;
+}
+
+/**
+ * branch_pending_details.id for an active procedure token.
+ */
+function pharmecy_branch_pending_id_for_token($con, $token_no)
+{
+    $token_no = (int) $token_no;
+    if ($token_no < 1) {
+        return 0;
+    }
+    $run = mysqli_query(
+        $con,
+        "SELECT id FROM branch_pending_details
         WHERE token_no = '$token_no' AND status = '1'
         ORDER BY id DESC
         LIMIT 1"
     );
-    if ($run_bpd && ($row_bpd = mysqli_fetch_assoc($run_bpd))) {
-        $bpd_amount = (int) round((float) ($row_bpd['amount'] ?? 0));
-        if ($bpd_amount > 0) {
-            return $bpd_amount;
-        }
+    if ($run && ($row = mysqli_fetch_assoc($run))) {
+        return (int) ($row['id'] ?? 0);
+    }
+    return 0;
+}
+
+/**
+ * Record medicine payment and sync branch_pending_details.amount to issued total.
+ */
+function pharmecy_record_procedure_medicine_cash_received($con, $token_no, $amount, $user_id, $branch_id, $current_date)
+{
+    $token_no = (int) $token_no;
+    $amount = (float) $amount;
+    $user_id = (int) $user_id;
+    $branch_id = (int) $branch_id;
+    if ($token_no < 1 || $amount <= 0) {
+        return false;
     }
 
-    return pharmecy_tokan_cash_amount($con, $token_no);
+    $pending_id = pharmecy_branch_pending_id_for_token($con, $token_no);
+    $amount_sql = mysqli_real_escape_string($con, (string) $amount);
+    $current_date = mysqli_real_escape_string($con, (string) $current_date);
+
+    $ok = (bool) mysqli_query(
+        $con,
+        "INSERT INTO branch_pending_receive
+        (token_no, pending_id, amount, user_id, branch_id, status, created)
+        VALUES
+        ('$token_no', '$pending_id', '$amount_sql', '$user_id', '$branch_id', '1', '$current_date')"
+    );
+    if (!$ok) {
+        return false;
+    }
+
+    $issued_total = pharmecy_procedure_medicine_cash_received_total($con, $token_no);
+    $issued_sql = mysqli_real_escape_string($con, (string) $issued_total);
+    mysqli_query(
+        $con,
+        "UPDATE branch_pending_details SET amount = '$issued_sql'
+        WHERE token_no = '$token_no' AND status = '1'"
+    );
+
+    return true;
+}
+
+/**
+ * Keep branch_pending_details.amount aligned with branch_pending_receive totals.
+ */
+function pharmecy_sync_branch_pending_issued_from_receive($con, $token_no)
+{
+    $token_no = (int) $token_no;
+    if ($token_no < 1) {
+        return false;
+    }
+    $issued_total = pharmecy_procedure_medicine_cash_received_total($con, $token_no);
+    $issued_sql = mysqli_real_escape_string($con, (string) $issued_total);
+    return (bool) mysqli_query(
+        $con,
+        "UPDATE branch_pending_details SET amount = '$issued_sql'
+        WHERE token_no = '$token_no' AND status = '1'"
+    );
+}
+
+/**
+ * Medicine limit: procedure_tokens_medicine_limits first, else branch_pending_details.amount.
+ */
+function pharmecy_procedure_medicine_limit_preset($con, $token_no)
+{
+    return pharmecy_procedure_medicine_limit_for_token($con, $token_no);
 }
 
 /**
@@ -731,54 +851,11 @@ function pharmecy_procedure_medicine_limit($con, $token_no, $procedure_amount = 
 }
 
 /**
- * Issued medicine value from previous saves (item_by_doctor), not current cart.
- * Lines on procedure token and prior medicine slips (previous_tokan_no).
+ * Issued medicine cash total from branch_pending_receive for this procedure token.
  */
 function pharmecy_procedure_issued_medicine_amount($con, $token_no)
 {
-    $token_no = (int) $token_no;
-    if ($token_no < 1) {
-        return 0;
-    }
-
-    $sql = "SELECT COALESCE(SUM(
-            CASE
-                WHEN ibd.sale_price > 0 THEN ibd.sale_price
-                WHEN ibd.tokan_type_id = 102 THEN COALESCE(NULLIF(ibd.sale_price_poor, 0), i.poor) * qty.q
-                WHEN ibd.tokan_type_id = 103 THEN COALESCE(NULLIF(ibd.sale_price_member, 0), i.member) * qty.q
-                ELSE COALESCE(NULLIF(ibd.sale_price_general, 0), i.general) * qty.q
-            END
-        ), 0) AS issued
-        FROM item_by_doctor ibd
-        INNER JOIN item_register_to_branches irb ON ibd.item_id = irb.id
-        INNER JOIN items i ON irb.item_id = i.id
-        INNER JOIN (
-            SELECT ibd2.id,
-                GREATEST(
-                    COALESCE(
-                        NULLIF(ibd2.sale_quantity, 0),
-                        IF(ibd2.fix_dose = 0, ibd2.dose * ibd2.feed * ibd2.days, ibd2.fix_dose),
-                        1
-                    ),
-                    1
-                ) AS q
-            FROM item_by_doctor ibd2
-        ) qty ON qty.id = ibd.id
-        WHERE ibd.status >= 2
-        AND (
-            ibd.tokan_no = '$token_no'
-            OR ibd.tokan_no IN (
-                SELECT id FROM tokans
-                WHERE previous_tokan_no = '$token_no' AND status >= 2
-            )
-        )";
-
-    $run = mysqli_query($con, $sql);
-    if ($run && ($row = mysqli_fetch_assoc($run))) {
-        return (int) round((float) $row['issued']);
-    }
-
-    return 0;
+    return pharmecy_procedure_medicine_cash_received_total($con, $token_no);
 }
 
 /**
@@ -813,8 +890,8 @@ function pharmecy_load_procedure_medicine_turn($con, $token_no)
     }
 
     $row['procedure_cash'] = $procedure_cash;
-    $row['medicine_limit'] = pharmecy_procedure_medicine_limit_preset($con, $token_no);
-    $row['issued_medicine'] = pharmecy_procedure_issued_medicine_amount($con, $token_no);
+    $row['medicine_limit'] = pharmecy_procedure_medicine_limit_for_token($con, $token_no);
+    $row['issued_medicine'] = pharmecy_procedure_medicine_cash_received_total($con, $token_no);
 
     return $row;
 }

@@ -40,7 +40,7 @@ $age = '';
 $gender = 0;
 
 if ($tokan_no > 0) {
-    pharmecy_sync_branch_pending_amount_from_tokan($con, $tokan_no);
+    pharmecy_sync_branch_pending_issued_from_receive($con, $tokan_no);
     $procedure_turn = pharmecy_load_procedure_medicine_turn($con, $tokan_no);
     if ($procedure_turn) {
         $patient_id = (int) $procedure_turn['patient_id'];
@@ -69,88 +69,88 @@ $is_save_medicine = (isset($_GET['save_medicine']) && $_GET['save_medicine'] !==
     || (isset($_GET['save']) && $_GET['save'] !== '');
 
 if ($is_save_medicine) {
-if ($count_item >= 1) {
-		$previous_tokan_no = (int) ($_REQUEST['previous_tokan_no'] ?? 0);
-		$patient_id = (int) ($_REQUEST['patient_id'] ?? 0);
-		$doctor_id = (int) ($_REQUEST['doctor_id'] ?? 0);
-		$tokan_type = (int) ($_REQUEST['tokan_payment'] ?? 104);
-		$cash = (float) ($_REQUEST['cash'] ?? 0);
-		if ($cash <= 0) {
-			$cash = pharmecy_items_by_doctor_cart_amount($con, $user_id, $branch_id, $tokan_type);
-		}
-		$cash_received = (float) ($_REQUEST['cash_received'] ?? 0);
-		$insert = "INSERT INTO `tokans`
-		(`id`, `patient_id`, `doctor_id`, `tokan_type_id`, `cash`,`cash_received`, `user_id`, `previous_tokan_no`, `created`, `branch_id`, `status`) 
-		VALUES 
-		(NULL, '$patient_id','$doctor_id', '$tokan_type', '$cash', '$cash_received', '$user_id', '$previous_tokan_no', '$current_date', '$branch_id', '2')";
-			if (mysqli_query($con, $insert)) 
-			{
-			    $tokan_no = mysqli_insert_id($con);
-			    if ($cash_received > 0 && $previous_tokan_no > 0) {
-			        $cash_received_sql = mysqli_real_escape_string($con, (string) $cash_received);
-			        mysqli_query(
-			            $con,
-			            "UPDATE tokans SET cash_received = '$cash_received_sql'
-			            WHERE id = '$previous_tokan_no'"
-			        );
-			    }
-			    pharmecy_sync_branch_pending_amount_from_tokan($con, $previous_tokan_no);
-				while ($row_select_item = mysqli_fetch_array($run_select_item)) 
-				{
-            	    $del_record_id = $row_select_item['id'];
-                	    $purchase = $row_select_item['purchase_price'];
-                	    $poor = $row_select_item['sale_price_poor'];
-                	    $member = $row_select_item['sale_price_member'];
-                	    $general = $row_select_item['sale_price_general'];
-                	    $category_id = $row_select_item['category_id'];					
-    	            $reg_item_id = $row_select_item['item_id'];
-					$dose = $row_select_item['dose'];
-					$feed = $row_select_item['feed'];
-					$days = $row_select_item['days'];
-					$fix_dose = $row_select_item['fix_dose'];
-                	if ($fix_dose == 0) 
-                	{
-                	    $quantity = $dose * $days * $feed;
-                	}
-                	else
-                	{
-            			$quantity = $fix_dose;
-                	}	
-                	$sale_price = 0;
-                	$sale_quantity = $quantity;
-                	if($tokan_type == 102)
-                	{
-                	    $sale_price = $poor*$sale_quantity;
-                	}
-                	elseif($tokan_type == 103)
-                	{
-                	    $sale_price = $member*$sale_quantity;
-                	}
-                	else
-                	{
-                	    $sale_price = $general*$sale_quantity;
-                	}
-					mysqli_query($con, "INSERT INTO `item_by_doctor`
-					(`tokan_no`,`item_id`, `dose`,  `feed`,  `days`,  `user_id`,  `branch_id`, `fix_dose`, `created`, `doctor_id`, `status`, `purchase_price`, `sale_price_general`, `sale_price_member`, `sale_price_poor`, `category_id`, `tokan_type_id`, `sale_price`, `sale_quantity`) 
-					VALUES 
-					('$tokan_no','$reg_item_id', '$dose', '$feed', '$days', '$user_id','$branch_id', '$fix_dose', '$current_date', '$doctor_id', '2', '$purchase', '$general', '$member', '$poor', '$category_id', '$tokan_type', '$sale_price', '$sale_quantity')");
-    				mysqli_query($con, "DELETE FROM `items_by_doctor` WHERE id = '$del_record_id' AND user_id = '$user_id' ");
-				}
-				// mysqli_query($con, "DELETE FROM `items_by_doctor` WHERE branch_id = '$branch_id' AND user_id = '$user_id' AND tokan_no IS NULL ");
-			}
-?>
-<script>
-  window.open(<?php echo json_encode(ycdo_absolute_url('print_medicine_slip.php', 'tokan_no=' . rawurlencode((string) $tokan_no))); ?>, "_blank", "toolbar=no,scrollbars=no,resizable=no,top=500,left=500,width=400,height=400,status=no");
-  location.replace("dashboard.php");
-</script>
-<?php
+    $previous_tokan_no = (int) ($_REQUEST['previous_tokan_no'] ?? 0);
+    $patient_id = (int) ($_REQUEST['patient_id'] ?? 0);
+    $doctor_id = (int) ($_REQUEST['doctor_id'] ?? 0);
+    $tokan_type = (int) ($_REQUEST['tokan_payment'] ?? 104);
+    $cash = (float) ($_REQUEST['cash'] ?? 0);
+    if ($cash <= 0) {
+        $cash = pharmecy_items_by_doctor_cart_amount($con, $user_id, $branch_id, $tokan_type);
+    }
+    $cash_received = (float) ($_REQUEST['cash_received'] ?? 0);
+
+    if ($previous_tokan_no < 1) {
+        header('Location: second_procedure_turn_medicines.php?save_error=1');
+        exit;
+    }
+
+    $medicine_tokan_no = 0;
+    $saved = false;
+
+    if ($count_item >= 1) {
+        $insert = "INSERT INTO `tokans`
+        (`id`, `patient_id`, `doctor_id`, `tokan_type_id`, `cash`,`cash_received`, `user_id`, `previous_tokan_no`, `created`, `branch_id`, `status`)
+        VALUES
+        (NULL, '$patient_id','$doctor_id', '$tokan_type', '$cash', '$cash_received', '$user_id', '$previous_tokan_no', '$current_date', '$branch_id', '2')";
+        if (mysqli_query($con, $insert)) {
+            $medicine_tokan_no = (int) mysqli_insert_id($con);
+            while ($row_select_item = mysqli_fetch_array($run_select_item)) {
+                $del_record_id = $row_select_item['id'];
+                $purchase = $row_select_item['purchase_price'];
+                $poor = $row_select_item['sale_price_poor'];
+                $member = $row_select_item['sale_price_member'];
+                $general = $row_select_item['sale_price_general'];
+                $category_id = $row_select_item['category_id'];
+                $reg_item_id = $row_select_item['item_id'];
+                $dose = $row_select_item['dose'];
+                $feed = $row_select_item['feed'];
+                $days = $row_select_item['days'];
+                $fix_dose = $row_select_item['fix_dose'];
+                if ($fix_dose == 0) {
+                    $quantity = $dose * $days * $feed;
+                } else {
+                    $quantity = $fix_dose;
+                }
+                $sale_price = 0;
+                $sale_quantity = $quantity;
+                if ($tokan_type == 102) {
+                    $sale_price = $poor * $sale_quantity;
+                } elseif ($tokan_type == 103) {
+                    $sale_price = $member * $sale_quantity;
+                } else {
+                    $sale_price = $general * $sale_quantity;
+                }
+                mysqli_query($con, "INSERT INTO `item_by_doctor`
+                (`tokan_no`,`item_id`, `dose`,  `feed`,  `days`,  `user_id`,  `branch_id`, `fix_dose`, `created`, `doctor_id`, `status`, `purchase_price`, `sale_price_general`, `sale_price_member`, `sale_price_poor`, `category_id`, `tokan_type_id`, `sale_price`, `sale_quantity`)
+                VALUES
+                ('$medicine_tokan_no','$reg_item_id', '$dose', '$feed', '$days', '$user_id','$branch_id', '$fix_dose', '$current_date', '$doctor_id', '2', '$purchase', '$general', '$member', '$poor', '$category_id', '$tokan_type', '$sale_price', '$sale_quantity')");
+                mysqli_query($con, "DELETE FROM `items_by_doctor` WHERE id = '$del_record_id' AND user_id = '$user_id' ");
+            }
+            $saved = true;
+        }
+    }
+
+    if ($cash_received > 0) {
+        if (pharmecy_record_procedure_medicine_cash_received($con, $previous_tokan_no, $cash_received, $user_id, $branch_id, $current_date)) {
+            $saved = true;
+        }
+    }
+
+    if ($saved) {
+        $redirect = 'second_procedure_turn_medicines.php?search_tokan_no=' . $previous_tokan_no . '&saved=1';
+        if ($medicine_tokan_no > 0) {
+            echo '<script>
+  window.open(' . json_encode(ycdo_absolute_url('print_medicine_slip.php', 'tokan_no=' . rawurlencode((string) $medicine_tokan_no))) . ', "_blank", "toolbar=no,scrollbars=no,resizable=no,top=500,left=500,width=400,height=400,status=no");
+  location.replace(' . json_encode($redirect) . ');
+</script>';
+        } else {
+            header('Location: ' . $redirect);
+        }
+        exit;
+    }
+
+    header('Location: second_procedure_turn_medicines.php?search_tokan_no=' . $previous_tokan_no . '&save_error=1');
     exit;
-}
-else
-{
-    echo "INTERNET ERROR";
-    exit(0);
-}
 }
 
 if (isset($_GET['del_medicine']) && $_GET['del_medicine'] != '') 
