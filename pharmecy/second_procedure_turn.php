@@ -12,19 +12,27 @@ if (isset($_GET['ajax']) && $_GET['ajax'] === 'procedure_options') {
 }
 
 if (isset($_GET['save']) && $_GET['save'] != '') {
-    $token_pre = (int) ($_GET['previous_tokan_no'] ?? 0);
+    $token_pre = (int) ($_REQUEST['previous_tokan_no'] ?? 0);
     if ($token_pre < 1) {
         header('Location: second_procedure_turn.php?save_error=missing_token');
         exit;
     }
 
-    $reg_item_id = (int) ($_GET['reg_item_id'] ?? 0);
     $procedure_opts = array(
-        'fix_dose' => (int) ($_GET['fix_dose'] ?? 0),
-        'dose' => (int) ($_GET['dose'] ?? 1),
-        'feed' => (int) ($_GET['feed'] ?? 1),
-        'days' => (int) ($_GET['days'] ?? 1),
+        'fix_dose' => (int) ($_REQUEST['fix_dose'] ?? 0),
+        'dose' => (int) ($_REQUEST['dose'] ?? 1),
+        'feed' => (int) ($_REQUEST['feed'] ?? 1),
+        'days' => (int) ($_REQUEST['days'] ?? 1),
     );
+
+    $reg_item_id = pharmecy_validate_branch_reg_item_id(
+        $con,
+        $branch_id,
+        (int) ($_REQUEST['reg_item_id'] ?? 0)
+    );
+    if ($reg_item_id < 1) {
+        $reg_item_id = pharmecy_procedure_turn_first_cart_reg_item_id($con, $user_id, $branch_id);
+    }
 
     if (pharmecy_procedure_turn_cart_count($con, $user_id, $branch_id) < 1 && $reg_item_id > 0) {
         pharmecy_procedure_turn_add_cart_item($con, $reg_item_id, $user_id, $branch_id, $current_date, $procedure_opts);
@@ -33,14 +41,22 @@ if (isset($_GET['save']) && $_GET['save'] != '') {
     $count_item = pharmecy_procedure_turn_cart_count($con, $user_id, $branch_id);
     $has_procedure = ($count_item >= 1 || $reg_item_id > 0);
     if ($has_procedure) {
-        $patient_id = (int) $_GET['patient_id'];
-        $doctor_id = (int) $_GET['doctor_id'];
-        $tokan_type = (int) $_GET['tokan_payment'];
-        $cash_received = (float) ($_GET['cash_received'] ?? 0);
-        $cash = pharmecy_cart_amount_by_tokan_type($con, $user_id, $branch_id, $tokan_type);
-        if ($cash <= 0) {
-            $cash = (float) ($_GET['cash'] ?? 0);
+        $patient_id = (int) ($_REQUEST['patient_id'] ?? 0);
+        $doctor_id = (int) ($_REQUEST['doctor_id'] ?? 0);
+        $tokan_type = (int) ($_REQUEST['tokan_payment'] ?? 104);
+        if ($tokan_type < 100) {
+            $tokan_type = 104;
         }
+        $cash_received = (float) ($_REQUEST['cash_received'] ?? 0);
+
+        $cash = 0.0;
+        if ($reg_item_id > 0) {
+            $cash = pharmecy_procedure_reg_item_sale_amount($con, $reg_item_id, $branch_id, $tokan_type, $procedure_opts);
+        }
+        if ($cash <= 0) {
+            $cash = pharmecy_cart_amount_by_tokan_type($con, $user_id, $branch_id, $tokan_type);
+        }
+
         $insert = "INSERT INTO `tokans`
         (`id`, `patient_id`, `doctor_id`, `tokan_type_id`, `cash`,`cash_received`, `user_id`, `previous_tokan_no`, `status`, `created`, `branch_id`)
         VALUES
@@ -50,16 +66,34 @@ if (isset($_GET['save']) && $_GET['save'] != '') {
             if ($count_item >= 1) {
                 pharmecy_finalize_procedure_cart_items($con, $tokan_no, $user_id, $branch_id, $doctor_id, $tokan_type);
             } elseif ($reg_item_id > 0) {
-                pharmecy_attach_procedure_to_token($con, $tokan_no, $reg_item_id, $user_id, $branch_id, $doctor_id, $tokan_type, $current_date, $procedure_opts);
+                pharmecy_insert_procedure_token_item_line(
+                    $con,
+                    $tokan_no,
+                    $reg_item_id,
+                    $user_id,
+                    $branch_id,
+                    $doctor_id,
+                    $tokan_type,
+                    $current_date,
+                    $procedure_opts
+                );
             }
+
             $final_cash = pharmecy_token_bill_amount($con, $tokan_no);
-            if ($final_cash <= 0) {
+            if ($final_cash <= 0 && $cash > 0) {
                 $final_cash = (float) $cash;
             }
             if ($final_cash > 0) {
                 $final_cash_sql = mysqli_real_escape_string($con, (string) $final_cash);
-                mysqli_query($con, "UPDATE tokans SET cash = '$final_cash_sql' WHERE id = '$tokan_no'");
+                mysqli_query(
+                    $con,
+                    "UPDATE tokans SET cash = '$final_cash_sql', tokan_type_id = '$tokan_type'
+                    WHERE id = '$tokan_no'"
+                );
+            } else {
+                mysqli_query($con, "UPDATE tokans SET tokan_type_id = '$tokan_type' WHERE id = '$tokan_no'");
             }
+
             pharmecy_insert_branch_pending_details($con, $tokan_no, $current_date, $branch_id, '1', array(
                 'amount' => $final_cash,
                 'user_id' => $user_id,
@@ -258,6 +292,7 @@ include 'includes/head.php';
 
 <form method="get" onsubmit="syncProcedureToSaveForm(); return checknumber(this);">
 <input type="hidden" name="search_tokan_no" value="<?php echo (int) $search_tokan_no; ?>">
+<input type="hidden" name="tokan_payment" value="104">
 <input type="hidden" name="reg_item_id" id="save_reg_item_id" value="">
 <input type="hidden" name="fix_dose" id="save_fix_dose" value="0">
 <input type="hidden" name="dose" value="1">

@@ -335,7 +335,7 @@ function pharmecy_finalize_procedure_cart_items($con, $tokan_no, $user_id, $bran
             $con,
             "UPDATE `item_by_doctor` SET
                 tokan_no = '$tokan_no',
-                status = '2',
+                status = '1',
                 tokan_type_id = '$tokan_type_id',
                 sale_price = '$sale_price',
                 sale_quantity = '$quantity',
@@ -603,28 +603,127 @@ function pharmecy_procedure_turn_add_cart_item($con, $reg_item_id, $user_id, $br
 }
 
 /**
- * Attach a procedure line directly to a saved token (no staging cart).
+ * Validate item_register_to_branches.id for this branch.
  */
-function pharmecy_attach_procedure_to_token($con, $tokan_no, $reg_item_id, $user_id, $branch_id, $doctor_id, $tokan_type_id, $current_date, array $opts = array())
+function pharmecy_validate_branch_reg_item_id($con, $branch_id, $reg_item_id)
 {
-    $tokan_no = (int) $tokan_no;
+    $branch_id = (int) $branch_id;
     $reg_item_id = (int) $reg_item_id;
+    if ($branch_id < 1 || $reg_item_id < 1) {
+        return 0;
+    }
+    $run = mysqli_query(
+        $con,
+        "SELECT id FROM item_register_to_branches
+        WHERE id = '$reg_item_id' AND branch_id = '$branch_id' AND status = '1'
+        LIMIT 1"
+    );
+    if ($run && mysqli_num_rows($run) === 1) {
+        return $reg_item_id;
+    }
+    return 0;
+}
+
+/**
+ * First staged cart line's branch register item id.
+ */
+function pharmecy_procedure_turn_first_cart_reg_item_id($con, $user_id, $branch_id)
+{
+    $user_id = (int) $user_id;
+    $branch_id = (int) $branch_id;
+    $run = mysqli_query(
+        $con,
+        "SELECT item_id FROM item_by_doctor
+        WHERE branch_id = '$branch_id' AND user_id = '$user_id' AND status = '1'
+        AND (tokan_no IS NULL OR tokan_no = '' OR tokan_no = '0')
+        ORDER BY id ASC
+        LIMIT 1"
+    );
+    if ($run && ($row = mysqli_fetch_assoc($run))) {
+        return (int) ($row['item_id'] ?? 0);
+    }
+    return 0;
+}
+
+/**
+ * Sale amount for one procedure register line.
+ */
+function pharmecy_procedure_reg_item_sale_amount($con, $reg_item_id, $branch_id, $tokan_type_id, array $opts = array())
+{
+    $reg_item_id = pharmecy_validate_branch_reg_item_id($con, $branch_id, $reg_item_id);
+    if ($reg_item_id < 1) {
+        return 0.0;
+    }
+
+    $fix_dose = (int) ($opts['fix_dose'] ?? 0);
+    $dose = max(1, (int) ($opts['dose'] ?? 1));
+    $feed = max(1, (int) ($opts['feed'] ?? 1));
+    $days = max(1, (int) ($opts['days'] ?? 1));
+    $quantity = ($fix_dose === 0) ? ($dose * $days * $feed) : $fix_dose;
+    if ($quantity < 1) {
+        $quantity = 1;
+    }
+
+    $tokan_type_id = (int) $tokan_type_id;
+    if ($tokan_type_id < 100) {
+        $tokan_type_id = 104;
+    }
+    $price_col = pharmecy_tokan_type_price_column($tokan_type_id);
+
+    $run = mysqli_query(
+        $con,
+        "SELECT i.general, i.member, i.poor
+        FROM items i
+        INNER JOIN item_register_to_branches irb ON irb.item_id = i.id
+        WHERE irb.id = '$reg_item_id' AND irb.branch_id = '$branch_id'
+        LIMIT 1"
+    );
+    if (!$run || !($row = mysqli_fetch_assoc($run))) {
+        return 0.0;
+    }
+
+    $unit = (float) ($row['general'] ?? 0);
+    if ($price_col === 'poor') {
+        $unit = (float) ($row['poor'] ?? 0);
+    } elseif ($price_col === 'member') {
+        $unit = (float) ($row['member'] ?? 0);
+    }
+
+    return $unit * $quantity;
+}
+
+/**
+ * Insert procedure line on saved token (item_id = item_register_to_branches.id).
+ *
+ * @return array{ok: bool, sale_price: float}
+ */
+function pharmecy_insert_procedure_token_item_line($con, $tokan_no, $reg_item_id, $user_id, $branch_id, $doctor_id, $tokan_type_id, $current_date, array $opts = array())
+{
+    $empty = array('ok' => false, 'sale_price' => 0.0);
+    $tokan_no = (int) $tokan_no;
+    $reg_item_id = pharmecy_validate_branch_reg_item_id($con, $branch_id, $reg_item_id);
     $user_id = (int) $user_id;
     $branch_id = (int) $branch_id;
     $doctor_id = (int) $doctor_id;
     $tokan_type_id = (int) $tokan_type_id;
+    if ($tokan_type_id < 100) {
+        $tokan_type_id = 104;
+    }
     if ($tokan_no < 1 || $reg_item_id < 1 || $user_id < 1 || $branch_id < 1) {
-        return false;
+        return $empty;
     }
 
-    $existing = mysqli_num_rows(mysqli_query(
+    $existing = mysqli_query(
         $con,
-        "SELECT id FROM item_by_doctor
-        WHERE tokan_no = '$tokan_no' AND item_id = '$reg_item_id' AND status = '2'
+        "SELECT id, sale_price FROM item_by_doctor
+        WHERE tokan_no = '$tokan_no' AND item_id = '$reg_item_id'
         LIMIT 1"
-    ));
-    if ($existing > 0) {
-        return true;
+    );
+    if ($existing && ($row = mysqli_fetch_assoc($existing))) {
+        return array(
+            'ok' => true,
+            'sale_price' => (float) ($row['sale_price'] ?? 0),
+        );
     }
 
     $fix_dose = (int) ($opts['fix_dose'] ?? 0);
@@ -645,7 +744,7 @@ function pharmecy_attach_procedure_to_token($con, $tokan_no, $reg_item_id, $user
         LIMIT 1"
     );
     if (!$run_items || mysqli_num_rows($run_items) !== 1) {
-        return false;
+        return $empty;
     }
     $row_item = mysqli_fetch_assoc($run_items);
     $purchase = $row_item['purchase'];
@@ -661,17 +760,32 @@ function pharmecy_attach_procedure_to_token($con, $tokan_no, $reg_item_id, $user
         $sale_price = (float) $member * $quantity;
     }
 
-    $get_available_quantity = get_register_item_quantity_from_item_id($reg_item_id);
-    $new_quantity = $get_available_quantity - $quantity;
-    mysqli_query($con, "UPDATE `item_register_to_branches` SET `quantity`= '$new_quantity' WHERE id = '$reg_item_id' ");
+    if (function_exists('pharmecy_item_requires_stock_check') && pharmecy_item_requires_stock_check((int) $category_id)) {
+        $get_available_quantity = get_register_item_quantity_from_item_id($reg_item_id);
+        $new_quantity = $get_available_quantity - $quantity;
+        mysqli_query($con, "UPDATE `item_register_to_branches` SET `quantity`= '$new_quantity' WHERE id = '$reg_item_id' ");
+    }
 
     $insert = "INSERT INTO `item_by_doctor`
-    (`item_id`, `dose`, `feed`, `days`, `user_id`, `branch_id`, `fix_dose`, `created`, `purchase_price`, `sale_price_general`, `sale_price_member`, `sale_price_poor`, `category_id`, `sale_quantity`, `tokan_no`, `status`, `tokan_type_id`, `sale_price`, `doctor_id`) VALUES
-    ('$reg_item_id', '$dose', '$feed', '$days', '$user_id', '$branch_id', '$fix_dose', '$current_date', '$purchase', '$general', '$member', '$poor', '$category_id', '$quantity', '$tokan_no', '2', '$tokan_type_id', '$sale_price', '$doctor_id')";
+    (`tokan_no`, `item_id`, `dose`, `feed`, `days`, `user_id`, `branch_id`, `fix_dose`, `created`, `purchase_price`, `sale_price_general`, `sale_price_member`, `sale_price_poor`, `category_id`, `sale_quantity`, `status`, `tokan_type_id`, `sale_price`, `doctor_id`) VALUES
+    ('$tokan_no', '$reg_item_id', '$dose', '$feed', '$days', '$user_id', '$branch_id', '$fix_dose', '$current_date', '$purchase', '$general', '$member', '$poor', '$category_id', '$quantity', '1', '$tokan_type_id', '$sale_price', '$doctor_id')";
 
-    return (bool) mysqli_query($con, $insert);
+    $ok = (bool) mysqli_query($con, $insert);
+    return array('ok' => $ok, 'sale_price' => $ok ? $sale_price : 0.0);
 }
-function pharmecy_branch_procedures_options_html($con, $branch_id, $limit = 1500)
+
+/**
+ * @deprecated Use pharmecy_insert_procedure_token_item_line()
+ */
+function pharmecy_attach_procedure_to_token($con, $tokan_no, $reg_item_id, $user_id, $branch_id, $doctor_id, $tokan_type_id, $current_date, array $opts = array())
+{
+    $result = pharmecy_insert_procedure_token_item_line($con, $tokan_no, $reg_item_id, $user_id, $branch_id, $doctor_id, $tokan_type_id, $current_date, $opts);
+    return (bool) $result['ok'];
+}
+
+/**
+ * Procedure dropdown options for this branch (one JOIN, no per-item queries).
+ */
 {
     $branch_id = (int) $branch_id;
     $limit = max(1, min((int) $limit, 2000));
