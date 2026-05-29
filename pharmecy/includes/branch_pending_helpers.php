@@ -549,6 +549,102 @@ function pharmecy_procedure_limits_token_column($con)
 }
 
 /**
+ * Preset medicine limit from procedure_tokens_medicine_limits only (no 25% fallback).
+ */
+function pharmecy_procedure_medicine_limit_preset($con, $token_no)
+{
+    $token_no = (int) $token_no;
+    if ($token_no < 1) {
+        return 0;
+    }
+
+    static $limits_table_exists = null;
+    if ($limits_table_exists === null) {
+        $chk = mysqli_query($con, "SHOW TABLES LIKE 'procedure_tokens_medicine_limits'");
+        $limits_table_exists = ($chk && mysqli_num_rows($chk) > 0);
+    }
+
+    if (!$limits_table_exists) {
+        return 0;
+    }
+
+    $token_col = pharmecy_procedure_limits_token_column($con);
+    if ($token_col === '') {
+        return 0;
+    }
+
+    $token_col_sql = '`' . mysqli_real_escape_string($con, $token_col) . '`';
+    $run = mysqli_query(
+        $con,
+        "SELECT * FROM procedure_tokens_medicine_limits
+        WHERE $token_col_sql = '$token_no'
+        LIMIT 1"
+    );
+    if (!$run || !($row = mysqli_fetch_assoc($run))) {
+        return 0;
+    }
+
+    foreach (array('medicine_limit', 'limit_amount', 'limit', 'amount') as $col) {
+        if (isset($row[$col]) && (float) $row[$col] > 0) {
+            return (int) $row[$col];
+        }
+    }
+
+    return 0;
+}
+
+/**
+ * Cart total for current session (items_by_doctor staging list).
+ */
+function pharmecy_items_by_doctor_cart_amount($con, $user_id, $branch_id, $tokan_type_id = 104)
+{
+    $user_id = (int) $user_id;
+    $branch_id = (int) $branch_id;
+    $tokan_type_id = (int) $tokan_type_id;
+    $amount = 0.0;
+
+    $run1 = mysqli_query(
+        $con,
+        "SELECT * FROM `items_by_doctor`
+        WHERE branch_id = '$branch_id' AND user_id = '$user_id' AND status = '1'"
+    );
+    if (!$run1) {
+        return 0;
+    }
+
+    while ($row1 = mysqli_fetch_assoc($run1)) {
+        $fix_dose = (int) $row1['fix_dose'];
+        $quantity = ($fix_dose === 0)
+            ? (int) $row1['days'] * (int) $row1['dose'] * (float) $row1['feed']
+            : $fix_dose;
+        if ($quantity < 1) {
+            $quantity = 1;
+        }
+        $item_id = (int) $row1['item_id'];
+        $run = mysqli_query(
+            $con,
+            "SELECT poor, member, general FROM items
+            WHERE id IN (SELECT item_id FROM item_register_to_branches WHERE id = '$item_id')
+            LIMIT 1"
+        );
+        if (!$run || !($row = mysqli_fetch_assoc($run))) {
+            continue;
+        }
+        if ($tokan_type_id === 102) {
+            $amount += (float) $row['poor'] * $quantity;
+        } elseif ($tokan_type_id === 103) {
+            $amount += (float) $row['member'] * $quantity;
+        } elseif ($tokan_type_id === 101) {
+            $amount += (float) ($row['poor'] ?? $row['general']) * $quantity;
+        } else {
+            $amount += (float) $row['general'] * $quantity;
+        }
+    }
+
+    return (int) round($amount);
+}
+
+/**
  * Medicine limit for a procedure token (procedure_tokens_medicine_limits or 25% of bill).
  */
 function pharmecy_procedure_medicine_limit($con, $token_no, $procedure_amount = 0.0)
@@ -593,8 +689,8 @@ function pharmecy_procedure_medicine_limit($con, $token_no, $procedure_amount = 
 }
 
 /**
- * Total value of medicines already dispensed for a procedure registration token.
- * Includes lines on the procedure token and on child medicine tokens (previous_tokan_no).
+ * Issued medicine value from previous saves (item_by_doctor), not current cart.
+ * Lines on procedure token and prior medicine slips (previous_tokan_no).
  */
 function pharmecy_procedure_issued_medicine_amount($con, $token_no)
 {
@@ -626,14 +722,14 @@ function pharmecy_procedure_issued_medicine_amount($con, $token_no)
                 ) AS q
             FROM item_by_doctor ibd2
         ) qty ON qty.id = ibd.id
-        WHERE (
+        WHERE ibd.status >= 2
+        AND (
             ibd.tokan_no = '$token_no'
             OR ibd.tokan_no IN (
                 SELECT id FROM tokans
                 WHERE previous_tokan_no = '$token_no' AND status >= 2
             )
-        )
-        AND ibd.status >= 2";
+        )";
 
     $run = mysqli_query($con, $sql);
     if ($run && ($row = mysqli_fetch_assoc($run))) {
@@ -675,7 +771,7 @@ function pharmecy_load_procedure_medicine_turn($con, $token_no)
     }
 
     $row['procedure_cash'] = $procedure_cash;
-    $row['medicine_limit'] = pharmecy_procedure_medicine_limit($con, $token_no, $procedure_cash);
+    $row['medicine_limit'] = pharmecy_procedure_medicine_limit_preset($con, $token_no);
     $row['issued_medicine'] = pharmecy_procedure_issued_medicine_amount($con, $token_no);
 
     return $row;

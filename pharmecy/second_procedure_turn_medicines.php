@@ -22,9 +22,17 @@ if (isset($_GET['search_tokan_no']) && $_GET['search_tokan_no'] !== '') {
 
 $GLOBALS['search_tokan_no'] = $search_tokan_no;
 
+if (isset($_GET['ajax']) && $_GET['ajax'] === 'cart_total') {
+    header('Content-Type: application/json; charset=UTF-8');
+    $tokan_type = (int) ($_GET['tokan_type'] ?? 104);
+    echo json_encode(array(
+        'amount' => pharmecy_items_by_doctor_cart_amount($con, $user_id, $branch_id, $tokan_type),
+    ));
+    exit;
+}
+
 $limit = 0;
-$limit_amount = 0;
-$procedure_cash = 0;
+$issued_medicine = 0;
 $patient_id = 0;
 $doctor_id = 0;
 $name = '';
@@ -39,14 +47,18 @@ if ($tokan_no > 0) {
         $name = (string) $procedure_turn['name'];
         $age = (string) $procedure_turn['age'];
         $gender = (int) $procedure_turn['gender'];
-        $procedure_cash = (int) $procedure_turn['procedure_cash'];
         $limit = (int) $procedure_turn['medicine_limit'];
-        $limit_amount = (int) $procedure_turn['issued_medicine'];
+        $issued_medicine = (int) $procedure_turn['issued_medicine'];
     }
 }
 
-$amount_array = get_select_amount_array();
-$cart_cash = (int) ($amount_array[2] ?? 0);
+$cart_totals = array(
+    101 => pharmecy_items_by_doctor_cart_amount($con, $user_id, $branch_id, 101),
+    102 => pharmecy_items_by_doctor_cart_amount($con, $user_id, $branch_id, 102),
+    103 => pharmecy_items_by_doctor_cart_amount($con, $user_id, $branch_id, 103),
+    104 => pharmecy_items_by_doctor_cart_amount($con, $user_id, $branch_id, 104),
+);
+$cart_cash = (int) ($cart_totals[104] ?? 0);
 $select_item = "SELECT * FROM `items_by_doctor` WHERE `branch_id` = '$branch_id' AND `user_id` = '$user_id' AND `status` = '1' ";
 $run_select_item = mysqli_query($con, $select_item);
 $count_item = mysqli_num_rows($run_select_item);
@@ -57,12 +69,15 @@ $is_save_medicine = (isset($_GET['save_medicine']) && $_GET['save_medicine'] !==
 
 if ($is_save_medicine) {
 if ($count_item >= 1) {
-		$previous_tokan_no = $_GET['previous_tokan_no'];
-		$patient_id = $_GET['patient_id'];
-		$doctor_id = $_GET['doctor_id'];
-		$tokan_type = $_GET['tokan_payment'];
-		$cash = $_GET['cash'];
-		$cash_received = $_GET['cash_received'];
+		$previous_tokan_no = (int) ($_REQUEST['previous_tokan_no'] ?? 0);
+		$patient_id = (int) ($_REQUEST['patient_id'] ?? 0);
+		$doctor_id = (int) ($_REQUEST['doctor_id'] ?? 0);
+		$tokan_type = (int) ($_REQUEST['tokan_payment'] ?? 104);
+		$cash = (float) ($_REQUEST['cash'] ?? 0);
+		if ($cash <= 0) {
+			$cash = pharmecy_items_by_doctor_cart_amount($con, $user_id, $branch_id, $tokan_type);
+		}
+		$cash_received = (float) ($_REQUEST['cash_received'] ?? 0);
 		$insert = "INSERT INTO `tokans`
 		(`id`, `patient_id`, `doctor_id`, `tokan_type_id`, `cash`,`cash_received`, `user_id`, `previous_tokan_no`, `created`, `branch_id`, `status`) 
 		VALUES 
@@ -320,128 +335,86 @@ include 'includes/head.php'; ?>
 
 </form>
 
-<form onsubmit="return checknumber(this);">
+<form method="get" id="medicine_save_form" onsubmit="return checknumber(this);">
+<input type="hidden" name="search_tokan_no" value="<?php echo (int) $search_tokan_no; ?>" />
+<?php if ($tokan_no > 0 && $patient_id > 0) { ?>
 <div class="row">
-<?php
-if ($tokan_no > 0 && $patient_id > 0) 
-{ 
-	?>
 	<div class="col-md-3">
 		<label>Patient Name</label>
-		<input type="hidden" name="patient_id" value="<?php echo $patient_id; ?>">
-		<input type="hidden" name="previous_tokan_no" value="<?php echo $tokan_no; ?>">
-		<input readonly type="text" class="form-control" value="<?php echo $name; ?>">
+		<input type="hidden" name="patient_id" value="<?php echo (int) $patient_id; ?>">
+		<input type="hidden" name="previous_tokan_no" value="<?php echo (int) $tokan_no; ?>">
+		<input readonly type="text" class="form-control" value="<?php echo htmlspecialchars($name, ENT_QUOTES, 'UTF-8'); ?>">
 	</div>
 	<div class="col-md-2">
-		<label> Age</label>
-		<input readonly type="number" value="<?php echo $age; ?>" min="0" class="form-control">
+		<label>Age</label>
+		<input readonly type="number" value="<?php echo htmlspecialchars($age, ENT_QUOTES, 'UTF-8'); ?>" min="0" class="form-control">
 	</div>
 	<div class="col-md-2">
-		<label> Gender</label>
+		<label>Gender</label>
 		<select readonly required class="form-control">
-<?php 
-if ($gender == 1) {echo '<option value="1"> Female</option>';}
-elseif ($gender == 2) {echo '<option value="2"> Male</option>';}
-else {echo '<option value="3"> Other</option>';}
+<?php
+if ($gender == 1) {
+    echo '<option value="1">Female</option>';
+} elseif ($gender == 2) {
+    echo '<option value="2">Male</option>';
+} else {
+    echo '<option value="3">Other</option>';
+}
 ?>
 		</select>
 	</div>
 	<div class="col-md-3">
 		<label>Operation By</label>
 		<select name="doctor_id" required class="form-control">
-		<?php 	$get_doctor = mysqli_query($con, "SELECT * FROM users WHERE role_id = '3' AND branch_id = '$branch_id' ");
-		if (mysqli_num_rows($get_doctor) > 0) 
-		{	
-			while ($row_doctor = mysqli_fetch_array($get_doctor)) 
-		    {
-		    	$option_doctor_id = $row_doctor['id'];
-		    	if ($doctor_id == $option_doctor_id) 
-		    	{
-		      echo '<option selected value="'.$row_doctor['id'].'">'.$row_doctor['u_name'].'</option>';
-		    	}
-		    	else
-		    	{
-		      echo '<option value="'.$row_doctor['id'].'">'.$row_doctor['u_name'].'</option>';
-		    	}
-
+		<?php
+		$get_doctor = mysqli_query($con, "SELECT id, u_name FROM users WHERE role_id = '3' AND branch_id = '$branch_id' AND status = 1 ORDER BY u_name");
+		if ($get_doctor && mysqli_num_rows($get_doctor) > 0) {
+		    while ($row_doctor = mysqli_fetch_assoc($get_doctor)) {
+		        $opt_id = (int) $row_doctor['id'];
+		        $sel = ($doctor_id === $opt_id) ? ' selected' : '';
+		        echo '<option' . $sel . ' value="' . $opt_id . '">' . htmlspecialchars($row_doctor['u_name'], ENT_QUOTES, 'UTF-8') . '</option>';
 		    }
-		} ?>
+		}
+		?>
 		</select>
-	</div>
-	<input type="hidden" name="cash" value="<?php echo (int) $cart_cash; ?>" />
-<?php }
-else
-{ ?>
-	<div class="col-md-3">
-		<label>Patient Name</label>
-		<input type="text" name="name" class="form-control">
 	</div>
 	<div class="col-md-2">
-		<label> Age</label>
-		<input type="number" min="0" name="age" class="form-control">
+		<label>Cash</label>
+		<input type="hidden" name="cash" id="cash" value="<?php echo (int) $cart_cash; ?>">
+		<input type="text" readonly id="cash_display" class="form-control" value="<?php echo (int) $cart_cash; ?>">
 	</div>
-	<div class="col-md-2">
-		<label> Gender</label>
-		<select name="gender" required class="form-control">
-			<option value=""> Gender</option>
-			<option value="1">Female</option>
-			<option value="2">Male</option>
-			<option value="3">Other</option>
-		</select>
-	</div>
-	<div class="col-md-3">
-		<label>Checked By</label>
-		<select name="doctor_id" required class="form-control">
-			<option value="">Select doctor</option>			
-		<?php 	
-		$get_doctor = mysqli_query($con, "SELECT * FROM users WHERE role_id = '3' AND branch_id = '$branch_id' AND status = 1 ORDER BY u_name  ");
-		if (mysqli_num_rows($get_doctor) > 0) 
-		{	
-			while ($row_doctor = mysqli_fetch_array($get_doctor)) 
-		    {
-		      echo '<option value="'.$row_doctor['id'].'">'.$row_doctor['u_name'].'</option>';
-		    }
-		} ?>
-		</select>
-	</div>
-	<input type="hidden" name="cash" value="0" />
-<?php } ?>
-
-
+</div>
+<div class="row" style="margin-top: 10px;">
    	<div class="col-md-3" style="font-size: 15px;">
    		<label>Amount Token Type</label><br>
-   		<div class = "row">
-   			<div class="col-md-12">
-		   		<input onclick="myFunction104()" type="radio" id="general" required name="tokan_payment" value="104">
-		   		<label for="general">General</label>   				
-		   		<input id = "get_general" type="hidden" value = "<?php echo (int) $cart_cash; ?>">	
-   			</div>   			
-   		</div>
+   		<input type="radio" id="general" required name="tokan_payment" value="104" checked>
+   		<label for="general">General</label>
    	</div>
    	<div class="col-md-2">
    		<label>Limit Medicine</label>
-   		<input type = "number" value = "<?php echo (int) $limit; ?>"  readonly class = "form-control"/>
+   		<input type="number" id="limit_medicine" value="<?php echo (int) $limit; ?>" readonly class="form-control">
    	</div>
    	<div class="col-md-2">
    		<label>Issued Medicine</label>
-   		<input type = "number" value = "<?php echo (int) $limit_amount; ?>"  readonly class = "form-control"/>
+   		<input type="number" id="issued_medicine" value="<?php echo (int) $issued_medicine; ?>" readonly class="form-control">
    	</div>
-
-
    	<div class="col-md-3">
    		<label>Cash Received</label>
-   		<input type="number" min="0" value="0" name="cash_received" class="form-control" readonly required>
+   		<input type="number" min="0" value="" name="cash_received" id="cash_received" class="form-control" required>
    	</div>
-
 	<div class="col-md-2">
 		<br>
-<?php if ($tokan_no > 0 && $patient_id > 0 && $count_item >= 1) { ?>
         <button type="submit" id="save_medicine" name="save_medicine" value="1" class="btn btn-success" onclick="myDisplayGoneSave()">SAVE</button>
-<?php } ?>
-		<input type="reset" value="CLEAR" name="clear" class="btn btn-sm btn-warning">
+		<input type="reset" value="CLEAR" class="btn btn-sm btn-warning">
 	</div>
-
 </div>
+<?php } else { ?>
+<div class="row">
+	<div class="col-md-12">
+		<div class="alert alert-warning">Open this page with a valid procedure token (search_tokan_no).</div>
+	</div>
+</div>
+<?php } ?>
 
 </form>
 
@@ -464,8 +437,59 @@ else
 });
 </script>
 <script>
-function myFunction104() {
-	// Cart total is submitted via hidden input; display stays procedure cash from tokans.
+var cartTotalsByType = <?php echo json_encode($cart_totals); ?>;
+
+function updateSessionCashDisplay() {
+  var typeEl = document.querySelector('input[name="tokan_payment"]:checked');
+  var typeId = typeEl ? parseInt(typeEl.value, 10) : 104;
+  var amount = cartTotalsByType[typeId];
+  if (typeof amount === 'undefined') {
+    amount = cartTotalsByType[104] || 0;
+  }
+  var display = document.getElementById('cash_display');
+  var hidden = document.getElementById('cash');
+  if (display) {
+    display.value = amount;
+  }
+  if (hidden) {
+    hidden.value = amount;
+  }
+}
+
+function refreshCartTotalFromServer() {
+  var typeEl = document.querySelector('input[name="tokan_payment"]:checked');
+  var typeId = typeEl ? parseInt(typeEl.value, 10) : 104;
+  if (typeof jQuery === 'undefined') {
+    updateSessionCashDisplay();
+    return;
+  }
+  jQuery.getJSON('second_procedure_turn_medicines.php', {
+    ajax: 'cart_total',
+    search_tokan_no: <?php echo (int) $search_tokan_no; ?>,
+    tokan_type: typeId
+  }).done(function (data) {
+    if (data && typeof data.amount !== 'undefined') {
+      cartTotalsByType[typeId] = data.amount;
+      updateSessionCashDisplay();
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  var radios = document.querySelectorAll('input[name="tokan_payment"]');
+  for (var i = 0; i < radios.length; i++) {
+    radios[i].addEventListener('change', updateSessionCashDisplay);
+  }
+  updateSessionCashDisplay();
+});
+
+function checknumber(theForm) {
+  var cashReceived = document.getElementById('cash_received');
+  if (cashReceived && cashReceived.value === '') {
+    alert('Please enter cash received.');
+    return false;
+  }
+  return true;
 }
 </script>
 <script>
