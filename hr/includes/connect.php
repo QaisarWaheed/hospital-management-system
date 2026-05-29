@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../../includes/ycdo_bootstrap.php';
 date_default_timezone_set("Asia/Karachi");
 $ip_address = $_SERVER['SERVER_ADDR'] ?? '';
-$current_date = date('Y-m-d H:i:s');
+$current_date = date('Y-m-d G:i:s A');
 error_reporting(1);
 
 if (session_status() === PHP_SESSION_NONE) {
@@ -73,38 +73,6 @@ function get_staff_time_in($staff_id)
         }    
     }    
     return $quanity;
-}
-
-/**
- * Whether employee belongs to the selected HR branch context (0 = organization staff).
- */
-function hr_staff_matches_attendance_branch($employee_id, $context_branch_id)
-{
-    $employee_id = (int) $employee_id;
-    $context_branch_id = (int) $context_branch_id;
-    if ($employee_id < 1) {
-        return false;
-    }
-    $run = mysqli_query(
-        $GLOBALS['con'],
-        "SELECT branch_id FROM staff WHERE staff_id = '$employee_id' AND staff_status = '1' LIMIT 1"
-    );
-    if (!$run || !($row = mysqli_fetch_assoc($run))) {
-        return false;
-    }
-    return (int) $row['branch_id'] === $context_branch_id;
-}
-
-/**
- * Posted branch for attendance (0 = organization); -1 when employee does not belong to that context.
- */
-function hr_resolve_attendance_branch_id($employee_id, $posted_branch_id = 0)
-{
-    $posted_branch_id = (int) $posted_branch_id;
-    if (!hr_staff_matches_attendance_branch($employee_id, $posted_branch_id)) {
-        return -1;
-    }
-    return $posted_branch_id;
 }
 
 function get_staff_time_out($staff_id)
