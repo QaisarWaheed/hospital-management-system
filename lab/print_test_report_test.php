@@ -1,13 +1,37 @@
-<?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-?>
 <script>
 window.opener.location.href = "lab_test_all_reocrds.php";    
 </script>
 <?php
     include('includes/config.php');
     include('includes/connect.php');
+
+    // Bootstrap turns display_errors off; re-enable for this debug page.
+    ini_set('display_errors', '1');
+    ini_set('display_startup_errors', '1');
+    error_reporting(E_ALL);
+    register_shutdown_function(function () {
+        $e = error_get_last();
+        if ($e && in_array($e['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR], true)) {
+            echo '<pre style="color:red;padding:1em;">Fatal: ' . htmlspecialchars($e['message'])
+                . ' in ' . htmlspecialchars($e['file']) . ':' . (int) $e['line'] . '</pre>';
+        }
+    });
+
+    if (!function_exists('str_contains')) {
+        function str_contains($haystack, $needle)
+        {
+            return $needle === '' || strpos((string) $haystack, (string) $needle) !== false;
+        }
+    }
+
+    function format_lab_datetime($value, $format = 'h:i:s A d-M-Y')
+    {
+        if (empty($value) || $value === '0000-00-00 00:00:00' || $value === '0000-00-00') {
+            return 'N/A';
+        }
+        $dt = date_create($value);
+        return $dt ? date_format($dt, $format) : 'N/A';
+    }
 if(isset($_GET['token_no']) && $_GET['token_no'] != '')
 {
     $token_no = $_GET['token_no'];
@@ -15,6 +39,11 @@ if(isset($_GET['token_no']) && $_GET['token_no'] != '')
 else
 {
     header('location: logout.php');
+}
+$GLOBALS['patient_gender_id'] = 0;
+$gender_query = mysqli_query($con, "SELECT patients.gender FROM tokans INNER JOIN patients ON tokans.patient_id = patients.id WHERE tokans.id = '$token_no' LIMIT 1");
+if ($gender_query && ($gender_row = mysqli_fetch_assoc($gender_query))) {
+    $GLOBALS['patient_gender_id'] = $gender_row['gender'];
 }
 include 'includes/head.php'; 
 include 'includes/phpqrcode/qrlib.php';
@@ -80,7 +109,7 @@ $output .= '<hr style="height:1px;border-width:0;color:gray;background-color:bla
         <td width = "45%"> '.$row['name'].'</td>
 
         <th width = "20%">Registration Time</th>
-        <td width = "20%"> '.date_format(date_create($row['token_created_at']), "h:i:s A d-M-Y").'</td>
+        <td width = "20%"> '.format_lab_datetime($row['token_created_at']).'</td>
     </tr>
     <tr>
         <th>Age / Sex</th>
@@ -104,7 +133,7 @@ $output .= '<hr style="height:1px;border-width:0;color:gray;background-color:bla
         $output .= '</td>
         
         <th>Specimen Received At</th>
-        <td> '.date_format(date_create($row['sample_date_time']), "h:i:s A d-M-Y").'</td>
+        <td> '.format_lab_datetime($row['sample_date_time']).'</td>
     </tr>
     <tr>
         <th>CNIC</th>
@@ -120,7 +149,7 @@ $output .= '<hr style="height:1px;border-width:0;color:gray;background-color:bla
         $output .= '</td>
         
         <th>Reporting Time</th>
-        <td> '.date_format(date_create($row['reporting_date_time']), "h:i:s A d-M-Y").'</td>
+        <td> '.format_lab_datetime($row['reporting_date_time']).'</td>
     </tr>
     <tr>
         <th>Consultant</th>
@@ -467,8 +496,8 @@ td {
                                 $reference_range = $row_test_report['lab_reporting_test_normal_value'];
                                 $lab_reporting_test_normal_value = $reference_range;
                                 $normal_values_array = explode('-', $lab_reporting_test_normal_value);
-                                $lab_reporting_test_normal_value_low = $normal_values_array[0];
-                                $lab_reporting_test_normal_value_high = $normal_values_array[1];
+                                $lab_reporting_test_normal_value_low = $normal_values_array[0] ?? '';
+                                $lab_reporting_test_normal_value_high = $normal_values_array[1] ?? $normal_values_array[0] ?? '';
                                 
                                 $lab_test_unit_value = $row_test_report['lab_test_unit_value'];
 
