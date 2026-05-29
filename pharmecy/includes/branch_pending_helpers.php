@@ -518,6 +518,37 @@ function pharmecy_branch_procedures_options_html($con, $branch_id, $limit = 1500
  * Selected cart items for procedure turn (one JOIN).
  */
 /**
+ * Token column on procedure_tokens_medicine_limits (schema varies by install).
+ */
+function pharmecy_procedure_limits_token_column($con)
+{
+    static $column = null;
+    if ($column !== null) {
+        return $column;
+    }
+
+    $column = '';
+    $candidates = array('token_no', 'procedure_token_no', 'token_id', 'tokan_no');
+    $run = mysqli_query($con, 'SHOW COLUMNS FROM procedure_tokens_medicine_limits');
+    if (!$run) {
+        return $column;
+    }
+
+    $found = array();
+    while ($row = mysqli_fetch_assoc($run)) {
+        $found[] = $row['Field'];
+    }
+    foreach ($candidates as $name) {
+        if (in_array($name, $found, true)) {
+            $column = $name;
+            break;
+        }
+    }
+
+    return $column;
+}
+
+/**
  * Medicine limit for a procedure token (procedure_tokens_medicine_limits or 25% of bill).
  */
 function pharmecy_procedure_medicine_limit($con, $token_no, $procedure_amount = 0.0)
@@ -535,16 +566,20 @@ function pharmecy_procedure_medicine_limit($con, $token_no, $procedure_amount = 
     }
 
     if ($limits_table_exists) {
-        $run = mysqli_query(
-            $con,
-            "SELECT * FROM procedure_tokens_medicine_limits
-            WHERE token_no = '$token_no' OR tokan_no = '$token_no'
-            LIMIT 1"
-        );
-        if ($run && ($row = mysqli_fetch_assoc($run))) {
-            foreach (array('medicine_limit', 'limit_amount', 'limit', 'amount') as $col) {
-                if (isset($row[$col]) && (float) $row[$col] > 0) {
-                    return (int) $row[$col];
+        $token_col = pharmecy_procedure_limits_token_column($con);
+        if ($token_col !== '') {
+            $token_col_sql = '`' . mysqli_real_escape_string($con, $token_col) . '`';
+            $run = mysqli_query(
+                $con,
+                "SELECT * FROM procedure_tokens_medicine_limits
+                WHERE $token_col_sql = '$token_no'
+                LIMIT 1"
+            );
+            if ($run && ($row = mysqli_fetch_assoc($run))) {
+                foreach (array('medicine_limit', 'limit_amount', 'limit', 'amount') as $col) {
+                    if (isset($row[$col]) && (float) $row[$col] > 0) {
+                        return (int) $row[$col];
+                    }
                 }
             }
         }
