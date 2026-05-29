@@ -29,8 +29,8 @@ $select = "SELECT * FROM `users` WHERE `id` = '$admin_id' AND `password` = '$adm
 $select_admin = mysqli_query($con, $select);
 if(mysqli_num_rows($select_admin) == 1)
 {
-    $login_id = $_SESSION['login_id'];
-    mysqli_query($con, "UPDATE logins_detail SET logout_at = '$current_date', status = '2' WHERE id = '$login_id' AND status = '1' ");
+    $login_id = (int) ($_SESSION['login_id'] ?? 0);
+    mysqli_query($con, "UPDATE logins_detail SET logout_at = '$current_date', status = '2' WHERE id = '$login_id'");
         $search = "SELECT * FROM logins_detail WHERE id = '$login_id' ";
         $run = mysqli_query($con, $search);
         if(mysqli_num_rows($run) == 1)
@@ -48,7 +48,8 @@ if($submitted_cash > ($cash_received + $donation_amount) ){$short_amount = 0;$ex
 elseif($submitted_cash < ($cash_received + $donation_amount) ){$short_amount = ($cash_received + $donation_amount)-$submitted_cash;$extra_amount = 0;}
 else{$short_amount = 0;$extra_amount = 0;}
 
-pharmecy_save_summary_details($con, $login_id, $cash, $cash_received, $donation_amount, $submitted_cash, $short_amount, $extra_amount, $user_id, $current_date);
+$summary_saved = pharmecy_save_summary_details($con, $login_id, $cash, $cash_received, $donation_amount, $submitted_cash, $short_amount, $extra_amount, $user_id, $current_date);
+if ($summary_saved) {
 mysqli_query($con, "INSERT INTO `summary_by_admin`( `login_id`, `admin_id`, `submmited_cash`, `total_cash`, `created`, `user_id`, `reason_for_admin_password_used`, `staff_name_who_uses_admin_password`, `old_physicall_cash`) VALUES
     ('$login_id', '$admin_id', '$submitted_cash', '$cash_received', '$current_date', '$user_id', '$reason_for_admin_password_used', '$staff_name_who_uses_admin_password', '$old_physicall_cash')");
 ?>
@@ -167,6 +168,7 @@ if (mysqli_num_rows($run) > 0)
 ?>    
 </table>
 <?php pharmecy_logout_report_redirect_footer(); ?>
+<?php } else { pharmecy_logout_summary_save_failed_message($con); } ?>
 <?php
 }
 else
@@ -225,8 +227,8 @@ elseif (isset($_POST['physicall_cash']) && $_POST['physicall_cash'] != '')
     $total_cash = $_POST['total_cash'];
 if($submitted_cash >= $total_cash)
 {
-    $login_id = $_SESSION['login_id'];
-    mysqli_query($con, "UPDATE logins_detail SET logout_at = '$current_date', status = '2' WHERE id = '$login_id' AND status = '1' ");
+    $login_id = (int) ($_SESSION['login_id'] ?? 0);
+    mysqli_query($con, "UPDATE logins_detail SET logout_at = '$current_date', status = '2' WHERE id = '$login_id'");
         $search = "SELECT * FROM logins_detail WHERE id = '$login_id' ";
         $run = mysqli_query($con, $search);
         if(mysqli_num_rows($run) == 1)
@@ -244,7 +246,8 @@ if($submitted_cash > ($cash_received + $donation_amount) ){$short_amount = 0;$ex
 elseif($submitted_cash < ($cash_received + $donation_amount) ){$short_amount = ($cash_received + $donation_amount)-$submitted_cash;$extra_amount = 0;}
 else{$short_amount = 0;$extra_amount = 0;}
 
-pharmecy_save_summary_details($con, $login_id, $cash, $cash_received, $donation_amount, $submitted_cash, $short_amount, $extra_amount, $user_id, $current_date);
+$summary_saved = pharmecy_save_summary_details($con, $login_id, $cash, $cash_received, $donation_amount, $submitted_cash, $short_amount, $extra_amount, $user_id, $current_date);
+if ($summary_saved) {
 ?>
 <table class="table">
     <tr>                
@@ -361,6 +364,7 @@ echo '
 ?>      
 </table>
 <?php pharmecy_logout_report_redirect_footer(); ?>
+<?php } else { pharmecy_logout_summary_save_failed_message($con); } ?>
 <?php
 }
 else

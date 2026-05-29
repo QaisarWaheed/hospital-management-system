@@ -38,14 +38,9 @@ if (empty($_SESSION['form_token'])) {
 //     // echo substr($current_date,0,10) . '<br>' . substr($login_expire_at,0,10); 
 // }
  
-$db_host = getenv('DB_HOST');
-if ($db_host === false || $db_host === '') {
-    $db_host = file_exists('/.dockerenv') ? 'srv-captain--mysql-db' : 'localhost';
-}
-if ($db_host === 'localhost' && PHP_OS_FAMILY !== 'Windows') {
-    $db_host = '127.0.0.1';
-}
-$con = mysqli_connect($db_host, getenv('DB_USER') ?: 'ycdoeh1', getenv('DB_PASS') ?: 'ycdoeh1', getenv('DB_NAME') ?: 'ycdomlt');
+require_once __DIR__ . '/../../includes/ycdo_bootstrap.php';
+$con = ycdo_db_connect();
+$GLOBALS['con'] = $con;
 
 
 //Check Expire Login
@@ -69,6 +64,76 @@ include 'company_info.php';
 //$con = mysqli_connect('184.168.103.144', 'anmol', 'Anmol_122', 'ycdo');
 if (!$con) {
     die(mysqli_connect_error());
+}
+
+function pharmecy_save_summary_details($con, $login_id, $cash, $cash_received, $donation_amount, $submitted_cash, $short_amount, $extra_amount, $user_id, $current_date)
+{
+    if (!$con instanceof mysqli) {
+        $con = $GLOBALS['con'] ?? null;
+    }
+    $login_id = (int) $login_id;
+    $user_id = (int) $user_id;
+    if (!$con instanceof mysqli || $login_id < 1 || $user_id < 1) {
+        return false;
+    }
+
+    $cash = (float) $cash;
+    $cash_received = (float) $cash_received;
+    $donation_amount = (float) $donation_amount;
+    $submitted_cash = (float) $submitted_cash;
+    $short_amount = (float) $short_amount;
+    $extra_amount = (float) $extra_amount;
+    $current_date = mysqli_real_escape_string($con, $current_date);
+
+    $fields = "
+        `computer_total` = '$cash',
+        `received_amount` = '$cash_received',
+        `donation_collection` = '$donation_amount',
+        `submitted_amount` = '$submitted_cash',
+        `submitted_to` = '0',
+        `short_amount` = '$short_amount',
+        `extra_amount` = '$extra_amount',
+        `status` = '1',
+        `created` = '$current_date',
+        `user_id` = '$user_id'";
+
+    $existing = mysqli_query($con, "SELECT login_id FROM summary_details WHERE login_id = '$login_id' LIMIT 1");
+    if ($existing && mysqli_num_rows($existing) > 0) {
+        $sql = "UPDATE summary_details SET $fields WHERE login_id = '$login_id'";
+    } else {
+        $sql = "INSERT INTO summary_details
+            (`login_id`, `computer_total`, `received_amount`, `donation_collection`, `submitted_amount`, `submitted_to`, `short_amount`, `extra_amount`, `status`, `created`, `user_id`)
+            VALUES
+            ('$login_id', '$cash', '$cash_received', '$donation_amount', '$submitted_cash', '0', '$short_amount', '$extra_amount', '1', '$current_date', '$user_id')";
+    }
+
+    $ok = mysqli_query($con, $sql);
+    if (!$ok) {
+        $GLOBALS['pharmecy_last_summary_error'] = mysqli_error($con);
+    }
+
+    return (bool) $ok;
+}
+
+function pharmecy_logout_report_redirect_footer()
+{
+    echo '<p style="text-align:center;margin-top:20px;"><a href="logout.php" class="btn btn-primary">Continue to Home</a></p>';
+    echo '<script>setTimeout(function(){ window.location.href = "logout.php"; }, 5000);</script>';
+}
+
+function pharmecy_logout_summary_save_failed_message($con)
+{
+    $message = 'Logout summary could not be saved. Please try again or contact support.';
+    if (getenv('YCDO_DEBUG') === '1' || getenv('APP_DEBUG') === '1') {
+        $detail = $GLOBALS['pharmecy_last_summary_error'] ?? '';
+        if ($detail === '' && $con instanceof mysqli) {
+            $detail = mysqli_error($con);
+        }
+        if ($detail !== '') {
+            $message .= ' (' . $detail . ')';
+        }
+    }
+    echo '<p style="color:red;text-align:center;margin-top:20px;">' . htmlspecialchars($message) . '</p>';
 }
 
 function available_items_in_store_by_register_item($branch_item_id)
@@ -1541,42 +1606,6 @@ $output .= '</td></tr>';
 }
 echo '</table></div>';
     return $output;
-}
-
-function pharmecy_save_summary_details($con, $login_id, $cash, $cash_received, $donation_amount, $submitted_cash, $short_amount, $extra_amount, $user_id, $current_date)
-{
-    $login_id = (int) $login_id;
-    $user_id = (int) $user_id;
-    $cash = (float) $cash;
-    $cash_received = (float) $cash_received;
-    $donation_amount = (float) $donation_amount;
-    $submitted_cash = (float) $submitted_cash;
-    $short_amount = (float) $short_amount;
-    $extra_amount = (float) $extra_amount;
-    $current_date = mysqli_real_escape_string($con, $current_date);
-
-    $sql = "INSERT INTO `summary_details`
-        (`login_id`, `computer_total`, `received_amount`, `donation_collection`, `submitted_amount`, `submitted_to`, `short_amount`, `extra_amount`, `status`, `created`, `user_id`)
-        VALUES
-        ('$login_id', '$cash', '$cash_received', '$donation_amount', '$submitted_cash', '0', '$short_amount', '$extra_amount', '1', '$current_date', '$user_id')
-        ON DUPLICATE KEY UPDATE
-        `computer_total` = VALUES(`computer_total`),
-        `received_amount` = VALUES(`received_amount`),
-        `donation_collection` = VALUES(`donation_collection`),
-        `submitted_amount` = VALUES(`submitted_amount`),
-        `short_amount` = VALUES(`short_amount`),
-        `extra_amount` = VALUES(`extra_amount`),
-        `status` = VALUES(`status`),
-        `created` = VALUES(`created`),
-        `user_id` = VALUES(`user_id`)";
-
-    return mysqli_query($con, $sql);
-}
-
-function pharmecy_logout_report_redirect_footer()
-{
-    echo '<p style="text-align:center;margin-top:20px;"><a href="logout.php" class="btn btn-primary">Continue to Home</a></p>';
-    echo '<script>setTimeout(function(){ window.location.href = "logout.php"; }, 5000);</script>';
 }
 
 ?>
