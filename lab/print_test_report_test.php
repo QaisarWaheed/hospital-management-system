@@ -611,8 +611,15 @@ td {
                             echo '<thead><tr><th style = "text-align: left;">PARAMETERS</th><th>UNIT</th><th>REFERENECE RANGE</th><th class = "text-center" colspan = "2">RESULT</th></tr></thead><tbody>';
                             while($row_test_report = mysqli_fetch_array($run_test_report))
                             {
+                                $lab_reporting_test_normal_value_high_range = '';
                                 $lab_reporting_test_normal_value_high_female_range = '';
                                 $lab_reporting_test_normal_value_high_male_range = '';
+                                $lab_reporting_test_normal_value_low = '';
+                                $lab_reporting_test_normal_value_high = '';
+                                $lab_reporting_test_normal_value_low_female = '';
+                                $lab_reporting_test_normal_value_high_female = '';
+                                $lab_reporting_test_normal_value_low_male = '';
+                                $lab_reporting_test_normal_value_high_male = '';
 
                                 $lab_test_report_result = (string) ($row_test_report['lab_test_report_result'] ?? '');
                                 // NORMAL FOR ALL
@@ -691,11 +698,11 @@ td {
                                     {
                                         $class_detail = "text-dark";    $msg_if_low = '';   $msg_if_hight = ''; 
                                     }
-                                    elseif($lab_reporting_test_normal_value_high_range == 'NIL')
+                                    elseif(($lab_reporting_test_normal_value_high_range ?? '') === 'NIL')
                                     {
                                         $class_detail = "text-danger";    $msg_if_low = '';   $msg_if_hight = ''; 
                                     }
-                                    elseif($lab_reporting_test_normal_value_high_range == '')
+                                    elseif(($lab_reporting_test_normal_value_high_range ?? '') === '')
                                     {
                                         if($patient_gender_id == 2) // MALE
                                         {

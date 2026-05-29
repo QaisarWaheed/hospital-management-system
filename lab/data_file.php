@@ -494,6 +494,15 @@ td {
                             echo '<tr><th>PARAMETERS</th><th>UNIT</th><th>REFERENECE RANGE</th><th>RESULT</th></tr>';
                             while($row_test_report = mysqli_fetch_array($run_test_report))
                             {
+                                $lab_reporting_test_normal_value_high_range = '';
+                                $lab_reporting_test_normal_value_high_female_range = '';
+                                $lab_reporting_test_normal_value_high_male_range = '';
+                                $lab_reporting_test_normal_value_low = '';
+                                $lab_reporting_test_normal_value_high = '';
+                                $lab_reporting_test_normal_value_low_female = '';
+                                $lab_reporting_test_normal_value_high_female = '';
+                                $lab_reporting_test_normal_value_low_male = '';
+                                $lab_reporting_test_normal_value_high_male = '';
 
                                 $lab_test_report_result = $row_test_report['lab_test_report_result'];
                                 // NORMAL FOR ALL
