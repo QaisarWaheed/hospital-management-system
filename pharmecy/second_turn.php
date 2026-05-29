@@ -133,14 +133,21 @@ if (isset($_GET['save_test']))
 	}
 	$check_item = mysqli_num_rows(mysqli_query($con, "SELECT * FROM `item_by_doctor` WHERE item_id = '$reg_item_id' AND user_id = '$user_id' AND status = '1' "));
 	$check_test = mysqli_num_rows(mysqli_query($con, "SELECT id FROM `items` WHERE category_id = '2' AND `id` IN (SELECT item_id FROM `item_register_to_branches` WHERE id = '$reg_item_id') "));
+	$save_category_id = 0;
+	$cat_run = mysqli_query($con, "SELECT category_id FROM items WHERE id IN (SELECT item_id FROM item_register_to_branches WHERE id = '$reg_item_id') LIMIT 1");
+	if ($cat_run && ($cat_row = mysqli_fetch_assoc($cat_run))) {
+		$save_category_id = (int) $cat_row['category_id'];
+	}
 	$insert = "INSERT INTO `item_by_doctor`
 	(`item_id`,      `dose`,  `feed`,  `days`,  `user_id`,  `branch_id`, `fix_dose`, `created`) VALUES 
 	('$reg_item_id', '$dose', '$feed', '$days', '$user_id','$branch_id', '$fix_dose', '$current_date')";
 	if($check_item == 0)
 	{	
-		$get_available_quantity = get_register_item_quantity_from_item_id($reg_item_id);
-		$new_quantity = $get_available_quantity - $quantity;
-		mysqli_query($con, "UPDATE `item_register_to_branches` SET `quantity`= '$new_quantity' WHERE id = '$reg_item_id' ");
+		if (pharmecy_item_requires_stock_check($save_category_id)) {
+			$get_available_quantity = get_register_item_quantity_from_item_id($reg_item_id);
+			$new_quantity = $get_available_quantity - $quantity;
+			mysqli_query($con, "UPDATE `item_register_to_branches` SET `quantity`= '$new_quantity' WHERE id = '$reg_item_id' ");
+		}
 		if (mysqli_query($con, $insert))		{ 
 			if ($check_test == 1) {
 				mysqli_query($con, "INSERT INTO `tests_by_doctor`(`test_id`, `user_id`, `created`) VALUES('$reg_item_id', '$user_id', '$current_date')");

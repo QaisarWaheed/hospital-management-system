@@ -1,6 +1,24 @@
 <?php
 
 /**
+ * True when branch quantity should gate UI (OUT OF STOCK) and stock deductions.
+ * Services/tests/procedures/imaging are not physical stock.
+ */
+function pharmecy_item_requires_stock_check($category_id)
+{
+    static $service_category_ids = array(
+        2,   // TEST / lab
+        3,   // PROCEDURE
+        8,   // USG / imaging
+        20,
+        28,
+        29, 31, 32, 33, 34, 36, 37, 38, 39, 40, 41, 42, 44,
+    );
+
+    return !in_array((int) $category_id, $service_category_ids, true);
+}
+
+/**
  * Price column on items / item_by_doctor for a token payment type.
  */
 function pharmecy_tokan_type_price_column($tokan_type_id)

@@ -318,7 +318,7 @@ function branch_medicines_by_name()
         $reg_item_id = (int) $row['reg_item_id'];
         $item_name = htmlspecialchars($row['item_name'], ENT_QUOTES, 'UTF-8');
         $cat_name = htmlspecialchars($row['cat_name'], ENT_QUOTES, 'UTF-8');
-        $prefix = ((int) $row['qty'] < 1 && (int) $row['category_id'] !== 2) ? 'OUT OF STOCK ' : '';
+        $prefix = ((int) $row['qty'] < 1 && pharmecy_item_requires_stock_check($row['category_id'])) ? 'OUT OF STOCK ' : '';
         $output .= '<option value="'.$reg_item_id.'">'.$prefix.$item_name.' - '.$cat_name.'</option>';
     }
     if ($output === '') {

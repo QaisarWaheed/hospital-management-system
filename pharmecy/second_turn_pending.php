@@ -132,12 +132,17 @@ if (isset($_GET['del_medicine']) && $_GET['del_medicine'] != '')
 	$delete = "DELETE FROM items_by_doctor WHERE id = '$del_id' AND user_id = '$user_id' AND branch_id = '$branch_id' AND `tokan_no` IS NULL ";
 		$reg_item_id = get_branch_item_id_from_items_by_doctor_id($del_id);
 		$quantity = get_item_quantity_from_item_by_docotor_id($del_id);
-		$get_available_quantity = get_register_item_quantity_from_item_id($reg_item_id);
-		$new_quantity = $get_available_quantity + $quantity;
-		$update = "UPDATE `item_register_to_branches` SET `quantity`= quantity+$quantity WHERE id = '$reg_item_id' ";
+		$del_category_id = 0;
+		$cat_run = mysqli_query($con, "SELECT category_id FROM items WHERE id IN (SELECT item_id FROM item_register_to_branches WHERE id = '$reg_item_id') LIMIT 1");
+		if ($cat_run && ($cat_row = mysqli_fetch_assoc($cat_run))) {
+			$del_category_id = (int) $cat_row['category_id'];
+		}
 	if (mysqli_query($con, $delete)) 
 	{
-		mysqli_query($con, $update);
+		if (pharmecy_item_requires_stock_check($del_category_id)) {
+			$update = "UPDATE `item_register_to_branches` SET `quantity`= quantity+$quantity WHERE id = '$reg_item_id' ";
+			mysqli_query($con, $update);
+		}
         header('location: second_turn_pending.php');
         exit(0);
 	}	
@@ -189,9 +194,11 @@ if (isset($_GET['save_test']))
 	('$reg_item_id', '$dose', '$feed', '$days', '$user_id','$branch_id', '$fix_dose', '$current_date', '$purchase', '$general', '$member', '$poor', '$category_id')";
 	if($check_item == 0)
 	{	
-		$get_available_quantity = get_register_item_quantity_from_item_id($reg_item_id);
-		$new_quantity = $get_available_quantity - $quantity;
-		mysqli_query($con, "UPDATE `item_register_to_branches` SET `quantity`= '$new_quantity' WHERE id = '$reg_item_id' ");
+		if (pharmecy_item_requires_stock_check($category_id)) {
+			$get_available_quantity = get_register_item_quantity_from_item_id($reg_item_id);
+			$new_quantity = $get_available_quantity - $quantity;
+			mysqli_query($con, "UPDATE `item_register_to_branches` SET `quantity`= '$new_quantity' WHERE id = '$reg_item_id' ");
+		}
 		if (mysqli_query($con, $insert))		{ 
 			if ($check_test == 1) {
 				mysqli_query($con, "INSERT INTO `tests_by_doctor`(`test_id`, `user_id`, `created`) VALUES('$reg_item_id', '$user_id', '$current_date')");
