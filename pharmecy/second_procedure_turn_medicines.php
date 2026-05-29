@@ -51,10 +51,12 @@ $select_item = "SELECT * FROM `items_by_doctor` WHERE `branch_id` = '$branch_id'
 $run_select_item = mysqli_query($con, $select_item);
 $count_item = mysqli_num_rows($run_select_item);
 
-if (isset($_GET['save']) && $_GET['save'] != '') 
-{
-if($count_item >= 1)
-{
+$is_save_medicine = (isset($_GET['save_medicine']) && $_GET['save_medicine'] !== '')
+    || (isset($_POST['save_medicine']) && $_POST['save_medicine'] !== '')
+    || (isset($_GET['save']) && $_GET['save'] !== '');
+
+if ($is_save_medicine) {
+if ($count_item >= 1) {
 		$previous_tokan_no = $_GET['previous_tokan_no'];
 		$patient_id = $_GET['patient_id'];
 		$doctor_id = $_GET['doctor_id'];
@@ -433,10 +435,8 @@ else
 
 	<div class="col-md-2">
 		<br>
-<?php
-if (($count_item >= 1 && $limit > ($limit_amount + $cart_cash)) || $branch_id == 15)
-{ ?>
-        <input type="submit" id="save" onclick="myDisplayGoneSave()" value="SAVE" name="save" class="btn btn-sm btn-primary">
+<?php if ($tokan_no > 0 && $patient_id > 0 && $count_item >= 1) { ?>
+        <button type="submit" id="save_medicine" name="save_medicine" value="1" class="btn btn-success" onclick="myDisplayGoneSave()">SAVE</button>
 <?php } ?>
 		<input type="reset" value="CLEAR" name="clear" class="btn btn-sm btn-warning">
 	</div>
@@ -486,6 +486,9 @@ function myDisplayGone() {
 </script> 
 <script>
 function myDisplayGoneSave() {
-  document.getElementById("save").style.display = "none";
+  var el = document.getElementById("save_medicine");
+  if (el) {
+    el.style.display = "none";
+  }
 }
 </script>
