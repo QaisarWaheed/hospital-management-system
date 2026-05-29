@@ -1,27 +1,33 @@
-<script>
-window.opener.location.href = "lab_test_all_reocrds.php";    
-</script>
 <?php
-    include('includes/config.php');
-    include('includes/connect.php');
-
-    // Bootstrap turns display_errors off; re-enable for this debug page.
     ini_set('display_errors', '1');
     ini_set('display_startup_errors', '1');
     error_reporting(E_ALL);
+
     register_shutdown_function(function () {
         $e = error_get_last();
         if ($e && in_array($e['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR], true)) {
-            echo '<pre style="color:red;padding:1em;">Fatal: ' . htmlspecialchars($e['message'])
-                . ' in ' . htmlspecialchars($e['file']) . ':' . (int) $e['line'] . '</pre>';
+            $msg = 'Fatal: ' . $e['message'] . ' in ' . $e['file'] . ':' . $e['line'];
+            @file_put_contents(__DIR__ . '/print_test_report_test_error.log', date('c') . ' ' . $msg . "\n", FILE_APPEND);
+            if (!headers_sent()) {
+                header('Content-Type: text/html; charset=utf-8');
+            }
+            echo '<pre style="color:red;padding:1em;white-space:pre-wrap;">' . htmlspecialchars($msg) . '</pre>';
         }
     });
 
-    if (!function_exists('str_contains')) {
-        function str_contains($haystack, $needle)
-        {
-            return $needle === '' || strpos((string) $haystack, (string) $needle) !== false;
+    function lab_str_contains($haystack, $needle)
+    {
+        return $needle === '' || strpos((string) ($haystack ?? ''), (string) $needle) !== false;
+    }
+
+    function lab_explode_range($value)
+    {
+        $value = trim((string) ($value ?? ''));
+        if ($value === '') {
+            return ['', ''];
         }
+        $parts = explode('-', $value, 2);
+        return [$parts[0], $parts[1] ?? $parts[0]];
     }
 
     function format_lab_datetime($value, $format = 'h:i:s A d-M-Y')
@@ -32,6 +38,36 @@ window.opener.location.href = "lab_test_all_reocrds.php";
         $dt = date_create($value);
         return $dt ? date_format($dt, $format) : 'N/A';
     }
+
+    if (isset($_GET['diag'])) {
+        header('Content-Type: text/plain; charset=utf-8');
+        try {
+            include('includes/config.php');
+            echo "config ok\n";
+            include('includes/connect.php');
+            echo "connect ok, user=" . ($lab_user_id ?? '?') . "\n";
+            $token_no = $_GET['token_no'] ?? '';
+            echo "token_no=$token_no\n";
+            $q = mysqli_query($con, "SELECT COUNT(*) AS c FROM lab_tests WHERE token_no = '$token_no' AND lab_test_status_id >= 6");
+            $r = $q ? mysqli_fetch_assoc($q) : null;
+            echo "approved tests: " . ($r['c'] ?? 'query failed') . "\n";
+        } catch (Throwable $t) {
+            echo "ERROR: " . $t->getMessage() . "\n" . $t->getFile() . ':' . $t->getLine();
+        }
+        exit;
+    }
+
+    include('includes/config.php');
+    include('includes/connect.php');
+
+    ini_set('display_errors', '1');
+    ini_set('display_startup_errors', '1');
+    error_reporting(E_ALL);
+?>
+<script>
+window.opener.location.href = "lab_test_all_reocrds.php";    
+</script>
+<?php
 if(isset($_GET['token_no']) && $_GET['token_no'] != '')
 {
     $token_no = $_GET['token_no'];
@@ -56,7 +92,11 @@ if(isset($_GET['token_no']) && $_GET['token_no'] != '')
     $pixel_Size = 10;
     $frame_Size = 10;
     if (!is_dir('qr/')) { mkdir('qr/', 0777, true); }
-    QRcode::png($token_no, $file, $ecc, $pixel_Size, $frame_Size);    
+    try {
+        QRcode::png($token_no, $file, $ecc, $pixel_Size, $frame_Size);
+    } catch (Throwable $qrEx) {
+        @file_put_contents(__DIR__ . '/print_test_report_test_error.log', date('c') . ' QR: ' . $qrEx->getMessage() . "\n", FILE_APPEND);
+    }
 }
 function header_data($token_no)
 {
@@ -90,7 +130,7 @@ function header_data($token_no)
         </div>
     </div>';
 
-    $select = "SELECT DISTINCT lab_tests.sample_date_time, items.name AS item_name, lab_tests.reporting_date_time, patients.name, patients.phone, patients.age, patients.cnic, patients.gender, genders.gender_title, tokans.created AS token_created_at, users.id AS sample_collected_by_id, users.u_name AS sample_collected_by, doctor.u_name AS doctor_name, reception_center.address AS reception_center_location FROM `tokans` INNER JOIN patients ON tokans.patient_id = patients.id INNER JOIN genders ON patients.gender = genders.gender_id INNER JOIN lab_tests ON tokans.id = lab_tests.token_no INNER JOIN users ON lab_tests.user_id = users.id INNER JOIN users doctor ON tokans.doctor_id = doctor.id INNER JOIN items ON lab_tests.item_id = items.id INNER JOIN branchs reception_center ON tokans.branch_id = reception_center.id WHERE tokans.id = '$token_no' LIMIT 0,1 ";
+    $select = "SELECT DISTINCT lab_tests.sample_date_time, items.name AS item_name, lab_tests.reporting_date_time, patients.name, patients.phone, patients.age, patients.cnic, patients.gender, genders.gender_title, tokans.created AS token_created_at, users.id AS sample_collected_by_id, users.u_name AS sample_collected_by, doctor.u_name AS doctor_name, reception_center.address AS reception_center_location FROM `tokans` INNER JOIN patients ON tokans.patient_id = patients.id INNER JOIN genders ON patients.gender = genders.gender_id INNER JOIN lab_tests ON tokans.id = lab_tests.token_no INNER JOIN users ON lab_tests.user_id = users.id LEFT JOIN users doctor ON tokans.doctor_id = doctor.id INNER JOIN items ON lab_tests.item_id = items.id INNER JOIN branchs reception_center ON tokans.branch_id = reception_center.id WHERE tokans.id = '$token_no' LIMIT 1 ";
     $run = mysqli_query($con, $select);
     if(mysqli_num_rows($run) == 1)
     {
@@ -330,6 +370,7 @@ td {
     <div class = "row">
         <div class = "col-sm-12 text-center">
             <?php
+            try {
             $counter = 0;
             $data = 0;
             $data_3_4 = 0;
@@ -345,10 +386,8 @@ td {
                     $lab_test_id = $row_token['lab_test_id'];
                     $test_category_title = $row_token['test_category_title'];
                     $count_tests = $row_token['3'];
-                    $report_test_name = $row_token['name'];
-                    $report_test_name = str_replace('E1 ', '', $report_test_name);
-                    $report_test_name = str_replace('E2 ', '', $report_test_name);
-                    $report_test_name = str_replace('E3 ', '', $report_test_name);
+                    $report_test_name = (string) ($row_token['name'] ?? '');
+                    $report_test_name = str_replace(['E1 ', 'E2 ', 'E3 '], '', $report_test_name);
                     
                     $patient_gender_id = $GLOBALS['patient_gender_id'];
                     
@@ -357,7 +396,7 @@ td {
                         $data = $data + 2;
                         if($is_display == 0)
                         {
-                            echo '<div class = "d-none d-print-block">'.header_data($token_no).'</div>';
+                            echo '<div class = "report-header-block">'.header_data($token_no).'</div>';
                             $is_display = 1;
                         }
                         $select_test_report = "SELECT * FROM `lab_test_reports` INNER JOIN lab_reporting_tests ON lab_test_reports.lab_reporting_test_id = lab_reporting_tests.lab_reporting_test_id INNER JOIN lab_test_units ON lab_reporting_tests.lab_test_unit_id = lab_test_units.lab_test_unit_id WHERE lab_reporting_test_status = '1' AND lab_test_reports.lab_test_id = '$lab_test_id' ";
@@ -368,7 +407,7 @@ td {
                             echo '<caption style = "color: black; caption-side: top;"><h4 class ="text-left">'.$report_test_name.' - '.$test_category_title.'</h4></caption>';
                             while($row_test_report = mysqli_fetch_array($run_test_report))
                             {
-                                $lab_test_report_result = $row_test_report['lab_test_report_result'];
+                                $lab_test_report_result = (string) ($row_test_report['lab_test_report_result'] ?? '');
                                 
                                 // NORMAL FOR ALL
                                 $reference_range = $row_test_report['lab_reporting_test_normal_value'];
@@ -383,23 +422,17 @@ td {
                                 $lab_reporting_test_normal_value_male = $reference_range_male;
                                 if($lab_reporting_test_normal_value != '')
                                 {
-                                    $normal_values_array = explode('-', $lab_reporting_test_normal_value);
-                                    $lab_reporting_test_normal_value_low = $normal_values_array[0];
-                                    $lab_reporting_test_normal_value_high = $normal_values_array[1];
+                                    list($lab_reporting_test_normal_value_low, $lab_reporting_test_normal_value_high) = lab_explode_range($lab_reporting_test_normal_value);
                                 }
                                 else
                                 {
                                     if($reference_range_female != '')
                                     {
-                                        $normal_values_array = explode('-', $lab_reporting_test_normal_value_female);
-                                        $lab_reporting_test_normal_value_low = $normal_values_array[0];
-                                        $lab_reporting_test_normal_value_high = $normal_values_array[1];
+                                        list($lab_reporting_test_normal_value_low, $lab_reporting_test_normal_value_high) = lab_explode_range($lab_reporting_test_normal_value_female);
                                     } 
                                     else
                                     {
-                                        $normal_values_array = explode('-', $lab_reporting_test_normal_value_male);
-                                        $lab_reporting_test_normal_value_low = $normal_values_array[0];
-                                        $lab_reporting_test_normal_value_high = $normal_values_array[1];
+                                        list($lab_reporting_test_normal_value_low, $lab_reporting_test_normal_value_high) = lab_explode_range($lab_reporting_test_normal_value_male);
                                     }                                    
                                 }
                                 $lab_test_unit_value = $row_test_report['lab_test_unit_value'];
@@ -474,12 +507,12 @@ td {
                             echo '</table>';
                         } 
                     }
-                    elseif(str_contains($report_test_name, 'PCR'))
+                    elseif(lab_str_contains($report_test_name, 'PCR'))
                     {
                         $data = $data + 2;
                         if($is_display == 0)
                         {
-                            echo '<div class = "d-none d-print-block">'.header_data($token_no).'</div>';
+                            echo '<div class = "report-header-block">'.header_data($token_no).'</div>';
                             $is_display = 1;
                         }
                         $select_test_report = "SELECT * FROM `lab_test_reports` INNER JOIN lab_reporting_tests ON lab_test_reports.lab_reporting_test_id = lab_reporting_tests.lab_reporting_test_id INNER JOIN lab_test_units ON lab_reporting_tests.lab_test_unit_id = lab_test_units.lab_test_unit_id WHERE lab_reporting_test_status = '1' AND lab_test_reports.lab_test_id = '$lab_test_id' ";
@@ -490,14 +523,12 @@ td {
                             echo '<div class = "col-sm-7" style = "color: black;"><h4 class ="text-left">'.$report_test_name.' - '.$test_category_title.'</h4></div>';
                             while($row_test_report = mysqli_fetch_array($run_test_report))
                             {
-                                $lab_test_report_result = $row_test_report['lab_test_report_result'];
-                                $parameter_detail = $row_test_report['parameter_detail'];
+                                $lab_test_report_result = (string) ($row_test_report['lab_test_report_result'] ?? '');
+                                $parameter_detail = $row_test_report['parameter_detail'] ?? '';
                                 // NORMAL FOR ALL
                                 $reference_range = $row_test_report['lab_reporting_test_normal_value'];
                                 $lab_reporting_test_normal_value = $reference_range;
-                                $normal_values_array = explode('-', $lab_reporting_test_normal_value);
-                                $lab_reporting_test_normal_value_low = $normal_values_array[0] ?? '';
-                                $lab_reporting_test_normal_value_high = $normal_values_array[1] ?? $normal_values_array[0] ?? '';
+                                list($lab_reporting_test_normal_value_low, $lab_reporting_test_normal_value_high) = lab_explode_range($lab_reporting_test_normal_value);
                                 
                                 $lab_test_unit_value = $row_test_report['lab_test_unit_value'];
 
@@ -520,27 +551,27 @@ td {
                             $data++;
                             if($is_display == 0)
                             {
-                                echo '<div class = "d-none d-print-block">'.header_data($token_no).'</div>';
+                                echo '<div class = "report-header-block">'.header_data($token_no).'</div>';
                                 $is_display = 1;
                             }
                             if($data%7 == 0 && $data > 0)
                             {
                                 $data++;
                                 echo '<div style="break-after:page"></div>';
-                                echo '<div class = "d-none d-print-block">'.header_data($token_no).'</div>';
+                                echo '<div class = "report-header-block">'.header_data($token_no).'</div>';
                             }
                         }
                         elseif ($count_tests == 3 || $count_tests == 4 || $count_tests == 5) 
                         {
                             if($is_display == 0)
                             {
-                                echo '<div class = "d-none d-print-block">'.header_data($token_no).'</div>';
+                                echo '<div class = "report-header-block">'.header_data($token_no).'</div>';
                                 $is_display = 1;
                             }
                             elseif($data_3_4 == 0 && $data > 3)
                             {
                                 echo '<div style="break-after:page"></div>';
-                                echo '<div class = "d-none d-print-block">'.header_data($token_no).'</div>';
+                                echo '<div class = "report-header-block">'.header_data($token_no).'</div>';
                                 if($data_3_4 == 3)
                                 {
                                     $data_3_4 = 0;
@@ -552,7 +583,7 @@ td {
                         {
                             if($is_display == 0)
                             {
-                                echo '<div class = "d-none d-print-block">'.header_data($token_no).'</div>';
+                                echo '<div class = "report-header-block">'.header_data($token_no).'</div>';
                                 $is_display = 1;
                                 $data = $data + 3;
                             }
@@ -566,7 +597,7 @@ td {
                             else
                             {
                                 echo '<div style="break-after:page"></div>';
-                                echo '<div class = "d-none d-print-block">'.header_data($token_no).'</div>';
+                                echo '<div class = "report-header-block">'.header_data($token_no).'</div>';
                             }
                         }
                         $select_test_report = "SELECT * FROM `lab_test_reports` INNER JOIN lab_reporting_tests ON lab_test_reports.lab_reporting_test_id = lab_reporting_tests.lab_reporting_test_id INNER JOIN lab_test_units ON lab_reporting_tests.lab_test_unit_id = lab_test_units.lab_test_unit_id WHERE lab_reporting_test_status = '1' AND lab_test_reports.lab_test_id = '$lab_test_id' ";
@@ -580,8 +611,10 @@ td {
                             echo '<thead><tr><th style = "text-align: left;">PARAMETERS</th><th>UNIT</th><th>REFERENECE RANGE</th><th class = "text-center" colspan = "2">RESULT</th></tr></thead><tbody>';
                             while($row_test_report = mysqli_fetch_array($run_test_report))
                             {
+                                $lab_reporting_test_normal_value_high_female_range = '';
+                                $lab_reporting_test_normal_value_high_male_range = '';
 
-                                $lab_test_report_result = $row_test_report['lab_test_report_result'];
+                                $lab_test_report_result = (string) ($row_test_report['lab_test_report_result'] ?? '');
                                 // NORMAL FOR ALL
                                 $reference_range = $row_test_report['lab_reporting_test_normal_value'];
                                 $lab_reporting_test_normal_value = $reference_range;
@@ -595,9 +628,9 @@ td {
                                 $lab_reporting_test_normal_value_male = $reference_range_male;
                                 if($lab_reporting_test_normal_value != '')
                                 {
-                                    $normal_values_array = explode('-', $lab_reporting_test_normal_value);
-                                    $lab_reporting_test_normal_value_low = strtoupper($normal_values_array[0]);
-                                    $lab_reporting_test_normal_value_high = strtoupper($normal_values_array[1]);
+                                    list($lab_reporting_test_normal_value_low, $lab_reporting_test_normal_value_high) = lab_explode_range($lab_reporting_test_normal_value);
+                                    $lab_reporting_test_normal_value_low = strtoupper($lab_reporting_test_normal_value_low);
+                                    $lab_reporting_test_normal_value_high = strtoupper($lab_reporting_test_normal_value_high);
                                     if($lab_reporting_test_normal_value_low == "NIL" OR $lab_reporting_test_normal_value_low == "NIL " OR $lab_reporting_test_normal_value_low == "NEGATIVE")
                                     {
                                         $lab_reporting_test_normal_value_high_range = $lab_reporting_test_normal_value_low;
@@ -611,16 +644,12 @@ td {
                                 {
                                     if($reference_range_female != '')
                                     {
-                                        $normal_values_array = explode('-', $lab_reporting_test_normal_value_female);
-                                        $lab_reporting_test_normal_value_low_female = $normal_values_array[0];
-                                        $lab_reporting_test_normal_value_high_female = $normal_values_array[1];
+                                        list($lab_reporting_test_normal_value_low_female, $lab_reporting_test_normal_value_high_female) = lab_explode_range($lab_reporting_test_normal_value_female);
                                         $lab_reporting_test_normal_value_high_female_range = 'F: ' .$lab_reporting_test_normal_value_low_female.' - '.$lab_reporting_test_normal_value_high_female;
                                     } 
                                     if($reference_range_male != '')
                                     {
-                                        $normal_values_array = explode('-', $lab_reporting_test_normal_value_male);
-                                        $lab_reporting_test_normal_value_low_male = $normal_values_array[0];
-                                        $lab_reporting_test_normal_value_high_male = $normal_values_array[1];
+                                        list($lab_reporting_test_normal_value_low_male, $lab_reporting_test_normal_value_high_male) = lab_explode_range($lab_reporting_test_normal_value_male);
                                         if($lab_reporting_test_normal_value_high_female_range == '')
                                         {                                        
                                             $lab_reporting_test_normal_value_high_male_range = 'M: ' .$lab_reporting_test_normal_value_low_male.' - '.$lab_reporting_test_normal_value_high_male;
@@ -635,7 +664,7 @@ td {
                                 echo '<tr>';
                                     echo '<td class ="text-left  h6">'.$row_test_report['parameter_name'].'</td>';
                                     echo '<td class = "h6">'.$row_test_report['lab_test_unit_value'].'</td>';
-                                    echo '<td class = "h6">'.str_replace(',', '<br>', $row_test_report['lab_reporting_test_normal_value'].$lab_reporting_test_normal_value_high_female_range.$lab_reporting_test_normal_value_high_male_range).'</td>';
+                                    echo '<td class = "h6">'.str_replace(',', '<br>', (string)($row_test_report['lab_reporting_test_normal_value'] ?? '').($lab_reporting_test_normal_value_high_female_range ?? '').($lab_reporting_test_normal_value_high_male_range ?? '')).'</td>';
                                     if($patient_gender_id == 1)
                                     {
                                         $gender = "female";
@@ -645,20 +674,20 @@ td {
                                         $gender = "male";
                                     }
                                     
-                                    $lab_test_report_result = strtoupper($lab_test_report_result);
+                                    $lab_test_report_result = strtoupper((string) ($lab_test_report_result ?? ''));
                                     if($lab_test_report_result == 'NIL' || $lab_test_report_result == 'TRACES' || $lab_test_report_result == 'NEGATIVE' || $lab_test_report_result == 'NEGATIVE ' || $lab_test_report_result == 'POSITIVE' || $lab_test_report_result == '-')
                                     {
                                         $class_detail = "text-dark";    $msg_if_low = '';   $msg_if_hight = ''; 
                                     }
-                                    elseif(str_contains($lab_test_report_result, '-'))
+                                    elseif(lab_str_contains($lab_test_report_result, '-'))
                                     {
                                         $class_detail = "text-dark";    $msg_if_low = '';   $msg_if_hight = ''; 
                                     }
-                                    elseif(str_contains($lab_test_report_result, '+') || str_contains($lab_test_report_result, 'POSITIVE') ||str_contains($lab_test_report_result, 'RED') || str_contains($lab_test_report_result, 'DARK BROWN') || str_contains($lab_test_report_result, 'ORANGE') || str_contains($lab_test_report_result, 'BLUE') || str_contains($lab_test_report_result, 'GREEN') || str_contains($lab_test_report_result, 'CLOUDY') || str_contains($lab_test_report_result, 'MILKY'))
+                                    elseif(lab_str_contains($lab_test_report_result, '+') || lab_str_contains($lab_test_report_result, 'POSITIVE') ||lab_str_contains($lab_test_report_result, 'RED') || lab_str_contains($lab_test_report_result, 'DARK BROWN') || lab_str_contains($lab_test_report_result, 'ORANGE') || lab_str_contains($lab_test_report_result, 'BLUE') || lab_str_contains($lab_test_report_result, 'GREEN') || lab_str_contains($lab_test_report_result, 'CLOUDY') || lab_str_contains($lab_test_report_result, 'MILKY'))
                                     {
                                         $class_detail = "text-danger";    $msg_if_low = '';   $msg_if_hight = ''; 
                                     } 
-                                    elseif(str_contains($row_test_report['lab_reporting_test_normal_value'], 'male') ||str_contains($row_test_report['lab_reporting_test_normal_value'], 'WEEKS') ||str_contains($lab_test_report_result, 'NEGATIVE') || str_contains($lab_test_report_result, 'POSITIVE') || str_contains($lab_test_report_result, 'CLEAR') || str_contains($lab_test_report_result, 'PALE YELLOW') || str_contains($lab_test_report_result, 'YELLOW') || str_contains($lab_test_report_result, 'DARK YELLOW') || str_contains($lab_test_report_result, 'DARK AMBER'))
+                                    elseif(lab_str_contains($row_test_report['lab_reporting_test_normal_value'], 'male') ||lab_str_contains($row_test_report['lab_reporting_test_normal_value'], 'WEEKS') ||lab_str_contains($lab_test_report_result, 'NEGATIVE') || lab_str_contains($lab_test_report_result, 'POSITIVE') || lab_str_contains($lab_test_report_result, 'CLEAR') || lab_str_contains($lab_test_report_result, 'PALE YELLOW') || lab_str_contains($lab_test_report_result, 'YELLOW') || lab_str_contains($lab_test_report_result, 'DARK YELLOW') || lab_str_contains($lab_test_report_result, 'DARK AMBER'))
                                     {
                                         $class_detail = "text-dark";    $msg_if_low = '';   $msg_if_hight = ''; 
                                     }
@@ -731,6 +760,11 @@ td {
                         }                      
                     }
                 }
+            }
+            } catch (Throwable $reportEx) {
+                $errMsg = $reportEx->getMessage() . ' in ' . $reportEx->getFile() . ':' . $reportEx->getLine();
+                @file_put_contents(__DIR__ . '/print_test_report_test_error.log', date('c') . ' ' . $errMsg . "\n", FILE_APPEND);
+                echo '<div class="alert alert-danger text-left"><strong>Report error:</strong> ' . htmlspecialchars($errMsg) . '</div>';
             }
             ?>
         </div>
