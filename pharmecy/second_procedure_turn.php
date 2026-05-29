@@ -19,17 +19,20 @@ if (isset($_GET['save']) && $_GET['save'] != '') {
     }
 
     $reg_item_id = (int) ($_GET['reg_item_id'] ?? 0);
+    $procedure_opts = array(
+        'fix_dose' => (int) ($_GET['fix_dose'] ?? 0),
+        'dose' => (int) ($_GET['dose'] ?? 1),
+        'feed' => (int) ($_GET['feed'] ?? 1),
+        'days' => (int) ($_GET['days'] ?? 1),
+    );
+
     if (pharmecy_procedure_turn_cart_count($con, $user_id, $branch_id) < 1 && $reg_item_id > 0) {
-        pharmecy_procedure_turn_add_cart_item($con, $reg_item_id, $user_id, $branch_id, $current_date, array(
-            'fix_dose' => (int) ($_GET['fix_dose'] ?? 0),
-            'dose' => (int) ($_GET['dose'] ?? 1),
-            'feed' => (int) ($_GET['feed'] ?? 1),
-            'days' => (int) ($_GET['days'] ?? 1),
-        ));
+        pharmecy_procedure_turn_add_cart_item($con, $reg_item_id, $user_id, $branch_id, $current_date, $procedure_opts);
     }
 
     $count_item = pharmecy_procedure_turn_cart_count($con, $user_id, $branch_id);
-    if ($count_item >= 1) {
+    $has_procedure = ($count_item >= 1 || $reg_item_id > 0);
+    if ($has_procedure) {
         $patient_id = (int) $_GET['patient_id'];
         $doctor_id = (int) $_GET['doctor_id'];
         $tokan_type = (int) $_GET['tokan_payment'];
@@ -44,7 +47,11 @@ if (isset($_GET['save']) && $_GET['save'] != '') {
         (NULL, '$patient_id','$doctor_id', '$tokan_type', '$cash', '$cash_received', '$user_id', '$token_pre', '1', '$current_date', '$branch_id')";
         if (mysqli_query($con, $insert)) {
             $tokan_no = mysqli_insert_id($con);
-            pharmecy_finalize_procedure_cart_items($con, $tokan_no, $user_id, $branch_id, $doctor_id, $tokan_type);
+            if ($count_item >= 1) {
+                pharmecy_finalize_procedure_cart_items($con, $tokan_no, $user_id, $branch_id, $doctor_id, $tokan_type);
+            } elseif ($reg_item_id > 0) {
+                pharmecy_attach_procedure_to_token($con, $tokan_no, $reg_item_id, $user_id, $branch_id, $doctor_id, $tokan_type, $current_date, $procedure_opts);
+            }
             $final_cash = pharmecy_token_bill_amount($con, $tokan_no);
             if ($final_cash <= 0) {
                 $final_cash = (float) $cash;
@@ -64,7 +71,7 @@ if (isset($_GET['save']) && $_GET['save'] != '') {
         header('Location: second_procedure_turn.php?search_tokan_no=' . urlencode((string) $token_pre) . '&save_error=1');
         exit;
     }
-    header('Location: second_procedure_turn.php?search_tokan_no=' . urlencode((string) $token_pre) . '&save_error=empty_cart');
+    header('Location: second_procedure_turn.php?search_tokan_no=' . urlencode((string) $token_pre) . '&save_error=no_procedure');
     exit;
 }
 
@@ -129,6 +136,7 @@ if (isset($_GET['search_tokan_no']) && $_GET['search_tokan_no'] !== '') {
 }
 
 $initial_cart_amount = (int) pharmecy_cart_amount_by_tokan_type($con, $user_id, $branch_id, 104);
+$cart_item_count = pharmecy_procedure_turn_cart_count($con, $user_id, $branch_id);
 $next_token_display = pharmecy_next_tokan_no_fast($con);
 $cart_options_html = pharmecy_medicine_selected_cart_options_html($con, (int) $branch_id, $user_id);
 
@@ -170,6 +178,13 @@ include 'includes/head.php';
     	<div class="col-md-12" style="text-align: center;">
     		<label><h1>Patient Medicine</h1></label>
     	</div>
+<?php if (isset($_GET['save_error']) && $_GET['save_error'] === 'no_procedure') { ?>
+        <div class="col-md-12"><div class="alert alert-danger">Please select a procedure from the dropdown before saving.</div></div>
+<?php } elseif (isset($_GET['save_error']) && $_GET['save_error'] !== '') { ?>
+        <div class="col-md-12"><div class="alert alert-danger">Could not save procedure token. Please try again.</div></div>
+<?php } elseif (isset($_GET['cart_dup']) && $_GET['cart_dup'] !== '') { ?>
+        <div class="col-md-12"><div class="alert alert-warning">Procedure not added — select a procedure from the list first, or it is already in the cart.</div></div>
+<?php } ?>
         <div class="col-md-12">
         	<form name="search" method="get">
         		<div class="row">
@@ -185,11 +200,15 @@ include 'includes/head.php';
         	</form>
         </div>
     </div>
-<form method="get">
+<form method="get" id="addProcedureForm" onsubmit="return validateAddProcedure(this);">
 <div class="row">
 <div class="col-md-12">
 	<fieldset class="border p-2">
 	<legend style="font-size: 14px;" class="w-auto">SELECT TEST OR MEDICINE OR PROCEDURE</legend>
+	<div class="alert alert-info" style="margin-bottom: 10px; font-size: 14px;">
+		<strong>Step 1:</strong> Select a procedure from the dropdown below.<br>
+		<strong>Step 2:</strong> Click <strong>ADD</strong> to add it to the cart (recommended), <em>or</em> go straight to <strong>SAVE</strong> — the selected procedure will be added automatically.
+	</div>
 	<div class="row">
 
 	<div class="col-md-6">
@@ -214,7 +233,7 @@ include 'includes/head.php';
 	</div>
 </div>
 <div class="col-md-12" style="text-align: right;" >
-	<input type="submit" onclick="myDisplayGoneAdd()" id = "add" name="save_test" value="ADD" class="btn btn-sm btn-primary">
+	<input type="submit" onclick="myDisplayGoneAdd()" id="add" name="save_test" value="ADD PROCEDURE" class="btn btn-lg btn-success" style="font-weight: bold; min-width: 180px;">
 	<input type="submit" name="clear" value="CLEAR" class="btn btn-sm btn-warning">
 </div>
 
@@ -222,9 +241,10 @@ include 'includes/head.php';
    	</div>
    	<div class="col-md-6">
    		<input type="hidden" id="tokan_no" name="tokan_no" value="<?php echo (int) $search_tokan_no; ?>">
-   		<select id="mySelect" ondblclick="del_medicine();" class="form-control" size="6">
+   		<select id="mySelect" ondblclick="del_medicine();" class="form-control" size="6" title="Cart — double-click to remove">
    			<?php echo $cart_options_html; ?>
    		</select>
+   		<small class="text-muted"><?php echo (int) $cart_item_count; ?> item(s) in cart</small>
    	</div>
 
    </div>
@@ -301,7 +321,8 @@ if ($gender == 1) {
 	<div class="col-md-2">
 		<br>
 <?php if ($has_registration_token) { ?>
-        <input type="submit" id="save" onclick="myDisplayGoneSave()" value="SAVE" name="save" class="btn btn-sm btn-primary">
+        <input type="submit" id="save" onclick="myDisplayGoneSave()" value="SAVE" name="save" class="btn btn-lg btn-primary" style="font-weight: bold; min-width: 120px;">
+        <small class="text-muted d-block">Select procedure above, then SAVE</small>
 <?php } ?>
 		<input type="reset" value="CLEAR" name="clear" class="btn btn-sm btn-warning">
 	</div>
@@ -323,13 +344,26 @@ if ($gender == 1) {
 <script type="text/javascript">
 var procedureSelectize;
 var initialCartAmount = <?php echo (int) $initial_cart_amount; ?>;
+var cartItemCount = <?php echo (int) $cart_item_count; ?>;
+
+function syncProcedureSelectValue() {
+  if (!procedureSelectize) {
+    return '';
+  }
+  var val = procedureSelectize.getValue() || '';
+  $('#select_item').val(val);
+  return val;
+}
 
 function initProcedureSelect() {
   if (procedureSelectize) {
     procedureSelectize.destroy();
   }
   procedureSelectize = $('#select_item').selectize({
-    sortField: 'text'
+    sortField: 'text',
+    onChange: function () {
+      syncProcedureToSaveForm();
+    }
   })[0].selectize;
 }
 
@@ -338,9 +372,6 @@ $(document).ready(function () {
     .done(function (html) {
       $('#select_item').html('<option value="">Select Procedure</option>' + html);
       initProcedureSelect();
-      if (procedureSelectize) {
-        procedureSelectize.on('change', syncProcedureToSaveForm);
-      }
       syncProcedureToSaveForm();
     })
     .fail(function () {
@@ -353,10 +384,8 @@ $(document).ready(function () {
 });
 
 function syncProcedureToSaveForm() {
-  var regItemId = '';
-  if (procedureSelectize) {
-    regItemId = procedureSelectize.getValue() || '';
-  } else {
+  var regItemId = syncProcedureSelectValue();
+  if (!regItemId) {
     var sel = document.getElementById('select_item');
     if (sel) {
       regItemId = sel.value;
@@ -371,6 +400,22 @@ function syncProcedureToSaveForm() {
   if (saveFix && fixEl) {
     saveFix.value = fixEl.value;
   }
+}
+
+function validateAddProcedure(form) {
+  var regItemId = syncProcedureSelectValue();
+  if (!regItemId) {
+    var sel = form.reg_item_id || document.getElementById('select_item');
+    if (sel) {
+      regItemId = sel.value;
+    }
+  }
+  if (!regItemId) {
+    alert('Please select a procedure from the dropdown first.');
+    return false;
+  }
+  syncProcedureToSaveForm();
+  return true;
 }
 </script>
 <script type="text/javascript">
@@ -410,6 +455,12 @@ function myDisplayGoneSave() {
 <script type="text/javascript">
 function checknumber(theForm) {
   syncProcedureToSaveForm();
+  var regId = document.getElementById('save_reg_item_id');
+  var hasProcedure = regId && regId.value !== '';
+  if (cartItemCount < 1 && !hasProcedure) {
+    alert('Please select a procedure from the dropdown. You can click ADD first, or SAVE will add it automatically.');
+    return false;
+  }
   if (parseInt(theForm.cash.value, 10) > parseInt(theForm.cash_received.value, 10)) {
     alert('enter the correct amount');
     return false;
