@@ -146,7 +146,10 @@ if (mysqli_num_rows($select_branch_pending) > 0)
 		$created = $row_branch_data['created'];
 		$total_received = $recieved_amount+$pending_received;
         $pending_amount = intval($total_amount-($total_received));
-        $medicine_limit = intval($total_amount/100*(25));
+        $medicine_limit = pharmecy_procedure_medicine_limit_for_token($con, (int) $token_no);
+        if ($medicine_limit <= 0) {
+            $medicine_limit = intval($total_amount / 100 * 25);
+        }
 echo '
 <tr>
 	<td>'.$s.'</td>

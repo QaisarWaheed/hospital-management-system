@@ -48,8 +48,12 @@ if ($tokan_no > 0) {
         $name = (string) $procedure_turn['name'];
         $age = (string) $procedure_turn['age'];
         $gender = (int) $procedure_turn['gender'];
-        $limit = (int) $procedure_turn['medicine_limit'];
         $issued_medicine = (int) $procedure_turn['issued_medicine'];
+    }
+    $cash_run = mysqli_query($con, "SELECT cash FROM tokans WHERE id = '$tokan_no' LIMIT 1");
+    if ($cash_run && ($cash_row = mysqli_fetch_assoc($cash_run))) {
+        $cash = (float) ($cash_row['cash'] ?? 0);
+        $limit = intval($cash / 100 * 25);
     }
 }
 

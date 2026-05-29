@@ -594,33 +594,78 @@ function pharmecy_procedure_limits_token_column($con)
 }
 
 /**
- * Catalog items.id for the procedure line on this token.
+ * Procedure line on token: catalog items.id + branch register id (item_by_doctor.item_id).
+ *
+ * @return array{catalog_item_id: int, register_item_id: int}
  */
-function pharmecy_procedure_catalog_item_id_for_token($con, $token_no)
+function pharmecy_procedure_item_ids_for_token($con, $token_no)
 {
+    $empty = array('catalog_item_id' => 0, 'register_item_id' => 0);
     $token_no = (int) $token_no;
     if ($token_no < 1) {
-        return 0;
+        return $empty;
     }
+
     $cats = pharmecy_procedure_category_ids_sql_in();
     $run = mysqli_query(
         $con,
-        "SELECT irb.item_id AS catalog_item_id
+        "SELECT irb.item_id AS catalog_item_id, ibd.item_id AS register_item_id
         FROM item_by_doctor ibd
         INNER JOIN item_register_to_branches irb ON ibd.item_id = irb.id
+        INNER JOIN items i ON irb.item_id = i.id
+        INNER JOIN categories c ON i.category_id = c.id
         WHERE ibd.tokan_no = '$token_no'
-        AND ibd.category_id IN ($cats)
+        AND (
+            ibd.category_id IN ($cats)
+            OR UPPER(c.name) LIKE '%PROCEDURE%'
+            OR UPPER(c.name) LIKE '%OPERATION%'
+            OR UPPER(c.name) LIKE '%SURGERY%'
+        )
         ORDER BY ibd.id ASC
         LIMIT 1"
     );
     if ($run && ($row = mysqli_fetch_assoc($run))) {
-        return (int) ($row['catalog_item_id'] ?? 0);
+        return array(
+            'catalog_item_id' => (int) ($row['catalog_item_id'] ?? 0),
+            'register_item_id' => (int) ($row['register_item_id'] ?? 0),
+        );
+    }
+
+    return $empty;
+}
+
+/**
+ * Catalog items.id for the procedure line on this token.
+ */
+function pharmecy_procedure_catalog_item_id_for_token($con, $token_no)
+{
+    $ids = pharmecy_procedure_item_ids_for_token($con, $token_no);
+    return (int) $ids['catalog_item_id'];
+}
+
+/**
+ * Lookup medicine_limit in procedure_medicine_limits for one item id key.
+ */
+function pharmecy_procedure_medicine_limit_by_item_key($con, $item_key)
+{
+    $item_key = (int) $item_key;
+    if ($item_key < 1) {
+        return 0;
+    }
+    $run = mysqli_query(
+        $con,
+        "SELECT medicine_limit FROM procedure_medicine_limits
+        WHERE item_id = '$item_key'
+        LIMIT 1"
+    );
+    if ($run && ($row = mysqli_fetch_assoc($run))) {
+        return (int) round((float) ($row['medicine_limit'] ?? 0));
     }
     return 0;
 }
 
 /**
- * Medicine limit from procedure_medicine_limits for the procedure item on this token.
+ * Medicine limit from procedure_medicine_limits for the procedure on this token.
  */
 function pharmecy_procedure_medicine_limit_for_token($con, $token_no)
 {
@@ -629,19 +674,27 @@ function pharmecy_procedure_medicine_limit_for_token($con, $token_no)
         return 0;
     }
 
-    $catalog_item_id = pharmecy_procedure_catalog_item_id_for_token($con, $token_no);
-    if ($catalog_item_id < 1) {
-        return 0;
+    $ids = pharmecy_procedure_item_ids_for_token($con, $token_no);
+    $catalog_item_id = (int) $ids['catalog_item_id'];
+    $register_item_id = (int) $ids['register_item_id'];
+
+    if ($catalog_item_id > 0) {
+        $limit = pharmecy_procedure_medicine_limit_by_item_key($con, $catalog_item_id);
+        if ($limit > 0) {
+            return $limit;
+        }
     }
 
-    $run = mysqli_query(
-        $con,
-        "SELECT medicine_limit FROM procedure_medicine_limits
-        WHERE item_id = '$catalog_item_id'
-        LIMIT 1"
-    );
-    if ($run && ($row = mysqli_fetch_assoc($run))) {
-        return (int) round((float) ($row['medicine_limit'] ?? 0));
+    if ($register_item_id > 0 && $register_item_id !== $catalog_item_id) {
+        $limit = pharmecy_procedure_medicine_limit_by_item_key($con, $register_item_id);
+        if ($limit > 0) {
+            return $limit;
+        }
+    }
+
+    $procedure_cash = pharmecy_tokan_cash_amount($con, $token_no);
+    if ($procedure_cash > 0) {
+        return (int) round($procedure_cash * 0.25);
     }
 
     return 0;
