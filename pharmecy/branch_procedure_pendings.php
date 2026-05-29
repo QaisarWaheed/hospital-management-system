@@ -1,5 +1,7 @@
-<?php 
-include 'includes/connect.php'; 
+<?php
+set_time_limit(120);
+
+include 'includes/connect.php';
 
 if (isset($_GET['add_token']) && $_GET['enter_token'] != '' && $_GET['add_token']) 
 {
@@ -25,7 +27,8 @@ if (isset($_GET['add_token']) && $_GET['enter_token'] != '' && $_GET['add_token'
                 	}
                 	else
                 	{
-                		header('location: second_procedure_turn.php?search_tokan_no='.$token_no);
+                		header('Location: second_procedure_turn.php?search_tokan_no=' . (int) $token_no);
+                		exit;
                 	}
                 }
             }
@@ -202,6 +205,15 @@ echo '</tr>
 
 </body>
 </html>
+<?php if (!empty($_GET['saved']) && !empty($_GET['tokan_no'])) { ?>
+<script>
+window.open(
+  <?php echo json_encode(ycdo_absolute_url('print_medicine_slip.php', 'tokan_no=' . rawurlencode((string) $_GET['tokan_no']))); ?>,
+  "_blank",
+  "toolbar=no,scrollbars=no,resizable=no,top=500,left=500,width=400,height=400,status=no"
+);
+</script>
+<?php } ?>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
 <!-- 
  -->

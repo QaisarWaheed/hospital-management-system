@@ -299,3 +299,130 @@ function pharmecy_finalize_procedure_cart_items($con, $tokan_no, $user_id, $bran
         );
     }
 }
+
+/** Max rows for branch procedure pending lists (avoids gateway timeouts). */
+function pharmecy_branch_pending_list_limit()
+{
+    return 100;
+}
+
+/**
+ * Pending procedure rows for branch_procedure_pending_token (single query, no per-row N+1).
+ *
+ * @return list<array<string, mixed>>
+ */
+function pharmecy_fetch_branch_pending_list($con, $branch_id, $search_token = '', $limit = 100)
+{
+    $branch_id = (int) $branch_id;
+    $limit = max(1, min((int) $limit, pharmecy_branch_pending_list_limit()));
+
+    $join = "
+        FROM branch_pending_details bpd
+        INNER JOIN tokans t ON bpd.token_no = t.id
+        INNER JOIN patients p ON t.patient_id = p.id
+        LEFT JOIN branch_pending_receive bpr ON bpr.token_no = t.id AND bpr.status = '1'
+        WHERE bpd.status = '1' AND bpd.branch_id = '$branch_id'";
+
+    if ($search_token !== '') {
+        $search_esc = mysqli_real_escape_string($con, (string) $search_token);
+        if (ctype_digit($search_esc)) {
+            $search_sql = " AND (bpd.token_no = '$search_esc' OR p.name LIKE '%$search_esc%') ";
+        } else {
+            $search_sql = " AND p.name LIKE '%$search_esc%' ";
+        }
+        $join .= $search_sql;
+    }
+
+    $sql = "SELECT bpd.id AS branch_pending_id, bpd.token_no, bpd.gardian_name, bpd.recommended_by,
+        bpd.amount AS stored_amount, t.cash, t.cash_received, t.created, t.tokan_type_id,
+        p.name AS patient_name,
+        COALESCE(SUM(bpr.amount), 0) AS receive_sum
+        $join
+        GROUP BY bpd.id, bpd.token_no, bpd.gardian_name, bpd.recommended_by, bpd.amount,
+            t.cash, t.cash_received, t.created, t.tokan_type_id, p.name
+        ORDER BY bpd.id DESC
+        LIMIT $limit";
+
+    $run = mysqli_query($con, $sql);
+    if (!$run) {
+        return array();
+    }
+
+    $out = array();
+    while ($row = mysqli_fetch_assoc($run)) {
+        $stored = (float) ($row['stored_amount'] ?? 0);
+        $total_amount = $stored > 0 ? $stored : (float) ($row['cash'] ?? 0);
+        if ($total_amount <= 0) {
+            $total_amount = pharmecy_resolve_branch_pending_display_amount(
+                $con,
+                (int) $row['token_no'],
+                $stored
+            );
+        }
+        $receive_adj = -(float) ($row['receive_sum'] ?? 0);
+        $received_amount = (float) ($row['cash_received'] ?? 0);
+        $pending_amount = (int) ($total_amount - ($received_amount - $receive_adj));
+        if ($pending_amount <= 0) {
+            continue;
+        }
+        $row['total_amount'] = $total_amount;
+        $row['received_amount'] = $received_amount;
+        $row['pending_amount'] = $pending_amount;
+        $out[] = $row;
+    }
+
+    return $out;
+}
+
+/**
+ * HTML table rows for procedure pending list (used by page and AJAX).
+ */
+function pharmecy_render_branch_pending_procedure_rows($con, $branch_id, $search_token = '', $limit = 100)
+{
+    $rows = pharmecy_fetch_branch_pending_list($con, $branch_id, $search_token, $limit);
+    if (count($rows) === 0) {
+        echo '<tr><td colspan="12" class="text-center text-muted">No pending procedures found (showing latest '
+            . (int) pharmecy_branch_pending_list_limit() . ' records).</td></tr>';
+        return;
+    }
+
+    $s = 0;
+    foreach ($rows as $row) {
+        $s++;
+        $token_no = (int) $row['token_no'];
+        $branch_pending_id = (int) $row['branch_pending_id'];
+        $patient_name = htmlspecialchars((string) $row['patient_name'], ENT_QUOTES, 'UTF-8');
+        $gardian_name = htmlspecialchars((string) $row['gardian_name'], ENT_QUOTES, 'UTF-8');
+        $recommended_by = htmlspecialchars((string) $row['recommended_by'], ENT_QUOTES, 'UTF-8');
+        $token_type_title = htmlspecialchars(
+            (string) token_type_title((int) $row['tokan_type_id']),
+            ENT_QUOTES,
+            'UTF-8'
+        );
+        $created_fmt = date_format(date_create((string) $row['created']), 'd-m-Y');
+        $total_amount = (int) $row['total_amount'];
+        $received_amount = (int) $row['received_amount'];
+        $pending_amount = (int) $row['pending_amount'];
+
+        echo '<tr>';
+        echo '<td>' . $s . '</td>';
+        echo '<td>' . $created_fmt . '</td>';
+        echo '<td>' . $patient_name . '</td>';
+        echo '<td>' . $gardian_name . '</td>';
+        echo '<td><a class="btn btn-sm btn-outline-info" href="branch_pending_complete_detail.php?token_no='
+            . $token_no . '">' . $token_no . '</a></td>';
+        echo '<td>' . $token_type_title . '</td>';
+        echo '<td>' . $total_amount . '</td>';
+        echo '<td>' . $received_amount . '</td>';
+        echo '<td>' . $pending_amount . '</td>';
+        echo '<td>' . $recommended_by . '</td>';
+        echo '<td><a class="btn btn-sm btn-outline-info" href="procedure_pending_amount.php?search_tokan_no='
+            . $token_no . '">Pay Amount</a></td>';
+        if ($branch_pending_id !== 0) {
+            echo '<td><a href="branch_pending_detail_update.php?u_id=' . $branch_pending_id . '">Update</a></td>';
+        } else {
+            echo '<td></td>';
+        }
+        echo '</tr>';
+    }
+}

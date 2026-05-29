@@ -1,4 +1,7 @@
-<?php include 'includes/connect.php'; 
+<?php
+set_time_limit(120);
+
+include 'includes/connect.php';
 
 if (isset($_GET['save']) && $_GET['save'] != '') 
 {
@@ -31,13 +34,13 @@ if($count_item >= 1)
 				'user_id' => $user_id,
 				'tokan_type_id' => $tokan_type,
 			));
+			header(
+				'Location: branch_procedure_pendings.php?saved=1&tokan_no=' . (int) $tokan_no
+			);
+			exit;
 		}
-?>
-<script>
-  window.open(<?php echo json_encode(ycdo_absolute_url('print_medicine_slip.php', 'tokan_no=' . rawurlencode((string) $tokan_no))); ?>, "_blank", "toolbar=no,scrollbars=no,resizable=no,top=500,left=500,width=400,height=400,status=no");
-  location.replace("branch_procedure_pendings.php");
-</script>
-<?php
+		header('Location: second_procedure_turn.php?search_tokan_no=' . urlencode((string) ($_GET['previous_tokan_no'] ?? '')) . '&save_error=1');
+		exit;
 }
 else
 {

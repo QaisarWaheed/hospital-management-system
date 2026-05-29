@@ -1,43 +1,51 @@
-<?php 
-include 'includes/connect.php'; 
+<?php
+set_time_limit(120);
 
-if (isset($_GET['add_token']) && $_GET['enter_token'] != '' && $_GET['add_token']) 
-{
-	$token_no = $_GET['enter_token'];
-	$select = "SELECT * FROM tokans WHERE id = '$token_no' AND `tokan_type_id` < 100 ";
-	$run = mysqli_query($con, $select);
-	if (mysqli_num_rows($run) == 1) 
-	{
-		while ($row = mysqli_fetch_array($run)) 
-		{
-			$patient_id = $row['patient_id'];
-            $select_patient = "SELECT * FROM patients WHERE id = '$patient_id' ";
-            $run_patient = mysqli_query($con, $select_patient);
-            if (mysqli_num_rows($run_patient) == 1) 
-            {
-                while ($row_patient = mysqli_fetch_array($run_patient)) 
-                {
-                	$phone = $row_patient['phone'];
-                	$cnic = $row_patient['cnic'];
-                	if ($phone == NULL || $cnic == NULL) 
-                	{
-                		$error = "NOT VALID TOKEN NO";
-                	}
-                	else
-                	{
-                		header('location: second_procedure_turn.php?search_tokan_no='.$token_no);
-                	}
-                }
-            }
-		}
-	}
-	else
-	{
-	$error = "ENTER A VALID TOKEN NO";
-	}
+include 'includes/connect.php';
+
+if (isset($_GET['ajax']) && $_GET['ajax'] === 'pending_list') {
+    header('Content-Type: text/html; charset=UTF-8');
+    $search = '';
+    if (isset($_GET['enter_search_token']) && $_GET['enter_search_token'] !== '') {
+        $search = (string) $_GET['enter_search_token'];
+    }
+    pharmecy_render_branch_pending_procedure_rows(
+        $con,
+        (int) $branch_id,
+        $search,
+        pharmecy_branch_pending_list_limit()
+    );
+    exit;
 }
 
-include 'includes/head.php'; 
+if (isset($_GET['add_token']) && $_GET['enter_token'] != '' && $_GET['add_token']) {
+    $token_no = (int) $_GET['enter_token'];
+    $select = "SELECT * FROM tokans WHERE id = '$token_no' AND `tokan_type_id` < 100 ";
+    $run = mysqli_query($con, $select);
+    if (mysqli_num_rows($run) == 1) {
+        while ($row = mysqli_fetch_array($run)) {
+            $patient_id = $row['patient_id'];
+            $select_patient = "SELECT * FROM patients WHERE id = '$patient_id' ";
+            $run_patient = mysqli_query($con, $select_patient);
+            if (mysqli_num_rows($run_patient) == 1) {
+                while ($row_patient = mysqli_fetch_array($run_patient)) {
+                    $phone = $row_patient['phone'];
+                    $cnic = $row_patient['cnic'];
+                    if ($phone == null || $cnic == null) {
+                        header('Location: branch_procedure_pending_token.php?add_token=1&enter_token=' . $token_no . '&error=invalid');
+                        exit;
+                    }
+                    header('Location: second_procedure_turn.php?search_tokan_no=' . $token_no);
+                    exit;
+                }
+            }
+        }
+    }
+    header('Location: branch_procedure_pending_token.php?error=invalid_token');
+    exit;
+}
+
+include 'includes/head.php';
 ?>
 	<title>Branch Procedure Token - <?php echo $company_trademark; ?></title>
 
@@ -60,10 +68,17 @@ include 'includes/head.php';
     		    <div class = "col-12">
         		    <h2 style = "text-align: center;">PROCEDURE TOKEN</h2>
         			<form method="GET">
-                        <?php if (isset($_GET['add_token']) && isset($error)) {echo '<div class="alert alert-success alert-dismissible"><button type="button" class="close" data-dismiss="alert">&times;</button><label>'.$error.'</label></div>';} ?>
+                        <?php
+                        if (isset($_GET['error'])) {
+                            $msg = ($_GET['error'] === 'invalid_token')
+                                ? 'ENTER A VALID TOKEN NO'
+                                : 'NOT VALID TOKEN NO';
+                            echo '<div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert">&times;</button><label>' . htmlspecialchars($msg, ENT_QUOTES, 'UTF-8') . '</label></div>';
+                        }
+                        ?>
         			    <label>ENTER PATIENT COMPLETE REGISTRATION TOKEN NO</label>
 
-        				<input type="number" name="enter_token" / class = "form-control">
+        				<input type="number" name="enter_token" class = "form-control" />
         				<input type="submit" name="add_token" class="btn btn-sm btn-primary" style = "margin-top: 15px;" />
         			</form>
     		    </div>
@@ -72,6 +87,7 @@ include 'includes/head.php';
             			<thead>
             				<caption style="caption-side: top;text-align: center;">
             					<h3> PROCEDURES DETAIL</h3>
+            					<p class="text-muted small mb-0">Showing latest <?php echo (int) pharmecy_branch_pending_list_limit(); ?> pending records. Use search to find a specific token or name.</p>
             				</caption>
             				<tr>
             				    <th colspan = "6">
@@ -79,6 +95,7 @@ include 'includes/head.php';
             				    </th>
             				    <th colspan = "6">
             				        <input type="text" id="tokenInput" onkeyup="tokenFunction()" placeholder="Search tokens.." title="Type Token" class = "form-control">
+            				        <input type="text" id="serverSearchInput" placeholder="Search server (name or token).." class="form-control mt-1" />
             				    </th>
             				</tr>
             				<tr>
@@ -96,97 +113,11 @@ include 'includes/head.php';
             					<th>Update</th>
             				</tr>
             			</thead>
-            			<tbody>
-            <?php
-            $date = date('Y-m');
-            // $date = date("Y-m-d", strtotime("-1 week"));
-            // $select_branch_pending_query = "SELECT * FROM `branch_pending_details` WHERE (id IN (1) AND status = '1' AND branch_id = '$branch_id') OR (status = '1' AND branch_id = '$branch_id' AND created like '$date%') ";
-            // $select_branch_pending_query = "SELECT * FROM `branch_pending_details` WHERE (id IN (1) AND status = '1' AND branch_id = '$branch_id') OR (status = '1' AND branch_id = '$branch_id' AND created > '$date') ";
-            $s = 0;
-            
-            if (isset($_GET['enter_search_token']) && $_GET['enter_search_token'] != '') 
-            {
-                $enter_search_token = $_GET['enter_search_token'];
-                $select_branch_pending_query = "SELECT * FROM `branch_pending_details` WHERE (token_no = '$enter_search_token' AND status = '1' AND branch_id = '$branch_id') OR (token_no IN (SELECT id FROM tokans WHERE patient_id IN (SELECT id FROM patients WHERE `name` LIKE '%$enter_search_token%'))AND status = '1' AND branch_id = '$branch_id') ";
-                // exit(0);
-            }
-            else
-            {
-            $pending_ids = get_pending_id($branch_id);
-            $select_branch_pending_query = "SELECT * FROM `branch_pending_details` WHERE (id IN (1) AND status = '1' AND branch_id = '$branch_id') OR (status = '1' AND branch_id = '$branch_id') ORDER BY `id` DESC limit 0, 500";
-            }
-            $select_branch_pending = mysqli_query($con, $select_branch_pending_query);
-            if (mysqli_num_rows($select_branch_pending) > 0) 
-            {
-            	while ($row_branch_data = mysqli_fetch_array($select_branch_pending) ) 
-            	{
-            		$amount = 0;
-            		$branch_pending_id = $row_branch_data['id'];
-            		$gardian_name = $row_branch_data['gardian_name'];
-            		$gardian_phone = $row_branch_data['gardian_phone'];
-            		$recommended_by = $row_branch_data['recommended_by'];
-            		$token_no = $row_branch_data['token_no'];
-            		$select_token = mysqli_query($con, "SELECT * FROM `tokans` WHERE id = '$token_no' ");
-            		if (mysqli_num_rows($select_token) > 0) 
-            		{
-            			while ($row_token = mysqli_fetch_array($select_token)) 
-            			{
-            				$token_no = $row_token['id'];
-                                $run2 = mysqli_query($GLOBALS['con'], "SELECT * FROM `branch_pending_receive` WHERE token_no = '$token_no' AND status = '1' ");
-                                if (mysqli_num_rows($run2) > 0) 
-                                {
-                                    while ($row = mysqli_fetch_array($run2)) 
-                                    {
-                                        $amount = $amount - $row['amount'];
-                                    }
-                                }
-            				$token_type_title = token_type_title($row_token['tokan_type_id']);
-            				$patient_name = get_patient_name_by_id($row_token['patient_id']);
-            				$total_amount = pharmecy_resolve_branch_pending_display_amount(
-            				    $con,
-            				    $token_no,
-            				    $row_branch_data['amount'] ?? 0
-            				);
-            				$recieved_amount = $row_token['cash_received'];
-            				$created = $row_token['created'];
-            			}
-            		}
-            
-                $pending_amount = intval($total_amount-($recieved_amount-$amount));
-                
-            	if($pending_amount > 0)
-            	{
-            		$s = $s + 1;
-                    echo '
-                    <tr>
-                    	<td>'.$s.'</td>
-                    	<td>'.date_format(date_create($created), "d-m-Y").'</td>
-                    	<td>'.$patient_name.'</td>
-                    	<td>'.$gardian_name.'</td>
-                    	<td><a class="btn btn-sm btn-outline-info" href="branch_pending_complete_detail.php?token_no='.$token_no.'"">'.$token_no.'</a></td>
-                    	<td>'.$token_type_title.'</td>
-                    	<td>'.$total_amount.'</td>
-                    	<td>'.$recieved_amount.'</td>
-                    	<td>'.$pending_amount.'</td>	
-                    	<td>'.$recommended_by.'</td>';
-                    	echo '<td>
-                    		<a class="btn btn-sm btn-outline-info" href="procedure_pending_amount.php?search_tokan_no='.$token_no.'">Pay Amount</a>
-                    	</td>';
-                    	if ($branch_pending_id != 0) {
-                    	echo '<td><a href="branch_pending_detail_update.php?u_id='.$branch_pending_id.'">Update</a></td>';
-                    	}
-                    	else
-                    		echo '<td></td>';	
-                    echo '</tr>
-                    ';
-            	}
-            
-            	}
-            }
-            ?>
+            			<tbody id="pendingProceduresBody">
+            			    <tr><td colspan="12" class="text-center text-muted">Loading procedures…</td></tr>
             			</tbody>
             		</table>
-    			    
+
     			</div>
     		</div>
         </div>
@@ -199,6 +130,39 @@ include 'includes/head.php';
 </body>
 </html>
 <script>
+(function () {
+  var searchTimer = null;
+  function loadPendingList(search) {
+    var params = { ajax: 'pending_list' };
+    if (search) {
+      params.enter_search_token = search;
+    }
+    $('#pendingProceduresBody').html(
+      '<tr><td colspan="12" class="text-center text-muted">Loading procedures…</td></tr>'
+    );
+    $.get('branch_procedure_pending_token.php', params)
+      .done(function (html) {
+        $('#pendingProceduresBody').html(html);
+      })
+      .fail(function () {
+        $('#pendingProceduresBody').html(
+          '<tr><td colspan="12" class="text-danger text-center">Could not load procedures. Refresh the page.</td></tr>'
+        );
+      });
+  }
+  $(document).ready(function () {
+    loadPendingList('');
+    $('#serverSearchInput').on('input', function () {
+      clearTimeout(searchTimer);
+      var q = $(this).val();
+      searchTimer = setTimeout(function () {
+        loadPendingList(q);
+      }, 400);
+    });
+  });
+})();
+</script>
+<script>
 function nameFunction() {
   var input, filter, table, tr, td, i, txtValue;
   input = document.getElementById("nameInput");
@@ -207,18 +171,18 @@ function nameFunction() {
   tr = table.getElementsByTagName("tr");
   for (i = 0; i < tr.length; i++) {
     td = tr[i].getElementsByTagName("td")[2];
-    if (td) 
+    if (td)
     {
         txtValue = td.textContent || td.innerText;
-        if (txtValue.toUpperCase().indexOf(filter) > -1) 
+        if (txtValue.toUpperCase().indexOf(filter) > -1)
         {
             tr[i].style.display = "";
-        } 
-        else 
+        }
+        else
         {
             tr[i].style.display = "none";
         }
-    }       
+    }
   }
 }
 </script>
@@ -231,21 +195,19 @@ function tokenFunction() {
   tr = table.getElementsByTagName("tr");
   for (i = 0; i < tr.length; i++) {
     td = tr[i].getElementsByTagName("td")[4];
-    if (td) 
+    if (td)
     {
         txtValue = td.textContent || td.innerText;
-        if (txtValue.toUpperCase().indexOf(filter) > -1) 
+        if (txtValue.toUpperCase().indexOf(filter) > -1)
         {
             tr[i].style.display = "";
-        } 
-        else 
+        }
+        else
         {
             tr[i].style.display = "none";
         }
-    }       
+    }
   }
 }
 </script>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
-<!-- 
- -->
