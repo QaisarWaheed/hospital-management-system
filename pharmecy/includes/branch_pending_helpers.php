@@ -516,19 +516,90 @@ function pharmecy_load_procedure_turn_token($con, $token_no)
 /**
  * Cart lines not yet assigned to a procedure token (for procedure turn page).
  */
-function pharmecy_procedure_turn_cart_count($con, $user_id)
+function pharmecy_procedure_turn_cart_count($con, $user_id, $branch_id = null)
 {
     $user_id = (int) $user_id;
-    $run = mysqli_query(
-        $con,
-        "SELECT COUNT(*) AS c FROM item_by_doctor
-        WHERE user_id = '$user_id' AND status = '1'
-        AND (tokan_no IS NULL OR tokan_no = '' OR tokan_no = '0')"
-    );
+    if ($branch_id === null) {
+        $branch_id = (int) ($GLOBALS['branch_id'] ?? 0);
+    } else {
+        $branch_id = (int) $branch_id;
+    }
+
+    $where = "user_id = '$user_id' AND status = '1'
+        AND (tokan_no IS NULL OR tokan_no = '' OR tokan_no = '0')";
+    if ($branch_id > 0) {
+        $where = "branch_id = '$branch_id' AND " . $where;
+    }
+
+    $run = mysqli_query($con, "SELECT COUNT(*) AS c FROM item_by_doctor WHERE $where");
     if ($run && ($row = mysqli_fetch_assoc($run))) {
         return (int) $row['c'];
     }
     return 0;
+}
+
+/**
+ * Add one procedure line to the staging cart (item_by_doctor, tokan_no NULL).
+ */
+function pharmecy_procedure_turn_add_cart_item($con, $reg_item_id, $user_id, $branch_id, $current_date, array $opts = array())
+{
+    $reg_item_id = (int) $reg_item_id;
+    $user_id = (int) $user_id;
+    $branch_id = (int) $branch_id;
+    if ($reg_item_id < 1 || $user_id < 1 || $branch_id < 1) {
+        return false;
+    }
+
+    $fix_dose = (int) ($opts['fix_dose'] ?? 0);
+    $dose = max(1, (int) ($opts['dose'] ?? 1));
+    $feed = max(1, (int) ($opts['feed'] ?? 1));
+    $days = max(1, (int) ($opts['days'] ?? 1));
+    $quantity = ($fix_dose === 0) ? ($dose * $days * $feed) : $fix_dose;
+    if ($quantity < 1) {
+        $quantity = 1;
+    }
+
+    $purchase = 0;
+    $poor = 0;
+    $member = 0;
+    $general = 0;
+    $category_id = 0;
+    $select_items = "SELECT i.id, i.purchase, i.poor, i.member, i.general, i.deserving, i.category_id
+        FROM items i
+        INNER JOIN item_register_to_branches irb ON irb.item_id = i.id
+        WHERE irb.branch_id = '$branch_id' AND irb.id = '$reg_item_id'
+        LIMIT 1";
+    $run_items = mysqli_query($con, $select_items);
+    if (!$run_items || mysqli_num_rows($run_items) !== 1) {
+        return false;
+    }
+    $row_item = mysqli_fetch_assoc($run_items);
+    $purchase = $row_item['purchase'];
+    $poor = $row_item['poor'];
+    $member = $row_item['member'];
+    $general = $row_item['general'];
+    $category_id = $row_item['category_id'];
+
+    $check_item = mysqli_num_rows(mysqli_query(
+        $con,
+        "SELECT id FROM `item_by_doctor`
+        WHERE item_id = '$reg_item_id' AND user_id = '$user_id' AND branch_id = '$branch_id' AND status = '1'
+        AND (tokan_no IS NULL OR tokan_no = '' OR tokan_no = '0')
+        LIMIT 1"
+    ));
+    if ($check_item > 0) {
+        return true;
+    }
+
+    $get_available_quantity = get_register_item_quantity_from_item_id($reg_item_id);
+    $new_quantity = $get_available_quantity - $quantity;
+    mysqli_query($con, "UPDATE `item_register_to_branches` SET `quantity`= '$new_quantity' WHERE id = '$reg_item_id' ");
+
+    $insert = "INSERT INTO `item_by_doctor`
+    (`item_id`, `dose`, `feed`, `days`, `user_id`, `branch_id`, `fix_dose`, `created`, `purchase_price`, `sale_price_general`, `sale_price_member`, `sale_price_poor`, `category_id`, `sale_quantity`) VALUES
+    ('$reg_item_id', '$dose', '$feed', '$days', '$user_id','$branch_id', '$fix_dose', '$current_date', '$purchase', '$general', '$member', '$poor', '$category_id', '$quantity')";
+
+    return (bool) mysqli_query($con, $insert);
 }
 
 /**

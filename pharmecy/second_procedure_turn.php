@@ -12,9 +12,24 @@ if (isset($_GET['ajax']) && $_GET['ajax'] === 'procedure_options') {
 }
 
 if (isset($_GET['save']) && $_GET['save'] != '') {
-    $count_item = pharmecy_procedure_turn_cart_count($con, $user_id);
-    if ($count_item >= 1 && isset($_GET['previous_tokan_no'])) {
-        $token_pre = (int) $_GET['previous_tokan_no'];
+    $token_pre = (int) ($_GET['previous_tokan_no'] ?? 0);
+    if ($token_pre < 1) {
+        header('Location: second_procedure_turn.php?save_error=missing_token');
+        exit;
+    }
+
+    $reg_item_id = (int) ($_GET['reg_item_id'] ?? 0);
+    if (pharmecy_procedure_turn_cart_count($con, $user_id, $branch_id) < 1 && $reg_item_id > 0) {
+        pharmecy_procedure_turn_add_cart_item($con, $reg_item_id, $user_id, $branch_id, $current_date, array(
+            'fix_dose' => (int) ($_GET['fix_dose'] ?? 0),
+            'dose' => (int) ($_GET['dose'] ?? 1),
+            'feed' => (int) ($_GET['feed'] ?? 1),
+            'days' => (int) ($_GET['days'] ?? 1),
+        ));
+    }
+
+    $count_item = pharmecy_procedure_turn_cart_count($con, $user_id, $branch_id);
+    if ($count_item >= 1) {
         $patient_id = (int) $_GET['patient_id'];
         $doctor_id = (int) $_GET['doctor_id'];
         $tokan_type = (int) $_GET['tokan_payment'];
@@ -49,7 +64,7 @@ if (isset($_GET['save']) && $_GET['save'] != '') {
         header('Location: second_procedure_turn.php?search_tokan_no=' . urlencode((string) $token_pre) . '&save_error=1');
         exit;
     }
-    echo 'INTERNET ERROR';
+    header('Location: second_procedure_turn.php?search_tokan_no=' . urlencode((string) $token_pre) . '&save_error=empty_cart');
     exit;
 }
 
@@ -76,44 +91,15 @@ if (isset($_GET['save_test'])) {
     $dose = (int) ($_GET['dose'] ?? 1);
     $feed = (int) ($_GET['feed'] ?? 1);
     $days = (int) ($_GET['days'] ?? 1);
-    $quantity = ($fix_dose === 0) ? ($dose * $days * $feed) : $fix_dose;
 
-    $purchase = 0;
-    $poor = 0;
-    $member = 0;
-    $general = 0;
-    $category_id = 0;
-    $select_items = "SELECT i.id, i.purchase, i.poor, i.member, i.general, i.deserving, i.category_id
-        FROM items i
-        INNER JOIN item_register_to_branches irb ON irb.item_id = i.id
-        WHERE irb.branch_id = '$branch_id' AND irb.id = '$reg_item_id'
-        LIMIT 1";
-    $run_items = mysqli_query($con, $select_items);
-    if ($run_items && mysqli_num_rows($run_items) === 1) {
-        $row_item = mysqli_fetch_assoc($run_items);
-        $purchase = $row_item['purchase'];
-        $poor = $row_item['poor'];
-        $member = $row_item['member'];
-        $general = $row_item['general'];
-        $category_id = $row_item['category_id'];
-    }
-
-    $check_item = mysqli_num_rows(mysqli_query(
-        $con,
-        "SELECT id FROM `item_by_doctor` WHERE item_id = '$reg_item_id' AND user_id = '$user_id' AND status = '1'
-        AND (tokan_no IS NULL OR tokan_no = '' OR tokan_no = '0') LIMIT 1"
-    ));
-    $insert = "INSERT INTO `item_by_doctor`
-    (`item_id`, `dose`, `feed`, `days`, `user_id`, `branch_id`, `fix_dose`, `created`, `purchase_price`, `sale_price_general`, `sale_price_member`, `sale_price_poor`, `category_id`, `sale_quantity`) VALUES
-    ('$reg_item_id', '$dose', '$feed', '$days', '$user_id','$branch_id', '$fix_dose', '$current_date', '$purchase', '$general', '$member', '$poor', '$category_id', '$quantity')";
-    if ($check_item === 0 && $reg_item_id > 0) {
-        $get_available_quantity = get_register_item_quantity_from_item_id($reg_item_id);
-        $new_quantity = $get_available_quantity - $quantity;
-        mysqli_query($con, "UPDATE `item_register_to_branches` SET `quantity`= '$new_quantity' WHERE id = '$reg_item_id' ");
-        if (mysqli_query($con, $insert)) {
-            header('Location: second_procedure_turn.php?search_tokan_no=' . $search_tokan_no);
-            exit;
-        }
+    if ($reg_item_id > 0 && pharmecy_procedure_turn_add_cart_item($con, $reg_item_id, $user_id, $branch_id, $current_date, array(
+        'fix_dose' => $fix_dose,
+        'dose' => $dose,
+        'feed' => $feed,
+        'days' => $days,
+    ))) {
+        header('Location: second_procedure_turn.php?search_tokan_no=' . $search_tokan_no);
+        exit;
     }
     header('Location: second_procedure_turn.php?search_tokan_no=' . $search_tokan_no . '&cart_dup=1');
     exit;
@@ -143,7 +129,6 @@ if (isset($_GET['search_tokan_no']) && $_GET['search_tokan_no'] !== '') {
 }
 
 $initial_cart_amount = (int) pharmecy_cart_amount_by_tokan_type($con, $user_id, $branch_id, 104);
-$cart_item_count = pharmecy_procedure_turn_cart_count($con, $user_id);
 $next_token_display = pharmecy_next_tokan_no_fast($con);
 $cart_options_html = pharmecy_medicine_selected_cart_options_html($con, (int) $branch_id, $user_id);
 
@@ -251,7 +236,13 @@ include 'includes/head.php';
 
 </form>
 
-<form onsubmit="return checknumber(this);">
+<form method="get" onsubmit="syncProcedureToSaveForm(); return checknumber(this);">
+<input type="hidden" name="search_tokan_no" value="<?php echo (int) $search_tokan_no; ?>">
+<input type="hidden" name="reg_item_id" id="save_reg_item_id" value="">
+<input type="hidden" name="fix_dose" id="save_fix_dose" value="0">
+<input type="hidden" name="dose" value="1">
+<input type="hidden" name="feed" value="1">
+<input type="hidden" name="days" value="1">
 <div class="row">
 <?php if ($has_registration_token) { ?>
 	<div class="col-md-3">
@@ -309,7 +300,7 @@ if ($gender == 1) {
 
 	<div class="col-md-2">
 		<br>
-<?php if ($has_registration_token && $cart_item_count >= 1) { ?>
+<?php if ($has_registration_token) { ?>
         <input type="submit" id="save" onclick="myDisplayGoneSave()" value="SAVE" name="save" class="btn btn-sm btn-primary">
 <?php } ?>
 		<input type="reset" value="CLEAR" name="clear" class="btn btn-sm btn-warning">
@@ -347,6 +338,10 @@ $(document).ready(function () {
     .done(function (html) {
       $('#select_item').html('<option value="">Select Procedure</option>' + html);
       initProcedureSelect();
+      if (procedureSelectize) {
+        procedureSelectize.on('change', syncProcedureToSaveForm);
+      }
+      syncProcedureToSaveForm();
     })
     .fail(function () {
       $('#select_item').html('<option value="">Could not load procedures</option>');
@@ -354,7 +349,29 @@ $(document).ready(function () {
     });
   $(".alert").alert();
   setCashAmount(initialCartAmount);
+  $('#fix_dose').on('change input', syncProcedureToSaveForm);
 });
+
+function syncProcedureToSaveForm() {
+  var regItemId = '';
+  if (procedureSelectize) {
+    regItemId = procedureSelectize.getValue() || '';
+  } else {
+    var sel = document.getElementById('select_item');
+    if (sel) {
+      regItemId = sel.value;
+    }
+  }
+  var saveReg = document.getElementById('save_reg_item_id');
+  var saveFix = document.getElementById('save_fix_dose');
+  var fixEl = document.getElementById('fix_dose');
+  if (saveReg) {
+    saveReg.value = regItemId;
+  }
+  if (saveFix && fixEl) {
+    saveFix.value = fixEl.value;
+  }
+}
 </script>
 <script type="text/javascript">
 function del_medicine()
@@ -385,8 +402,19 @@ function myDisplayGoneAdd() {
   if (el) { el.style.display = "none"; }
 }
 function myDisplayGoneSave() {
+  syncProcedureToSaveForm();
   var el = document.getElementById("save");
   if (el) { el.style.display = "none"; }
+}
+</script>
+<script type="text/javascript">
+function checknumber(theForm) {
+  syncProcedureToSaveForm();
+  if (parseInt(theForm.cash.value, 10) > parseInt(theForm.cash_received.value, 10)) {
+    alert('enter the correct amount');
+    return false;
+  }
+  return true;
 }
 </script>
 <?php
