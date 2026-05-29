@@ -53,8 +53,8 @@ if(isset($_POST['update_lab_test_collected']) && $_POST['update_lab_test_collect
     	            <h1>SAMPLES IN LAB FOR TEST (<?php echo date('d-m-Y'); ?>)</h1>
                     <?php if ($list_truncated) { ?>
                         <p class="text-warning">Showing latest 500 records. Narrow dates or pick one branch.</p>
-                    <?php } elseif (!$list_filters['should_run']) { ?>
-                        <p class="text-info">Select branch and dates, then click Search (default: last 14 days).</p>
+                    <?php } else { ?>
+                        <p class="text-muted">Showing status 2 samples by sample date (default: last 14 days). Adjust dates or branch and click Search.</p>
                     <?php } ?>
     	        </caption>
     	        <thead>

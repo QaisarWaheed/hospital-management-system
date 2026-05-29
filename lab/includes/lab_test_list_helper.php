@@ -36,7 +36,8 @@ function lab_test_list_parse_filters($con, $default_branch_id)
         'date_to' => $date_to,
         'date_from_sql' => mysqli_real_escape_string($con, $date_from),
         'date_to_sql' => mysqli_real_escape_string($con, $date_to),
-        'should_run' => isset($_GET['search']),
+        // Queue pages should load with default dates without requiring ?search=1
+        'should_run' => true,
     );
 }
 
@@ -93,6 +94,12 @@ function lab_test_list_build_sql_simple($filters, $status_id, $limit = 500)
     $from = $filters['date_from_sql'] . ' 00:00:00';
     $to = $filters['date_to_sql'] . ' 23:59:59';
     $branch_sql = ($branch_id > 0) ? " AND tokans.branch_id = '$branch_id' " : '';
+    // Use sample/collected time — not token registration date — so tests added later still appear.
+    $date_expr = "COALESCE(
+            NULLIF(lab_tests.sample_date_time, '0000-00-00 00:00:00'),
+            NULLIF(lab_tests.lab_test_collected_created_at, '0000-00-00 00:00:00'),
+            tokans.created
+        )";
 
     return "SELECT
             lab_tests.lab_test_id,
@@ -110,14 +117,14 @@ function lab_test_list_build_sql_simple($filters, $status_id, $limit = 500)
         FROM lab_tests
         INNER JOIN tokans ON lab_tests.token_no = tokans.id
         INNER JOIN patients ON tokans.patient_id = patients.id
-        INNER JOIN users register ON tokans.user_id = register.id
+        LEFT JOIN users register ON tokans.user_id = register.id
         LEFT JOIN users collected ON lab_tests.user_id = collected.id
         INNER JOIN items ON lab_tests.item_id = items.id
         INNER JOIN branchs ON tokans.branch_id = branchs.id
         WHERE lab_tests.lab_test_status_id = '$status_id'
         $branch_sql
-        AND tokans.created >= '$from'
-        AND tokans.created <= '$to'
+        AND $date_expr >= '$from'
+        AND $date_expr <= '$to'
         ORDER BY lab_tests.lab_test_id DESC
         LIMIT $limit";
 }
