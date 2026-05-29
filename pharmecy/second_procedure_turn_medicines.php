@@ -1,6 +1,52 @@
-<?php 
-include 'includes/connect_second_turn.php'; 
+<?php
+include 'includes/connect_second_turn.php';
+
+$tokan_no = '';
+$search_tokan_no = '';
+if (isset($_GET['search_tokan_no']) && $_GET['search_tokan_no'] !== '') {
+    $search_tokan_no = (int) $_GET['search_tokan_no'];
+    $tokan_no = $search_tokan_no;
+} elseif (isset($_GET['tokan_no']) && $_GET['tokan_no'] !== '') {
+    $search_tokan_no = (int) $_GET['tokan_no'];
+    $tokan_no = $search_tokan_no;
+} elseif (isset($_GET['token_no']) && $_GET['token_no'] !== '') {
+    $search_tokan_no = (int) $_GET['token_no'];
+    $tokan_no = $search_tokan_no;
+} elseif (isset($_POST['token_no']) && $_POST['token_no'] !== '') {
+    $search_tokan_no = (int) $_POST['token_no'];
+    $tokan_no = $search_tokan_no;
+} elseif (isset($_POST['tokan_no']) && $_POST['tokan_no'] !== '') {
+    $search_tokan_no = (int) $_POST['tokan_no'];
+    $tokan_no = $search_tokan_no;
+}
+
+$GLOBALS['search_tokan_no'] = $search_tokan_no;
+
+$limit = 0;
+$limit_amount = 0;
+$procedure_cash = 0;
+$patient_id = 0;
+$doctor_id = 0;
+$name = '';
+$age = '';
+$gender = 0;
+
+if ($tokan_no > 0) {
+    $procedure_turn = pharmecy_load_procedure_medicine_turn($con, $tokan_no);
+    if ($procedure_turn) {
+        $patient_id = (int) $procedure_turn['patient_id'];
+        $doctor_id = (int) $procedure_turn['doctor_id'];
+        $name = (string) $procedure_turn['name'];
+        $age = (string) $procedure_turn['age'];
+        $gender = (int) $procedure_turn['gender'];
+        $procedure_cash = (int) $procedure_turn['procedure_cash'];
+        $limit = (int) $procedure_turn['medicine_limit'];
+        $limit_amount = (int) $procedure_turn['issued_medicine'];
+    }
+}
+
 $amount_array = get_select_amount_array();
+$cart_cash = (int) ($amount_array[2] ?? 0);
 $select_item = "SELECT * FROM `items_by_doctor` WHERE `branch_id` = '$branch_id' AND `user_id` = '$user_id' AND `status` = '1' ";
 $run_select_item = mysqli_query($con, $select_item);
 $count_item = mysqli_num_rows($run_select_item);
@@ -18,7 +64,7 @@ if($count_item >= 1)
 		$insert = "INSERT INTO `tokans`
 		(`id`, `patient_id`, `doctor_id`, `tokan_type_id`, `cash`,`cash_received`, `user_id`, `previous_tokan_no`, `created`, `branch_id`, `status`) 
 		VALUES 
-		('$tokan_no', '$patient_id','$doctor_id', '$tokan_type', '$cash', '$cash_received', '$user_id', '$previous_tokan_no', '$current_date', '$branch_id', '2')";
+		(NULL, '$patient_id','$doctor_id', '$tokan_type', '$cash', '$cash_received', '$user_id', '$previous_tokan_no', '$current_date', '$branch_id', '2')";
 			if (mysqli_query($con, $insert)) 
 			{
 			    $tokan_no = mysqli_insert_id($con);
@@ -71,6 +117,7 @@ if($count_item >= 1)
   location.replace("dashboard.php");
 </script>
 <?php
+    exit;
 }
 else
 {
@@ -142,20 +189,16 @@ if (isset($_GET['save_test']))
 	if($check_item == 0)
 	{	
 		mysqli_query($con, "UPDATE `item_register_to_branches` SET `quantity`= quantity-$quantity WHERE id = '$reg_item_id' ");
-		if (mysqli_query($con, $insert))		{ 
-			?>
-	<script type="text/javascript">
-			  location.replace("second_procedure_turn_medicines.php?search_tokan_no=<?php echo $search_tokan_no; ?>");
-			</script>
-	<?php	}
+		if (mysqli_query($con, $insert)) {
+			header('Location: second_procedure_turn_medicines.php?search_tokan_no=' . (int) $search_tokan_no);
+			exit;
+		}
 	}
 	else
-	{ ?>
-	<script type="text/javascript">
-		alert("INFO: Data already addad");
-	  location.replace("second_procedure_turn_medicines.php?search_tokan_no=<?php echo $search_tokan_no; ?>");	
-	</script>
-<?php }
+	{
+		header('Location: second_procedure_turn_medicines.php?search_tokan_no=' . (int) $search_tokan_no . '&cart_dup=1');
+		exit;
+	}
 }
 include 'includes/head.php'; ?>
 	<title>SECOND TURN PROCEDURE MEDICINES - <?php echo $company_trademark; ?></title>
@@ -168,11 +211,6 @@ include 'includes/head.php'; ?>
 	<div class="col-md-12" style="text-align: center;background: lightgreen;">
 		<label><h1><?php echo $company_name?> </h1></label>
 	</div>
-<?php if(isset($_GET['search_tokan_no']) && $_GET['search_tokan_no'] != '')
-{
-	$search_tokan_no = $_GET['search_tokan_no'];
-}
-?>
 <div>
 
 	<div class="">
@@ -283,28 +321,8 @@ include 'includes/head.php'; ?>
 <form onsubmit="return checknumber(this);">
 <div class="row">
 <?php
-if (isset($_GET['search_tokan_no']) && $_GET['search_tokan_no'] != '') 
+if ($tokan_no > 0 && $patient_id > 0) 
 { 
-	$tokan_no = $_GET['search_tokan_no'];
-	$select_tokan = "SELECT patients.name, patients.id AS patient_id, patients.age, patients.gender, tokans.cash AS procedure_amount, SUM(medicines.cash) AS medicines_amount FROM tokans INNER JOIN patients ON tokans.patient_id = patients.id LEFT JOIN tokans medicines ON tokans.id = medicines.previous_tokan_no AND medicines.status = 2 WHERE tokans.id = '$tokan_no' ";
-	$run_tokan = mysqli_query($con, $select_tokan);
-	if (mysqli_num_rows($run_tokan) == 1) 
-	{
-		while ($row_tokan = mysqli_fetch_array($run_tokan)) 
-		{
-					$name = $row_tokan['name'];
-					$patient_id = $row_tokan['patient_id'];
-					$age = $row_tokan['age'];
-					$gender = $row_tokan['gender'];
-					$limit_amount = $row_tokan['medicines_amount'];
-					if($limit_amount == '')
-					{
-					    $limit_amount = 0;
-					}
-					$procedure_amount = $row_tokan['procedure_amount'];
-					$limit = intval(($procedure_amount/100)*25);
-		}
-	}
 	?>
 	<div class="col-md-3">
 		<label>Patient Name</label>
@@ -349,9 +367,9 @@ else {echo '<option value="3"> Other</option>';}
 		</select>
 	</div>
    	<div class="col-md-2">
-   		<label>Cash</label>
-
-   		<textarea readonly required rows="1" style="resize: none;" readonly id="cash" name="cash" class="form-control"><?php echo $amount_array['2']; ?></textarea>
+   		<label>Cash (procedure)</label>
+   		<input type="hidden" name="cash" value="<?php echo (int) $cart_cash; ?>" />
+   		<textarea readonly required rows="1" style="resize: none;" id="cash" class="form-control"><?php echo (int) $procedure_cash; ?></textarea>
    	</div>
 <?php }
 else
@@ -401,17 +419,17 @@ else
    			<div class="col-md-12">
 		   		<input onclick="myFunction104()" type="radio" id="general" required name="tokan_payment" value="104">
 		   		<label for="general">General</label>   				
-		   		<input id = "get_general" type="hidden" value = "<?php echo $amount_array['2']; ?>">	
+		   		<input id = "get_general" type="hidden" value = "<?php echo (int) $cart_cash; ?>">	
    			</div>   			
    		</div>
    	</div>
    	<div class="col-md-2">
    		<label>Limit Medicine</label>
-   		<input type = "number" value = "<?php echo $limit; ?>"  readonly class = "form-control"/>
+   		<input type = "number" value = "<?php echo (int) $limit; ?>"  readonly class = "form-control"/>
    	</div>
    	<div class="col-md-2">
    		<label>Issued Medicine</label>
-   		<input type = "number" value = "<?php echo $limit_amount; ?>"  readonly class = "form-control"/>
+   		<input type = "number" value = "<?php echo (int) $limit_amount; ?>"  readonly class = "form-control"/>
    	</div>
 
 
@@ -423,7 +441,7 @@ else
 	<div class="col-md-2">
 		<br>
 <?php
-if(($count_item >= 1 && $limit > ($limit_amount+$amount_array['2'])) || $branch_id == 15)
+if (($count_item >= 1 && $limit > ($limit_amount + $cart_cash)) || $branch_id == 15)
 { ?>
         <input type="submit" id="save" onclick="myDisplayGoneSave()" value="SAVE" name="save" class="btn btn-sm btn-primary">
 <?php } ?>
@@ -454,9 +472,7 @@ if(($count_item >= 1 && $limit > ($limit_amount+$amount_array['2'])) || $branch_
 </script>
 <script>
 function myFunction104() {
-	//GENERAL
-	var get_general = document.getElementById("get_general").value;
-  document.getElementById("cash").innerHTML = get_general;
+	// Cart total is submitted via hidden input; display stays procedure cash from tokans.
 }
 </script>
 <script>

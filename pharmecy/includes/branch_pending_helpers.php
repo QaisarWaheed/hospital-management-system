@@ -517,6 +517,105 @@ function pharmecy_branch_procedures_options_html($con, $branch_id, $limit = 1500
 /**
  * Selected cart items for procedure turn (one JOIN).
  */
+/**
+ * Medicine limit for a procedure token (procedure_tokens_medicine_limits or 25% of bill).
+ */
+function pharmecy_procedure_medicine_limit($con, $token_no, $procedure_amount = 0.0)
+{
+    $token_no = (int) $token_no;
+    $procedure_amount = (float) $procedure_amount;
+    if ($token_no < 1) {
+        return 0;
+    }
+
+    static $limits_table_exists = null;
+    if ($limits_table_exists === null) {
+        $chk = mysqli_query($con, "SHOW TABLES LIKE 'procedure_tokens_medicine_limits'");
+        $limits_table_exists = ($chk && mysqli_num_rows($chk) > 0);
+    }
+
+    if ($limits_table_exists) {
+        $run = mysqli_query(
+            $con,
+            "SELECT * FROM procedure_tokens_medicine_limits
+            WHERE token_no = '$token_no' OR tokan_no = '$token_no'
+            LIMIT 1"
+        );
+        if ($run && ($row = mysqli_fetch_assoc($run))) {
+            foreach (array('medicine_limit', 'limit_amount', 'limit', 'amount') as $col) {
+                if (isset($row[$col]) && (float) $row[$col] > 0) {
+                    return (int) $row[$col];
+                }
+            }
+        }
+    }
+
+    if ($procedure_amount <= 0) {
+        $procedure_amount = pharmecy_resolve_branch_pending_display_amount($con, $token_no, 0);
+    }
+
+    return (int) ($procedure_amount / 100 * 25);
+}
+
+/**
+ * Total issued medicine value for a procedure token (saved lines on item_by_doctor).
+ */
+function pharmecy_procedure_issued_medicine_amount($con, $token_no)
+{
+    $token_no = (int) $token_no;
+    if ($token_no < 1) {
+        return 0;
+    }
+    $run = mysqli_query(
+        $con,
+        "SELECT COALESCE(SUM(sale_price), 0) AS issued
+        FROM item_by_doctor
+        WHERE tokan_no = '$token_no'"
+    );
+    if ($run && ($row = mysqli_fetch_assoc($run))) {
+        return (int) $row['issued'];
+    }
+    return 0;
+}
+
+/**
+ * Token + patient + limit/issued/cash for second_procedure_turn_medicines.php.
+ *
+ * @return array<string, mixed>|null
+ */
+function pharmecy_load_procedure_medicine_turn($con, $token_no)
+{
+    $token_no = (int) $token_no;
+    if ($token_no < 1) {
+        return null;
+    }
+
+    $sql = "SELECT t.id, t.doctor_id, t.patient_id, t.cash,
+        p.name, p.age, p.gender, bpd.amount AS pending_amount
+        FROM tokans t
+        INNER JOIN patients p ON t.patient_id = p.id
+        LEFT JOIN branch_pending_details bpd ON bpd.token_no = t.id AND bpd.status = '1'
+        WHERE t.id = '$token_no'
+        LIMIT 1";
+    $run = mysqli_query($con, $sql);
+    if (!$run || mysqli_num_rows($run) !== 1) {
+        return null;
+    }
+
+    $row = mysqli_fetch_assoc($run);
+    $pending_amount = (float) ($row['pending_amount'] ?? 0);
+    $procedure_cash = pharmecy_resolve_branch_pending_display_amount($con, $token_no, $pending_amount);
+    if ($procedure_cash <= 0) {
+        $procedure_cash = (float) ($row['cash'] ?? 0);
+    }
+
+    $row['procedure_cash'] = $procedure_cash;
+    $row['medicine_limit'] = pharmecy_procedure_medicine_limit($con, $token_no, $procedure_cash);
+    $row['issued_medicine'] = pharmecy_procedure_issued_medicine_amount($con, $token_no);
+
+    return $row;
+}
+
 function pharmecy_medicine_selected_cart_options_html($con, $branch_id, $user_id)
 {
     $branch_id = (int) $branch_id;
