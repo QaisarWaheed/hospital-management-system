@@ -593,7 +593,8 @@ function pharmecy_procedure_medicine_limit($con, $token_no, $procedure_amount = 
 }
 
 /**
- * Total issued medicine value for a procedure token (saved lines on item_by_doctor).
+ * Total value of medicines already dispensed for a procedure registration token.
+ * Includes lines on the procedure token and on child medicine tokens (previous_tokan_no).
  */
 function pharmecy_procedure_issued_medicine_amount($con, $token_no)
 {
@@ -601,15 +602,44 @@ function pharmecy_procedure_issued_medicine_amount($con, $token_no)
     if ($token_no < 1) {
         return 0;
     }
-    $run = mysqli_query(
-        $con,
-        "SELECT COALESCE(SUM(sale_price), 0) AS issued
-        FROM item_by_doctor
-        WHERE tokan_no = '$token_no'"
-    );
+
+    $sql = "SELECT COALESCE(SUM(
+            CASE
+                WHEN ibd.sale_price > 0 THEN ibd.sale_price
+                WHEN ibd.tokan_type_id = 102 THEN COALESCE(NULLIF(ibd.sale_price_poor, 0), i.poor) * qty.q
+                WHEN ibd.tokan_type_id = 103 THEN COALESCE(NULLIF(ibd.sale_price_member, 0), i.member) * qty.q
+                ELSE COALESCE(NULLIF(ibd.sale_price_general, 0), i.general) * qty.q
+            END
+        ), 0) AS issued
+        FROM item_by_doctor ibd
+        INNER JOIN item_register_to_branches irb ON ibd.item_id = irb.id
+        INNER JOIN items i ON irb.item_id = i.id
+        INNER JOIN (
+            SELECT ibd2.id,
+                GREATEST(
+                    COALESCE(
+                        NULLIF(ibd2.sale_quantity, 0),
+                        IF(ibd2.fix_dose = 0, ibd2.dose * ibd2.feed * ibd2.days, ibd2.fix_dose),
+                        1
+                    ),
+                    1
+                ) AS q
+            FROM item_by_doctor ibd2
+        ) qty ON qty.id = ibd.id
+        WHERE (
+            ibd.tokan_no = '$token_no'
+            OR ibd.tokan_no IN (
+                SELECT id FROM tokans
+                WHERE previous_tokan_no = '$token_no' AND status >= 2
+            )
+        )
+        AND ibd.status >= 2";
+
+    $run = mysqli_query($con, $sql);
     if ($run && ($row = mysqli_fetch_assoc($run))) {
-        return (int) $row['issued'];
+        return (int) round((float) $row['issued']);
     }
+
     return 0;
 }
 

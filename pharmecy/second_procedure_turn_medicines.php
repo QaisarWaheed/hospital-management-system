@@ -366,11 +366,7 @@ else {echo '<option value="3"> Other</option>';}
 		} ?>
 		</select>
 	</div>
-   	<div class="col-md-2">
-   		<label>Cash (procedure)</label>
-   		<input type="hidden" name="cash" value="<?php echo (int) $cart_cash; ?>" />
-   		<textarea readonly required rows="1" style="resize: none;" id="cash" class="form-control"><?php echo (int) $procedure_cash; ?></textarea>
-   	</div>
+	<input type="hidden" name="cash" value="<?php echo (int) $cart_cash; ?>" />
 <?php }
 else
 { ?>
@@ -406,10 +402,7 @@ else
 		} ?>
 		</select>
 	</div>
-   	<div class="col-md-2">
-   		<label>Cash</label>
-   		<textarea readonly required rows="1" style="resize: none;" id="cash" name="cash" class="form-control">0</textarea>
-   	</div>
+	<input type="hidden" name="cash" value="0" />
 <?php } ?>
 
 
