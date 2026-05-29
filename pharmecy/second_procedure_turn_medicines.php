@@ -40,6 +40,7 @@ $age = '';
 $gender = 0;
 
 if ($tokan_no > 0) {
+    pharmecy_sync_branch_pending_amount_from_tokan($con, $tokan_no);
     $procedure_turn = pharmecy_load_procedure_medicine_turn($con, $tokan_no);
     if ($procedure_turn) {
         $patient_id = (int) $procedure_turn['patient_id'];
@@ -93,6 +94,7 @@ if ($count_item >= 1) {
 			            WHERE id = '$previous_tokan_no'"
 			        );
 			    }
+			    pharmecy_sync_branch_pending_amount_from_tokan($con, $previous_tokan_no);
 				while ($row_select_item = mysqli_fetch_array($run_select_item)) 
 				{
             	    $del_record_id = $row_select_item['id'];
@@ -407,8 +409,8 @@ if ($gender == 1) {
    		<input type="number" id="issued_medicine" value="<?php echo (int) $issued_medicine; ?>" readonly class="form-control">
    	</div>
    	<div class="col-md-3">
-   		<label>Cash Received</label>
-   		<input type="number" name="cash_received" class="form-control" value="">
+   		<label for="cash_received">Cash Received</label>
+   		<input type="number" name="cash_received" id="cash_received" class="form-control" placeholder="Enter amount" style="width:150px" autocomplete="off">
    	</div>
 	<div class="col-md-2">
 		<br>
@@ -492,7 +494,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function checknumber(theForm) {
-  var cashReceived = theForm.querySelector('[name="cash_received"]');
+  var cashReceived = theForm.querySelector('#cash_received');
   if (cashReceived && cashReceived.value === '') {
     alert('Please enter cash received.');
     return false;

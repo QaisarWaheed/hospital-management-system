@@ -30,8 +30,16 @@ if (isset($_GET['save']) && $_GET['save'] != '') {
         if (mysqli_query($con, $insert)) {
             $tokan_no = mysqli_insert_id($con);
             pharmecy_finalize_procedure_cart_items($con, $tokan_no, $user_id, $branch_id, $doctor_id, $tokan_type);
+            $final_cash = pharmecy_token_bill_amount($con, $tokan_no);
+            if ($final_cash <= 0) {
+                $final_cash = (float) $cash;
+            }
+            if ($final_cash > 0) {
+                $final_cash_sql = mysqli_real_escape_string($con, (string) $final_cash);
+                mysqli_query($con, "UPDATE tokans SET cash = '$final_cash_sql' WHERE id = '$tokan_no'");
+            }
             pharmecy_insert_branch_pending_details($con, $tokan_no, $current_date, $branch_id, '1', array(
-                'amount' => $cash,
+                'amount' => $final_cash,
                 'user_id' => $user_id,
                 'tokan_type_id' => $tokan_type,
             ));

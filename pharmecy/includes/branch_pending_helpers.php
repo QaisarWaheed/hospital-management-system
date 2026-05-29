@@ -221,6 +221,13 @@ function pharmecy_insert_branch_pending_details($con, $tokan_no, $current_date, 
         }
     }
 
+    $tokan_cash = pharmecy_tokan_cash_amount($con, $tokan_no);
+    if ($tokan_cash > 0 && $amount <= 0) {
+        $amount = (float) $tokan_cash;
+    } elseif ($tokan_cash > $amount) {
+        $amount = (float) $tokan_cash;
+    }
+
     $gardian_name = mysqli_real_escape_string($con, $gardian_name);
     $gardian_phone = mysqli_real_escape_string($con, $gardian_phone);
     $recommended_by = mysqli_real_escape_string($con, $recommended_by);
@@ -242,6 +249,44 @@ function pharmecy_insert_branch_pending_details($con, $tokan_no, $current_date, 
     }
 
     return $ok;
+}
+
+/**
+ * Procedure token bill from tokans.cash.
+ */
+function pharmecy_tokan_cash_amount($con, $token_no)
+{
+    $token_no = (int) $token_no;
+    if ($token_no < 1) {
+        return 0;
+    }
+    $run = mysqli_query($con, "SELECT cash FROM tokans WHERE id = '$token_no' LIMIT 1");
+    if ($run && ($row = mysqli_fetch_assoc($run))) {
+        return (int) round((float) ($row['cash'] ?? 0));
+    }
+    return 0;
+}
+
+/**
+ * Backfill branch_pending_details.amount from tokans.cash when amount is zero.
+ */
+function pharmecy_sync_branch_pending_amount_from_tokan($con, $token_no)
+{
+    $token_no = (int) $token_no;
+    if ($token_no < 1) {
+        return false;
+    }
+    $cash = pharmecy_tokan_cash_amount($con, $token_no);
+    if ($cash <= 0) {
+        return false;
+    }
+    $cash_sql = mysqli_real_escape_string($con, (string) $cash);
+    return (bool) mysqli_query(
+        $con,
+        "UPDATE branch_pending_details SET amount = '$cash_sql'
+        WHERE token_no = '$token_no' AND status = '1'
+        AND (amount IS NULL OR amount = '' OR amount = '0' OR amount = 0)"
+    );
 }
 
 /**
@@ -549,7 +594,7 @@ function pharmecy_procedure_limits_token_column($con)
 }
 
 /**
- * Preset medicine limit from procedure_tokens_medicine_limits only (no 25% fallback).
+ * Medicine limit: procedure_tokens_medicine_limits first, else branch_pending_details.amount.
  */
 function pharmecy_procedure_medicine_limit_preset($con, $token_no)
 {
@@ -567,10 +612,27 @@ function pharmecy_procedure_medicine_limit_preset($con, $token_no)
         LIMIT 1"
     );
     if ($run && ($row = mysqli_fetch_assoc($run))) {
-        return (int) round((float) ($row['procedure_tokens_medicine_limit_amount'] ?? 0));
+        $limit = (int) round((float) ($row['procedure_tokens_medicine_limit_amount'] ?? 0));
+        if ($limit > 0) {
+            return $limit;
+        }
     }
 
-    return 0;
+    $run_bpd = mysqli_query(
+        $con,
+        "SELECT amount FROM branch_pending_details
+        WHERE token_no = '$token_no' AND status = '1'
+        ORDER BY id DESC
+        LIMIT 1"
+    );
+    if ($run_bpd && ($row_bpd = mysqli_fetch_assoc($run_bpd))) {
+        $bpd_amount = (int) round((float) ($row_bpd['amount'] ?? 0));
+        if ($bpd_amount > 0) {
+            return $bpd_amount;
+        }
+    }
+
+    return pharmecy_tokan_cash_amount($con, $token_no);
 }
 
 /**
