@@ -22,9 +22,7 @@ if(isset($_GET['token_no']) && $_GET['token_no'] != '')
     $ecc = 'L';
     $pixel_Size = 10;
     $frame_Size = 10;
-    if (!is_dir('qr/')) {
-        mkdir('qr/', 0777, true);
-    }
+    if (!is_dir('qr/')) { mkdir('qr/', 0777, true); }
     QRcode::png($token_no, $file, $ecc, $pixel_Size, $frame_Size);    
 }
 function header_data($token_no)
