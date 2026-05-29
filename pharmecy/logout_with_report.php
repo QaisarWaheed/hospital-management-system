@@ -48,9 +48,7 @@ if($submitted_cash > ($cash_received + $donation_amount) ){$short_amount = 0;$ex
 elseif($submitted_cash < ($cash_received + $donation_amount) ){$short_amount = ($cash_received + $donation_amount)-$submitted_cash;$extra_amount = 0;}
 else{$short_amount = 0;$extra_amount = 0;}
 
-mysqli_query($con, "INSERT INTO `summary_details`
-(`login_id`, `computer_total`, `received_amount`, `donation_collection`, `submitted_amount`, `submitted_to`, `short_amount`, `extra_amount`, `status`, `created`, `user_id`) VALUES 
-('$login_id', '$cash', '$cash_received', '$donation_amount', '$submitted_cash', '0', '$short_amount', '$extra_amount', '1', '$current_date', '$user_id')");
+pharmecy_save_summary_details($con, $login_id, $cash, $cash_received, $donation_amount, $submitted_cash, $short_amount, $extra_amount, $user_id, $current_date);
 mysqli_query($con, "INSERT INTO `summary_by_admin`( `login_id`, `admin_id`, `submmited_cash`, `total_cash`, `created`, `user_id`, `reason_for_admin_password_used`, `staff_name_who_uses_admin_password`, `old_physicall_cash`) VALUES
     ('$login_id', '$admin_id', '$submitted_cash', '$cash_received', '$current_date', '$user_id', '$reason_for_admin_password_used', '$staff_name_who_uses_admin_password', '$old_physicall_cash')");
 ?>
@@ -168,6 +166,7 @@ if (mysqli_num_rows($run) > 0)
 // }
 ?>    
 </table>
+<?php pharmecy_logout_report_redirect_footer(); ?>
 <?php
 }
 else
@@ -245,9 +244,7 @@ if($submitted_cash > ($cash_received + $donation_amount) ){$short_amount = 0;$ex
 elseif($submitted_cash < ($cash_received + $donation_amount) ){$short_amount = ($cash_received + $donation_amount)-$submitted_cash;$extra_amount = 0;}
 else{$short_amount = 0;$extra_amount = 0;}
 
-mysqli_query($con, "INSERT INTO `summary_details`
-(`login_id`, `computer_total`, `received_amount`, `donation_collection`, `submitted_amount`, `submitted_to`, `short_amount`, `extra_amount`, `status`, `created`, `user_id`) VALUES 
-('$login_id', '$cash', '$cash_received', '$donation_amount', '$submitted_cash', '0', '$short_amount', '$extra_amount', '1', '$current_date', '$user_id')");
+pharmecy_save_summary_details($con, $login_id, $cash, $cash_received, $donation_amount, $submitted_cash, $short_amount, $extra_amount, $user_id, $current_date);
 ?>
 <table class="table">
     <tr>                
@@ -363,6 +360,7 @@ echo '
 // }
 ?>      
 </table>
+<?php pharmecy_logout_report_redirect_footer(); ?>
 <?php
 }
 else

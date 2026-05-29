@@ -1543,6 +1543,42 @@ echo '</table></div>';
     return $output;
 }
 
+function pharmecy_save_summary_details($con, $login_id, $cash, $cash_received, $donation_amount, $submitted_cash, $short_amount, $extra_amount, $user_id, $current_date)
+{
+    $login_id = (int) $login_id;
+    $user_id = (int) $user_id;
+    $cash = (float) $cash;
+    $cash_received = (float) $cash_received;
+    $donation_amount = (float) $donation_amount;
+    $submitted_cash = (float) $submitted_cash;
+    $short_amount = (float) $short_amount;
+    $extra_amount = (float) $extra_amount;
+    $current_date = mysqli_real_escape_string($con, $current_date);
+
+    $sql = "INSERT INTO `summary_details`
+        (`login_id`, `computer_total`, `received_amount`, `donation_collection`, `submitted_amount`, `submitted_to`, `short_amount`, `extra_amount`, `status`, `created`, `user_id`)
+        VALUES
+        ('$login_id', '$cash', '$cash_received', '$donation_amount', '$submitted_cash', '0', '$short_amount', '$extra_amount', '1', '$current_date', '$user_id')
+        ON DUPLICATE KEY UPDATE
+        `computer_total` = VALUES(`computer_total`),
+        `received_amount` = VALUES(`received_amount`),
+        `donation_collection` = VALUES(`donation_collection`),
+        `submitted_amount` = VALUES(`submitted_amount`),
+        `short_amount` = VALUES(`short_amount`),
+        `extra_amount` = VALUES(`extra_amount`),
+        `status` = VALUES(`status`),
+        `created` = VALUES(`created`),
+        `user_id` = VALUES(`user_id`)";
+
+    return mysqli_query($con, $sql);
+}
+
+function pharmecy_logout_report_redirect_footer()
+{
+    echo '<p style="text-align:center;margin-top:20px;"><a href="logout.php" class="btn btn-primary">Continue to Home</a></p>';
+    echo '<script>setTimeout(function(){ window.location.href = "logout.php"; }, 5000);</script>';
+}
+
 ?>
 <!--             $select_patient = "SELECT * FROM patients WHERE id = '$patient_id' ";
             $run_patient = mysqli_query($con, $select_patient);
