@@ -85,6 +85,14 @@ if ($count_item >= 1) {
 			if (mysqli_query($con, $insert)) 
 			{
 			    $tokan_no = mysqli_insert_id($con);
+			    if ($cash_received > 0 && $previous_tokan_no > 0) {
+			        $cash_received_sql = mysqli_real_escape_string($con, (string) $cash_received);
+			        mysqli_query(
+			            $con,
+			            "UPDATE tokans SET cash_received = '$cash_received_sql'
+			            WHERE id = '$previous_tokan_no'"
+			        );
+			    }
 				while ($row_select_item = mysqli_fetch_array($run_select_item)) 
 				{
             	    $del_record_id = $row_select_item['id'];
@@ -400,7 +408,7 @@ if ($gender == 1) {
    	</div>
    	<div class="col-md-3">
    		<label>Cash Received</label>
-   		<input type="number" min="0" value="" name="cash_received" id="cash_received" class="form-control" required>
+   		<input type="number" name="cash_received" class="form-control" value="">
    	</div>
 	<div class="col-md-2">
 		<br>
@@ -484,7 +492,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function checknumber(theForm) {
-  var cashReceived = document.getElementById('cash_received');
+  var cashReceived = theForm.querySelector('[name="cash_received"]');
   if (cashReceived && cashReceived.value === '') {
     alert('Please enter cash received.');
     return false;

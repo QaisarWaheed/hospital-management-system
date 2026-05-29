@@ -558,36 +558,16 @@ function pharmecy_procedure_medicine_limit_preset($con, $token_no)
         return 0;
     }
 
-    static $limits_table_exists = null;
-    if ($limits_table_exists === null) {
-        $chk = mysqli_query($con, "SHOW TABLES LIKE 'procedure_tokens_medicine_limits'");
-        $limits_table_exists = ($chk && mysqli_num_rows($chk) > 0);
-    }
-
-    if (!$limits_table_exists) {
-        return 0;
-    }
-
-    $token_col = pharmecy_procedure_limits_token_column($con);
-    if ($token_col === '') {
-        return 0;
-    }
-
-    $token_col_sql = '`' . mysqli_real_escape_string($con, $token_col) . '`';
     $run = mysqli_query(
         $con,
-        "SELECT * FROM procedure_tokens_medicine_limits
-        WHERE $token_col_sql = '$token_no'
+        "SELECT procedure_tokens_medicine_limit_amount
+        FROM procedure_tokens_medicine_limits
+        WHERE token_no = '$token_no'
+        ORDER BY procedure_tokens_medicine_limit_status DESC
         LIMIT 1"
     );
-    if (!$run || !($row = mysqli_fetch_assoc($run))) {
-        return 0;
-    }
-
-    foreach (array('medicine_limit', 'limit_amount', 'limit', 'amount') as $col) {
-        if (isset($row[$col]) && (float) $row[$col] > 0) {
-            return (int) $row[$col];
-        }
+    if ($run && ($row = mysqli_fetch_assoc($run))) {
+        return (int) round((float) ($row['procedure_tokens_medicine_limit_amount'] ?? 0));
     }
 
     return 0;
