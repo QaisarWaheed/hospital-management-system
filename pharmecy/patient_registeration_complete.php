@@ -1,14 +1,8 @@
 <?php include 'includes/connect.php';
 include_once 'includes/rehab_fingerprint.php';
 if (isset($_POST['save'])) {
-	if (is_rehabilitation_branch($branch_id)) {
-		$fp_left = trim($_POST['fp_thumb_left'] ?? '');
-		$fp_right = trim($_POST['fp_thumb_right'] ?? '');
-		if (strlen($fp_left ?? '') < REHAB_FP_MIN_TEMPLATE_LEN || strlen($fp_right ?? '') < REHAB_FP_MIN_TEMPLATE_LEN) {
-			echo '<script>alert("Rehabilitation branch: both thumb templates are required. Capture left and right thumb on the reader, then save."); history.back();</script>';
-			exit(0);
-		}
-	}
+	$fp_left = trim($_POST['fp_thumb_left'] ?? '');
+	$fp_right = trim($_POST['fp_thumb_right'] ?? '');
 	$tokan_no = next_tokan_no();
 	$id = next_patient_id();
 	$name = $_POST['name'];
@@ -40,7 +34,7 @@ if (isset($_POST['save'])) {
 	else
 	{
 		if (is_rehabilitation_branch($branch_id)) {
-			save_patient_fingerprints($con, $id, $fp_left, $fp_right);
+			rehab_fingerprint_save_if_provided($con, $id, $fp_left, $fp_right);
 		}
     	header('Location: print_tokan.php?tokan_no=' . (int) $tokan_no);
 		exit;

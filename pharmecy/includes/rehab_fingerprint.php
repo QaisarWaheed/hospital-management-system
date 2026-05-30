@@ -31,6 +31,48 @@ function is_rehabilitation_branch($branch_id)
     return in_array((int) $branch_id, rehabilitation_branch_ids(), true);
 }
 
+/** True when a captured/pasted template string is long enough to store or match. */
+function rehab_fingerprint_template_valid($template)
+{
+    return strlen(trim((string) ($template ?? ''))) >= REHAB_FP_MIN_TEMPLATE_LEN;
+}
+
+/** Both thumbs captured — required only when persisting enrollment, not for token save. */
+function rehab_fingerprint_both_thumbs_provided($thumb_left, $thumb_right)
+{
+    return rehab_fingerprint_template_valid($thumb_left) && rehab_fingerprint_template_valid($thumb_right);
+}
+
+/**
+ * Save fingerprints when both thumbs are present; otherwise skip (token creation still allowed).
+ *
+ * @return bool mysqli success, or true when nothing to save
+ */
+function rehab_fingerprint_save_if_provided($con, $patient_id, $thumb_left, $thumb_right)
+{
+    if (!rehab_fingerprint_both_thumbs_provided($thumb_left, $thumb_right)) {
+        return true;
+    }
+    return (bool) save_patient_fingerprints($con, $patient_id, $thumb_left, $thumb_right);
+}
+
+/**
+ * Returning patient with fingerprints on file: verify only when staff supplied a probe.
+ *
+ * @return bool true if verification passed or was skipped
+ */
+function rehab_fingerprint_verify_if_probe_provided($con, $patient_id, $probe)
+{
+    if (!rehab_patient_has_fingerprints($con, $patient_id)) {
+        return true;
+    }
+    $probe = trim((string) ($probe ?? ''));
+    if ($probe === '' || !rehab_fingerprint_template_valid($probe)) {
+        return true;
+    }
+    return verify_rehab_patient_fingerprint($con, $patient_id, $probe);
+}
+
 function rehab_patient_has_fingerprints($con, $patient_id)
 {
     $pid = (int) $patient_id;
@@ -450,11 +492,11 @@ function rehab_fingerprint_identify_block($default_next_patient_id)
     <div class="col-md-12" style="margin-top: 0;">
         <div id="rehab_status_banner" class="alert alert-info" role="status" style="display:none;"></div>
         <fieldset class="border p-2 mb-2">
-            <legend class="w-auto" style="font-size: 14px;"><strong>Identify patient — scan thumbs in order (max two)</strong></legend>
+            <legend class="w-auto" style="font-size: 14px;"><strong>Identify patient (optional)</strong></legend>
             <p class="small text-muted mb-2">
-                Scan <strong>one thumb</strong> first. If that matches someone in the system, the form fills and you do <strong>not</strong> need a second scan.
-                If it does not match, the first scan is kept as the <strong>first enrollment thumb</strong> — then scan only the <strong>other thumb</strong> once.
-                If there is still no match, you are a <strong>new patient</strong>: both thumbs are already captured — complete the form and save (no extra fingerprint step).
+                Fingerprint is <strong>optional</strong> — you can fill patient details and save a token without scanning.
+                To identify a returning patient: scan <strong>one thumb</strong> first. If it matches, the form fills automatically.
+                If not, scan the <strong>other thumb</strong> once. If still no match, register as a new patient (you may save without fingerprints).
             </p>
             <input type="hidden" name="rehab_existing_patient_id" id="rehab_existing_patient_id" value="">
             <textarea id="fp_identify_probe_1" class="form-control" rows="2" style="position:absolute;left:-9999px;opacity:0;height:10px;" tabindex="-1" aria-hidden="true" autocomplete="off"></textarea>
@@ -654,7 +696,7 @@ function rehab_fingerprint_identify_block($default_next_patient_id)
             var b = document.getElementById('rehab_status_banner');
             b.style.display = 'block';
             b.className = 'alert alert-secondary';
-            b.textContent = 'New patient — first and second thumb scans are saved. Complete patient details and save. Use “Edit thumb templates” only if you need to paste/capture again.';
+            b.textContent = 'New patient — thumb scans saved if captured. Complete patient details and save (fingerprints optional). Use “Edit thumb templates” only to paste/capture again.';
         };
 
         window.rehabRegistrationOnReset = function () {
@@ -692,20 +734,20 @@ function rehab_fingerprint_enrollment_block()
     ?>
     <div class="col-md-12" style="margin-top: 12px;">
         <fieldset class="border p-2">
-            <legend class="w-auto" style="font-size: 14px;"><strong>Fingerprints (rehabilitation — both thumbs required)</strong></legend>
+            <legend class="w-auto" style="font-size: 14px;"><strong>Fingerprints (optional)</strong></legend>
             <p class="small text-muted mb-2">
-                Use <strong>Capture with U.are.U reader</strong> for each thumb (needs HID DigitalPersona Lite Client / Workstation on this PC and internet the first time scripts load).
-                Or paste a template from your software. Optional HTTP bridge: define <code>REHAB_FP_LOCAL_CAPTURE_URL</code> in <code>company_info.php</code>.
+                Optional — leave blank to save the token without fingerprints. Use <strong>Capture with U.are.U reader</strong> for each thumb, or paste a template.
+                Optional HTTP bridge: define <code>REHAB_FP_LOCAL_CAPTURE_URL</code> in <code>company_info.php</code>.
             </p>
             <div class="row">
                 <div class="col-md-6">
                     <label>Left thumb template (base64 / ISO)</label>
-                    <textarea name="fp_thumb_left" id="fp_thumb_left" class="form-control" rows="2" placeholder="Paste or capture from reader" required></textarea>
+                    <textarea name="fp_thumb_left" id="fp_thumb_left" class="form-control" rows="2" placeholder="Paste or capture from reader (optional)"></textarea>
                     <button type="button" class="btn btn-sm btn-outline-secondary mt-1" onclick="rehabFpTryCapture('left')">Capture with U.are.U reader (left)</button>
                 </div>
                 <div class="col-md-6">
                     <label>Right thumb template (base64 / ISO)</label>
-                    <textarea name="fp_thumb_right" id="fp_thumb_right" class="form-control" rows="2" placeholder="Paste or capture from reader" required></textarea>
+                    <textarea name="fp_thumb_right" id="fp_thumb_right" class="form-control" rows="2" placeholder="Paste or capture from reader (optional)"></textarea>
                     <button type="button" class="btn btn-sm btn-outline-secondary mt-1" onclick="rehabFpTryCapture('right')">Capture with U.are.U reader (right)</button>
                 </div>
             </div>
@@ -748,10 +790,10 @@ function rehab_fingerprint_verify_block()
     ?>
     <div class="col-md-12" style="margin-top: 10px;">
         <fieldset class="border p-2">
-            <legend class="w-auto" style="font-size: 14px;"><strong>Thumb verification (rehabilitation)</strong></legend>
-            <p class="small text-muted mb-2">Patient has fingerprints on file. Scan <strong>one</strong> thumb (left or right) to continue.</p>
+            <legend class="w-auto" style="font-size: 14px;"><strong>Thumb verification (optional)</strong></legend>
+            <p class="small text-muted mb-2">Patient has fingerprints on file. Scan one thumb to verify, or leave blank and save the token.</p>
             <label>Thumb template for verification</label>
-            <textarea name="fp_thumb_verify" id="fp_thumb_verify" class="form-control" rows="2" placeholder="Paste or capture from reader" required></textarea>
+            <textarea name="fp_thumb_verify" id="fp_thumb_verify" class="form-control" rows="2" placeholder="Paste or capture from reader (optional)"></textarea>
             <button type="button" class="btn btn-sm btn-outline-secondary mt-1" onclick="rehabFpTryCaptureVerify()">Capture with U.are.U reader</button>
         </fieldset>
     </div>

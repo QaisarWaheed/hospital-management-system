@@ -35,14 +35,8 @@ if (isset($_POST['save']))
         exit(0);
     }
 
-    if (is_rehabilitation_branch($branch_id)) {
-        $fp_left = trim($_POST['fp_thumb_left'] ?? '');
-        $fp_right = trim($_POST['fp_thumb_right'] ?? '');
-        if (strlen($fp_left ?? '') < REHAB_FP_MIN_TEMPLATE_LEN || strlen($fp_right ?? '') < REHAB_FP_MIN_TEMPLATE_LEN) {
-            echo '<script>alert("Rehabilitation branch (new patient): both thumb templates are required. Use identification first for returning patients, or complete both thumb fields."); history.back();</script>';
-            exit(0);
-        }
-    }
+    $fp_left = trim($_POST['fp_thumb_left'] ?? '');
+    $fp_right = trim($_POST['fp_thumb_right'] ?? '');
     $last_token = last_tokan_no();
     $last_patient_name = get_patient_name_by_token_no($last_token);
     $last_patient_age = get_patient_age_by_token_no($last_token);
@@ -61,7 +55,7 @@ if (isset($_POST['save']))
 	VALUES 
 	('$tokan_no', '$patient_id','$doctor_id', '$tokan_type', '$cash', '$cash', '$user_id', '$current_date', '$branch_id')");
 	if (is_rehabilitation_branch($branch_id)) {
-		save_patient_fingerprints($con, $patient_id, $fp_left, $fp_right);
+		rehab_fingerprint_save_if_provided($con, $patient_id, $fp_left, $fp_right);
 	}
 	header('Location: print_tokan.php?tokan_no=' . (int) $tokan_no);
 	exit;
