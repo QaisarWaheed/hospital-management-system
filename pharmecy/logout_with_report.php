@@ -419,8 +419,7 @@ if(mysqli_num_rows($select_admin) > 0)
 }
 else
 {
-    mysqli_query($con, "UPDATE logins_detail SET logout_at = '$current_date', status = '2' WHERE id = '$login_id' AND status = '1' ");
-        $search = "SELECT * FROM logins_detail WHERE id = '$login_id' ";
+        $search = "SELECT login_at FROM logins_detail WHERE id = '$login_id' ";
         $run = mysqli_query($con, $search);
         if(mysqli_num_rows($run) == 1)
         {

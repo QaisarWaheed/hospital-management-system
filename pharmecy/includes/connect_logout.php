@@ -181,13 +181,13 @@ function get_uname_by_id($id)
 function get_total_token_cash($id, $login_at, $logout_at)
 {
     $output = 0;
-    $query = "SELECT sum(cash) FROM `tokans` WHERE `user_id` = '$id' AND created > '$login_at' AND created < '$logout_at' AND status = '1' ";
+    $query = "SELECT sum(cash) FROM `tokans` WHERE `user_id` = '$id' AND created >= '$login_at' AND created <= '$logout_at' AND status = '1' ";
     $run = mysqli_query($GLOBALS['con'], $query);
-    if (mysqli_num_rows($run) == 1) 
+    if ($run && mysqli_num_rows($run) == 1) 
     {
         while ($row = mysqli_fetch_array($run)) 
         {
-            $output = $row['0'];
+            $output = (float) ($row[0] ?? 0);
         }    
     }    
     return $output;
@@ -196,13 +196,13 @@ function get_total_token_cash($id, $login_at, $logout_at)
 function get_total_token_cash_received($id, $login_at, $logout_at)
 {
     $output = 0;
-    $query = "SELECT sum(cash_received) FROM `tokans` WHERE `user_id` = '$id' AND created > '$login_at' AND created < '$logout_at' AND `status`= '1' ";
+    $query = "SELECT sum(cash_received) FROM `tokans` WHERE `user_id` = '$id' AND created >= '$login_at' AND created <= '$logout_at' AND `status`= '1' ";
     $run = mysqli_query($GLOBALS['con'], $query);
-    if (mysqli_num_rows($run) == 1) 
+    if ($run && mysqli_num_rows($run) == 1) 
     {
         while ($row = mysqli_fetch_array($run)) 
         {
-            $output = $row['0'];
+            $output = (float) ($row[0] ?? 0);
         }    
     }    
     return $output;

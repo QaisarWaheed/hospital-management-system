@@ -134,11 +134,11 @@ $list_truncated = $list_result['truncated'];
     	                <td><?php echo $row_sample['name']; ?></td>
     	                <td><?php echo $row_sample['phone']; ?></td>
     	                <td><?php echo $row_sample['age']; ?></td>
-    	                <td><?php echo date_format(date_create($row_sample['added_at']), 'h:i:s A d-m-Y'); ?></td>
-        	                <td><?php echo $row_sample['added_by']; ?></td>
-    	                <td><?php echo date_format(date_create($row_sample['collected_at']), 'h:i:s A d-m-Y'); ?></td>
-        	                <td><?php echo $row_sample['collected_by']; ?></td>
-        	                <td><?php echo date_format(date_create($row_sample['processed_at']), 'h:i:s A d-m-Y'); ?></td>
+    	                <td><?php echo ycdo_safe_date_format($row_sample['added_at'] ?? null, 'h:i:s A d-m-Y'); ?></td>
+        	                <td><?php echo $row_sample['added_by'] ?? ''; ?></td>
+    	                <td><?php echo ycdo_safe_date_format($row_sample['collected_at'] ?? null, 'h:i:s A d-m-Y'); ?></td>
+        	                <td><?php echo $row_sample['collected_by'] ?? ''; ?></td>
+        	                <td><?php echo ycdo_safe_date_format($row_sample['processed_at'] ?? null, 'h:i:s A d-m-Y'); ?></td>
         	                <td><?php echo $row_sample['processed_by']; ?></td>
         	                <td>
         	                    <a href="#" class = "btn btn-sm btn-success" onClick="MyWindow=window.open('lab_test_type_report.php?lab_test_id=<?php echo $row_sample['lab_test_id']; ?>','MyWindow','width=900,height=1200'); return false;"><span class="glyphicon glyphicon-pencil">U</span></a>
