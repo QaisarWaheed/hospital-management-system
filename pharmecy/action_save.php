@@ -31,12 +31,9 @@ if($count_item >= 1)
 	{
 		$previous_tokan_no = $_POST['previous_tokan_no'];
 		$patient_id = $_POST['patient_id'];
-		if (is_rehabilitation_branch($branch_id) && rehab_patient_has_fingerprints($con, $patient_id)) {
-			$probe = trim($_POST['fp_thumb_verify'] ?? '');
-			if (!verify_rehab_patient_fingerprint($con, $patient_id, $probe)) {
-				echo '<script>alert("Rehabilitation branch: fingerprint verification failed. Scan a registered thumb (left or right) and try again."); history.back();</script>';
-				exit(0);
-			}
+		if (is_rehabilitation_branch($branch_id) && !rehab_fingerprint_verify_if_probe_provided($con, $patient_id, $_POST['fp_thumb_verify'] ?? '')) {
+			echo '<script>alert("Fingerprint verification failed. Scan a registered thumb or leave verification blank to continue."); history.back();</script>';
+			exit(0);
 		}
 		$doctor_id = $_POST['doctor_id'];
 		$cash_received = $_POST['cash_received'];
@@ -51,14 +48,8 @@ if($count_item >= 1)
 		$age = $_POST['age'];
 		$phone = $_POST['phone'];
 		$gender = $_POST['gender'];
-		if (is_rehabilitation_branch($branch_id)) {
-			$fp_left = trim($_POST['fp_thumb_left'] ?? '');
-			$fp_right = trim($_POST['fp_thumb_right'] ?? '');
-			if (strlen($fp_left ?? '') < REHAB_FP_MIN_TEMPLATE_LEN || strlen($fp_right ?? '') < REHAB_FP_MIN_TEMPLATE_LEN) {
-				echo '<script>alert("Rehabilitation branch: both thumb templates are required for new patients."); history.back();</script>';
-				exit(0);
-			}
-		}
+		$fp_left = trim($_POST['fp_thumb_left'] ?? '');
+		$fp_right = trim($_POST['fp_thumb_right'] ?? '');
 		$cash_received = $_POST['cash_received'];
 		$doctor_id = $_POST['doctor_id'];
 			$run2 = mysqli_query($con, "INSERT INTO `patients`
@@ -75,8 +66,8 @@ if($count_item >= 1)
 			if (mysqli_query($con, $insert)) 
 			{
 			    $tokan_no = mysqli_insert_id($con);
-				if (is_rehabilitation_branch($branch_id) && !isset($_POST['previous_tokan_no']) && isset($fp_left)) {
-					save_patient_fingerprints($con, $patient_id, $fp_left, $fp_right);
+				if (is_rehabilitation_branch($branch_id) && !isset($_POST['previous_tokan_no'])) {
+					rehab_fingerprint_save_if_provided($con, $patient_id, $fp_left, $fp_right);
 				}
 				if ($cash > $cash_received-1) 
 				{

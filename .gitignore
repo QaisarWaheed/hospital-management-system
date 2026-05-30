@@ -1,3 +1,5 @@
 /vendor/
 /.phpunit.cache/
 composer.lock
+config.bat
+node_modules
